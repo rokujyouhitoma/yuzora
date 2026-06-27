@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed [REQ-04] 目次表示およびジャンプ機能 (TOC) のバックログ要件 (docs/backlogs/005-table-of-contents-toc.md) を精査し、ステータスを Approved に更新 (ID: 007)。
 - Changed エージェント行動規範 (.agents/AGENTS.md) に、新スキル (create-backlog, polish-backlog) によるバックログ管理ルールを追記 (ID: 007)。
 - Changed ドキュメント構成の拡張に伴い、docs/README.md およびルートの README.md のディレクトリ構造記述を更新 (ID: 007)。
 - Changed [MNG-02] 開発プロセスドキュメント (docs/MNG-02-development_process.md) に、新スキル (create-backlog, polish-backlog) とドキュメント (REQ-04) の三位一体対応セクションを追記し、関係性を整理 (ID: 007)。

@@ -12,7 +12,7 @@
 | **002** | Feature | Low | Draft | しおり手動一覧管理 | [002-manual-bookmark-management.md](002-manual-bookmark-management.md) |
 | **003** | Feature | Low | Draft | PDF/EPUB形式のインポート対応 | [003-pdf-epub-import.md](003-pdf-epub-import.md) |
 | **004** | Refactor | Medium | Draft | CSSスタイルのモジュール化 | [004-css-module.md](004-css-module.md) |
-| **005** | Feature | High | Draft | 目次表示およびジャンプ機能 (TOC) | [005-table-of-contents-toc.md](005-table-of-contents-toc.md) |
+| **005** | Feature | High | Approved | 目次表示およびジャンプ機能 (TOC) | [005-table-of-contents-toc.md](005-table-of-contents-toc.md) |
 
 ---
 
