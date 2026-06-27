@@ -13,7 +13,7 @@
 | **003** | Feature | Low | Draft | PDF/EPUB形式のインポート対応 | [003-pdf-epub-import.md](003-pdf-epub-import.md) |
 | **004** | Refactor | Medium | Draft | CSSスタイルのモジュール化 | [004-css-module.md](004-css-module.md) |
 | **005** | Feature | High | Approved | 目次表示およびジャンプ機能 (TOC) | [005-table-of-contents-toc.md](005-table-of-contents-toc.md) |
-| **006** | Enhancement | Low | Draft | 非同期処理による目次抽出および描画の高速化 | [006-async-toc-generation.md](006-async-toc-generation.md) |
+| **006** | Enhancement | Low | Approved | 非同期処理による目次抽出および描画の高速化 | [006-async-toc-generation.md](006-async-toc-generation.md) |
 
 ---
 
