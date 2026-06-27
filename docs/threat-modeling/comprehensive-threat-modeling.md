@@ -6,41 +6,9 @@
 
 ## 1. システムデータフローダイアグラム (DFD)
 
-ゆうぞらにおけるデータの流れと信頼境界（Trust Boundary）は、以下の図の通りです。
+ゆうぞらにおけるシステム構成および詳細なデータフロー（Mermaid 図等）は、システム設計の一次情報として基本設計書に定義されています。本モデリングは、同基本設計に示されるデータフローおよび信頼境界（Trust Boundary）に基づいて実施されています。
 
-```mermaid
-flowchart TD
-    User["外部エンティティ: ユーザー"]
-    FileSystem["外部エンティティ: ローカルファイルシステム"]
-    
-    subgraph ClientApp["信頼境界: クライアントブラウザ (Yuzora App)"]
-        subgraph Controller["プロセス: app.js (Controller)"]
-            P1["P1: ファイル読み込み / デコード<br>(FileReader / TextDecoder)"]
-            P2["P2: 青空文庫記法パース<br>(parseAozoraText / HTML)"]
-            P3["P3: DOM操作 / 表示更新"]
-            P4["P4: 設定・しおり管理ロジック"]
-        end
-        
-        subgraph View["View (DOM)"]
-            D1["D1: ウェルカム画面"]
-            D2["D2: 読書画面<br>(#reader-content)"]
-            D3["D3: 設定ドロワー / デバッグモーダル"]
-        end
-        
-        subgraph Storage["データストア"]
-            LocalStorage[("LocalStorage<br>(yuzora_config, bookmarks)")]
-        end
-    end
-
-    %% データフロー
-    FileSystem -->|"1. テキスト/HTMLファイル (Shift_JIS/UTF-8)"| P1
-    User -->|"2. 作品選択/設定変更 (Click/Drag)"| P3
-    P1 -->|"3. 生テキスト/生HTML文字列"| P2
-    P2 -->|"4. 安全に構築されたHTML/DOM要素"| P3
-    P3 -->|"5. 表示更新・状態監視"| User
-    P3 -->|"6. 設定・しおり更新要求"| P4
-    P4 <-->|"7. 設定・進捗データ (JSON)"| LocalStorage
-```
+* [【基本設計書】2.2 システムデータフローダイアグラム (DFD)](../DSN-01-high_level_design.md#22-システムデータフローダイアグラム-data-flow-diagram-dfd)
 
 ---
 

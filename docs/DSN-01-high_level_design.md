@@ -68,7 +68,47 @@ graph TD
    - 読書画面で「表示設定」ボタンを押した際に表示されるサイドメニュー。
    - テーマ、フォント、文字サイズ、行間、文字間などのリアルタイム変更を制御。
 
-### 2.2 ファイル読み込みから描画までのデータフロー
+### 2.2 システムデータフローダイアグラム (Data Flow Diagram: DFD)
+
+システムのデータフローと信頼境界（Trust Boundary）の定義です。本ダイアグラムは、セキュリティ脅威モデリングのインプットとしても利用されます。
+
+```mermaid
+flowchart TD
+    User["外部エンティティ: ユーザー"]
+    FileSystem["外部エンティティ: ローカルファイルシステム"]
+    
+    subgraph ClientApp["信頼境界: クライアントブラウザ (Yuzora App)"]
+        subgraph Controller["プロセス: app.js (Controller)"]
+            P1["P1: ファイル読み込み / デコード<br>(FileReader / TextDecoder)"]
+            P2["P2: 青空文庫記法パース<br>(parseAozoraText / HTML)"]
+            P3["P3: DOM操作 / 表示更新"]
+            P4["P4: 設定・しおり管理ロジック"]
+        end
+        
+        subgraph View["View (DOM)"]
+            D1["D1: ウェルカム画面"]
+            D2["D2: 読書画面<br>(#reader-content)"]
+            D3["D3: 設定ドロワー / デバッグモーダル"]
+        end
+        
+        subgraph Storage["データストア"]
+            LocalStorage[("LocalStorage<br>(yuzora_config, bookmarks)")]
+        end
+    end
+
+    %% データフロー
+    FileSystem -->|"1. テキスト/HTMLファイル (Shift_JIS/UTF-8)"| P1
+    User -->|"2. 作品選択/設定変更 (Click/Drag)"| P3
+    P1 -->|"3. 生テキスト/生HTML文字列"| P2
+    P2 -->|"4. 安全に構築されたHTML/DOM要素"| P3
+    P3 -->|"5. 表示更新・状態監視"| User
+    P3 -->|"6. 設定・しおり更新要求"| P4
+    P4 <-->|"7. 設定・進捗データ (JSON)"| LocalStorage
+```
+
+---
+
+### 2.3 ファイル読み込みから描画までのデータフロー
 
 ```mermaid
 sequenceDiagram
@@ -99,7 +139,7 @@ sequenceDiagram
     deactivate C
 ```
 
-### 2.3 画面構成要素一覧 (UI Screen Component Breakdown)
+### 2.4 画面構成要素一覧 (UI Screen Component Breakdown)
 
 本アプリケーションを構成する主要な3画面のDOM・UI構成要素、対応する識別子（ID/クラス名）、およびそれぞれの論理的な役割は以下の通りです。
 
