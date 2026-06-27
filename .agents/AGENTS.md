@@ -31,3 +31,8 @@ You MUST follow this structured, issue-driven development lifecycle for all modi
 - Threat modeling results MUST be outputted to the `docs/threat-modeling/` directory.
 - Threat modeling results MUST be maintained in a dateless, single source-of-truth file (e.g., `comprehensive-threat-modeling.md` or a descriptively named dateless file) to represent the latest system status. Do NOT include dates in the filename.
 - For any identified threats that have been addressed or fixed, you MUST include a link to the corresponding issue file under `docs/issues/closed/` (e.g., `[Issue 005](../issues/closed/005-fix-xss-vulnerability-t-e1.md)`) within the threat analysis details.
+
+## Documentation Rules
+
+- When creating or modifying documents under the `docs/` directory, you MUST strictly adhere to the rules defined in [docs/README.md](../docs/README.md).
+- Specifically, you MUST use relative paths (never absolute paths) for all links within documents to prevent broken links across different environments.
