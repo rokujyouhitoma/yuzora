@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed [MNG-02] 開発プロセスドキュメント (docs/MNG-02-development_process.md) に、新スキル (create-backlog, polish-backlog) とドキュメント (REQ-04) の三位一体対応セクションを追記し、関係性を整理 (ID: 007)。
 - Added [REQ-04] バックログ精査用スキル (.agents/skills/polish-backlog/SKILL.md) を新設 (ID: 007)。
 - Added [REQ-04] バックログ管理をマルチファイル構造（docs/backlogs/*.md および docs/backlogs/README.md）に移行し、MNG-01 ドキュメント台帳を更新 (ID: 007)。
 - Changed [REQ-04] create-backlog スキルを個別バックログファイルの自動生成および台帳追記手順に更新 (ID: 007)。

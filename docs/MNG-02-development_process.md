@@ -24,9 +24,20 @@
 | **インプット** | 要件定義書 (SRD) | 基本設計書 (HLD) |
 | **アウトプット** | [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) | [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md) |
 
+### 1.3 ドキュメントとスキルの相互対応関係
+プロジェクトの品質整合性を維持するため、エージェントの実行手順（スキル）と開発ドキュメントは完全に 1 対 1 または論理的な対応関係にあります。
+
+| ドキュメント/成果物 | 対応する支援・実行スキル | 主な用途・連携内容 |
+| :--- | :--- | :--- |
+| **[MNG-01 ドキュメント台帳](MNG-01-document_ledger.md)**<br>**[MNG-02 開発プロセス](MNG-02-development_process.md)** | `git-workflow`<br>`changelog-workflow` | ドキュメントの新規作成時に台帳へ事前登録し、コミット前に `CHANGES.md` およびルートの `README.md` を更新するフローを制御する。 |
+| **[REQ-04 バックログ管理プロセス定義書](REQ-04-backlog.md)**<br>**[backlogs/README.md](backlogs/README.md)** | `create-backlog`<br>`polish-backlog` | 将来のアイデア・要望を個別のバックログ要件ファイルとして起票・詳細化し、承認（Approved）まで引き上げる。 |
+| **[issues/README.md](issues/README.md)**<br>各 Issue ファイル | `create-issue`<br>`polish-issue` | バックログや要件からアクティブな Issue を起票し、設計書（HLD/LLD）の更新計画および成功基準（DoD）を確立する。 |
+| **[MNG-07 脅威モデリング定義書](MNG-07-threat_modeling.md)**<br>包括的脅威分析結果シート | `threat-modeling` | 基本設計（HLD）の策定段階および詳細精査において、STRIDE分析と情報アセット分類のセキュリティ要件を定義する。 |
+| **実装コード** (`app.js`, `style.css`等) | `review-diff-code` | 実装フェーズ（Make）における差分コード（git diff）のセルフレビューと品質基準適合チェックを実行する。 |
+
 ### 1.4 ADR（Architecture Decision Record）の導入による意思決定の記録
 プロジェクトにおける重要な設計上の意思決定（主要技術の選定、アルゴリズムの決定など）とその背景、影響を明確に記録し、後から追跡可能にするため、**ADR (Architecture Decision Record)** のプロセスを導入します。
-詳細な起票基準、ADRの構成テンプレート、ステータスライフサイクル、および承認プロセスについては、[[MNG-08] アーキテクチャ意思決定プロセス](MNG-08-adr_process.md) に集約して定義し、一元管理します。
+詳細な起票基準、ADR的構成テンプレート、ステータスライフサイクル、および承認プロセスについては、[[MNG-08] アーキテクチャ意思決定プロセス](MNG-08-adr_process.md) に集約して定義し、一元管理します。
 
 ### 1.5 ドキュメント管理の重要性と一元管理の方針
 ゆうぞらプロジェクトにおいて、ドキュメントはソースコードと同等にプロダクトの品質、整合性、および持続可能性を支える極めて重要な成果物であり、**文書管理を開発プロセスの極めて重要な方針として位置づけます**。
@@ -95,11 +106,13 @@ flowchart TD
 * **担当エージェント・担当者**:
   * **主担当**: AI Agent（要求の整理・ドキュメント作成・構造化）
   * **確認・承認**: User (人間)（ビジネス目標・要求事項の提示および最終承認）
-* **インプット**: ユーザーからの機能要求、利用する外部公開リソース（青空文庫形式）の仕様。
-* **関連スキル**: `create-issue`（要求が発生した際、または機能追加・改善の検討開始時にIssueチケットを起票する）
+* **インプット**: ユーザーからの機能要求、利用する外部公開リソース（青空文庫形式）の仕様、バックログ候補のアイデア。
+* **関連スキル**: `create-backlog`（アイデアのバックログ起票）、`polish-backlog`（バックログ要件の精査）、`create-issue`（承認済みバックログからの開発Issue起票）
 * **主要成果物**:
   * [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md) （要求定義書）
   * [REQ-02-feature_list.md](/docs/REQ-02-feature_list.md) （機能一覧）
+  * [REQ-04-backlog.md](/docs/REQ-04-backlog.md) （バックログ管理プロセス定義書）
+  * [backlogs/README.md](/docs/backlogs/README.md) （バックログ管理台帳）
 
 ### 3.2 要件定義 (System Requirements Definition: SRD)
 * **概要**: 要求定義で整理されたユーザー要求を満たすために、システムが満たすべき具体的な機能要件（ファイル読み込み、デコード、パース仕様、ビューアー制御、しおり等）および非機能要件（UI/UXガイドライン、セキュリティ/XSS対策、パフォーマンス要件等）を定義します。
