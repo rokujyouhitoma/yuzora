@@ -238,20 +238,52 @@ document.addEventListener('DOMContentLoaded', () => {
         report += `  - 進捗割合(bookmarkProgress): ${(bookmarkProgress * 100).toFixed(1)}%\n`;
         report += `  - ページ数: 現在 ${currentPage} / ${pageCount} ページ\n\n`;
 
+        // 1.2. カラム＆ビューポート計算検証
+        report += `### 📐 カラム＆ビューポート計算検証\n`;
+        const cStyle = window.getComputedStyle(readerContent);
+        const colWidthStr = cStyle.columnWidth || 'auto';
+        const colGapStr = cStyle.columnGap || 'normal';
+        const marginLeftStr = cStyle.marginLeft || '0px';
+        const marginRightStr = cStyle.marginRight || '0px';
+        
+        report += `- **コンテンツ配置スタイル**:\n`;
+        report += `  - column-width: ${colWidthStr}\n`;
+        report += `  - column-gap: ${colGapStr}\n`;
+        report += `  - margin-left: ${marginLeftStr}\n`;
+        report += `  - margin-right: ${marginRightStr}\n`;
+
+        const viewportW = readerViewport.clientWidth;
+        const colWidthVal = parseFloat(colWidthStr) || 0;
+        const mLeftVal = parseFloat(marginLeftStr) || 0;
+        const mRightVal = parseFloat(marginRightStr) || 0;
+        
+        const isMobile = window.innerWidth < 768;
+        const expectedColWidth = isMobile ? (viewportW - mLeftVal - mRightVal) : (viewportW / 2 - mLeftVal - mRightVal);
+        report += `- **カラム仕様チェック**:\n`;
+        report += `  - デバイス環境: ${isMobile ? 'モバイル (1段組み)' : 'PC (見開き2段組み)'}\n`;
+        report += `  - 理論上の理想カラム幅: ${expectedColWidth.toFixed(1)}px (計算式: ${isMobile ? 'W - margins' : 'W/2 - margins'})\n`;
+        report += `  - 実際のカラム幅: ${colWidthVal.toFixed(1)}px\n`;
+        const colWidthDiff = Math.abs(colWidthVal - expectedColWidth);
+        if (colWidthDiff > 2) {
+            report += `  - ⚠️ **警告**: 実際のカラム幅が理想の幅と ${colWidthDiff.toFixed(1)}px ズレています。改段ずれの原因となります。\n`;
+        } else {
+            report += `  - ✅ **正常**: カラム幅はレイアウト設計通りです。\n`;
+        }
+        report += `\n`;
+
         // 1.5. 縦方向レイアウト配置
         report += `### 📐 縦方向レイアウト配置\n`;
         const header = document.querySelector('.reader-header');
         const footer = document.querySelector('.reader-footer');
+        const viewportRect = readerViewport.getBoundingClientRect();
         if (header && footer) {
             const hRect = header.getBoundingClientRect();
             const fRect = footer.getBoundingClientRect();
             const cRect = readerContent.getBoundingClientRect();
-            const vRect = readerViewport.getBoundingClientRect();
-            const cStyle = window.getComputedStyle(readerContent);
-
+            
             report += `- **ヘッダー Y座標範囲**: ${hRect.top.toFixed(1)}px 〜 ${hRect.bottom.toFixed(1)}px (高さ: ${hRect.height.toFixed(1)}px)\n`;
             report += `- **フッター Y座標範囲**: ${fRect.top.toFixed(1)}px 〜 ${fRect.bottom.toFixed(1)}px (高さ: ${fRect.height.toFixed(1)}px)\n`;
-            report += `- **ビューポート高**: ${vRect.height.toFixed(1)}px\n`;
+            report += `- **ビューポート高**: ${viewportRect.height.toFixed(1)}px\n`;
             report += `- **コンテンツ Y座標範囲**: ${cRect.top.toFixed(1)}px 〜 ${cRect.bottom.toFixed(1)}px (高さ: ${cRect.height.toFixed(1)}px)\n`;
             report += `  - margin-top: ${cStyle.marginTop}\n`;
             report += `  - margin-bottom: ${cStyle.marginBottom}\n`;
@@ -263,6 +295,39 @@ document.addEventListener('DOMContentLoaded', () => {
             report += `  - フッターとの重複: ${overlapFooter ? `⚠️ あり (重複高: ${(cRect.bottom - fRect.top).toFixed(1)}px)` : '✅ なし'}\n`;
             report += `  - フッターとの間の余白: ${(fRect.top - cRect.bottom).toFixed(1)}px\n\n`;
         }
+
+        // 1.8. 可視要素の境界座標分布
+        report += `### 📏 可視要素の境界座標分布 (Y: ${viewportRect.top.toFixed(1)}px)\n`;
+        const childNodes = Array.from(readerContent.children);
+        let visibleParagraphsCount = 0;
+        
+        childNodes.forEach((child, index) => {
+            if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
+                return;
+            }
+            const rect = child.getBoundingClientRect();
+            const leftOffset = rect.left - viewportRect.left;
+            const rightOffset = rect.right - viewportRect.left;
+            
+            const isVisible = rect.right >= viewportRect.left - 5 && rect.left <= viewportRect.right + 5;
+            if (isVisible) {
+                visibleParagraphsCount++;
+                const bleedsLeft = leftOffset < -1;
+                const bleedsRight = rightOffset > viewportRect.width + 1;
+                const pText = child.textContent.trim().substring(0, 15);
+                report += `- **段落 ${index + 1} (${child.tagName.toLowerCase()})**: X範囲: ${leftOffset.toFixed(1)}px 〜 ${rightOffset.toFixed(1)}px (幅: ${rect.width.toFixed(1)}px) 「${pText}...」\n`;
+                if (bleedsLeft) {
+                    report += `  - ⚠️ **はみ出し**: 左境界を ${( -leftOffset).toFixed(1)}px 超過しています (次のページに回り込んでいるか、見切れています)\n`;
+                }
+                if (bleedsRight) {
+                    report += `  - ⚠️ **はみ出し**: 右境界を ${(rightOffset - viewportRect.width).toFixed(1)}px 超過しています (前のページから回り込んでいるか、見切れています)\n`;
+                }
+            }
+        });
+        if (visibleParagraphsCount === 0) {
+            report += `- (可視段落は検出されませんでした)\n`;
+        }
+        report += `\n`;
 
         // 2. アライメント検証
         const expectedScrollMultiplier = currentPage - 1;
@@ -285,32 +350,22 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. 境界線上の見切れ文字検出
         report += `### ⚠️ 境界線上でのテキスト見切れ検出\n`;
         
-        const viewportRect = readerViewport.getBoundingClientRect();
-        // 現在見えているページの左端と右端の座標
         const boundaryLeft = viewportRect.left;
         const boundaryRight = viewportRect.right;
-
-        // reader-content の直接の子要素（p, h2, h3, div 等）をスキャン
-        const childNodes = Array.from(readerContent.children);
         let leftBoundaryOverlapCount = 0;
         let rightBoundaryOverlapCount = 0;
         let verticalBoundaryOverlapCount = 0;
-
         let overlapDetails = '';
 
         childNodes.forEach((child, index) => {
-            // 空行や改ページマークは無視
             if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
                 return;
             }
 
             const rect = child.getBoundingClientRect();
-
-            // ビューポートの可視範囲内（またはその付近）にある要素のみを対象にする
             const isNearViewport = rect.right >= viewportRect.left - 50 && rect.left <= viewportRect.right + 50;
             if (!isNearViewport) return;
 
-            // 上下のはみ出しをチェック
             const overflowTop = rect.top < viewportRect.top - 2;
             const overflowBottom = rect.bottom > viewportRect.bottom + 2;
             if (overflowTop || overflowBottom) {
@@ -320,18 +375,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 verticalBoundaryOverlapCount++;
             }
 
-            // 境界またぎ判定
             const intersectsLeft = rect.left < boundaryLeft && rect.right > boundaryLeft;
             const intersectsRight = rect.left < boundaryRight && rect.right > boundaryRight;
+            const childStyle = window.getComputedStyle(child);
+            const fontInfo = `[font-size: ${childStyle.fontSize}, line-height: ${childStyle.lineHeight}, font-family: ${childStyle.fontFamily}]`;
 
             if (intersectsLeft) {
                 leftBoundaryOverlapCount++;
                 const boundaryCharInfo = findCharAtBoundary(child, boundaryLeft);
-                overlapDetails += `- **左境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が左ページ境界 (X: ${boundaryLeft.toFixed(1)}px) をまたいでいます。\n`;
+                overlapDetails += `- **左境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が左ページ境界 (X: ${boundaryLeft.toFixed(1)}px) をまたいでいます。 ${fontInfo}\n`;
                 if (boundaryCharInfo && boundaryCharInfo.char) {
                     const ctx = boundaryCharInfo.context;
+                    const charL = boundaryCharInfo.rect.left - viewportRect.left;
+                    const charR = boundaryCharInfo.rect.right - viewportRect.left;
+                    const overrun = viewportRect.left - boundaryCharInfo.rect.left;
                     overlapDetails += `  - 境界上の文字: 「${ctx.before}**[${boundaryCharInfo.char}]**${ctx.after}」\n`;
-                    overlapDetails += `  - 文字座標: left: ${boundaryCharInfo.rect.left.toFixed(1)}px, right: ${boundaryCharInfo.rect.right.toFixed(1)}px\n`;
+                    overlapDetails += `  - 文字座標 (viewport基準): left: ${charL.toFixed(1)}px, right: ${charR.toFixed(1)}px (幅: ${boundaryCharInfo.rect.width.toFixed(1)}px)\n`;
+                    overlapDetails += `  - 左境界はみ出し量 (overrun): **${overrun.toFixed(1)}px**\n`;
                 } else {
                     overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
                 }
@@ -340,11 +400,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (intersectsRight) {
                 rightBoundaryOverlapCount++;
                 const boundaryCharInfo = findCharAtBoundary(child, boundaryRight);
-                overlapDetails += `- **右境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が右ページ境界 (X: ${boundaryRight.toFixed(1)}px) をまたいでいます。\n`;
+                overlapDetails += `- **右境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が右ページ境界 (X: ${boundaryRight.toFixed(1)}px) をまたいでいます。 ${fontInfo}\n`;
                 if (boundaryCharInfo && boundaryCharInfo.char) {
                     const ctx = boundaryCharInfo.context;
+                    const charL = boundaryCharInfo.rect.left - viewportRect.left;
+                    const charR = boundaryCharInfo.rect.right - viewportRect.left;
+                    const overrun = boundaryCharInfo.rect.right - viewportRect.right;
                     overlapDetails += `  - 境界上の文字: 「${ctx.before}**[${boundaryCharInfo.char}]**${ctx.after}」\n`;
-                    overlapDetails += `  - 文字座標: left: ${boundaryCharInfo.rect.left.toFixed(1)}px, right: ${boundaryCharInfo.rect.right.toFixed(1)}px\n`;
+                    overlapDetails += `  - 文字座標 (viewport基準): left: ${charL.toFixed(1)}px, right: ${charR.toFixed(1)}px (幅: ${boundaryCharInfo.rect.width.toFixed(1)}px)\n`;
+                    overlapDetails += `  - 右境界はみ出し量 (overrun): **${overrun.toFixed(1)}px**\n`;
                 } else {
                     overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
                 }
