@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added [REQ-04] 非同期処理による目次抽出および描画の高速化バックログ (docs/backlogs/006-async-toc-generation.md) を起票 (ID: 006).
 - Added 目次表示およびジャンプ機能 (TOC) のUI（目次ボタンおよび目次ドロワー）を追加 (ID: 005 - Backlog)。
 - Changed 見出しの階層レベルに応じたインデントと視覚表現（中見出し・小見出しの箇条書きマーク）の追加 (ID: 005 - Backlog)。
 - Changed RTL縦書き表示時のマルチカラムスクロール座標系に対応した精密な見出しジャンプ計算ロジック（`getBoundingClientRect()` 基準）を実装 (ID: 005 - Backlog)。
