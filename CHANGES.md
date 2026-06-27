@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added [REQ-04] 大容量テキストのインクリメンタルパースおよびレンダリングバックログ (docs/backlogs/007-incremental-text-parsing.md) を起票 (ID: 007)。
+- Added [REQ-04] レイアウト診断レポート生成の非同期・タイムスライス化バックログ (docs/backlogs/008-async-layout-diagnostics.md) を起票 (ID: 008)。
+- Added [REQ-04] しおり書き込み処理の非同期アイドル実行化バックログ (docs/backlogs/009-async-bookmark-storage.md) を起票 (ID: 009)。
+- Added [REQ-04] 起動時オススメ書籍グリッドの遅延レンダリングバックログ (docs/backlogs/010-lazy-loading-predefined-books.md) を起票 (ID: 010)。
 - Changed [REQ-04] 非同期処理による目次抽出および描画の高速化バックログ (docs/backlogs/006-async-toc-generation.md) を精査し、ステータスを Approved に更新 (ID: 006)。
 - Added 目次表示およびジャンプ機能 (TOC) のUI（目次ボタンおよび目次ドロワー）を追加 (ID: 005 - Backlog)。
 - Changed 見出しの階層レベルに応じたインデントと視覚表現（中見出し・小見出しの箇条書きマーク）の追加 (ID: 005 - Backlog)。
