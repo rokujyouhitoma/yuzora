@@ -89,4 +89,33 @@ test.describe('Yuzora E2E Reader Tests', () => {
         console.log(`Last paragraph left margin: ${leftMargin}px`);
         expect(leftMargin).toBeGreaterThanOrEqual(15);
     });
+
+    test('should control debug modal using keyboard shortcuts', async ({ page }) => {
+        // Open a book
+        const bookCard = page.locator('#developer-books-grid .book-card').first();
+        await bookCard.click();
+        await page.waitForSelector('#reader-content p');
+
+        // Assert debug modal is hidden initially
+        const debugModal = page.locator('#debug-modal');
+        await expect(debugModal).toHaveClass(/hidden/);
+
+        // Press 'd' to open debug modal
+        await page.keyboard.press('d');
+        await expect(debugModal).not.toHaveClass(/hidden/);
+
+        // Press '2' to switch to Layout Diagnosis tab
+        const tabDiagnose = page.locator('#tab-btn-diagnose');
+        await page.keyboard.press('2');
+        await expect(tabDiagnose).toHaveClass(/active/);
+
+        // Press '1' to switch to System Monitor tab
+        const tabMonitor = page.locator('#tab-btn-monitor');
+        await page.keyboard.press('1');
+        await expect(tabMonitor).toHaveClass(/active/);
+
+        // Press 'Escape' to close debug modal
+        await page.keyboard.press('Escape');
+        await expect(debugModal).toHaveClass(/hidden/);
+    });
 });

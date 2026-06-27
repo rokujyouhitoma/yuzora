@@ -792,6 +792,67 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Keyboard shortcuts for debug menu (PC only)
+    document.addEventListener('keydown', (e) => {
+        // Prevent key events from triggering while typing in inputs
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
+            return;
+        }
+
+        const isModalOpen = debugModal && !debugModal.classList.contains('hidden');
+
+        // Toggle debug modal with 'd' or 'D'
+        if (e.key === 'd' || e.key === 'D') {
+            if (isModalOpen) {
+                closeDebugModal();
+            } else {
+                if (btnOpenDebug) btnOpenDebug.click();
+            }
+            e.preventDefault();
+            return;
+        }
+
+        // Handle keys when debug modal is open
+        if (isModalOpen) {
+            // Close with Escape key
+            if (e.key === 'Escape') {
+                closeDebugModal();
+                e.preventDefault();
+                return;
+            }
+
+            // Switch to System Monitor tab with '1'
+            if (e.key === '1') {
+                if (tabBtnMonitor) tabBtnMonitor.click();
+                e.preventDefault();
+                return;
+            }
+
+            // Switch to Layout Diagnosis tab with '2'
+            if (e.key === '2') {
+                if (tabBtnDiagnose) tabBtnDiagnose.click();
+                e.preventDefault();
+                return;
+            }
+
+            // Trigger Layout Diagnosis run with 'r' or 'R'
+            if (e.key === 'r' || e.key === 'R') {
+                if (btnDiagnoseLayout) btnDiagnoseLayout.click();
+                e.preventDefault();
+                return;
+            }
+
+            // Copy Layout Diagnosis Report with 'c' or 'C'
+            if (e.key === 'c' || e.key === 'C') {
+                if (btnCopyDebugReport && !btnCopyDebugReport.hasAttribute('disabled')) {
+                    btnCopyDebugReport.click();
+                }
+                e.preventDefault();
+                return;
+            }
+        }
+    });
+
     // Controls Toggle & Auto-Hide Behaviour
     readerViewport.addEventListener('click', toggleControls);
 

@@ -201,10 +201,17 @@ Shift_JIS または UTF-8 から文字列へとデコードされたプレーン
     * **右スワイプ ($\Delta x > 50$ 且つ $\left|\Delta x\right| > \left|\Delta y\right|$)**: `prevPage()` を呼び出し、直前の1ページへ戻る（左スクロール）。
     * **左スワイプ ($\Delta x < -50$ 且つ $\left|\Delta x\right| > \left|\Delta y\right|$)**: `nextPage()` を呼び出し、直後の1ページへ進む（右スクロール）。
 
-* **キーボード矢印キー操作**:
-  * **RTL設定時**: `ArrowLeft` で `nextPage()`、`ArrowRight` で `prevPage()`。
-  * **LTR設定時**: `ArrowRight` で `nextPage()`、`ArrowLeft` で `prevPage()`。
-  * **メニュー表示切替**: `ArrowUp` または `ArrowDown` 押下で `toggleControls()` を呼び出してヘッダー/フッター表示の On/Off を切り替え、キーイベントのデフォルト動作（ブラウザスクロール）を `preventDefault()` で無効化します。
+* **キーボード矢印キーおよびショートカット操作**:
+  - **RTL設定時**: `ArrowLeft` で `nextPage()`、`ArrowRight` で `prevPage()`。
+  - **LTR設定時**: `ArrowRight` で `nextPage()`、`ArrowLeft` で `prevPage()`。
+  - **メニュー表示切替**: `ArrowUp` または `ArrowDown` 押下で `toggleControls()` を呼び出してヘッダー/フッター表示の On/Off を切り替え、キーイベントのデフォルト動作（ブラウザスクロール）を `preventDefault()` で無効化します。
+  - **デバッグ機能操作 (PCのみ、テキスト入力中を除く)**:
+    - **デバッグ画面開閉**: `d` または `D` でデバッグ画面の表示／非表示をトグル制御。
+    - **デバッグ画面を閉じる**: `Escape` でデバッグ画面を非表示化。
+    - **システム状態タブ選択**: `1` で `#tab-btn-monitor` のクリックイベントをトリガー。
+    - **レイアウト診断タブ選択**: `2` で `#tab-btn-diagnose` のクリックイベントをトリガー。
+    - **診断再実行**: `r` または `R` で `#btn-diagnose-layout` のクリックイベントをトリガー。
+    - **診断レポートコピー**: `c` または `C` で `#btn-copy-debug-report` のクリックイベントをトリガー（無効化状態を除く）。
 
 ### 3.3 レイアウト変更時の位置復元とリフロー保護 (`isReflowing`)
 リサイズやフォントサイズ、読書方向の変更時には、段組み寸法が変化して一時的に不規則なスクロールイベントが発生します。これを無視し元の位置を正確に維持するため、`isReflowing` 状態フラグで制御を行います。
