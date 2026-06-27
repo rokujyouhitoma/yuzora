@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed [REQ-04] Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応バックログ (docs/backlogs/012-command-pattern-operation-history.md) を精査し、ステータスを Approved に更新 (ID: 012)。
 - Added [REQ-04] 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化バックログ (docs/backlogs/011-modularize-src-by-screen-and-bundle.md) を起票 (ID: 011)。
 - Added [REQ-04] 大容量テキストのインクリメンタルパースおよびレンダリングバックログ (docs/backlogs/007-incremental-text-parsing.md) を起票 (ID: 007)。
 - Added [REQ-04] レイアウト診断レポート生成の非同期・タイムスライス化バックログ (docs/backlogs/008-async-layout-diagnostics.md) を起票 (ID: 008)。
