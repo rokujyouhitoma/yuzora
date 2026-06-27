@@ -29,6 +29,8 @@ You MUST follow this structured, issue-driven development lifecycle for all modi
 ## Threat Modeling Rules
 
 - Threat modeling results MUST be outputted to the `docs/threat-modeling/` directory.
-- The file name of the results MUST use the date-based format: `YYYYMMDD-<lowercase-hyphenated-description>.md` (e.g., `20260627-comprehensive-threat-modeling.md`).
+- Threat modeling results MUST be maintained in a dateless, single source-of-truth file (e.g., `comprehensive-threat-modeling.md` or a descriptively named dateless file) to represent the latest system status. Do NOT include dates in the filename.
+- For any identified threats that have been addressed or fixed, you MUST include a link to the corresponding issue file under `docs/issues/closed/` (e.g., `[Issue 005](../issues/closed/005-fix-xss-vulnerability-t-e1.md)`) within the threat analysis details.
+
 
 
