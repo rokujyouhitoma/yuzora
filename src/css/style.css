@@ -7,9 +7,9 @@
     --font-ui: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     
     /* Reader Layout Paddings */
-    --reader-padding-top: 104px; /* 64px header + 40px padding */
-    --reader-padding-bottom: 80px; /* 40px footer + 40px padding */
-    --reader-padding-x: 60px;
+    --reader-padding-top: 76px; /* 64px header + 12px padding */
+    --reader-padding-bottom: 52px; /* 40px footer + 12px padding */
+    --reader-padding-x: 0px;
     --reader-viewport-padding-x: 24px;
     
     /* Theme Defaults (Sepia / 和紙) */
@@ -503,14 +503,13 @@ a:hover {
     block-size: max-content; /* Size container block-size to fit all columns exactly */
     column-fill: auto;
     
-    inline-size: calc(100% - var(--reader-padding-top) - var(--reader-padding-bottom));
-    margin-inline-start: var(--reader-padding-top);
-    margin-inline-end: var(--reader-padding-bottom);
-    padding-inline: 0;
-    padding-block: 0;
-    border-inline: none;
-    border-block-start: var(--reader-viewport-padding-x) solid transparent;
-    border-block-end: var(--reader-viewport-padding-x) solid transparent;
+    height: calc(100% - var(--reader-padding-top) - var(--reader-padding-bottom));
+    margin-top: var(--reader-padding-top);
+    margin-bottom: var(--reader-padding-bottom);
+    margin-left: var(--reader-viewport-padding-x);
+    margin-right: var(--reader-viewport-padding-x);
+    padding: 0;
+    border: none;
     column-gap: calc(var(--reader-viewport-padding-x) * 2);
     
     text-align: justify;
@@ -538,7 +537,7 @@ a:hover {
 /* Set page column width to match viewport height-based ratio */
 @media (min-width: 768px) {
     :root {
-        --reader-padding-x: 60px;
+        --reader-padding-x: 0px;
         --reader-viewport-padding-x: 40px;
     }
     .reader-content {
@@ -547,9 +546,9 @@ a:hover {
 }
 @media (max-width: 767px) {
     :root {
-        --reader-padding-top: 88px; /* 64px header + 24px padding */
-        --reader-padding-bottom: 64px; /* 40px footer + 24px padding */
-        --reader-padding-x: 24px; /* Slightly wider mobile margins for premium readability */
+        --reader-padding-top: 76px; /* 64px header + 12px padding */
+        --reader-padding-bottom: 52px; /* 40px footer + 12px padding */
+        --reader-padding-x: 0px;
         --reader-viewport-padding-x: 24px;
     }
     .reader-content {
@@ -608,9 +607,24 @@ a:hover {
 .reader-content div.main_body {
     display: block;
 }
-.reader-content .jisage {
-    margin-top: 2em; /* shifts down (left margin in vertical is top margin equivalent for indentation) */
+.reader-content .jisage,
+.reader-content [class*="jisage"] {
+    margin-left: 0.5em !important;
+    margin-right: 0.5em !important;
 }
+.reader-content .jisage {
+    margin-top: 2em !important;
+}
+.reader-content .jisage1 { margin-top: 1em !important; }
+.reader-content .jisage2 { margin-top: 2em !important; }
+.reader-content .jisage3 { margin-top: 3em !important; }
+.reader-content .jisage4 { margin-top: 4em !important; }
+.reader-content .jisage5 { margin-top: 5em !important; }
+.reader-content .jisage6 { margin-top: 6em !important; }
+.reader-content .jisage7 { margin-top: 7em !important; }
+.reader-content .jisage8 { margin-top: 8em !important; }
+.reader-content .jisage9 { margin-top: 9em !important; }
+.reader-content .jisage10 { margin-top: 10em !important; }
 
 
 /* Typography styles */

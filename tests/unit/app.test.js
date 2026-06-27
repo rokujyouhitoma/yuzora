@@ -84,13 +84,13 @@ test.describe('Yuzora Parser Unit Tests', () => {
 
     test('should parse headings (large, medium, small) and preserve rubies inside', () => {
         const resultLarge = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃２字下げ］上　先生と私［＃「上　先生と私」は大見出し］');
-        assert.ok(resultLarge.body.includes('<h2>上　先生と私</h2>'));
+        assert.ok(resultLarge.body.includes('<h2 class="jisage2">上　先生と私</h2>'));
 
         const resultMedium = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃５字下げ］一［＃「一」は中見出し］');
-        assert.ok(resultMedium.body.includes('<h3>一</h3>'));
+        assert.ok(resultMedium.body.includes('<h3 class="jisage5">一</h3>'));
 
         const resultWithRuby = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃３字下げ］衆口《しゅうこう》［＃「衆口」は大見出し］');
-        assert.ok(resultWithRuby.body.includes('<h2><ruby>衆口<rt>しゅうこう</rt></ruby></h2>'));
+        assert.ok(resultWithRuby.body.includes('<h2 class="jisage3"><ruby>衆口<rt>しゅうこう</rt></ruby></h2>'));
     });
 
     test('should expose runLayoutDiagnosis on Yuzora and run it successfully', () => {

@@ -238,6 +238,32 @@ document.addEventListener('DOMContentLoaded', () => {
         report += `  - 進捗割合(bookmarkProgress): ${(bookmarkProgress * 100).toFixed(1)}%\n`;
         report += `  - ページ数: 現在 ${currentPage} / ${pageCount} ページ\n\n`;
 
+        // 1.5. 縦方向レイアウト配置
+        report += `### 📐 縦方向レイアウト配置\n`;
+        const header = document.querySelector('.reader-header');
+        const footer = document.querySelector('.reader-footer');
+        if (header && footer) {
+            const hRect = header.getBoundingClientRect();
+            const fRect = footer.getBoundingClientRect();
+            const cRect = readerContent.getBoundingClientRect();
+            const vRect = readerViewport.getBoundingClientRect();
+            const cStyle = window.getComputedStyle(readerContent);
+
+            report += `- **ヘッダー Y座標範囲**: ${hRect.top.toFixed(1)}px 〜 ${hRect.bottom.toFixed(1)}px (高さ: ${hRect.height.toFixed(1)}px)\n`;
+            report += `- **フッター Y座標範囲**: ${fRect.top.toFixed(1)}px 〜 ${fRect.bottom.toFixed(1)}px (高さ: ${fRect.height.toFixed(1)}px)\n`;
+            report += `- **ビューポート高**: ${vRect.height.toFixed(1)}px\n`;
+            report += `- **コンテンツ Y座標範囲**: ${cRect.top.toFixed(1)}px 〜 ${cRect.bottom.toFixed(1)}px (高さ: ${cRect.height.toFixed(1)}px)\n`;
+            report += `  - margin-top: ${cStyle.marginTop}\n`;
+            report += `  - margin-bottom: ${cStyle.marginBottom}\n`;
+            report += `  - margin-left: ${cStyle.marginLeft}\n`;
+            report += `  - margin-right: ${cStyle.marginRight}\n`;
+            const overlapHeader = cRect.top < hRect.bottom;
+            const overlapFooter = cRect.bottom > fRect.top;
+            report += `  - ヘッダーとの重複: ${overlapHeader ? `⚠️ あり (重複高: ${(hRect.bottom - cRect.top).toFixed(1)}px)` : '✅ なし'}\n`;
+            report += `  - フッターとの重複: ${overlapFooter ? `⚠️ あり (重複高: ${(cRect.bottom - fRect.top).toFixed(1)}px)` : '✅ なし'}\n`;
+            report += `  - フッターとの間の余白: ${(fRect.top - cRect.bottom).toFixed(1)}px\n\n`;
+        }
+
         // 2. アライメント検証
         const expectedScrollMultiplier = currentPage - 1;
         const idealScrollLeft = config.direction === 'rtl' 
@@ -942,6 +968,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 continue;
             }
 
+            // Detect indentation (jisage) markup
+            let jisageClass = '';
+            const jisageMatch = line.match(/［＃([０-９0-9]+)字下げ］/);
+            if (jisageMatch) {
+                const rawNum = jisageMatch[1];
+                const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+                const n = parseInt(cleanNum, 10);
+                jisageClass = `jisage${n}`;
+                line = line.replace(/［＃[０-９0-9]+字下げ］/, '');
+            }
+
             // Detect headings before formatting the markup
             let isHeading = false;
             let headingLevel = 2; // Default to h2 for large heading
@@ -966,11 +1003,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 parsedLines.push('<p class="empty-line">&nbsp;</p>');
             } else {
                 if (isHeading) {
-                    parsedLines.push(`<h${headingLevel}>${line}</h${headingLevel}>`);
+                    parsedLines.push(`<h${headingLevel}${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</h${headingLevel}>`);
                 } else if (line.startsWith('<h2>') || line.startsWith('<h3>')) {
                     parsedLines.push(line);
                 } else {
-                    parsedLines.push(`<p>${line}</p>`);
+                    parsedLines.push(`<p${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</p>`);
                 }
             }
         }
