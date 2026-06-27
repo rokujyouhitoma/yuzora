@@ -30,7 +30,7 @@
 | ドキュメント/成果物 | 対応する支援・実行スキル | 主な用途・連携内容 |
 | :--- | :--- | :--- |
 | **[MNG-01 ドキュメント台帳](MNG-01-document_ledger.md)**<br>**[MNG-02 開発プロセス](MNG-02-development_process.md)** | `git-workflow`<br>`changelog-workflow` | ドキュメントの新規作成時に台帳へ事前登録し、コミット前に `CHANGES.md` およびルートの `README.md` を更新するフローを制御する。 |
-| **[REQ-04 バックログ管理プロセス定義書](REQ-04-backlog.md)**<br>**[backlogs/README.md](backlogs/README.md)** | `create-backlog`<br>`polish-backlog` | 将来のアイデア・要望を個別のバックログ要件ファイルとして起票・詳細化し、承認（Approved）まで引き上げる。 |
+| **[MNG-09 バックログ管理プロセス定義書](MNG-09-backlog_process.md)**<br>**[backlogs/README.md](backlogs/README.md)** | `create-backlog`<br>`polish-backlog` | 将来のアイデア・要望を個別のバックログ要件ファイルとして起票・詳細化し、承認（Approved）まで引き上げる。 |
 | **[issues/README.md](issues/README.md)**<br>各 Issue ファイル | `create-issue`<br>`polish-issue` | バックログや要件からアクティブな Issue を起票し、設計書（HLD/LLD）の更新計画および成功基準（DoD）を確立する。 |
 | **[MNG-07 脅威モデリング定義書](MNG-07-threat_modeling.md)**<br>包括的脅威分析結果シート | `threat-modeling` | 基本設計（HLD）の策定段階および詳細精査において、STRIDE分析と情報アセット分類のセキュリティ要件を定義する。 |
 | **実装コード** (`app.js`, `style.css`等) | `review-diff-code` | 実装フェーズ（Make）における差分コード（git diff）のセルフレビューと品質基準適合チェックを実行する。 |
@@ -111,7 +111,7 @@ flowchart TD
 * **主要成果物**:
   * [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md) （要求定義書）
   * [REQ-02-feature_list.md](/docs/REQ-02-feature_list.md) （機能一覧）
-  * [REQ-04-backlog.md](/docs/REQ-04-backlog.md) （バックログ管理プロセス定義書）
+  * [MNG-09-backlog_process.md](/docs/MNG-09-backlog_process.md) （バックログ管理プロセス定義書）
   * [backlogs/README.md](/docs/backlogs/README.md) （バックログ管理台帳）
 
 ### 3.2 要件定義 (System Requirements Definition: SRD)

@@ -55,11 +55,11 @@
 | **[MNG-06] Active Issues台帳** | [/docs/issues/README.md](/docs/issues/README.md) | 現在進行中・開発中のアクティブなIssueのステータスや担当を追跡・一元管理する。 | 開発チーム、人間（User）、AI Agent | 新規Issue of 起票、進捗更新、またはクローズ時 |
 | **[MNG-07] 脅威モデリング定義書** | [MNG-07-threat_modeling.md](/docs/MNG-07-threat_modeling.md) | セキュリティ・バイ・デザインの実現に向け、STRIDEを用いたセキュリティ脅威の識別・分析・緩和のための管理策を定義する。 | 開発チーム、人間（User）、AI Agent | セキュリティポリシーの変更、または新たな脅威ベクトルの発生・改定時 |
 | **[MNG-08] アーキテクチャ意思決定プロセス** | [MNG-08-adr_process.md](/docs/MNG-08-adr_process.md) | 技術選定や設計のトレードオフを明文化するADRの運用・管理プロセスを定義する。 | 開発チーム、人間（User）、AI Agent | 新たな設計方針や技術選定プロセスの導入・見直し時 |
+| **[MNG-09] バックログ管理プロセス定義書** | [MNG-09-backlog_process.md](/docs/MNG-09-backlog_process.md) | 将来の機能要望、改善のアイデアのプールおよび起票・管理プロセスを定義する。 | 人間（User）、開発チーム、AI Agent | 管理プロセスの見直し、または定義変更時 |
+| **[MNG-09] バックログ管理台帳** | [backlogs/README.md](/docs/backlogs/README.md) | 将来の機能要望、改善のアイデアなどの詳細バックログファイルを一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | 新規バックログの起票、進捗更新、または昇格（クローズ）時 |
 | **[REQ-01] 要求定義書** | [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md) | ユーザーの目的、必須対応作品、ユースケースなどのビジネス上の「要求（URD）」を定義する。 | 人間（User）、AI Agent | ユーザー要求の変更、動作保証作品の追加・変更時 |
 | **[REQ-02] 機能一覧** | [REQ-02-feature_list.md](/docs/REQ-02-feature_list.md) | 実装済みおよび今後実装予定の全機能を一覧化し、各機能の仕様概要、ステータス、追跡性を管理する。 | 開発チーム、人間（User）、AI Agent | 機能の追加・削除・実装ステータスの変更時 |
 | **[REQ-03] 要件定義書** | [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md) | システム概要、対応フォーマット、および機能・非機能的な「要件（SRD）」を定義する。 | 開発チーム、AI Agent | システムに対する機能・非機能要件の追加・変更時 |
-| **[REQ-04] バックログ管理プロセス定義書** | [REQ-04-backlog.md](/docs/REQ-04-backlog.md) | 将来の機能要望、改善のアイデアのプールおよび起票・管理プロセスを定義する。 | 人間（User）、開発チーム、AI Agent | 管理プロセスの見直し、または定義変更時 |
-| **[REQ-04] バックログ管理台帳** | [backlogs/README.md](/docs/backlogs/README.md) | 将来の機能要望、改善のアイデアなどの詳細バックログファイルを一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | 新規バックログの起票、進捗更新、または昇格（クローズ）時 |
 | **[DSN-01] 基本設計書 (HLD)** | [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) | システムアーキテクチャ、コンポーネント役割、画面遷移、デザインシステム等の論理的な設計を定義する。 | 開発チーム、AI Agent | システムアーキテクチャの変更、UIコンポーネント構成の変更時 |
 | **[DSN-02] 詳細設計書 (LLD)** | [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md) | 関数仕様、変数、正規表現、ページ計算数式、データスキーマ等の実装に直結する物理設計を定義する。 | 実装担当エージェント、開発者 | コーディング仕様の変更、アルゴリズムの追加・変更時 |
 | **[USR-01] 操作マニュアル** | [USR-01-user_manual.md](/docs/USR-01-user_manual.md) | アプリケーションの操作方法、カスタマイズ設定、しおり保存機能等のユーザー向けガイドを定義する。 | 人間（User）、一般ユーザー | ドキュメントの新規作成、機能変更時 |

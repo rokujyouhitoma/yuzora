@@ -1,10 +1,10 @@
 ---
 name: create-backlog
-description: Register a new backlog item under the docs/REQ-04-backlog.md file in the workspace.
+description: Register a new backlog item under the docs/MNG-09-backlog_process.md file in the workspace.
 ---
 # create-backlog
 
-This skill dictates how to register a new backlog item in the Backlog Registry (`docs/REQ-04-backlog.md`) systematically.
+This skill dictates how to register a new backlog item in the Backlog Registry (`docs/MNG-09-backlog_process.md`) systematically.
 
 ## Instructions
 

@@ -1,4 +1,4 @@
-# [REQ-04] バックログ管理簿 (Backlog Registry) - ゆうぞら (Yuzora)
+# [MNG-09] バックログ管理プロセス定義書 (Backlog Management Process) - ゆうぞら (Yuzora)
 
 本ドキュメントは、「ゆうぞら (Yuzora)」プロジェクトにおける将来の要望、未計画の機能、および改善のためのアイデア（バックログ）を記録・プールするための台帳です。
 
@@ -23,7 +23,7 @@
 
 具体的なバックログ一覧および詳細な要件定義ファイルは、一次情報（SSOT）として以下の台帳で一元管理されています。
 
-* [[REQ-04] バックログ管理台帳 (backlogs/README.md)](backlogs/README.md)
+* [[MNG-09] バックログ管理台帳 (backlogs/README.md)](backlogs/README.md)
 
 ---
 
