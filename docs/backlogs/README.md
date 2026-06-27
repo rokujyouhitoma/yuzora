@@ -20,6 +20,7 @@
 | **010** | Enhancement | Low | Draft | 起動時オススメ書籍グリッドの遅延レンダリング | [010-lazy-loading-predefined-books.md](010-lazy-loading-predefined-books.md) |
 | **011** | Refactor | Medium | Draft | 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 | [011-modularize-src-by-screen-and-bundle.md](011-modularize-src-by-screen-and-bundle.md) |
 | **012** | Feature | Medium | Approved | Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応 | [012-command-pattern-operation-history.md](012-command-pattern-operation-history.md) |
+| **013** | Enhancement | Low | Draft | 目次ドロワーのキーボード・スクリーンリーダー向けアクセシビリティ向上 | [013-toc-accessibility-enhancement.md](013-toc-accessibility-enhancement.md) |
 
 ---
 
