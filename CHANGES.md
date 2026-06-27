@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Added [MNG-07] 脅威モデリング定義書 (docs/MNG-07-threat_modeling.md) および脅威モデリング実行スキル (.agents/skills/threat-modeling/SKILL.md) を新設 (ID: 003)。
+- Changed 開発哲学・マニフェスト (MNG-00) に「セキュリティ・バイ・デザイン」および「セキュア・バイ・デフォルト」を核心原則として追加 (ID: 003)。
+- Changed 開発プロセス、問題管理、変更管理ドキュメント (MNG-02〜04) および既存スキル (polish-issue, review-diff-code) を脅威モデリングプロセスに適合するよう改定 (ID: 003)。
 - Changed ドキュメント (MNG-01〜MNG-04) およびスキル (.agents/skills/*) を `MNG-00` に適合させ、三位一体モデルやドキュメント駆動開発の追跡性を強化 (ID: 002)。
 - Fixed `docs/MNG-02-development_process.md` 内の文字コード崩れをクレンジング修復 (ID: 002)。
 - Added [MNG-00] 開発哲学・マニフェスト (`docs/MNG-00-development_philosophy.md`) を新設し、プロダクト理念、UI/UX設計思想、運用統制の管理策、および三位一体連携モデルを集約。

@@ -27,10 +27,10 @@ This skill dictates how to initialize a new issue file to ensure uniformity and 
      - `優先度`: Set to `High`, `Medium`, or `Low`.
      - `ステータス`: Initialize to `Open (New)`.
    - Update the issue heading: `# [BUG/SEC] <Title> (ID: <3-digit-padded-number>)` or `# [FEAT/ENH] <Title> (ID: <3-digit-padded-number>)`.
-   - Populate **1. 概要 / Summary** with a concise description of the objective or problem. **When describing features or enhancements, always align them with the core philosophy in [MNG-00](file:///workspace/yuzora/yuzora/docs/MNG-00-development_philosophy.md) (e.g. traditional RTL layout respect, complete client-side serverless execution, or intuitive operation with RTL/LTR synchronization).**
+   - Populate **1. 概要 / Summary** with a concise description of the objective or problem. **When describing features or enhancements, always align them with the core philosophy in [MNG-00](../docs/MNG-00-development_philosophy.md) (e.g. traditional RTL layout respect, complete client-side serverless execution, or intuitive operation with RTL/LTR synchronization).**
    - Populate **2. 影響範囲と関連ファイル / Scope and Affected Files** with a list of the target files or folders that need to be investigated or edited.
    - For bugs, fill in steps to reproduce or known environments. Keep other technical planning/DoD sections blank or placeholders. These will be filled in during the `polish-issue` phase.
 
 4. **Register in Issue Ledger**:
-   - Right after creating the issue file, open [issues/README.md](file:///workspace/yuzora/yuzora/issues/README.md) (Issue台帳).
+   - Right after creating the issue file, open [issues/README.md](README.md) (Issue台帳).
    - Append a new row to the **1. アクティブIssue一覧** table with the status set to `New` and linking to the newly created issue file.

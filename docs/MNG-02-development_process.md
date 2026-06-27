@@ -122,14 +122,15 @@ flowchart TD
   * [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md) （要件定義書）
 
 ### 3.3 基本設計 (High-Level Design: HLD)
-* **概要**: システム全体のアーキテクチャ（MVC等）、各レイヤー（View, Controller, Storage）の役割境界、コンポーネント間の論理データフロー、共通UI/UXデザイン原則、およびエスケープ処理などの共通セキュリティ方針を定義します。TOGAF EAのAA・DA・TAの論理レベル設計に相当します。
+* **概要**: システム全体のアーキテクチャ（MVC等）、各レイヤー（View, Controller, Storage）の役割境界、コンポーネント間の論理データフロー、共通UI/UXデザイン原則、およびエスケープ処理などの共通セキュリティ方針を定義します。また、[MNG-07-threat_modeling.md](/docs/MNG-07-threat_modeling.md) に基づくSTRIDE脅威モデリングを実施し、識別された脅威に対する具体的な緩和策（セキュリティ設計）を基本設計に組み込みます。TOGAF EAのAA・DA・TAの論理レベル設計に相当します。
 * **担当エージェント・担当者**:
-  * **主担当**: AI Agent（構造の可視化・モジュール構造化・デザインシステムの基礎設計）
-  * **確認・承認**: User (人間)（アーキテクチャの整合性レビュー・承認）
-* **インプット**: [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md)
-* **関連スキル**: `polish-issue`（設計段階で、アーキテクチャやUIデザイン原則の変更を `DSN-01` 等に先行適用する）
+  * **主担当**: AI Agent（構造の可視化・モジュール構造化・デザインシステムの基礎設計・脅威モデリング実施）
+  * **確認・承認**: User (人間)（アーキテクチャの整合性およびセキュリティ設計のレビュー・承認）
+* **インプット**: [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md), [MNG-07-threat_modeling.md](/docs/MNG-07-threat_modeling.md)
+* **関連スキル**: `polish-issue`（設計段階で、アーキテクチャやUIデザイン原則の変更を `DSN-01` 等に先行適用する）、`threat-modeling`（STRIDEモデルに基づいてモジュールの脅威分析を実施し緩和策を設計する）
 * **主要成果物**:
   * [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) （基本設計書）
+  * [MNG-07-threat_modeling.md](/docs/MNG-07-threat_modeling.md) （脅威モデルの新規・追加分析）
   * **docs/adr/*.md** （アーキテクチャ意思決定記録：重要設計事項が発生した際に適宜新規作成・更新）
 
 ### 3.4 詳細設計 (Low-Level Design: LLD)
