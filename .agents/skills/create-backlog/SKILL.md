@@ -1,8 +1,8 @@
 ---
-name: register-backlog
+name: create-backlog
 description: Register a new backlog item under the docs/REQ-04-backlog.md file in the workspace.
 ---
-# register-backlog
+# create-backlog
 
 This skill dictates how to register a new backlog item in the Backlog Registry (`docs/REQ-04-backlog.md`) systematically.
 
