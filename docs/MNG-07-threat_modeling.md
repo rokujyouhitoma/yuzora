@@ -33,15 +33,10 @@
 
 ---
 
-## 3. 情報ベースの脅威分析：情報アセットの分類とセキュリティ要件
+## 3. 情報アセットに基づく脅威分析手法
 
-本システムにおいて処理および保存される主要な情報（データ）アセットの定義と、それぞれのセキュリティ要件（機密性・完全性・可用性：C-I-A）および想定される脅威シナリオのまとめです。
-
-| 情報アセット名 | 処理・保存場所 | 主なデータ内容 | 機密性 (C) | 完全性 (I) | 可用性 (A) | 想定される脅威シナリオとセキュリティ要件 |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **書籍コンテンツデータ** | メモリ（JS変数）、表示DOM（`#reader-content`） | ユーザーがロードした小説テキストまたはHTML/XHTML文字列。 | **Medium**<br>(私的文書の保護) | **High**<br>(XSS防止) | **Medium**<br>(ロードフリーズ防止) | ・**脅威**: XHTML内に悪意あるスクリプトが混入し、実行される（XSS）。<br>・**要件**: ホワイトリスト方式のサニタイズ（T-E2）およびエスケープ処理（T-E1）を施し、安全なDOM要素のみを描画する。 |
-| **しおり・読書進捗データ** | メモリ、ブラウザの `LocalStorage` (`bookmarks`) | 各書籍（ファイル名・事前定義ID）ごとの最終既読ページおよび進捗率。 | **Medium**<br>(プライバシー保護) | **Medium**<br>(データ破壊防止) | **Medium**<br>(履歴の維持) | ・**脅威**: 悪意あるスクリプト等により読書履歴が外部に送信される（情報漏洩）。またはLocalStorage改ざんでアプリがクラッシュする。<br>・**要件**: 外部ドメインへの接続をCSP（T-I1）で遮断する。またロード時にtry-catchでデフォルトにフォールバックする（T-T1）。 |
-| **UI表示設定データ** | メモリ、ブラウザの `LocalStorage` (`yuzora_config`) | 選択された背景色テーマ、フォントサイズ、書体、文字間、行間等の設定オブジェクト。 | **Low**<br>(非機密情報) | **Medium**<br>(設定改ざん防止) | **Medium**<br>(設定の維持) | ・**脅威**: 不正なCSSクラス名や規格外の値を注入され、ロード時に表示が崩壊する。<br>・**要件**: 読み込んだ設定値がホワイトリスト（sepia/light/dark/black等）に適合するか検証し、不適合時は適用を拒否する（T-T2）。 |
+本システムにおいて処理・保存される主要な情報アセット（書籍コンテンツ、しおり・進捗データ、UI表示設定）のCIA（機密性・完全性・可用性）要件を定義し、アセットを起点とした脅威シナリオの抽出を行います。
+※具体的な情報アセットの分類とセキュリティ要件定義の最新表は、[包括的脅威モデリング結果 (comprehensive-threat-modeling.md)](threat-modeling/comprehensive-threat-modeling.md#2-情報ベースの脅威分析情報アセットの分類とセキュリティ要件-information-asset-classification) を参照してください。
 
 ---
 
@@ -63,58 +58,13 @@
 
 ---
 
-## 5. システムデータフローダイアグラム (DFD)
+## 5. 包括的な脅威モデリング結果の一元管理 (Single Source of Truth)
 
-ゆうぞらにおけるデータの流れと信頼境界（Trust Boundary）は、以下の図の通りです。
+重複管理によるドキュメントの死文化を恒久的に防止するため、ゆうぞらプロジェクトにおける最新の脅威モデリング結果は、以下の単一ドキュメントで一元管理されています。
 
-```mermaid
-flowchart TD
-    User["外部エンティティ: ユーザー"]
-    FileSystem["外部エンティティ: ローカルファイルシステム"]
-    
-    subgraph ClientApp["信頼境界: クライアントブラウザ (Yuzora App)"]
-        subgraph Controller["プロセス: app.js (Controller)"]
-            P1["P1: ファイル読み込み / デコード<br>(FileReader / TextDecoder)"]
-            P2["P2: 青空文庫記法パース<br>(parseAozoraText / HTML)"]
-            P3["P3: DOM操作 / 表示更新"]
-            P4["P4: 設定・しおり管理ロジック"]
-        end
-        
-        subgraph View["View (DOM)"]
-            D1["D1: ウェルカム画面"]
-            D2["D2: 読書画面<br>(#reader-content)"]
-            D3["D3: 設定ドロワー / デバッグモーダル"]
-        end
-        
-        subgraph Storage["データストア"]
-            LocalStorage[("LocalStorage<br>(yuzora_config, bookmarks)")]
-        end
-    end
-
-    %% データフロー
-    FileSystem -->|"1. テキスト/HTMLファイル (Shift_JIS/UTF-8)"| P1
-    User -->|"2. 作品選択/設定変更 (Click/Drag)"| P3
-    P1 -->|"3. 生テキスト/生HTML文字列"| P2
-    P2 -->|"4. 安全に構築されたHTML/DOM要素"| P3
-    P3 -->|"5. 表示更新・状態監視"| User
-    P3 -->|"6. 設定・しおり更新要求"| P4
-    P4 <-->|"7. 設定・進捗データ (JSON)"| LocalStorage
-```
-
----
-
-## 6. STRIDE脅威分析結果シート (Threat Analysis Sheet)
-
-現在のゆうぞらシステムにおいて識別されている脅威、想定される影響、および実装されているセキュリティ緩和策の一覧です。
-※最新の分析ステータスおよび詳細情報（マージ済みIssueリンク等）は、[包括的脅威モデリング結果](threat-modeling/comprehensive-threat-modeling.md) を一次情報（SOT）として管理します。
-
-| 脅威ID | 脅威分類 (STRIDE) | 関連要素 (DFD) | 脅威シナリオ（具体的な攻撃・事象） | 影響度 | 現在のセキュリティ緩和策（実装） | 今後の推奨対策 | ステータス | 対応するIssue |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **T-S1** | **Spoofing**<br>(なりすまし) | P1, P3, D1 | 攻撃者が悪意ある事前定義作品のパスを改ざんし、外部の偽の書籍データをフェッチさせ、表示を偽装する。 | Low | ・`PREDEFINED_BOOKS` のフェッチパスはローカルの静的リソース（`src/books/`）にハードコードされており、外部ドメインからの取得を許可しない設計。 | ・作品リストのパスが固定値から変更されないことを、ビルド/テスト時に検証する。 | Mitigated | - |
-| **T-T1** | **Tampering**<br>(改ざん) | P4, LocalStorage | ブラウザの `LocalStorage` にあるしおりデータや設定オブジェクトを直接改ざんし、ロード時に例外を発生させてアプリをクラッシュさせる。 | Medium | ・LocalStorageからの読み込み時に `try-catch` 処理を施し、パース失敗時はデフォルトの設定（フォントサイズ・テーマ等）へフォールバックするロジックを実装。 | ・しおりデータの数値パラメータ（進捗率: 0.0〜1.0）の範囲外エラーチェックを強化する。 | Mitigated | - |
-| **T-T2** | **Tampering**<br>(改ざん) | P4, LocalStorage, P3 | `LocalStorage` の設定オブジェクト値に不正な文字列（悪意あるCSSクラス名等）を注入され、描画時にレイアウトを改ざんされる。 | Low | ・読み込んだ設定値は、定義済みのテーマ（sepia/light/dark/black）などのホワイトリストに合致しているか検証し、適合しない値は適用を拒否する。 | ・ホワイトリスト検証処理をすべての設定パラメータに対して網羅する。 | Mitigated | - |
-| **T-R1** | **Repudiation**<br>(否認) | P3, User | 表示ズレやしおり保存の不具合が発生した際、サーバーが存在しないため動作ログがなく、不具合の事実や原因究明を否認される。 | Low | ・デバッグモーダル内に「レイアウト/見切れ診断機能」を実装し、ユーザー自身が診断を実行してMarkdown形式の診断結果レポートをバグ報告時に添付できる仕組み提供。 | ・エラー発生時に、ローカル状態スタックを一時的にダンプ・出力するヘルプ機能を追加する。 | Mitigated | - |
-| **T-I1** | **Information Disclosure**<br>(情報漏洩) | ClientApp, Storage | 読み込んだ本の内容、しおりの進捗履歴、およびユーザーの設定情報が、悪意あるスクリプト等を介して外部サーバーにアクセス・送信される。 | High | ・Content Security Policy (CSP) を導入し、外部へのコネクション（`connect-src 'self'`）や不要なリソース取得を制限。([Issue 007](../issues/closed/007-enforce-csp-mitigation-t-i1.md) にて修正済) | ・自動レビュー（review-diff-code）において、CSP設定が除去されないことを静的チェック。 | Resolved | [Issue 007](../issues/closed/007-enforce-csp-mitigation-t-i1.md) |
-| **T-D1** | **Denial of Service**<br>(サービス拒否) | P1, P2 | 数十MBを超える極めて巨大なテキスト/HTMLファイルをドロップされ、デコード・パース処理でブラウザのメインスレッドをフリーズさせる。 | Medium | ・（未実装）ファイル入力時にサイズ検証を行い、一定上限値（例: 2MB）を超える場合はエラーを表示して処理を即座に中断するサイズチェックを追加予定。 | ・ファイルインプットイベント時のサイズチェック処理（DoDに含める）の実装。 | Open | - |
-| **T-E1** | **Elevation of Privilege**<br>(権限昇格) | P2, P3, D2 | プレーンテキストファイル（.txt）の本文内に埋め込まれた `<script>` などのタグがエスケープされずにDOM描画され、XSSを実行される。 | High | ・`parseAozoraText` 内の文字列処理の最優先ステップとして、`&` -> `&amp;`, `<` -> `&lt;`, `>` -> `&gt;` のHTML特殊文字一括エスケープを強制実施。([Issue 005](../issues/closed/005-fix-xss-vulnerability-t-e1.md) にて修正済) | ・自動レビュー（review-diff-code）において、エスケープ漏れが混入しないことを静的チェック。 | Resolved | [Issue 005](../issues/closed/005-fix-xss-vulnerability-t-e1.md) |
-| **T-E2** | **Elevation of Privilege**<br>(権限昇格) | P2, P3, D2 | HTML形式（.html/.xhtml）のファイルを読み込んだ際、本文内に埋め込まれた悪意あるスクリプトが実行される（XSS）。 | High | ・`DOMParser` を経由してパース後、ホワイトリスト方式で安全なHTMLタグおよび属性のみを許可するサニタイズ処理（`sanitizeDOM`）を実施。([Issue 006](../issues/closed/006-fix-xss-vulnerability-t-e2.md) にて修正済) | ・自動レビュー（review-diff-code）において、サニタイズ処理のバイパスが混入しないことを静的チェック。 | Resolved | [Issue 006](../issues/closed/006-fix-xss-vulnerability-t-e2.md) |
+* **最新のデータフローダイアグラム (DFD)**:
+  [包括的脅威モデリング結果 (comprehensive-threat-modeling.md) - 1. システムデータフローダイアグラム](threat-modeling/comprehensive-threat-modeling.md#1-システムデータフローダイアグラム-dfd)
+* **最新の情報アセット分類とC-I-Aセキュリティ要件**:
+  [包括的脅威モデリング結果 (comprehensive-threat-modeling.md) - 2. 情報アセットの分類とセキュリティ要件](threat-modeling/comprehensive-threat-modeling.md#2-情報ベースの脅威分析情報アセットの分類とセキュリティ要件-information-asset-classification)
+* **最新のSTRIDE脅威分析結果シート (ステータス・Issueリンク対応)**:
+  [包括的脅威モデリング結果 (comprehensive-threat-modeling.md) - 3. STRIDE脅威分析結果シート](threat-modeling/comprehensive-threat-modeling.md#3-stride脅威分析結果シート-threat-analysis-sheet)
