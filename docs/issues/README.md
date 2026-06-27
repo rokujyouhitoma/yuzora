@@ -15,6 +15,8 @@
 | **004** | Feature | High | Closed | 包括的脅威モデリングの実施 | AI Agent | [004-perform-threat-modeling.md](closed/004-perform-threat-modeling.md) |
 | **005** | Bug | High | Closed | グローバルHTMLエスケープの適用によるXSS脆弱性の解消 | AI Agent | [005-fix-xss-vulnerability-t-e1.md](closed/005-fix-xss-vulnerability-t-e1.md) |
 | **006** | Bug | High | Closed | HTMLファイル読み込み時のXSS脆弱性の解消 | AI Agent | [006-fix-xss-vulnerability-t-e2.md](closed/006-fix-xss-vulnerability-t-e2.md) |
+| **007** | Bug | High | Closed | CSPの定義による情報漏洩防止 | AI Agent | [007-enforce-csp-mitigation-t-i1.md](closed/007-enforce-csp-mitigation-t-i1.md) |
+
 
 
 ## 2. 状態（ステータス）定義
