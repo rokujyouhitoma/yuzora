@@ -47,6 +47,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnClearConfig = document.getElementById('btn-clear-config');
     const btnClearAll = document.getElementById('btn-clear-all');
 
+    // Layout Diagnostics Elements
+    const btnDiagnoseLayout = document.getElementById('btn-diagnose-layout');
+    const btnCopyDebugReport = document.getElementById('btn-copy-debug-report');
+    const diagnoseReportOutput = document.getElementById('diagnose-report-output');
+
+    // Debug Tabs Elements
+    const tabBtnMonitor = document.getElementById('tab-btn-monitor');
+    const tabBtnDiagnose = document.getElementById('tab-btn-diagnose');
+    const tabContentMonitor = document.getElementById('debug-tab-content-monitor');
+    const tabContentDiagnose = document.getElementById('debug-tab-content-diagnose');
+
     const PREDEFINED_BOOKS = [
         // 開発者のオススメ本
         { id: "kokoro", title: "こころ", shortTitle: "こころ", cardId: 773, path: "src/books/773_yoko.txt", category: "developer", author: "夏目漱石", meta: "夏目漱石" },
@@ -192,6 +203,267 @@ document.addEventListener('DOMContentLoaded', () => {
             updateDebugMonitor();
         }
     }, 1000);
+
+    // Layout Diagnostics Logic
+    let lastGeneratedReport = '';
+
+    function runLayoutDiagnosis() {
+        if (!readerViewport || !readerContent) {
+            return "エラー: ビューアーが初期化されていません。";
+        }
+
+        const maxScroll = readerViewport.scrollWidth - readerViewport.clientWidth;
+        const currentScroll = Math.abs(readerViewport.scrollLeft);
+        const pageCount = Math.round(readerViewport.scrollWidth / readerViewport.clientWidth) || 0;
+        const currentPage = maxScroll > 0 ? (Math.round(currentScroll / readerViewport.clientWidth) + 1) : (pageCount > 0 ? 1 : 0);
+
+        // 1. 環境情報
+        let report = `### 📖 ゆうぞら レイアウト診断レポート\n`;
+        report += `- **日時**: ${new Date().toLocaleString()}\n`;
+        report += `- **ファイル名**: ${currentFileName || '(未ロード)'}\n`;
+        report += `- **ファイル種別**: ${currentFileType || '(なし)'}\n`;
+        report += `- **表示設定**:\n`;
+        report += `  - テーマ: ${config.theme}\n`;
+        report += `  - 書体: ${config.font === 'font-mincho' ? '明朝体' : 'ゴシック体'}\n`;
+        report += `  - 送り方向: ${config.direction === 'rtl' ? '右から左 (RTL)' : '左から右 (LTR)'}\n`;
+        report += `  - 文字サイズ: ${config.size}\n`;
+        report += `  - 行間: ${config.lh}\n`;
+        report += `  - 文字間: ${config.spacing}\n`;
+        report += `- **画面サイズ**:\n`;
+        report += `  - ビューポート幅(clientWidth): ${readerViewport.clientWidth}px\n`;
+        report += `  - ビューポート高(clientHeight): ${readerViewport.clientHeight}px\n`;
+        report += `  - コンテンツ全体幅(scrollWidth): ${readerViewport.scrollWidth}px\n`;
+        report += `- **スクロール状態**:\n`;
+        report += `  - scrollLeft: ${readerViewport.scrollLeft}px\n`;
+        report += `  - 進捗割合(bookmarkProgress): ${(bookmarkProgress * 100).toFixed(1)}%\n`;
+        report += `  - ページ数: 現在 ${currentPage} / ${pageCount} ページ\n\n`;
+
+        // 2. アライメント検証
+        const expectedScrollMultiplier = currentPage - 1;
+        const idealScrollLeft = config.direction === 'rtl' 
+            ? -(expectedScrollMultiplier * readerViewport.clientWidth)
+            : (expectedScrollMultiplier * readerViewport.clientWidth);
+        
+        const scrollDifference = Math.abs(readerViewport.scrollLeft - idealScrollLeft);
+
+        report += `### 📐 アライメント検証\n`;
+        report += `- **現在のページの理想スクロール位置**: ${idealScrollLeft}px\n`;
+        report += `- **実際のスクロール位置とのズレ**: ${scrollDifference}px\n`;
+        if (scrollDifference > 5) {
+            report += `  - ⚠️ **警告**: スクロール位置がページの区切りから ${scrollDifference}px ズレています。文字が見切れる原因になっている可能性があります。\n`;
+        } else {
+            report += `  - ✅ **正常**: スクロール位置は正しく配置されています。\n`;
+        }
+        report += `\n`;
+
+        // 3. 境界線上の見切れ文字検出
+        report += `### ⚠️ 境界線上でのテキスト見切れ検出\n`;
+        
+        const viewportRect = readerViewport.getBoundingClientRect();
+        // 現在見えているページの左端と右端の座標
+        const boundaryLeft = viewportRect.left;
+        const boundaryRight = viewportRect.right;
+
+        // reader-content の直接の子要素（p, h2, h3, div 等）をスキャン
+        const childNodes = Array.from(readerContent.children);
+        let leftBoundaryOverlapCount = 0;
+        let rightBoundaryOverlapCount = 0;
+        let verticalBoundaryOverlapCount = 0;
+
+        let overlapDetails = '';
+
+        childNodes.forEach((child, index) => {
+            // 空行や改ページマークは無視
+            if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
+                return;
+            }
+
+            const rect = child.getBoundingClientRect();
+
+            // ビューポートの可視範囲内（またはその付近）にある要素のみを対象にする
+            const isNearViewport = rect.right >= viewportRect.left - 50 && rect.left <= viewportRect.right + 50;
+            if (!isNearViewport) return;
+
+            // 上下のはみ出しをチェック
+            const overflowTop = rect.top < viewportRect.top - 2;
+            const overflowBottom = rect.bottom > viewportRect.bottom + 2;
+            if (overflowTop || overflowBottom) {
+                overlapDetails += `- **縦方向はみ出し**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) がビューポートの上下境界からはみ出しています。\n`;
+                overlapDetails += `  - 要素のY座標範囲: ${rect.top.toFixed(1)}px 〜 ${rect.bottom.toFixed(1)}px (ビューポート: ${viewportRect.top.toFixed(1)}px 〜 ${viewportRect.bottom.toFixed(1)}px)\n`;
+                overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
+                verticalBoundaryOverlapCount++;
+            }
+
+            // 境界またぎ判定
+            const intersectsLeft = rect.left < boundaryLeft && rect.right > boundaryLeft;
+            const intersectsRight = rect.left < boundaryRight && rect.right > boundaryRight;
+
+            if (intersectsLeft) {
+                leftBoundaryOverlapCount++;
+                const boundaryCharInfo = findCharAtBoundary(child, boundaryLeft);
+                overlapDetails += `- **左境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が左ページ境界 (X: ${boundaryLeft.toFixed(1)}px) をまたいでいます。\n`;
+                if (boundaryCharInfo && boundaryCharInfo.char) {
+                    const ctx = boundaryCharInfo.context;
+                    overlapDetails += `  - 境界上の文字: 「${ctx.before}**[${boundaryCharInfo.char}]**${ctx.after}」\n`;
+                    overlapDetails += `  - 文字座標: left: ${boundaryCharInfo.rect.left.toFixed(1)}px, right: ${boundaryCharInfo.rect.right.toFixed(1)}px\n`;
+                } else {
+                    overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
+                }
+            }
+
+            if (intersectsRight) {
+                rightBoundaryOverlapCount++;
+                const boundaryCharInfo = findCharAtBoundary(child, boundaryRight);
+                overlapDetails += `- **右境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が右ページ境界 (X: ${boundaryRight.toFixed(1)}px) をまたいでいます。\n`;
+                if (boundaryCharInfo && boundaryCharInfo.char) {
+                    const ctx = boundaryCharInfo.context;
+                    overlapDetails += `  - 境界上の文字: 「${ctx.before}**[${boundaryCharInfo.char}]**${ctx.after}」\n`;
+                    overlapDetails += `  - 文字座標: left: ${boundaryCharInfo.rect.left.toFixed(1)}px, right: ${boundaryCharInfo.rect.right.toFixed(1)}px\n`;
+                } else {
+                    overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
+                }
+            }
+        });
+
+        if (leftBoundaryOverlapCount === 0 && rightBoundaryOverlapCount === 0 && verticalBoundaryOverlapCount === 0) {
+            report += `- ✅ 境界線上の見切れやはみ出しは検出されませんでした。\n`;
+        } else {
+            report += `- 検出サマリー: 左境界またぎ ${leftBoundaryOverlapCount}件, 右境界またぎ ${rightBoundaryOverlapCount}件, 上下はみ出し ${verticalBoundaryOverlapCount}件\n\n`;
+            report += overlapDetails;
+        }
+
+        return report;
+    }
+
+    function findCharAtBoundary(element, boundaryX) {
+        const textNodes = [];
+        const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while (node = walk.nextNode()) {
+            textNodes.push(node);
+        }
+
+        let closestMatch = null;
+        let minDiff = Infinity;
+
+        for (const node of textNodes) {
+            const text = node.textContent;
+            for (let i = 0; i < text.length; i++) {
+                const range = document.createRange();
+                try {
+                    range.setStart(node, i);
+                    range.setEnd(node, i + 1);
+                } catch (e) {
+                    continue;
+                }
+                const rect = range.getBoundingClientRect();
+                
+                if (rect.left <= boundaryX && rect.right >= boundaryX) {
+                    const before = text.substring(Math.max(0, i - 10), i);
+                    const after = text.substring(i + 1, Math.min(text.length, i + 11));
+                    return {
+                        char: text[i],
+                        rect: rect,
+                        context: { before, after }
+                    };
+                }
+
+                const diff = Math.min(Math.abs(rect.left - boundaryX), Math.abs(rect.right - boundaryX));
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    closestMatch = {
+                        char: text[i],
+                        rect: rect,
+                        node: node,
+                        index: i
+                    };
+                }
+            }
+        }
+
+        if (closestMatch) {
+            const text = closestMatch.node.textContent;
+            const i = closestMatch.index;
+            const before = text.substring(Math.max(0, i - 10), i);
+            const after = text.substring(i + 1, Math.min(text.length, i + 11));
+            return {
+                char: closestMatch.char,
+                rect: closestMatch.rect,
+                context: { before, after }
+            };
+        }
+
+        return null;
+    }
+
+    // Bind layout diagnostic events
+    if (btnDiagnoseLayout) {
+        btnDiagnoseLayout.addEventListener('click', () => {
+            diagnoseReportOutput.textContent = '診断を実行中...';
+            
+            setTimeout(() => {
+                try {
+                    lastGeneratedReport = runLayoutDiagnosis();
+                    diagnoseReportOutput.textContent = lastGeneratedReport;
+                    
+                    if (btnCopyDebugReport) {
+                        btnCopyDebugReport.removeAttribute('disabled');
+                    }
+                } catch (err) {
+                    console.error("Diagnosis error:", err);
+                    diagnoseReportOutput.textContent = `診断中にエラーが発生しました: ${err.message}`;
+                }
+            }, 50);
+        });
+    }
+
+    if (btnCopyDebugReport) {
+        btnCopyDebugReport.addEventListener('click', () => {
+            if (!lastGeneratedReport) return;
+            
+            navigator.clipboard.writeText(lastGeneratedReport)
+                .then(() => {
+                    const originalText = btnCopyDebugReport.textContent;
+                    btnCopyDebugReport.textContent = 'コピー完了！';
+                    btnCopyDebugReport.style.background = '#28a745';
+                    btnCopyDebugReport.style.color = '#fff';
+                    
+                    setTimeout(() => {
+                        btnCopyDebugReport.textContent = originalText;
+                        btnCopyDebugReport.style.background = '';
+                        btnCopyDebugReport.style.color = '';
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error("Clipboard copy failed:", err);
+                    alert("クリップボードへのコピーに失敗しました。お手数ですが、テキストエリアから手動でコピーしてください。");
+                });
+        });
+    }
+
+    // Debug Tabs Logic
+    if (tabBtnMonitor && tabBtnDiagnose && tabContentMonitor && tabContentDiagnose) {
+        tabBtnMonitor.addEventListener('click', () => {
+            tabBtnMonitor.classList.add('active');
+            tabBtnDiagnose.classList.remove('active');
+            tabContentMonitor.classList.remove('hidden');
+            tabContentDiagnose.classList.add('hidden');
+        });
+
+        tabBtnDiagnose.addEventListener('click', () => {
+            tabBtnDiagnose.classList.add('active');
+            tabBtnMonitor.classList.remove('active');
+            tabContentDiagnose.classList.remove('hidden');
+            tabContentMonitor.classList.add('hidden');
+            
+            // Auto run diagnose if it hasn't been run yet
+            if (diagnoseReportOutput && diagnoseReportOutput.textContent === '診断を実行してください。') {
+                if (btnDiagnoseLayout) {
+                    btnDiagnoseLayout.click();
+                }
+            }
+        });
+    }
 
     // localStorage operations
     if (btnClearBookmarks) {
@@ -1052,6 +1324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.Yuzora = {
         parseAozoraText,
         formatAozoraMarkup,
-        config
+        config,
+        runLayoutDiagnosis
     };
 });

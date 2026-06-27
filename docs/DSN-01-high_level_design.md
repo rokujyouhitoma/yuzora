@@ -169,20 +169,29 @@ sequenceDiagram
 | └ 開発者向け設定 | `.settings-group.dev-section` | `.drawer-content` | デバッグモーダルを起動する「デバッグ画面を開く」ボタン（`#btn-open-debug`）を内包する領域。 |
 
 #### 4. デバッグモーダル (Debug Modal)
-開発者向けのアプリ状態モニターおよび `localStorage` 操作を行うモーダル画面です。コンテナ要素は `#debug-modal`（クラス名: `.debug-modal`）で、背面には暗幕 `#debug-modal-overlay`（クラス名: `.debug-modal-overlay`）がオーバーレイされます。
+開発者向けのアプリ状態モニター、レイアウト/見切れ診断、および `localStorage` 操作を行うモーダル画面です。コンテナ要素は `#debug-modal`（クラス名: `.debug-modal`）で、背面には暗幕 `#debug-modal-overlay`（クラス名: `.debug-modal-overlay`）がオーバーレイされます。
 
 | 構成要素名 | 識別子 (ID / Class) | 親要素 | 役割・機能説明 |
 | :--- | :--- | :--- | :--- |
 | **モーダルヘッダー** | `.debug-modal-header` | `#debug-modal` | タイトルと閉じるボタンの領域。 |
 | ├ タイトル | `h2` | `.debug-modal-header` | 「デバッグ情報 & 操作」のテキスト表示。 |
 | └ 閉じるボタン | `#btn-close-debug` / `.btn-icon`| `.debug-modal-header` | モーダルを閉じるボタン。 |
-| **モーダルボディ** | `.debug-modal-body` | `#debug-modal` | 内部状態と操作用のボタン群。 |
-| ├ 状態モニター | `.debug-modal-section` (モニター用) | `.debug-modal-body` | アプリの状態変数をリアルタイム表示する領域。 |
-| 　└ モニタープレビュー | `#debug-monitor` | `.debug-monitor-container` | JSON化した内部状態のテキストプレビュー。 |
-| └ 操作パネル | `.debug-modal-section` (操作用) | `.debug-modal-body` | `localStorage` の初期化を行うボタン群。 |
+| **タブ選択バー** | `.debug-tabs` | `#debug-modal` | 状態モニターとレイアウト診断を切り替えるタブ領域。 |
+| ├ システム状態タブボタン | `#tab-btn-monitor` / `.debug-tab-btn` | `.debug-tabs` | クリック時にシステム状態モニターおよびlocalStorage操作パネルを表示。 |
+| └ レイアウト診断タブボタン | `#tab-btn-diagnose` / `.debug-tab-btn` | `.debug-tabs` | クリック時にレイアウト/見切れ診断パネルを表示（初回切り替え時に自動診断実行）。 |
+| **モーダルボディ** | `.debug-modal-body` | `#debug-modal` | 選択されたタブのコンテンツを表示する領域（縦幅超過による見切れを防ぐアコーディオン）。 |
+| **システム状態コンテンツ**| `#debug-tab-content-monitor` / `.debug-tab-content` | `.debug-modal-body` | システム状態モニターとlocalStorage操作を格納するコンテンツ。 |
+| ├ 状態モニターセクション| `.debug-modal-section` (モニター用)| `#debug-tab-content-monitor` | アプリの状態変数をリアルタイム表示する領域。 |
+| │ └ モニタープレビュー| `#debug-monitor` | `.debug-monitor-container` | JSON化した内部状態のテキストプレビュー。 |
+| └ 操作パネルセクション | `.debug-modal-section` (操作用)| `#debug-tab-content-monitor` | `localStorage` の初期化を行うボタン群。 |
 | 　├ しおり初期化ボタン | `#btn-clear-bookmarks` | `.debug-buttons` | クリック時に読書履歴や各作品の進捗データを削除。 |
 | 　├ 設定初期化ボタン | `#btn-clear-config` | `.debug-buttons` | クリック時に表示カスタマイズ設定をデフォルトにリセット。 |
 | 　└ 完全初期化ボタン | `#btn-clear-all` | `.debug-buttons` | 全ての `localStorage` をクリアしてアプリを強制再読込。 |
+| **レイアウト診断コンテンツ**| `#debug-tab-content-diagnose` / `.debug-tab-content` | `.debug-modal-body` | レイアウト診断機能を格納するコンテンツ（初期状態は非表示 `.hidden`）。 |
+| └ 診断パネルセクション | `.debug-modal-section` (診断用) | `#debug-tab-content-diagnose` | アライメントズレおよび境界交差文字の診断レポートを扱う領域。 |
+| 　├ 診断実行ボタン | `#btn-diagnose-layout` | `.debug-buttons` | 現在の画面サイズ・スクロール位置から見切れ文字やズレを診断する。 |
+| 　├ レポートコピーボタン| `#btn-copy-debug-report` | `.debug-buttons` | 生成したMarkdownレポートをクリップボードにコピーする。 |
+| 　└ 診断レポート表示エリア| `#diagnose-report-output` | `.debug-monitor-container` | 生成されたMarkdown診断レポートのテキストプレビューエリア。 |
 
 ---
 

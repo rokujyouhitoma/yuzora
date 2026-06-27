@@ -955,6 +955,17 @@ body.layout-direction-ltr .progress-thumb {
 /* ==========================================================================
    Debug Modal Screen
    ========================================================================== */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
 .debug-modal {
     position: fixed;
     top: 50%;
@@ -971,9 +982,11 @@ body.layout-direction-ltr .progress-thumb {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    direction: ltr;
+    writing-mode: horizontal-tb;
 }
 .debug-modal-overlay {
     position: fixed;
@@ -1059,5 +1072,49 @@ body.layout-direction-ltr .progress-thumb {
     background-color: var(--accent-hover);
     color: #ffffff;
     border-color: var(--accent-hover);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Debug Tabs */
+.debug-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.02);
+}
+.theme-dark .debug-tabs,
+.theme-black .debug-tabs {
+    background: rgba(255, 255, 255, 0.02);
+}
+.debug-tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+}
+.debug-tab-btn.active {
+    color: var(--text-main);
+    font-weight: 600;
+    border-bottom-color: var(--accent-color);
+}
+.debug-tab-btn:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+.theme-dark .debug-tab-btn:hover,
+.theme-black .debug-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+.debug-tab-content.hidden {
+    display: none !important;
 }
 

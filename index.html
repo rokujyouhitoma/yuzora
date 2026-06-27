@@ -205,22 +205,44 @@
                         </svg>
                     </button>
                 </div>
+                <div class="debug-tabs">
+                    <button id="tab-btn-monitor" class="debug-tab-btn active">システム状態</button>
+                    <button id="tab-btn-diagnose" class="debug-tab-btn">レイアウト診断</button>
+                </div>
                 <div class="debug-modal-body">
-                    <!-- Monitor Panel -->
-                    <div class="debug-modal-section">
-                        <h3>アプリ内部状態モニター</h3>
-                        <div class="debug-monitor-container">
-                            <pre id="debug-monitor">読み込み中...</pre>
+                    <!-- Tab 1: Monitor -->
+                    <div id="debug-tab-content-monitor" class="debug-tab-content">
+                        <!-- Monitor Panel -->
+                        <div class="debug-modal-section">
+                            <h3>アプリ内部状態モニター</h3>
+                            <div class="debug-monitor-container">
+                                <pre id="debug-monitor">読み込み中...</pre>
+                            </div>
+                        </div>
+                        
+                        <!-- Control Panel -->
+                        <div class="debug-modal-section" style="margin-top: 20px;">
+                            <h3>localStorage 操作</h3>
+                            <div class="debug-buttons">
+                                <button id="btn-clear-bookmarks" class="btn btn-secondary">しおりデータのみ初期化</button>
+                                <button id="btn-clear-config" class="btn btn-secondary">表示設定のみ初期化</button>
+                                <button id="btn-clear-all" class="btn btn-danger">すべて初期化してリロード</button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <!-- Control Panel -->
-                    <div class="debug-modal-section">
-                        <h3>localStorage 操作</h3>
-                        <div class="debug-buttons">
-                            <button id="btn-clear-bookmarks" class="btn btn-secondary">しおりデータのみ初期化</button>
-                            <button id="btn-clear-config" class="btn btn-secondary">表示設定のみ初期化</button>
-                            <button id="btn-clear-all" class="btn btn-danger">すべて初期化してリロード</button>
+
+                    <!-- Tab 2: Diagnostics -->
+                    <div id="debug-tab-content-diagnose" class="debug-tab-content hidden">
+                        <!-- Layout Diagnostics Panel -->
+                        <div class="debug-modal-section">
+                            <h3>レイアウト / 見切れ診断</h3>
+                            <div class="debug-buttons" style="margin-bottom: 12px; display: flex; gap: 10px;">
+                                <button id="btn-diagnose-layout" class="btn btn-primary" style="flex: 1;">現在のページを診断</button>
+                                <button id="btn-copy-debug-report" class="btn btn-secondary" style="flex: 1;" disabled>レポートをコピー</button>
+                            </div>
+                            <div class="debug-monitor-container" style="max-height: 280px;">
+                                <pre id="diagnose-report-output" style="white-space: pre-wrap; font-size: 13px; font-family: monospace;">診断を実行してください。</pre>
+                            </div>
                         </div>
                     </div>
                 </div>

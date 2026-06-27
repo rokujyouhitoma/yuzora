@@ -484,3 +484,31 @@ $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \t
 | **表示設定初期化** | `#btn-clear-config` | `yuzora_config`<br>`koizora_config` | 設定関連のキーを削除。表示設定を初期状態にリセット後、`window.location.reload()` でリロードする。 |
 | **完全初期化** | `#btn-clear-all` | 全ての `localStorage` データ | `localStorage.clear()` を実行し、全データを完全削除。その後 `window.location.reload()` で初期起動状態に戻す。 |
 
+### 6.3 レイアウト / 見切れ診断ロジック物理設計
+
+#### A. 理想スクロールアライメントズレの算出式
+理想のスクロール位置 $L_{ideal}$ は、現在のページ番号 $P_{current}$（1始まり）を元に、次式で算出されます。
+$$L_{ideal} = \begin{cases} -((P_{current} - 1) \times W_{viewport}) & (\text{RTL時}) \\ (P_{current} - 1) \times W_{viewport} & (\text{LTR時}) \end{cases}$$
+ここで $W_{viewport}$ はビューポートの幅（`readerViewport.clientWidth`）です。
+実際のスクロール位置 $L_{actual}$ （`readerViewport.scrollLeft`）との差分（ズレ量 $D_{diff}$）は次式で計算され、$D_{diff} > 5\text{px}$ の場合に位置アライメント警告をレポートに出力します。
+$$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
+
+#### B. 境界線またぎ交差文字の検出ロジック (`findCharAtBoundary`)
+現在表示されているページの左境界 $X_{left}$ および右境界 $X_{right}$ は、ビューポートの `getBoundingClientRect()` から得られます。
+`reader-content` の子要素（段落等）の中で、要素の `rect = child.getBoundingClientRect()` が $rect.left < X_{left} < rect.right$ または $rect.left < X_{right} < rect.right$ を満たすものを「境界またぎ交差要素」として判定します。
+交差している要素が検出された場合、以下の物理手順で正確な交差文字を特定します。
+1. `document.createTreeWalker` を用い、要素内のすべてのテキストノード（`NodeFilter.SHOW_TEXT`）を走査・収集します。
+2. 各テキストノードの各文字位置 $i$ について、`Range` オブジェクトを $i$ から $i+1$ の範囲で生成します。
+3. `range.getBoundingClientRect()` から文字の物理矩形 $rect_{char}$ を取得します。
+4. $rect_{char}.left \le X_{boundary} \le rect_{char}.right$ を満たす文字を「境界上の文字」として特定します。
+5. またがっている文字が確定したら、その文字および前後のコンテキストテキスト（前10文字、後10文字）を切り出し、Markdown形式の診断結果として整形します。
+6. 要素が交差していない場合であっても、境界に最も物理距離が近い文字（`closestMatch`）を計算し、フォールバックとして採用します。
+
+#### C. タブ切り替え制御および自動診断トリガー
+- `tabBtnMonitor` と `tabBtnDiagnose` のクリックイベントに連動し、`.debug-tab-content.hidden` の切り替え（`display: none !important`）を行います。
+- 「レイアウト診断」タブがクリックされた時点で、診断結果表示エリア（`#diagnose-report-output`）のテキストが初期状態（「診断を実行してください。」）であれば、自動的に `btnDiagnoseLayout.click()` をトリガーし、ユーザーの手間を省く設計としています。
+
+#### D. モーダル表示かくつき・RTL影響防止の物理設計
+- CSSフェードイン時の `transform` の衝突を回避するため、専用アニメーション `@keyframes modalFadeIn`（`translate(-50%, -48%)` から `translate(-50%, -50%)` への遷移）を適用し、モーダルの `left: 50%`, `top: 50%` による中央配置とアニメーション時の変形を共存させてかくつきを解消します。
+- モーダルに `direction: ltr; writing-mode: horizontal-tb;` を明示的に付与し、RTLや縦書きモードからの座標計算の影響を完全に排除します。
+
