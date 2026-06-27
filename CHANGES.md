@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added [MNG-09] バックログ 012 から、ユーザー操作履歴の Command パターン化実装用タスクとして [Issue 009](docs/issues/009-command-pattern-operation-history.md) を起票し、詳細な実装方針および DoD の精査（In Progress）を完了。
 - Changed [MNG-09] 目次表示およびジャンプ機能 (TOC) バックログ (docs/backlogs/closed/005-table-of-contents-toc.md) を、実装完了に伴い Closed に更新し、アーカイブディレクトリへ移動。
 - Added [MNG-09] 目次ドロワーのキーボード・スクリーンリーダー向けアクセシビリティ向上バックログ (docs/backlogs/013-toc-accessibility-enhancement.md) を起票 (ID: 013)。
 - Changed [MNG-09] Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応バックログ (docs/backlogs/012-command-pattern-operation-history.md) を精査し、最大世代数制限（100世代および本のロードコマンド保護）を追加して Approved に更新 (ID: 012)。
