@@ -16,7 +16,7 @@
 | **005** | Bug | High | Closed | グローバルHTMLエスケープの適用によるXSS脆弱性の解消 | AI Agent | [005-fix-xss-vulnerability-t-e1.md](closed/005-fix-xss-vulnerability-t-e1.md) |
 | **006** | Bug | High | Closed | HTMLファイル読み込み時のXSS脆弱性の解消 | AI Agent | [006-fix-xss-vulnerability-t-e2.md](closed/006-fix-xss-vulnerability-t-e2.md) |
 | **007** | Bug | High | Closed | CSPの定義による情報漏洩防止 | AI Agent | [007-enforce-csp-mitigation-t-i1.md](closed/007-enforce-csp-mitigation-t-i1.md) |
-| **008** | Bug | Medium | New | 目次ジャンプ先がRTL縦書き時に微小にズレる問題 | AI Agent | [008-toc-jump-misalignment-in-rtl.md](008-toc-jump-misalignment-in-rtl.md) |
+| **008** | Bug | Medium | Closed | 目次ジャンプ先がRTL縦書き時に微小にズレる問題 | AI Agent | [008-toc-jump-misalignment-in-rtl.md](closed/008-toc-jump-misalignment-in-rtl.md) |
 | **009** | Feature | Medium | Closed | Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応 | AI Agent | [009-command-pattern-operation-history.md](closed/009-command-pattern-operation-history.md) |
 
 

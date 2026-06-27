@@ -1992,11 +1992,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let pageIndex = 0;
         if (config.direction === 'rtl') {
-            const absolutePosition = (containerRect.right - rect.right) + Math.abs(readerViewport.scrollLeft);
-            pageIndex = Math.floor(absolutePosition / viewportWidth);
+            const absoluteRight = (containerRect.right - rect.right) + Math.abs(readerViewport.scrollLeft);
+            const absoluteLeft = (containerRect.right - rect.left) + Math.abs(readerViewport.scrollLeft);
+            const absoluteCenter = (absoluteRight + absoluteLeft) / 2;
+            pageIndex = Math.floor(absoluteCenter / viewportWidth);
         } else {
-            const absolutePosition = (rect.left - containerRect.left) + readerViewport.scrollLeft;
-            pageIndex = Math.floor(absolutePosition / viewportWidth);
+            const absoluteLeft = (rect.left - containerRect.left) + readerViewport.scrollLeft;
+            const absoluteRight = (rect.right - containerRect.left) + readerViewport.scrollLeft;
+            const absoluteCenter = (absoluteLeft + absoluteRight) / 2;
+            pageIndex = Math.floor(absoluteCenter / viewportWidth);
         }
 
         // Execute scroll via CommandManager

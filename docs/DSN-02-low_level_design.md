@@ -581,3 +581,28 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
   - `#debug-tab-content-monitor` がアクティブ（`.hidden` クラスを持っていない）な時：`CommandManager.exportJSON()` を実行し、クリップボードに操作履歴 JSON をコピーします。
   - `#debug-tab-content-diagnose` がアクティブな時：従来のレイアウト診断レポート（Markdown）をクリップボードにコピーします。
 
+### 7.4 目次（TOC）ジャンプ座標計算仕様
+
+目次から見出し要素（`headingId`）へのジャンプ位置精度を担保し、RTL縦書きで画面の最も右端（読み始め位置）にアラインさせるため、見出し要素の物理的な中心（Horizontal Center）を基準に遷移先ページを決定する物理的なアルゴリズムです。
+
+1. **見出し要素の絶対位置算出**:
+   `getBoundingClientRect()` から得られる要素境界（`rect.left`, `rect.right`）から、読書ビューポートのスクロール起点（RTL時は一番右、LTR時は一番左）を原点とした絶対座標 $X_{right}$ および $X_{left}$ を算出します。
+   - **RTL（右から左・縦書き）表示時**:
+     $$X_{right} = (W_{containerRight} - X_{rectRight}) + |L_{scrollLeft}|$$
+     $$X_{left} = (W_{containerRight} - X_{rectLeft}) + |L_{scrollLeft}|$$
+   - **LTR（左から右・横書き）表示時**:
+     $$X_{left} = (X_{rectLeft} - W_{containerLeft}) + L_{scrollLeft}$$
+     $$X_{right} = (X_{rectRight} - W_{containerLeft}) + L_{scrollLeft}$$
+
+2. **中心絶対座標（Horizontal Center）の決定**:
+   要素の幅を考慮し、要素の中心が物理的に属する絶対座標 $X_{center}$ を求めます：
+   $$X_{center} = \frac{X_{right} + X_{left}}{2}$$
+
+3. **遷移先論理ページの算出**:
+   この中心絶対座標 $X_{center}$ をビューポートの物理幅 $W_{viewport}$ で除算し、境界の回り込み誤差を吸収した正しいページインデックス $P_{target}$（0始まり）を求めます：
+   $$P_{target} = \lfloor \frac{X_{center}}{W_{viewport}} \rfloor$$
+
+4. **アライメントスクロール移動**:
+   `scrollToPage(P_{target} + 1)` を実行し、RTL時は $- (P_{target} \times W_{viewport})$、LTR時は $P_{target} \times W_{viewport}$ へスクロールします。これにより、見出し要素が回り込み誤差によって手前のページの左カラム（画面左側）に追いやられるのを防ぎ、移動先のページの右端（画面の最も右側）に正確に表示されるようにします。
+
+
