@@ -33,6 +33,6 @@ This skill dictates how to identify, analyze, and mitigate security risks system
      - Establish size limits (e.g. 2MB max) for loaded files.
 
 4. **Document and Integrate**:
-   - Update [MNG-07-threat_modeling.md](../docs/MNG-07-threat_modeling.md) or the issue ticket's implementation plan with the threat modeling findings.
+   - Update the threat modeling definition [MNG-07-threat_modeling.md](../docs/MNG-07-threat_modeling.md) or threat modeling results under the `docs/threat-modeling/` directory using the format `docs/threat-modeling/YYYYMMDD-<description>.md` (e.g., `docs/threat-modeling/20260627-comprehensive-threat-modeling.md`) or the issue ticket's implementation plan with the threat modeling findings.
    - Explicitly list the security mitigations in the "実装方針 / Implementation Plan" section.
    - Add verification test cases for the security mitigations (e.g. trying XSS injection payloads) in the "完了条件 / Success Criteria (DoD)" section of the issue.

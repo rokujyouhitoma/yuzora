@@ -25,3 +25,10 @@ You MUST follow this structured, issue-driven development lifecycle for all modi
 5. **Commit and Changelog (`git-workflow`, `changelog-workflow`)**:
    - Use `changelog-workflow` to document the changes in `CHANGES.md`.
    - Use `git-workflow` to commit your changes with a conventional commit message referencing the issue.
+
+## Threat Modeling Rules
+
+- Threat modeling results MUST be outputted to the `docs/threat-modeling/` directory.
+- The file name of the results MUST use the date-based format: `YYYYMMDD-<lowercase-hyphenated-description>.md` (e.g., `20260627-comprehensive-threat-modeling.md`).
+
+
