@@ -18,6 +18,7 @@
 | **008** | Enhancement | Medium | Draft | レイアウト診断レポート生成の非同期・タイムスライス化 | [008-async-layout-diagnostics.md](008-async-layout-diagnostics.md) |
 | **009** | Refactor | Medium | Draft | しおり（進捗）書き込み処理の非同期アイドル実行化 | [009-async-bookmark-storage.md](009-async-bookmark-storage.md) |
 | **010** | Enhancement | Low | Draft | 起動時オススメ書籍グリッドの遅延レンダリング | [010-lazy-loading-predefined-books.md](010-lazy-loading-predefined-books.md) |
+| **011** | Refactor | Medium | Draft | 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 | [011-modularize-src-by-screen-and-bundle.md](011-modularize-src-by-screen-and-bundle.md) |
 
 ---
 

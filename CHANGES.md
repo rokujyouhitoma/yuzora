@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added [REQ-04] 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化バックログ (docs/backlogs/011-modularize-src-by-screen-and-bundle.md) を起票 (ID: 011)。
 - Added [REQ-04] 大容量テキストのインクリメンタルパースおよびレンダリングバックログ (docs/backlogs/007-incremental-text-parsing.md) を起票 (ID: 007)。
 - Added [REQ-04] レイアウト診断レポート生成の非同期・タイムスライス化バックログ (docs/backlogs/008-async-layout-diagnostics.md) を起票 (ID: 008)。
 - Added [REQ-04] しおり書き込み処理の非同期アイドル実行化バックログ (docs/backlogs/009-async-bookmark-storage.md) を起票 (ID: 009)。
