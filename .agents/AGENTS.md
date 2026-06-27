@@ -23,7 +23,7 @@ You MUST follow this structured, issue-driven development lifecycle for all modi
    - Run review checks for correctness, security, performance, design alignment, style guidelines, error handling, and tests.
 
 5. **Commit and Changelog (`git-workflow`, `changelog-workflow`)**:
-   - Use `changelog-workflow` to document the changes in `CHANGES.md`.
+   - You MUST update `CHANGES.md` (via `changelog-workflow`) and check/update the root `README.md` to reflect any new features or changes before committing.
    - Use `git-workflow` to commit your changes with a conventional commit message referencing the issue.
 
 ## Threat Modeling Rules

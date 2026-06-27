@@ -40,3 +40,9 @@
 ### Rule 4: 登録管理制 (Document Control)
 * 新たなドキュメントを作成・削除する際は、必ず [[MNG-01] 文書管理・ドキュメント台帳](MNG-01-document_ledger.md) の台帳に事前登録し、一意の管理番号（プレフィックス＋連番）を発行してください。
 * ドキュメントの変更や削除を行った際は、他のドキュメントからの参照リンクが崩れていないか確認し、デッドリンクを完全に防止してください。
+
+### Rule 5: CHANGES.md および README.md の同期更新義務 (Changelog & Readme Sync Rule)
+* 機能の追加、バグ修正、またはドキュメントの重大な再構成を行った際は、コミットおよびマージの前に、必ず以下の2ファイルを更新・確認しなければなりません。
+  1. **[CHANGES.md](../CHANGES.md)**: 変更内容（Added, Changed, Fixed, Deprecated 等）を conventional commit に準拠した形で正確に追記します。
+  2. **[README.md](../README.md)**: 導入された新機能や設定項目が、ルートの README の説明と乖離していないか確認し、必要に応じて説明を最新化します。
+

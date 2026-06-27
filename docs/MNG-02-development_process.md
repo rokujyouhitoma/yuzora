@@ -182,9 +182,9 @@ flowchart TD
   * **受入検証実行**: User (人間)（受入検証の実行、最終リリース承認）
   * **支援**: AI Agent（動作ログ確認、デプロイ検証支援）
 * **インプット**: [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md), [MNG-05-test_cases.md](/docs/MNG-05-test_cases.md)（受入検証テストケース）
-* **関連スキル**: `git-workflow`（リリースマージ、チケットのクローズ処理、および設計書と実装コードの完全整合検証）、`changelog-workflow`（CHANGES.md への変更履歴記録と Issue ID 連携によるトレーサビリティの完了）
+* **関連スキル**: `git-workflow`（リリースマージ、チケットのクローズ処理、および設計書と実装コードの完全整合検証）、`changelog-workflow`（CHANGES.md への変更履歴記録と Issue ID 連携によるトレーサビリティの完了。※コミット前に CHANGES.md およびルート README.md の更新が必須）
 * **主要成果物**:
-  * **受入検証結果・リリースレポート** （`walkthrough.md`, `README.md`）
+  * **受入検証結果・リリースレポート** （`walkthrough.md`, ルート `README.md` への機能更新反映、`CHANGES.md` への変更履歴追記）
   * **静的プロダクションリリースファイル群**
 
 ---
