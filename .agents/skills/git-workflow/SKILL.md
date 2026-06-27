@@ -30,3 +30,13 @@ This skill ensures that all Git branches and commits adhere to a clean, standard
      - Support pressing 1 and 2 keys to switch tabs
      - Trigger automatic diagnosis run on active viewport
      ```
+
+3. **Issue Completion / Close Workflow**:
+   - When a task is fully implemented, verified, and ready to be merged/closed, perform the following steps to update the issue status:
+     1. Open the active issue file under `issues/`.
+     2. Update the `ステータス` in the metadata block at the top from `Open (...)` to `Closed`.
+     3. Move the issue file from the `issues/` root directory to the `issues/closed/` directory.
+        - Command: `mv issues/<issue-id>-<title>.md issues/closed/`
+     4. Open [issues/README.md](file:///workspace/yuzora/yuzora/issues/README.md) (Issue台帳).
+     5. Update the status column of the closed issue to `Closed`.
+     6. Update the link path of the closed issue to point to the new location: `[<issue-id>-<title>.md](closed/<issue-id>-<title>.md)`.

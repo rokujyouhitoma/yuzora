@@ -541,7 +541,7 @@ a:hover {
         --reader-viewport-padding-x: 40px;
     }
     .reader-content {
-        column-width: calc(50% - var(--reader-viewport-padding-x) * 2);
+        column-width: calc(50vw - var(--reader-padding-x) - var(--reader-viewport-padding-x) * 2);
     }
 }
 @media (max-width: 767px) {
@@ -552,7 +552,7 @@ a:hover {
         --reader-viewport-padding-x: 24px;
     }
     .reader-content {
-        column-width: calc(100% - var(--reader-viewport-padding-x) * 2);
+        column-width: calc(100vw - var(--reader-padding-x) * 2 - var(--reader-viewport-padding-x) * 2);
     }
 }
 

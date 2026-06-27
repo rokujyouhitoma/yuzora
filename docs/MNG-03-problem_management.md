@@ -37,6 +37,11 @@ stateDiagram-v2
 3. **暫定対処済 (Workaround)**: 恒久対策に時間がかかる場合、サービス復旧のために一時的な回避策が適用された状態。
 4. **解決済 (Resolved)**: 根本修正コードが適用され、動作検証が完了した状態。
 
+### 2.1 チケット化と台帳管理 (Ticket & Ledger Controls)
+検知された問題（バグや脆弱性）は速やかにチケット（Issue）化し、以下の方式に従って一元管理します。
+* **チケットの起票**: `create-issue` スキルを実行し、[issues/](file:///workspace/yuzora/yuzora/issues) ディレクトリ配下に `00X-xxx.md` のファイル名で作成します。その際、不具合用テンプレート（`template_bug.md`）を適用します。
+* **台帳の更新**: 起票された問題は、直ちに [issues/README.md](file:///workspace/yuzora/yuzora/issues/README.md) (Issue台帳) に登録され、ライフサイクル全体の進行ステータスは同台帳上で一元追跡・可視化されます。
+
 ---
 
 ## 3. 問題の分類と優先度判定 (Classification & Severity)

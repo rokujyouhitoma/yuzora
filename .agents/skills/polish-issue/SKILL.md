@@ -24,5 +24,10 @@ This skill guides the agent in refining a raw issue into a concrete, action-read
    - Specify clear, measurable goals in Section 4 (完了条件 / Success Criteria (DoD)).
    - Include testing requirements (e.g., E2E test commands, unit test files, manual UI checking steps).
 
-5. **Self-Review**:
+5. **Update Issue Status & Ledger**:
+   - Update the `ステータス` field in the metadata block at the top of the issue file to `Open (In Progress)`.
+   - Open [issues/README.md](file:///workspace/yuzora/yuzora/issues/README.md) (Issue台帳).
+   - Update the status of the polished issue from `New` or `Analyzing` to `In Progress` to indicate it is ready for development.
+
+6. **Self-Review**:
    - Review the completed issue file to verify if a developer/agent could execute it immediately without further research or ambiguity.
