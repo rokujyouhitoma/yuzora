@@ -4,10 +4,14 @@ This file contains project-scoped rules and instructions for all AI agents worki
 
 ## Development Workflow Rules
 
-You MUST follow this structured, issue-driven development lifecycle for all modifications and new features:
+You MUST follow this structured, backlog-driven and issue-driven development lifecycle for all modifications and new features:
+
+0. **Backlog Management (`create-backlog`, `polish-backlog`)**:
+   - Future ideas, feature requests, or refactoring plans MUST first be registered under the `docs/backlogs/` directory using the `create-backlog` skill (state: `Draft`).
+   - Before scheduling or prioritizing, refine and polish the requirements using the `polish-backlog` skill (state: `Approved`).
 
 1. **Issue Creation (`create-issue`)**:
-   - Every task, bug fix, or feature MUST start with an issue file under the `docs/issues/` directory.
+   - Every task, bug fix, or feature MUST start with an issue file under the `docs/issues/` directory (often promoted from an approved backlog).
    - Use the `create-issue` skill to initialize a new issue using `docs/issues/template.md`.
 
 2. **Issue Refinement (`polish-issue`)**:

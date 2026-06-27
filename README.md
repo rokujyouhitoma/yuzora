@@ -47,6 +47,9 @@ yuzora/
 ├── docs/                         # 要求仕様・要件・設計書ドキュメント類
 │   ├── adr/                      # アーキテクチャ意思決定記録 (ADR)
 │   │   └── ADR-01-predefined-books-and-storage.md
+│   ├── backlogs/                 # 将来の機能要望・改善のアイデア（台帳と個別要件）
+│   ├── issues/                   # 現在進行中の開発課題・バグ
+│   ├── threat-modeling/          # 包括的脅威モデリング結果（STRIDE分析等）
 │   ├── MNG-01-document_ledger.md # 文書管理・ドキュメント台帳
 │   ├── MNG-02-development_process.md # 開発プロセスおよび成果物定義書
 │   ├── REQ-01-user_requirements.md # 要求定義書 (URD)
@@ -56,7 +59,7 @@ yuzora/
 │   ├── DSN-02-low_level_design.md  # 詳細設計書 (LLD)
 │   └── USR-01-user_manual.md       # 操作マニュアル
 ├── src/                          # ソースコード
-│   ├── books/                    # 同梱「宮本武蔵」8作品テキストデータ
+│   ├── books/                    # 同梱オススメ書籍データ（宮本武蔵、こころ、故郷）
 │   ├── css/
 │   │   └── style.css             # アプリケーション共通スタイル
 │   └── js/
