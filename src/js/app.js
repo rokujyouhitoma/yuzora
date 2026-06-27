@@ -1048,6 +1048,11 @@ document.addEventListener('DOMContentLoaded', () => {
      * Parses Plain Text Aozora Formatting (Rubies, Page breaks, etc.)
      */
     function parseAozoraText(text) {
+        // XSS対策 (T-E1): 文字列処理の最優先ステップとして特殊文字を一括エスケープ
+        text = text.replace(/&/g, '&amp;')
+                   .replace(/</g, '&lt;')
+                   .replace(/>/g, '&gt;');
+
         let lines = text.split(/\r?\n/);
         let parsedLines = [];
         let title = '';
@@ -1157,11 +1162,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatAozoraMarkup(line) {
-        // Escapes HTML tags to prevent cross-site scripting
-        line = line.replace(/&/g, '&amp;')
-                   .replace(/</g, '&lt;')
-                   .replace(/>/g, '&gt;');
-
         // 1. Ruby with explicit delimiter: ｜漢字《かんじ》 or |漢字《かんじ》
         // Match both full-width ｜ and half-width |
         line = line.replace(/[｜|]([^《\r\n]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');

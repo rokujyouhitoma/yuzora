@@ -73,8 +73,11 @@ test.describe('Yuzora Parser Unit Tests', () => {
     });
 
     test('should escape HTML syntax to prevent XSS', () => {
-        const result = window.Yuzora.formatAozoraMarkup('<script>alert("xss")</script>');
-        assert.strictEqual(result, '&lt;script&gt;alert("xss")&lt;/script&gt;');
+        const result = window.Yuzora.parseAozoraText('<script>alert("title")</script>\n<script>alert("author")</script>\n-------------------------------------------------------\n<script>alert("body")</script>');
+        assert.ok(result.title.includes('&lt;script&gt;'));
+        assert.ok(result.title.includes('&lt;/script&gt;'));
+        assert.ok(result.body.includes('&lt;script&gt;'));
+        assert.ok(result.body.includes('&lt;/script&gt;'));
     });
 
     test('should parse page break marker', () => {

@@ -19,15 +19,15 @@ ID: 002
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [MNG-01-document_ledger.md](file:///workspace/yuzora/yuzora/docs/MNG-01-document_ledger.md)
-- [ ] [MNG-02-development_process.md](file:///workspace/yuzora/yuzora/docs/MNG-02-development_process.md)
-- [ ] [MNG-03-problem_management.md](file:///workspace/yuzora/yuzora/docs/MNG-03-problem_management.md)
-- [ ] [MNG-04-change_management.md](file:///workspace/yuzora/yuzora/docs/MNG-04-change_management.md)
-- [ ] [create-issue/SKILL.md](file:///workspace/yuzora/yuzora/.agents/skills/create-issue/SKILL.md)
-- [ ] [polish-issue/SKILL.md](file:///workspace/yuzora/yuzora/.agents/skills/polish-issue/SKILL.md)
-- [ ] [git-workflow/SKILL.md](file:///workspace/yuzora/yuzora/.agents/skills/git-workflow/SKILL.md)
-- [ ] [changelog-workflow/SKILL.md](file:///workspace/yuzora/yuzora/.agents/skills/changelog-workflow/SKILL.md)
-- [ ] [review-diff-code/SKILL.md](file:///workspace/yuzora/yuzora/.agents/skills/review-diff-code/SKILL.md)
+- [ ] [MNG-01-document_ledger.md](../MNG-01-document_ledger.md)
+- [ ] [MNG-02-development_process.md](../MNG-02-development_process.md)
+- [ ] [MNG-03-problem_management.md](../MNG-03-problem_management.md)
+- [ ] [MNG-04-change_management.md](../MNG-04-change_management.md)
+- [ ] [create-issue/SKILL.md](../../../.agents/skills/create-issue/SKILL.md)
+- [ ] [polish-issue/SKILL.md](../../../.agents/skills/polish-issue/SKILL.md)
+- [ ] [git-workflow/SKILL.md](../../../.agents/skills/git-workflow/SKILL.md)
+- [ ] [changelog-workflow/SKILL.md](../../../.agents/skills/changelog-workflow/SKILL.md)
+- [ ] [review-diff-code/SKILL.md](../../../.agents/skills/review-diff-code/SKILL.md)
 
 ---
 
