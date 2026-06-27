@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added [MNG-09] ユーザー操作履歴を Command パターンとして抽象化し、シリアライズ可能にする実装を完了 (ID: 009 - Issue)。
+- Added デバッグ画面の「システム状態」タブ内に、操作履歴JSONを表示・編集できるテキストエリアおよび履歴のエクスポート/リプレイ機能（ボタンコントロール等）を実装 (ID: 009 - Issue)。
+- Changed デバッグモーダルが開いている状態でのキーボードショートカット `c` / `C` コピーキーの挙動を、アクティブなタブ（システム状態 vs レイアウト診断）に応じて動的にコピー対象（履歴JSON vs 診断レポートMarkdown）を切り替えるよう共通化 (ID: 009 - Issue)。
+- Changed `CommandManager` に最大履歴100世代までの制限と FIFO 破棄、および先頭の `LoadBookCommand` 固定的保護（初期ロードデータ保護）ロジックを実装 (ID: 009 - Issue)。
+- Changed 履歴インポート時の構文エラーや不正配列に対する `try-catch` 例外処理・警告ダイアロックフォールバックによるセキュリティと堅牢性の向上 (ID: 009 - Issue)。
+- Fixed `LoadBookCommand.execute()` にて、ファイル名描画には `textContent` を用い、本文表示時には Aozora HTML パースとサニタイズ処理を強制適用することでインポート履歴からのXSS脆弱性を完全に防止 (ID: 009 - Issue)。
+- Added `tests/unit/app.test.js` に `CommandManager` の 100世代制限、FIFO＆LoadBook保護、JSONシリアライズ、例外捕捉エラーハンドリング等の自動ユニットテストを追加し、すべて正常パスを確認 (ID: 009 - Issue)。
+
 - Added [MNG-09] バックログ 012 から、ユーザー操作履歴の Command パターン化実装用タスクとして [Issue 009](docs/issues/009-command-pattern-operation-history.md) を起票し、詳細な実装方針および DoD の精査（In Progress）を完了。
 - Changed [MNG-09] 目次表示およびジャンプ機能 (TOC) バックログ (docs/backlogs/closed/005-table-of-contents-toc.md) を、実装完了に伴い Closed に更新し、アーカイブディレクトリへ移動。
 - Added [MNG-09] 目次ドロワーのキーボード・スクリーンリーダー向けアクセシビリティ向上バックログ (docs/backlogs/013-toc-accessibility-enhancement.md) を起票 (ID: 013)。

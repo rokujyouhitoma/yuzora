@@ -243,6 +243,16 @@
                             </div>
                         </div>
                         
+                        <!-- Operation History Panel -->
+                        <div class="debug-modal-section debug-section-margin">
+                            <h3>操作履歴（コマンド履歴）</h3>
+                            <textarea id="debug-history-json" class="debug-history-textarea" placeholder="操作履歴のJSONがここに表示されます。または履歴JSONをここに貼り付けてリプレイします。"></textarea>
+                            <div class="debug-buttons">
+                                <button id="btn-export-history" class="btn btn-primary flex-1">履歴をコピー (E)</button>
+                                <button id="btn-import-history" class="btn btn-secondary flex-1">貼り付け履歴をリプレイ</button>
+                            </div>
+                        </div>
+                        
                         <!-- Control Panel -->
                         <div class="debug-modal-section debug-section-margin">
                             <h3>localStorage 操作</h3>

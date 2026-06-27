@@ -56,6 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCopyDebugReport = document.getElementById('btn-copy-debug-report');
     const diagnoseReportOutput = document.getElementById('diagnose-report-output');
 
+    // Debug Command History Elements
+    const debugHistoryJSON = document.getElementById('debug-history-json');
+    const btnExportHistory = document.getElementById('btn-export-history');
+    const btnImportHistory = document.getElementById('btn-import-history');
+
     // Debug Tabs Elements
     const tabBtnMonitor = document.getElementById('tab-btn-monitor');
     const tabBtnDiagnose = document.getElementById('tab-btn-diagnose');
@@ -98,6 +103,272 @@ document.addEventListener('DOMContentLoaded', () => {
         lh: 'line-height-normal',
         spacing: 'spacing-normal'
     };
+
+    // ==========================================================================
+    // Command Pattern & Operation History (Issue 009)
+    // ==========================================================================
+    class Command {
+        constructor(type) {
+            this.type = type;
+        }
+        execute() {
+            throw new Error("execute() must be implemented");
+        }
+        toJSON() {
+            return {
+                type: this.type,
+                params: {}
+            };
+        }
+    }
+
+    class LoadBookCommand extends Command {
+        constructor(fileName, fileContent) {
+            super("LoadBook");
+            this.fileName = fileName;
+            this.fileContent = fileContent;
+        }
+        execute() {
+            // XSS mitigation: currentFileName will be rendered using textContent in displayBook
+            currentFileName = this.fileName;
+            currentFileType = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
+            currentFileContent = this.fileContent;
+            
+            // Re-render book
+            displayBook();
+        }
+        toJSON() {
+            return {
+                type: this.type,
+                params: {
+                    fileName: this.fileName,
+                    fileContent: this.fileContent
+                }
+            };
+        }
+    }
+
+    class NavigatePageCommand extends Command {
+        constructor(targetPage) {
+            super("NavigatePage");
+            this.targetPage = targetPage;
+        }
+        execute() {
+            // Scroll to the specified logical page
+            scrollToPage(this.targetPage);
+        }
+        toJSON() {
+            return {
+                type: this.type,
+                params: {
+                    targetPage: this.targetPage
+                }
+            };
+        }
+    }
+
+    class UpdateConfigCommand extends Command {
+        constructor(configKey, configValue) {
+            super("UpdateConfig");
+            this.configKey = configKey;
+            this.configValue = configValue;
+        }
+        execute() {
+            // Update configuration state
+            config[this.configKey] = this.configValue;
+            
+            // Mirror settings drawer UI active states
+            updateSettingsUI(this.configKey, this.configValue);
+            
+            // Apply layout settings and sync progress
+            isReflowing = true;
+            applySettings();
+            setTimeout(() => {
+                // Restore progress scroll after layout changes
+                const maxScroll = Math.abs(readerViewport.scrollWidth - readerViewport.clientWidth);
+                if (config.direction === 'rtl') {
+                    readerViewport.scrollLeft = -(bookmarkProgress * maxScroll);
+                } else {
+                    readerViewport.scrollLeft = bookmarkProgress * maxScroll;
+                }
+                updateProgress();
+                isReflowing = false;
+            }, 50);
+        }
+        toJSON() {
+            return {
+                type: this.type,
+                params: {
+                    configKey: this.configKey,
+                    configValue: this.configValue
+                }
+            };
+        }
+    }
+
+    class SyncBookmarkCommand extends Command {
+        constructor(progress) {
+            super("SyncBookmark");
+            this.progress = progress;
+        }
+        execute() {
+            bookmarkProgress = this.progress;
+            saveBookmark();
+            updateProgress();
+        }
+        toJSON() {
+            return {
+                type: this.type,
+                params: {
+                    progress: this.progress
+                }
+            };
+        }
+    }
+
+    const CommandManager = {
+        commandHistory: [],
+        isReplaying: false,
+
+        execute(command, isFromReplay = false) {
+            // If replaying and user tries to execute normal actions, ignore it
+            if (this.isReplaying && !isFromReplay) {
+                return;
+            }
+
+            // Run command
+            command.execute();
+
+            // Record command in history if it is not from replay
+            if (!isFromReplay) {
+                // Check redundancy for page navigation and progress bookmark commands to avoid stack bloat
+                if (command.type === "NavigatePage" && this.commandHistory.length > 0) {
+                    const lastCmd = this.commandHistory[this.commandHistory.length - 1];
+                    if (lastCmd.type === "NavigatePage" && lastCmd.targetPage === command.targetPage) {
+                        return; // Ignore duplicate consecutive page turns
+                    }
+                }
+                if (command.type === "SyncBookmark" && this.commandHistory.length > 0) {
+                    const lastCmd = this.commandHistory[this.commandHistory.length - 1];
+                    if (lastCmd.type === "SyncBookmark" && Math.abs(lastCmd.progress - command.progress) < 0.001) {
+                        return; // Ignore microscopic duplicate consecutive progress changes
+                    }
+                }
+
+                this.commandHistory.push(command);
+
+                // FIFO history limit to 100 generations
+                if (this.commandHistory.length > 100) {
+                    // Keep index 0 (LoadBookCommand) protected, discard index 1 (oldest command)
+                    if (this.commandHistory[0].type === "LoadBook") {
+                        this.commandHistory.splice(1, 1);
+                    } else {
+                        // Fallback in case first command is not load book
+                        this.commandHistory.shift();
+                    }
+                }
+
+                // Update debug text area with latest history JSON string
+                if (debugHistoryJSON) {
+                    debugHistoryJSON.value = this.exportJSON();
+                }
+            }
+        },
+
+        exportJSON() {
+            return JSON.stringify(this.commandHistory.map(cmd => cmd.toJSON()), null, 2);
+        },
+
+        importJSON(jsonString) {
+            try {
+                const rawArray = JSON.parse(jsonString);
+                if (!Array.isArray(rawArray)) {
+                    throw new Error("Input operations history must be a JSON array");
+                }
+                const commands = [];
+                for (const item of rawArray) {
+                    if (!item.type || !item.params) {
+                        throw new Error("Invalid command format in history array");
+                    }
+                    let cmd = null;
+                    switch (item.type) {
+                        case "LoadBook":
+                            cmd = new LoadBookCommand(item.params.fileName, item.params.fileContent);
+                            break;
+                        case "NavigatePage":
+                            cmd = new NavigatePageCommand(item.params.targetPage);
+                            break;
+                        case "UpdateConfig":
+                            cmd = new UpdateConfigCommand(item.params.configKey, item.params.configValue);
+                            break;
+                        case "SyncBookmark":
+                            cmd = new SyncBookmarkCommand(item.params.progress);
+                            break;
+                        default:
+                            throw new Error(`Unknown command type: ${item.type}`);
+                    }
+                    if (cmd) {
+                        commands.push(cmd);
+                    }
+                }
+                return commands;
+            } catch (err) {
+                console.error("Failed to parse operations history JSON:", err);
+                alert(`履歴データのインポートに失敗しました:\n${err.message}`);
+                return null;
+            }
+        },
+
+        async replay(commands) {
+            if (!commands || commands.length === 0) return;
+            
+            this.isReplaying = true;
+            // Clear current memory history before starting replay
+            this.commandHistory = [];
+            
+            // Mask UI to prevent user interactions during auto replay
+            if (app) app.classList.add('replaying');
+
+            try {
+                for (const cmd of commands) {
+                    // Delay execution by 300ms to allow rendering / transition cycles
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    this.execute(cmd, true);
+                    // Re-populate commandHistory during replay for consistent session state afterward
+                    this.commandHistory.push(cmd);
+                }
+                if (debugHistoryJSON) {
+                    debugHistoryJSON.value = this.exportJSON();
+                }
+            } catch (err) {
+                console.error("Error during auto-replay operation:", err);
+            } finally {
+                this.isReplaying = false;
+                if (app) app.classList.remove('replaying');
+            }
+        }
+    };
+
+    // Helper to mirror updates back to Settings Drawer buttons
+    function updateSettingsUI(key, value) {
+        let selector = '';
+        if (key === 'theme') selector = `.theme-btn[data-theme="${value}"]`;
+        else if (key === 'font') selector = `.font-btn[data-font="${value}"]`;
+        else if (key === 'direction') selector = `.direction-btn[data-direction="${value}"]`;
+        else if (key === 'size') selector = `.size-btn[data-size="${value}"]`;
+        else if (key === 'lh') selector = `.lh-btn[data-lh="${value}"]`;
+        else if (key === 'spacing') selector = `.spacing-btn[data-spacing="${value}"]`;
+
+        if (selector) {
+            const btn = document.querySelector(selector);
+            if (btn) {
+                // Find all sibling buttons and remove active class
+                const siblings = btn.parentNode.querySelectorAll('button');
+                siblings.forEach(s => s.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        }
+    }
 
     // ==========================================================================
     // Initialization & Event Listeners
@@ -164,6 +435,9 @@ document.addEventListener('DOMContentLoaded', () => {
             debugModal.classList.remove('hidden');
             debugModalOverlay.classList.remove('hidden');
             updateDebugMonitor();
+            if (debugHistoryJSON) {
+                debugHistoryJSON.value = CommandManager.exportJSON();
+            }
         });
     }
 
@@ -177,6 +451,45 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (debugModalOverlay) {
         debugModalOverlay.addEventListener('click', closeDebugModal);
+    }
+
+    // History Export / Import Handlers
+    if (btnExportHistory) {
+        btnExportHistory.addEventListener('click', () => {
+            if (debugHistoryJSON) {
+                // Update history text area
+                debugHistoryJSON.value = CommandManager.exportJSON();
+                
+                // Copy to clipboard
+                debugHistoryJSON.select();
+                navigator.clipboard.writeText(debugHistoryJSON.value)
+                    .then(() => {
+                        const originalText = btnExportHistory.textContent;
+                        btnExportHistory.textContent = "コピー完了！";
+                        btnExportHistory.classList.add('btn-success');
+                        setTimeout(() => {
+                            btnExportHistory.textContent = originalText;
+                            btnExportHistory.classList.remove('btn-success');
+                        }, 1500);
+                    })
+                    .catch(err => {
+                        console.error("Clipboard copy failed:", err);
+                        alert("操作履歴をコピーできませんでした。");
+                    });
+            }
+        });
+    }
+
+    if (btnImportHistory) {
+        btnImportHistory.addEventListener('click', () => {
+            if (debugHistoryJSON) {
+                const commands = CommandManager.importJSON(debugHistoryJSON.value);
+                if (commands) {
+                    closeDebugModal();
+                    CommandManager.replay(commands);
+                }
+            }
+        });
     }
 
     function updateDebugMonitor() {
@@ -737,7 +1050,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!isReflowing && !isDraggingProgress && !isSnapping) {
                 snapScrollPosition();
             }
-            saveBookmark();
+            if (currentFileName && !CommandManager.isReplaying) {
+                CommandManager.execute(new SyncBookmarkCommand(bookmarkProgress));
+            } else {
+                saveBookmark();
+            }
         }, 300);
     }
 
@@ -856,10 +1173,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Copy Layout Diagnosis Report with 'c' or 'C'
-            if (e.key === 'c' || e.key === 'C') {
-                if (btnCopyDebugReport && !btnCopyDebugReport.hasAttribute('disabled')) {
-                    btnCopyDebugReport.click();
+            // Context-aware export with 'e' or 'E'
+            if (e.key === 'e' || e.key === 'E') {
+                const isMonitorTab = tabContentMonitor && !tabContentMonitor.classList.contains('hidden');
+                if (isMonitorTab) {
+                    // System Monitor tab is active: copy operations history JSON
+                    if (btnExportHistory) btnExportHistory.click();
+                } else {
+                    // Layout Diagnosis tab is active: copy diagnostic report
+                    if (btnCopyDebugReport && !btnCopyDebugReport.hasAttribute('disabled')) {
+                        btnCopyDebugReport.click();
+                    }
                 }
                 e.preventDefault();
                 return;
@@ -972,8 +1296,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 text = utf8Decoder.decode(arrayBuffer);
             }
 
-            currentFileContent = text;
-            displayBook();
+            CommandManager.execute(new LoadBookCommand(file.name, text));
         };
 
         reader.readAsArrayBuffer(file);
@@ -998,8 +1321,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const utf8Decoder = new TextDecoder('utf-8');
                     text = utf8Decoder.decode(arrayBuffer);
                 }
-                currentFileContent = text;
-                displayBook();
+                CommandManager.execute(new LoadBookCommand(`${book.cardId}_yoko.txt`, text));
             })
             .catch(err => {
                 console.error(err);
@@ -1368,25 +1690,40 @@ document.addEventListener('DOMContentLoaded', () => {
         readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
     }
 
+    function scrollToPage(targetPage) {
+        const clientWidth = readerViewport.clientWidth;
+        const scrollWidth = readerViewport.scrollWidth;
+        const maxScroll = scrollWidth - clientWidth;
+        if (maxScroll <= 0) return;
+
+        const targetScroll = Math.min(maxScroll, Math.max(0, (targetPage - 1) * clientWidth));
+        const signedTargetScroll = config.direction === 'rtl' ? -targetScroll : targetScroll;
+
+        readerViewport.scrollTo({
+            left: signedTargetScroll,
+            behavior: 'smooth'
+        });
+    }
+
     function nextPage() {
-        const amount = readerViewport.clientWidth;
-        if (config.direction === 'rtl') {
-            // Forward in RTL layout means scrolling Left (negative direction)
-            readerViewport.scrollBy({ left: -amount, behavior: 'smooth' });
-        } else {
-            // Forward in LTR layout means scrolling Right (positive direction)
-            readerViewport.scrollBy({ left: amount, behavior: 'smooth' });
+        const clientWidth = readerViewport.clientWidth;
+        const scrollWidth = readerViewport.scrollWidth;
+        const currentScroll = Math.abs(readerViewport.scrollLeft);
+        const currentPage = Math.round(currentScroll / clientWidth) + 1;
+        const pageCount = Math.round(scrollWidth / clientWidth);
+
+        if (currentPage < pageCount) {
+            CommandManager.execute(new NavigatePageCommand(currentPage + 1));
         }
     }
 
     function prevPage() {
-        const amount = readerViewport.clientWidth;
-        if (config.direction === 'rtl') {
-            // Backward in RTL layout means scrolling Right (positive direction)
-            readerViewport.scrollBy({ left: amount, behavior: 'smooth' });
-        } else {
-            // Backward in LTR layout means scrolling Left (negative direction)
-            readerViewport.scrollBy({ left: -amount, behavior: 'smooth' });
+        const clientWidth = readerViewport.clientWidth;
+        const currentScroll = Math.abs(readerViewport.scrollLeft);
+        const currentPage = Math.round(currentScroll / clientWidth) + 1;
+
+        if (currentPage > 1) {
+            CommandManager.execute(new NavigatePageCommand(currentPage - 1));
         }
     }
 
@@ -1421,10 +1758,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const lastType = localStorage.getItem('last_read_file_type');
 
         if (lastName && lastContent && lastType) {
-            currentFileName = lastName;
-            currentFileContent = lastContent;
-            currentFileType = lastType;
-            displayBook();
+            CommandManager.execute(new LoadBookCommand(lastName, lastContent));
         }
     }
 
@@ -1497,14 +1831,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const buttons = document.querySelectorAll(selector);
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                
                 const value = btn.getAttribute(`data-${configKey}`);
-                config[configKey] = value;
-                
-                callback(value);
-                saveSettings();
+                if (!CommandManager.isReplaying) {
+                    CommandManager.execute(new UpdateConfigCommand(configKey, value));
+                } else {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    config[configKey] = value;
+                    callback(value);
+                    saveSettings();
+                }
             });
         });
     }
@@ -1663,14 +1999,8 @@ document.addEventListener('DOMContentLoaded', () => {
             pageIndex = Math.floor(absolutePosition / viewportWidth);
         }
 
-        let targetScroll = 0;
-        if (config.direction === 'rtl') {
-            targetScroll = -(pageIndex * viewportWidth);
-        } else {
-            targetScroll = pageIndex * viewportWidth;
-        }
-
-        readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
+        // Execute scroll via CommandManager
+        CommandManager.execute(new NavigatePageCommand(pageIndex + 1));
 
         // Focus the target element after smooth scroll completes to prevent layout jump or scroll interruption
         setTimeout(() => {
@@ -1724,6 +2054,11 @@ document.addEventListener('DOMContentLoaded', () => {
         formatAozoraMarkup,
         config,
         runLayoutDiagnosis,
-        getCurrentTOC: () => currentTOC
+        getCurrentTOC: () => currentTOC,
+        CommandManager,
+        LoadBookCommand,
+        NavigatePageCommand,
+        UpdateConfigCommand,
+        SyncBookmarkCommand
     };
 });

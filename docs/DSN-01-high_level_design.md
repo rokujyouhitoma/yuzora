@@ -139,7 +139,28 @@ sequenceDiagram
     deactivate C
 ```
 
-### 2.4 画面構成要素一覧 (UI Screen Component Breakdown)
+### 2.4 コマンド履歴と自動リプレイのデータフロー
+
+バグ再現、ユーザー操作の自動再現（リプレイ）、および操作ログのシリアライズを行うためのコマンド履歴データフローです。
+
+```mermaid
+graph TD
+    User["ユーザー操作 (本選択/スクロール/設定変更/cキー)"] -->|"イベント発生"| App["app.js (Controller)"]
+    App -->|"具象コマンド生成"| Cmd["具象Commandインスタンス<br>(LoadBook / NavigatePage / UpdateConfig)"]
+    Cmd -->|"execute() ＆ 登録要求"| Mgr["CommandManager"]
+    Mgr -->|"レシーバー変更実行"| Recv["読書画面 / ビューポート / LocalStorage (適用先)"]
+    Mgr -->|"履歴追加 (Max 100, FIFO, ロード保護)"| Hist["commandHistory (メモリ配列)"]
+    
+    %% インポート・エクスポートフロー
+    Hist -->|"exportJSON() / cキー"| Clip["クリップボード (JSON)"]
+    Clip -->|"ペースト ＆ インポート"| DebugUI["デバッグUI (テキストエリア)"]
+    DebugUI -->|"importJSON() ＆ replay()"| Mgr
+    Mgr -->|"300ms非同期ループ"| Cmd
+```
+
+---
+
+### 2.5 画面構成要素一覧 (UI Screen Component Breakdown)
 
 本アプリケーションを構成する主要な3画面のDOM・UI構成要素、対応する識別子（ID/クラス名）、およびそれぞれの論理的な役割は以下の通りです。
 

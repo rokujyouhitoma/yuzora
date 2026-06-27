@@ -530,3 +530,54 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
 - CSSフェードイン時の `transform` の衝突を回避するため、専用アニメーション `@keyframes modalFadeIn`（`translate(-50%, -48%)` から `translate(-50%, -50%)` への遷移）を適用し、モーダルの `left: 50%`, `top: 50%` による中央配置とアニメーション時の変形を共存させてかくつきを解消します。
 - モーダルに `direction: ltr; writing-mode: horizontal-tb;` を明示的に付与し、RTLや縦書きモードからの座標計算の影響を完全に排除します。
 
+---
+
+## 7. 操作履歴Commandパターン物理設計 (Command Pattern & History Specifications)
+
+ユーザーの主要操作を抽象化・シリアライズし、リプレイ可能にする物理クラスおよびロジックの設計仕様です。
+
+### 7.1 Command クラス群の設計
+- **`Command` (基底クラス)**:
+  - `constructor(type)` : 引数としてコマンド種別（文字列）を受け取り、インスタンスプロパティ `type` として保持します。
+  - `execute()` : 抽象メソッド。各具象クラスでオーバーライドします。
+  - `toJSON()` : シリアライズ用のプレーンオブジェクト（`{ type: this.type, params: this.params }`）を返します。
+- **`LoadBookCommand` (具象クラス)**:
+  - パラメータ `params`: `{ fileName, fileContent }`
+  - `execute()`: `currentFileName = fileName`, `currentFileContent = fileContent` を設定し、`displayBook()` を実行。
+  - **セキュリティ対策**: `fileName` の描画時には必ず `textContent` を使用し、本文の DOM 適用時には `DOMParser` を介したHTMLパースおよびサニタイズ処理（`sanitizeDOM`）を経由させ、XSSを防止します。
+- **`NavigatePageCommand` (具象クラス)**:
+  - パラメータ `params`: `{ targetPage }` (1〜N)
+  - `execute()`: 指定の論理ページ番号へスクロール。`scrollToPage(targetPage)` を実行。
+- **`UpdateConfigCommand` (具象クラス)**:
+  - パラメータ `params`: `{ configKey, configValue }`
+  - `execute()`: `config[configKey] = configValue` を適用し、表示オプション DOM のクラス更新と画面更新処理（`applySettings()`, `updateProgress()`）をトリガー。
+- **`SyncBookmarkCommand` (具象クラス)**:
+  - パラメータ `params`: `{ progress }`
+  - `execute()`: `bookmarkProgress = progress` を設定し、localStorage へのしおり保存（`saveBookmark`）を実行。
+
+### 7.2 コマンドマネージャ (`CommandManager`) の設計
+- **履歴管理プロパティ**:
+  - `commandHistory` : 実行された `Command` インスタンスを保持する配列。
+  - `isReplaying` : リプレイ中の場合に `true` となるフラグ。
+- **履歴世代数の制限・初期ロード保護アルゴリズム (`execute(command)`)**:
+  - コマンド実行の度に履歴配列へ追加します。
+  - 配列の長さが 100 を超えた場合、以下の FIFO 保護処理を実行します：
+    ```javascript
+    if (commandHistory.length > 100) {
+        // 先頭（インデックス 0）の LoadBookCommand は削除から除外
+        // インデックス 1 にある最古のコマンドを切り捨てる
+        commandHistory.splice(1, 1);
+    }
+    ```
+- **シリアライズとエラーハンドリング (`exportJSON()` / `importJSON(jsonString)`)**:
+  - `exportJSON()`: `JSON.stringify(commandHistory)` により、JSON文字列としてエクスポートします。
+  - `importJSON(jsonString)`: `JSON.parse` を用いてオブジェクト配列へ復元。`type` と `params` から対応する具象 `Command` インスタンスを再構築します。パース時およびインスタンス生成時のすべての例外を `try-catch` で囲み、エラー検知時には警告アラートをデバッグUIへ出力して安全にフォールバックします。
+- **自動リプレイ処理 (`replay(commands)`)**:
+  - `isReplaying = true` に設定し、リプレイ中はユーザーによる新規コマンド実行やスクロール操作等のインタラクションをガード（無視）します。
+  - 各コマンドを **`300ms`** のインターバルをあけて順次（非同期シーケンス）実行し、スクロール等のレンダリングや同期の遅延を吸収します。すべてのコマンド実行が完了したのち `isReplaying = false` に戻します。
+
+### 7.3 `e` / `E` ショートカットキーの動的分岐共通化仕様
+- `keydown` イベント監視（`keydown` ハンドラ）にて、デバッグ画面が開いている（`isModalOpen === true`）状態で `e` / `E` キーが押下された際、表示されているアクティブなタブの要素クラスを確認し、動的に呼び出す処理を切り替えます：
+  - `#debug-tab-content-monitor` がアクティブ（`.hidden` クラスを持っていない）な時：`CommandManager.exportJSON()` を実行し、クリップボードに操作履歴 JSON をコピーします。
+  - `#debug-tab-content-diagnose` がアクティブな時：従来のレイアウト診断レポート（Markdown）をクリップボードにコピーします。
+
