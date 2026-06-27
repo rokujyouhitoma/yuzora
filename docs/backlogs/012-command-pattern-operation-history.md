@@ -14,12 +14,12 @@ ID: 012
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [src/js/app.js](file:///workspace/yuzora/yuzora/src/js/app.js)
+- [src/js/app.js](../../src/js/app.js)
   - コマンドインターフェースと具象コマンドクラスの定義
   - ユーザー操作発生時のコマンド発行・履歴マネージャの追加
-- [index.html](file:///workspace/yuzora/yuzora/index.html)
+- [index.html](../../index.html)
   - デバッグ画面（`#debug-modal`）への履歴のインポート・エクスポート用 UI の追加
-- [src/css/style.css](file:///workspace/yuzora/yuzora/src/css/style.css)
+- [src/css/style.css](../../src/css/style.css)
   - デバッグ用のUIスタイル追加
 
 ---

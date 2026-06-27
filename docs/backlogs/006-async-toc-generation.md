@@ -15,7 +15,7 @@ ID: 006
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [src/js/app.js](file:///workspace/yuzora/yuzora/src/js/app.js)
+- [src/js/app.js](../../src/js/app.js)
   - `parseAozoraText()`（パースロジックの非同期化・遅延評価の検討）
   - `buildTOCList()`（DOM構築の非同期スケジュールおよびバッチ処理）
   - `updateProgress()` またはスクロール監視部（アクティブ見出し判定の非同期化）

@@ -22,7 +22,7 @@ ID: 008
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [src/js/app.js](file:///workspace/yuzora/yuzora/src/js/app.js) (の `jumpToHeading` および `buildTOCList` 内のページインデックス計算ロジック)
+- [src/js/app.js](../../src/js/app.js) (の `jumpToHeading` および `buildTOCList` 内のページインデックス計算ロジック)
 
 ---
 
