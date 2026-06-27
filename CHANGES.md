@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added [REQ-04] バックログ登録用スキル (.agents/skills/register-backlog/SKILL.md) を新設 (ID: 007)。
+- Added [REQ-04] 目次表示およびジャンプ機能 (TOC) をバックログ (BACKLOG-005) に登録 (ID: 007)。
 - Fixed [T-I1] Content Security Policy (CSP) メタタグを index.html に導入し、外部へのコネクション制限 (connect-src 'self') および不要なリソース取得を制限して情報漏洩を防止 (ID: 007)。
 
 - Fixed [T-E2] HTMLファイル読み込み時のXSS脆弱性の解消。ホワイトリスト方式のHTMLサニタイズ処理 (sanitizeDOM) を実装し、危険なタグやイベントハンドラを除去するように改善 (ID: 006)。
