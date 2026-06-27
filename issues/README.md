@@ -10,6 +10,7 @@
 | ID | 種別 | 優先度 | ステータス | タイトル | 担当 | 関連ドキュメント・ファイル |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **001** | Bug | High | Analyzing | ページの左右が見切れてしまう | AI Agent | [001-page-left-right-overrun.md](001-page-left-right-overrun.md) |
+| **002** | Feature | Medium | Closed | MNG-00に基づくskills, docsの見直し | AI Agent | [002-review-skills-and-docs-based-on-mng-00.md](closed/002-review-skills-and-docs-based-on-mng-00.md) |
 
 ## 2. 状態（ステータス）定義
 

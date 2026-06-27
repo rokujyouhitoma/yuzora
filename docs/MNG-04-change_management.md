@@ -45,8 +45,10 @@ flowchart TD
     Verify --> Release["7. リリース & 適用確認"]
 ```
 
-### 3.1 変更要求 (RFC: Request for Change) の起票
-* 変更の必要性、期待される効果、実装の概要を起票します。本プロジェクトでは、AI Agentが計画書（`implementation_plan.md`）を作成する形でRFCとします。
+### 3.1 変更要求 (RFC: Request for Change) の起票と設計先行更新（関連スキル: `create-issue`, `polish-issue`）
+* **Issueチケットの起票**: 変更の必要性や目的を整理するため、`create-issue` スキルを用いてIssueを登録します。
+* **変更計画 (RFC) の作成と設計の先行更新**: 
+  AI Agentが計画書（`implementation_plan.md`）を作成する形でRFCとします。また、コード変更に先立ち、`polish-issue` スキルを実行して [DSN-01](/docs/DSN-01-high_level_design.md) や [DSN-02](/docs/DSN-02-low_level_design.md) などの設計ドキュメントの先行更新を行い、ドキュメント駆動プロセスを遵守します。
 
 ### 3.2 影響分析 (Impact Analysis) とセキュリティ評価
 * **変更が与える影響**:
@@ -56,16 +58,18 @@ flowchart TD
 
 ### 3.3 承認プロセス
 * **変更の承認権限**:
-  * 一般変更は、人間（User）による明示的な承認が必要です。承認されるまで、AI Agentはソースコードの書き換えやコマンドによる適用を行ってはなりません。
+  * 一般変更は、人間（User）による計画書（`implementation_plan.md`）への明示的な承認が必要です。承認されるまで、AI Agentはソースコードの書き換えやコマンドによる適用を行ってはなりません。
 
-### 3.4 変更の実施と検証（回帰テストの方針）
+### 3.4 変更の実施と検証（回帰テストの方針）（関連スキル: `review-diff-code`）
 * 承認後、タスクリスト（`task.md`）に沿って変更を実施します。
 * 変更後、元の機能が破壊されていないかを確認するため、以下の検証を行います。
   * 既存の事前定義作品が正常に表示されるか。
   * UI（テーマ切り替え、文字サイズ調整）が正しく機能するか。
+* 実装完了後、`review-diff-code` スキルを用いて7つの観点で厳密な差分コードレビューを行います。
 
-### 3.5 完了確認 (Post-Implementation Review)
+### 3.5 完了確認 (Post-Implementation Review) とトレーサビリティの完了（関連スキル: `git-workflow`, `changelog-workflow`）
 * 変更の成果および検証結果を要約（`walkthrough.md`）として作成し、人間に最終確認を求めます。
+* 最終確認後、`git-workflow` スキルによりIssueを `Closed` に移行し、`changelog-workflow` に従って `CHANGES.md` に Issue ID 付きで変更履歴を記録し、トレーサビリティを確立します。
 
 ---
 

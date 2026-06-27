@@ -23,7 +23,8 @@ This skill ensures that all user-facing and architectural changes are recorded i
 3. **Format Entries**:
    - Write clear, concise descriptions.
    - Append the local issue ID (e.g. `(ID: 001)`) at the end of each bullet point.
+   - **If design documents (e.g. [DSN-01](file:///workspace/yuzora/yuzora/docs/DSN-01-high_level_design.md) or [DSN-02](file:///workspace/yuzora/yuzora/docs/DSN-02-low_level_design.md)) or architectural decisions (ADR) were updated, explicitly mention them in the description to preserve traceability (e.g., "... and updated DSN-02 (ID: 001)").**
    - Example:
      ```markdown
-     - Added keyboard shortcut trigger `d`/`D` to open/close the debug console (ID: 001).
+     - Added keyboard shortcut trigger `d`/`D` to open/close the debug console and updated DSN-02 (ID: 001).
      ```

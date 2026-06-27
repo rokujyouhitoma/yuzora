@@ -1,45 +1,19 @@
 # [MNG-02] 開発プロセスおよび成果物定義書 (Development Process & Deliverables Definition) - ゆうぞら (Yuzora)
 
-本ドキュメントは、青空文庫縦書きビューアー「ゆうぞら (Yuzora)」におけるソフトウェア開発手法の方針、開発プロセス（工程）、各工程で作成・維持される成果物（Deliverables）、およびそれぞれの担当エージェント・担当者を定義します。
+本ドキュメントは、「ゆうぞら (Yuzora)」プロジェクトにおける開発ライフサイクル、各工程の作業定義、担当者、および成果物の追跡性を体系的に定義し、プロセス統制（ガバナンス）を担保するための規定です。
 
 ---
 
-## 1. 開発手法の方針 (Development Methodology Policies)
+## 1. 開発手法・設計の方針 (Development Methodology & Design Policies)
 
-ゆうぞらプロジェクトでは、高品質かつ迅速なプロダクト開発を実現するため、以下の開発手法・設計方針を適用します。
+本システムにおける核心的な開発および設計の方針（インクリメンタルな反復プロセス、TOGAF EAの適用、HLD/LLD of 分離、ADRによる記録、ドキュメント/プロセス/ルールの統制、および直感的なUI/UX方針）は、プロジェクトの憲章である [MNG-00 開発哲学・マニフェスト](MNG-00-development_philosophy.md) に体系的にまとめられています。
 
-### 1.1 反復的かつインクリメンタルな開発プロセス (Iterative & Incremental)
-本システムは単一の完成形を一度に構築するのではなく、コア機能から段階的に構築・検証を繰り返す「反復的かつインクリメンタル」な手法を採用します。
-* **インクリメンタル（段階的）**: 
-  1. ファイル読み込みおよび Shift_JIS デコード機能（ベースライン）
-  2. 青空文庫記法（ルビ、改ページ等）のパースエンジン
-  3. 縦書き・ページめくり・マルチカラム表示等のビューアー機能
-  4. 表示テーマ、フォント、文字サイズ等の設定カスタマイズ機能
-  5. しおり自動保存およびセッション復元機能
-  のように、動作可能なインクリメントを段階的に追加します。
-* **反復的（イテレーティブ）**: 
-  各インクリメントごとに「要求定義・要件定義・設計・実装・検証」のサイクルを反復的に回し、テスト結果やユーザーレビューに基づくフィードバックを素早く取り込んで設計・実装を磨き上げます。
+開発者は開発プロセスにおいて、常に `MNG-00` の設計原則およびガバナンスルールに厳従し、後述する「ドキュメント・スキル・コードの三位一体（連携）モデル」および「V字開発プロセス」に則って、高品質な成果物（Deliverables）を作成・維持します。
 
-### 1.2 TOGAF EA（エンタープライズアーキテクチャ）の考え方の導入
-システムの全体最適とビジネス（読書体験）価値の最大化、将来の拡張性を担保するため、　**TOGAF（The Open Group Architecture Framework）** のアーキテクチャ開発手法（ADM）に基づき、以下のアーキテクチャドメインで設計を整理します。
+### 1.1 ドキュメント・スキル・コードの三位一体（連携）モデル
+開発プロセスは、設計図となる「ドキュメント」、実行手順としての「スキル（接着剤）」、および実態となる「コード」が相互に連携することで統制されます。すべての変更（新機能追加、バグ修正、リファクタリング）は、コードの書き換えに先立ち、ドキュメント（Issueおよび設計書）の先行更新を行う「ドキュメント駆動型開発」を遵守しなければなりません。
 
-1. **ビジネスアーキテクチャ (BA - Business Architecture)**:
-   * **定義対象**: ユーザーの本質的な読書プロセス、青空文庫テキストの提供プロセス、本物の書籍に近い縦書き読書体験というビジネス価値、対象とするユースケースや作品の範囲の整理。
-   * **ドキュメント位置づけ**: [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md) （要求定義書）にて表現。
-2. **情報システムアーキテクチャ / テクノロジーアーキテクチャの要件**:
-   * **定義対象**: ビジネス要求をシステム仕様に翻訳した機能的・非機能的な要件。
-   * **ドキュメント位置づけ**: [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md) （要件定義書）にて表現。
-3. **アプリケーションアーキテクチャ (AA - Application Architecture)**:
-   * **定義対象**: アプリケーションのコンポーネント構成（パース、ビューアー、設定、ストレージ等）および論理的なデータ連携方式。
-   * **ドキュメント位置づけ**: [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) （基本設計書：論理構成）にて定義。
-4. **データアーキテクチャ (DA - Data Architecture)**:
-   * **定義対象**: ファイルのデータ構造（Aozora Text/HTML）および永続化データ（LocalStorage）の論理・物理スキーマ。
-   * **ドキュメント位置づけ**: [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) （論理データ構造）および [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md) （物理データスキーマ）で定義。
-5. **テクノロジーアーキテクチャ (TA - Technology Architecture)**:
-   * **定義対象**: 実行プラットフォーム（ブラウザ）、動作環境、開発技術（HTML5, Vanilla CSS, JS）、Webフォントなどの物理的技術スタック。
-   * **ドキュメント位置づけ**: [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) （論理選定）および [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md) （物理スタイル・クラス）で定義。
-
-### 1.3 HLD（基本設計）とLLD（詳細設計）の明確な分離
+### 1.2 基本設計 (HLD) と詳細設計 (LLD) の明確な分離
 アーキテクチャの変更容易性と実装の効率性を高めるため、基本設計（High-Level Design: HLD）と詳細設計（Low-Level Design: LLD）の抽象度と関心領域を明確に分けます。
 
 | 項目 | 基本設計 (HLD) | 詳細設計 (LLD) |
@@ -132,6 +106,7 @@ flowchart TD
   * **主担当**: AI Agent（要求の整理・ドキュメント作成・構造化）
   * **確認・承認**: User (人間)（ビジネス目標・要求事項の提示および最終承認）
 * **インプット**: ユーザーからの機能要求、利用する外部公開リソース（青空文庫形式）の仕様。
+* **関連スキル**: `create-issue`（要求が発生した際、または機能追加・改善の検討開始時にIssueチケットを起票する）
 * **主要成果物**:
   * [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md) （要求定義書）
   * [REQ-02-feature_list.md](/docs/REQ-02-feature_list.md) （機能一覧）
@@ -142,6 +117,7 @@ flowchart TD
   * **主担当**: AI Agent（システム仕様の策定・要件定義書の作成）
   * **確認・承認**: User (人間)（要件定義内容の確認・承認）
 * **インプット**: [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md), [REQ-02-feature_list.md](/docs/REQ-02-feature_list.md)
+* **関連スキル**: `create-issue`（システムバグや新たな技術要件が識別された際にIssueチケットを起票する）
 * **主要成果物**:
   * [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md) （要件定義書）
 
@@ -151,6 +127,7 @@ flowchart TD
   * **主担当**: AI Agent（構造の可視化・モジュール構造化・デザインシステムの基礎設計）
   * **確認・承認**: User (人間)（アーキテクチャの整合性レビュー・承認）
 * **インプット**: [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md)
+* **関連スキル**: `polish-issue`（設計段階で、アーキテクチャやUIデザイン原則の変更を `DSN-01` 等に先行適用する）
 * **主要成果物**:
   * [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) （基本設計書）
   * **docs/adr/*.md** （アーキテクチャ意思決定記録：重要設計事項が発生した際に適宜新規作成・更新）
@@ -161,6 +138,7 @@ flowchart TD
   * **主担当**: AI Agent（関数の入出力仕様定義・パース正規表現の定義・アルゴリズム設計）
   * **確認・承認**: User (人間)（技術方針のフィードバック、および詳細設計の承認）
 * **インプット**: [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md)
+* **関連スキル**: `polish-issue`（実装方針の策定において、具体的な関数やデータ構造の変更を `DSN-02` 等に先行適用し、ドキュメントとコードの乖離を事前に防ぐ）
 * **主要成果物**:
   * [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md) （詳細設計書）
   * **docs/adr/*.md** （詳細な技術的意思決定記録：必要に応じて作成・更新）
@@ -171,6 +149,7 @@ flowchart TD
   * **主担当**: AI Agent（HTML/CSS/JSコーディング、コードのセルフチェック）
   * **確認・レビュー**: User (人間)（コードの最終レビュー）
 * **インプット**: [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md)
+* **関連スキル**: `review-diff-code`（実装した差分コードが、MNG-00の核心設計原則やセキュリティ・性能等の基準を満たしているかを検証する）
 * **主要成果物**:
   * [index.html](/index.html) （アプリ構造およびマークアップ）
   * [style.css](/src/css/style.css) （デザイン・テーマ・マルチカラム定義）
@@ -182,6 +161,7 @@ flowchart TD
   * **主担当**: AI Agent（単体テスト・検証の実行、単体バグ修正）
   * **確認・レビュー**: User (人間)（検証結果の確認、コードのテストカバレッジレビュー）
 * **インプット**: [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md), [index.html](/index.html), [style.css](/src/css/style.css), [app.js](/src/js/app.js), [MNG-05-test_cases.md](/docs/MNG-05-test_cases.md)（単体検証テストケース）
+* **関連スキル**: `review-diff-code`（単体テストケースがすべて正常に通過していることをセルフレビューする）
 * **主要成果物**:
   * **単体検証結果レポート** （`walkthrough.md` に結果を記載）
 
@@ -191,6 +171,7 @@ flowchart TD
   * **主担当**: AI Agent（結合テスト・レイアウト整合検証の実行）
   * **確認・レビュー**: User (人間)（レイアウト崩れの有無確認、SPA遷移の同期挙動確認）
 * **インプット**: [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md), [app.js](/src/js/app.js), [style.css](/src/css/style.css), [MNG-05-test_cases.md](/docs/MNG-05-test_cases.md)（結合検証テストケース）
+* **関連スキル**: `review-diff-code`（画面遷移やデザインアライメントに退行バグが発生していないか確認する）
 * **主要成果物**:
   * **結合検証結果レポート** （`walkthrough.md` に結果を記載）
 
@@ -200,6 +181,7 @@ flowchart TD
   * **主担当**: AI Agent（システムテスト実行、パフォーマンス・セキュリティ検証）
   * **確認・レビュー**: User (人間)（要件適合性のレビュー）
 * **インプット**: [REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md), [app.js](/src/js/app.js), [style.css](/src/css/style.css), [MNG-05-test_cases.md](/docs/MNG-05-test_cases.md)（システム検証テストケース）
+* **関連スキル**: `review-diff-code`（自動テストE2Eスクリプト等の全件通過および機能網羅率を最終レビューする）
 * **主要成果物**:
   * **システム検証結果レポート** （`walkthrough.md` に結果を記載）
 
@@ -209,6 +191,7 @@ flowchart TD
   * **受入検証実行**: User (人間)（受入検証の実行、最終リリース承認）
   * **支援**: AI Agent（動作ログ確認、デプロイ検証支援）
 * **インプット**: [REQ-01-user_requirements.md](/docs/REQ-01-user_requirements.md), [MNG-05-test_cases.md](/docs/MNG-05-test_cases.md)（受入検証テストケース）
+* **関連スキル**: `git-workflow`（リリースマージ、チケットのクローズ処理、および設計書と実装コードの完全整合検証）、`changelog-workflow`（CHANGES.md への変更履歴記録と Issue ID 連携によるトレーサビリティの完了）
 * **主要成果物**:
   * **受入検証結果・リリースレポート** （`walkthrough.md`, `README.md`）
   * **静的プロダクションリリースファイル群**
