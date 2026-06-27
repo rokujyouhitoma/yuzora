@@ -624,12 +624,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Scroll & Window Resize Events
     let scrollSaveTimeout = null;
+    let isSnapping = false;
+
     function handleScrollDebounced() {
         handleScroll();
         clearTimeout(scrollSaveTimeout);
         scrollSaveTimeout = setTimeout(() => {
+            if (!isReflowing && !isDraggingProgress && !isSnapping) {
+                snapScrollPosition();
+            }
             saveBookmark();
         }, 300);
+    }
+
+    function snapScrollPosition() {
+        if (!readerViewport) return;
+
+        const clientWidth = readerViewport.clientWidth;
+        const currentScroll = Math.abs(readerViewport.scrollLeft);
+        const maxScroll = readerViewport.scrollWidth - clientWidth;
+
+        if (maxScroll <= 0) return;
+
+        // Find the closest page boundary
+        const closestPageIndex = Math.round(currentScroll / clientWidth);
+        let targetScroll = closestPageIndex * clientWidth;
+
+        // Bound check with max scroll
+        if (targetScroll > maxScroll) {
+            targetScroll = maxScroll;
+        }
+
+        const signedTargetScroll = config.direction === 'rtl' ? -targetScroll : targetScroll;
+        const diff = Math.abs(readerViewport.scrollLeft - signedTargetScroll);
+
+        // Only snap if there is a noticeable alignment offset to prevent loops
+        if (diff >= 0.5) {
+            isSnapping = true;
+            
+            readerViewport.scrollTo({
+                left: signedTargetScroll,
+                behavior: 'smooth'
+            });
+
+            // Reset snapping state after the smooth scroll animation completes
+            setTimeout(() => {
+                isSnapping = false;
+                handleScroll();
+                saveBookmark();
+            }, 350);
+        }
     }
     
     readerViewport.addEventListener('scroll', handleScrollDebounced);

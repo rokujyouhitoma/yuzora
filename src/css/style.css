@@ -458,12 +458,13 @@ a:hover {
 }
 
 /* Viewport for reading text */
+/* Viewport for reading text */
 .reader-viewport {
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: var(--reader-padding-x);
+    right: var(--reader-padding-x);
     z-index: 1;
     overflow-x: hidden;
     overflow-y: hidden;
@@ -537,6 +538,7 @@ a:hover {
 /* Set page column width to match viewport height-based ratio */
 @media (min-width: 768px) {
     :root {
+        --reader-padding-x: 60px;
         --reader-viewport-padding-x: 40px;
     }
     .reader-content {
@@ -548,6 +550,7 @@ a:hover {
         --reader-padding-top: 88px; /* 64px header + 24px padding */
         --reader-padding-bottom: 64px; /* 40px footer + 24px padding */
         --reader-padding-x: 24px; /* Slightly wider mobile margins for premium readability */
+        --reader-viewport-padding-x: 24px;
     }
     .reader-content {
         column-width: calc(100% - var(--reader-viewport-padding-x) * 2);
