@@ -1,6 +1,6 @@
 ---
 name: create-issue
-description: Create a new issue file under the issues/ directory in the workspace.
+description: Create a new issue file under the docs/issues/ directory in the workspace.
 ---
 # create-issue
 
@@ -9,13 +9,13 @@ This skill dictates how to initialize a new issue file to ensure uniformity and 
 ## Instructions
 
 1. **Check Existing Issues**:
-   - List the files under `issues/` to find the next sequential number.
+   - List the files under `docs/issues/` to find the next sequential number.
    - If no issues exist, the first issue will be `001`.
 
 2. **Filename Format**:
-   - The file MUST be created under the `issues/` directory.
-   - Format: `issues/<3-digit-padded-number>-<hyphenated-lowercase-title>.md`.
-   - Example: `issues/001-implement-keyboard-shortcuts.md`
+   - The file MUST be created under the `docs/issues/` directory.
+   - Format: `docs/issues/<3-digit-padded-number>-<hyphenated-lowercase-title>.md`.
+   - Example: `docs/issues/001-implement-keyboard-shortcuts.md`
 
 3. **Content Template selection**:
    - Depending on the issue type, copy the content structure from either:
@@ -32,5 +32,5 @@ This skill dictates how to initialize a new issue file to ensure uniformity and 
    - For bugs, fill in steps to reproduce or known environments. Keep other technical planning/DoD sections blank or placeholders. These will be filled in during the `polish-issue` phase.
 
 4. **Register in Issue Ledger**:
-   - Right after creating the issue file, open [issues/README.md](README.md) (Issue台帳).
+   - Right after creating the issue file, open [docs/issues/README.md](README.md) (Issue台帳).
    - Append a new row to the **1. アクティブIssue一覧** table with the status set to `New` and linking to the newly created issue file.

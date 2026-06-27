@@ -40,9 +40,9 @@ stateDiagram-v2
 ### 2.1 チケット化と台帳管理 (Ticket & Ledger Controls)
 検知された問題（バグや脆弱性）は速やかにチケット（Issue）化し、以下の方式に従って一元管理およびドキュメント駆動開発の追跡を維持します。
 * **チケットの起票（関連スキル: `create-issue`）**: 
-  問題の検知後、直ちに `create-issue` スキルを実行し、[issues/](file:///workspace/yuzora/yuzora/issues) ディレクトリ配下に `00X-xxx.md` のファイル名で作成します。不具合用テンプレート（`template_bug.md`）を適用して、再現手順や影響範囲を記録します。
+  問題の検知後、直ちに `create-issue` スキルを実行し、[issues/](file:///workspace/yuzora/yuzora/docs/issues) ディレクトリ配下に `00X-xxx.md` のファイル名で作成します。不具合用テンプレート（`template_bug.md`）を適用して、再現手順や影響範囲を記録します。
 * **台帳の更新（関連スキル: `create-issue`, `polish-issue`, `git-workflow`）**: 
-  起票された問題は、直ちに [issues/README.md](file:///workspace/yuzora/yuzora/issues/README.md) (Issue台帳) に登録され、初期ステータスは `New` に設定されます。その後、`polish-issue` による分析（ステータス: `In Progress`）および `git-workflow` による解決（ステータス: `Closed`）と同期してライフサイクル全体が一元追跡されます。
+  起票された問題は、直ちに [issues/README.md](file:///workspace/yuzora/yuzora/docs/issues/README.md) (Issue台帳) に登録され、初期ステータスは `New` に設定されます。その後、`polish-issue` による分析（ステータス: `In Progress`）および `git-workflow` による解決（ステータス: `Closed`）と同期してライフサイクル全体が一元追跡されます。
 * **根本原因分析と設計更新（関連スキル: `polish-issue`）**: 
   バグの恒久対策を行う際、コード修正に先立ち、`polish-issue` スキルを通じて根本原因の調査と実装方針の策定（必要に応じて [DSN-01](/docs/DSN-01-high_level_design.md) や [DSN-02](/docs/DSN-02-low_level_design.md) の先行修正）を行い、ドキュメントとコードの整合を保証します。
 

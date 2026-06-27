@@ -19,8 +19,8 @@ ID: 004
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [MNG-07-threat_modeling.md](../docs/MNG-07-threat_modeling.md)
-- [ ] [issues/README.md](README.md)
+- [ ] [MNG-07-threat_modeling.md](../MNG-07-threat_modeling.md)
+- [ ] [issues/README.md](../README.md)
 
 ---
 
@@ -32,10 +32,10 @@ Target Branch: `feat/004-perform-threat-modeling`
 2. **STRIDEに基づく詳細分析**:
    - DFDの各要素（プロセス、データフロー、データストア、外部エンティティ）に対し、STRIDEの各観点で具体的なセキュリティ脅威を洗い出す。
 3. **脅威分析シートの作成**:
-   - 洗い出した各脅威について、「脅威の記述」「影響」「対象コンポーネント」「現在の緩和策（コード実装）」「追加の推奨対策」を記述した詳細な脅威分析シート（テーブル）を [MNG-07-threat_modeling.md](../docs/MNG-07-threat_modeling.md) の第3節に追記する。
+   - 洗い出した各脅威について、「脅威の記述」「影響」「対象コンポーネント」「現在の緩和策（コード実装）」「追加の推奨対策」を記述した詳細な脅威分析シート（テーブル）を [MNG-07-threat_modeling.md](../MNG-07-threat_modeling.md) の第3節に追記する。
 
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] [MNG-07-threat_modeling.md](../docs/MNG-07-threat_modeling.md) に詳細なSTRIDE脅威分析シートが追記され、整合していること。
+- [ ] [MNG-07-threat_modeling.md](../MNG-07-threat_modeling.md) に詳細なSTRIDE脅威分析シートが追記され、整合していること。
 - [ ] CHANGES.md に本変更が記録されていること。

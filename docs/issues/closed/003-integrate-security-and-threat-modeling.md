@@ -19,16 +19,16 @@ ID: 003
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [NEW] [MNG-07-threat_modeling.md](../docs/MNG-07-threat_modeling.md)
+- [NEW] [MNG-07-threat_modeling.md](../MNG-07-threat_modeling.md)
 - [NEW] [threat-modeling/SKILL.md](../.agents/skills/threat-modeling/SKILL.md)
-- [ ] [MNG-00-development_philosophy.md](../docs/MNG-00-development_philosophy.md)
-- [ ] [MNG-01-document_ledger.md](../docs/MNG-01-document_ledger.md)
-- [ ] [MNG-02-development_process.md](../docs/MNG-02-development_process.md)
-- [ ] [MNG-03-problem_management.md](../docs/MNG-03-problem_management.md)
-- [ ] [MNG-04-change_management.md](../docs/MNG-04-change_management.md)
+- [ ] [MNG-00-development_philosophy.md](../MNG-00-development_philosophy.md)
+- [ ] [MNG-01-document_ledger.md](../MNG-01-document_ledger.md)
+- [ ] [MNG-02-development_process.md](../MNG-02-development_process.md)
+- [ ] [MNG-03-problem_management.md](../MNG-03-problem_management.md)
+- [ ] [MNG-04-change_management.md](../MNG-04-change_management.md)
 - [ ] [polish-issue/SKILL.md](../.agents/skills/polish-issue/SKILL.md)
 - [ ] [review-diff-code/SKILL.md](../.agents/skills/review-diff-code/SKILL.md)
-- [ ] [issues/README.md](README.md)
+- [ ] [issues/README.md](../README.md)
 
 ---
 

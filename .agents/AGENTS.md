@@ -7,8 +7,8 @@ This file contains project-scoped rules and instructions for all AI agents worki
 You MUST follow this structured, issue-driven development lifecycle for all modifications and new features:
 
 1. **Issue Creation (`create-issue`)**:
-   - Every task, bug fix, or feature MUST start with an issue file under the `issues/` directory.
-   - Use the `create-issue` skill to initialize a new issue using `issues/template.md`.
+   - Every task, bug fix, or feature MUST start with an issue file under the `docs/issues/` directory.
+   - Use the `create-issue` skill to initialize a new issue using `docs/issues/template.md`.
 
 2. **Issue Refinement (`polish-issue`)**:
    - Before writing any code or making source modifications, the issue MUST be polished.
