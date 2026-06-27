@@ -1188,6 +1188,72 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
+     * Sanitizes a DOM element to prevent XSS (T-E2)
+     */
+    function sanitizeDOM(rootElement) {
+        const allowedTags = new Set([
+            'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+            'a', 'ruby', 'rt', 'rp', 'br', 'img', 'b', 'i', 'strong', 'em'
+        ]);
+        const allowedAttrs = new Set(['class', 'id', 'src', 'alt', 'href']);
+
+        // Sanitize root element attributes
+        const rootAttributes = Array.from(rootElement.attributes);
+        for (const attr of rootAttributes) {
+            const attrName = attr.name.toLowerCase();
+            if (attrName.startsWith('on') || !allowedAttrs.has(attrName)) {
+                rootElement.removeAttribute(attr.name);
+            } else if (attrName === 'href' || attrName === 'src') {
+                const val = attr.value.trim().toLowerCase();
+                if (val.startsWith('javascript:') || val.startsWith('data:') || val.startsWith('vbscript:')) {
+                    rootElement.removeAttribute(attr.name);
+                }
+            }
+        }
+
+        function sanitize(element) {
+            const childNodes = Array.from(element.childNodes);
+            for (const child of childNodes) {
+                if (child.nodeType === 1) { // Node.ELEMENT_NODE
+                    const tagName = child.tagName.toLowerCase();
+                    if (!allowedTags.has(tagName)) {
+                        const unsafeTagsToDiscardContent = new Set([
+                            'script', 'style', 'iframe', 'noscript', 'object', 'embed', 'link'
+                        ]);
+                        if (unsafeTagsToDiscardContent.has(tagName)) {
+                            child.remove();
+                        } else {
+                            // Unwrap: pull children up and remove the element itself
+                            while (child.firstChild) {
+                                child.parentNode.insertBefore(child.firstChild, child);
+                            }
+                            child.remove();
+                        }
+                    } else {
+                        // Sanitize attributes
+                        const attributes = Array.from(child.attributes);
+                        for (const attr of attributes) {
+                            const attrName = attr.name.toLowerCase();
+                            if (attrName.startsWith('on') || !allowedAttrs.has(attrName)) {
+                                child.removeAttribute(attr.name);
+                            } else if (attrName === 'href' || attrName === 'src') {
+                                const val = attr.value.trim().toLowerCase();
+                                if (val.startsWith('javascript:') || val.startsWith('data:') || val.startsWith('vbscript:')) {
+                                    child.removeAttribute(attr.name);
+                                }
+                            }
+                        }
+                        // Recurse
+                        sanitize(child);
+                    }
+                }
+            }
+        }
+
+        sanitize(rootElement);
+    }
+
+    /**
      * Parses XHTML Aozora Formatting
      */
     function parseAozoraHTML(htmlString) {
@@ -1210,11 +1276,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const cardLink = mainBody.querySelector('.card_link');
         if (cardLink) cardLink.remove();
 
+        // Sanitize DOM to prevent XSS (T-E2)
+        sanitizeDOM(mainBody);
+
         return {
             title: title,
             body: mainBody.innerHTML
         };
     }
+
 
     // ==========================================================================
     // Scrolling, Paging, and Bookmarks
@@ -1529,6 +1599,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Expose core functions for testing/debugging
     window.Yuzora = {
         parseAozoraText,
+        parseAozoraHTML,
         formatAozoraMarkup,
         config,
         runLayoutDiagnosis

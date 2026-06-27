@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Fixed [T-E2] HTMLファイル読み込み時のXSS脆弱性の解消。ホワイトリスト方式のHTMLサニタイズ処理 (sanitizeDOM) を実装し、危険なタグやイベントハンドラを除去するように改善 (ID: 006)。
+- Changed ドキュメント内のファイルリンクにおいて環境依存の絶対パスを禁止し、相対パスの使用を義務付けるルールを docs/MNG-02-development_process.md および .agents/AGENTS.md に追加 (ID: 006)。
+
 - Fixed [T-E1] parseAozoraText の開始時にHTML特殊文字を一括エスケープし、タイトルや著者メタデータ等も含めたXSS脆弱性を解消 (ID: 005)。
 - Added [MNG-07] 脅威モデリング定義書 (docs/MNG-07-threat_modeling.md) に、システムデータフロー図 (DFD) および STRIDE詳細脅威分析結果シートを追記 (ID: 004)。
 - Added [MNG-07] 脅威モデリング定義書 (docs/MNG-07-threat_modeling.md) および脅威モデリング実行スキル (.agents/skills/threat-modeling/SKILL.md) を新設 (ID: 003)。

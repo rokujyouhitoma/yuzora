@@ -80,6 +80,47 @@ test.describe('Yuzora Parser Unit Tests', () => {
         assert.ok(result.body.includes('&lt;/script&gt;'));
     });
 
+    test('should sanitize HTML structure to prevent XSS (T-E2)', () => {
+        const dirtyHTML = `
+            <html>
+            <head><title>悪意ある本</title></head>
+            <body class="main_body" onload="alert('XSS root')">
+                <h1>第一章</h1>
+                <p>安全なテキスト。<a href="javascript:alert('XSS href')">リンク</a></p>
+                <script>alert('XSS script')</script>
+                <iframe src="javascript:alert('XSS iframe')"></iframe>
+                <img src="valid.png" onerror="alert('XSS onerror')" alt="画像">
+                <div style="color: red;" data-custom="unsafe">スタイルとカスタム属性</div>
+            </body>
+            </html>
+        `;
+        const result = window.Yuzora.parseAozoraHTML(dirtyHTML);
+        
+        assert.strictEqual(result.title, '悪意ある本');
+        
+        // script や iframe が削除されていること
+        assert.ok(!result.body.includes('<script>'));
+        assert.ok(!result.body.includes('alert('));
+        assert.ok(!result.body.includes('<iframe>'));
+        
+        // onload や onerror、href="javascript:..." が削除されていること
+        assert.ok(!result.body.includes('onload='));
+        assert.ok(!result.body.includes('onerror='));
+        assert.ok(!result.body.includes('href="javascript:'));
+        
+        // 許可されていない style や data-custom 属性が削除されていること
+        assert.ok(!result.body.includes('style='));
+        assert.ok(!result.body.includes('data-custom='));
+        
+        // 許可されているタグと安全な属性は維持されること
+        assert.ok(result.body.includes('<h1>第一章</h1>'));
+        assert.ok(result.body.includes('<a>リンク</a>'));
+        assert.ok(result.body.includes('src="valid.png"'));
+        assert.ok(result.body.includes('alt="画像"'));
+        assert.ok(result.body.includes('<div>スタイルとカスタム属性</div>'));
+    });
+
+
     test('should parse page break marker', () => {
         const result = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文第一段\n［＃改ページ］\n本文第二段');
         assert.ok(result.body.includes('<div class="page-break"></div>'));
