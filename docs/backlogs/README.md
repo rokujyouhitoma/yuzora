@@ -21,6 +21,7 @@
 | **011** | Refactor | Medium | Draft | 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 | [011-modularize-src-by-screen-and-bundle.md](011-modularize-src-by-screen-and-bundle.md) |
 | **012** | Feature | Medium | Closed | Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応 | [012-command-pattern-operation-history.md](closed/012-command-pattern-operation-history.md) |
 | **013** | Enhancement | Low | Draft | 目次ドロワーのキーボード・スクリーンリーダー向けアクセシビリティ向上 | [013-toc-accessibility-enhancement.md](013-toc-accessibility-enhancement.md) |
+| **014** | Enhancement | Medium | Draft | デバッグ画面の全画面表示（画面いっぱい化） | [014-full-screen-debug-window.md](014-full-screen-debug-window.md) |
 
 ---
 
