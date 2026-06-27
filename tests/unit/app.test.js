@@ -11,7 +11,7 @@ test.describe('Yuzora Parser Unit Tests', () => {
 
     test.before(() => {
         // Setup JSDOM
-        const dom = new JSDOM('<!DOCTYPE html><html><body><div id="app"></div><div id="welcome-screen"></div><div id="reader-screen"></div><div id="drop-zone"></div><input id="file-input" type="file" /><div id="reader-viewport"></div><div id="reader-content"></div><div id="book-title"></div><button id="btn-back"></button><button id="btn-settings"></button><button id="btn-first-page"></button><button id="btn-close-settings"></button><div id="settings-drawer"></div><div id="drawer-overlay"></div><div id="page-nav-left"></div><div id="page-nav-right"></div><div class="reader-header"></div><div class="reader-footer"></div><div class="progress-bar-container"></div><div id="progress-bar"></div><div id="reading-percentage"></div><div id="reading-index"></div><div id="developer-books-grid"></div><div id="reader-books-grid"></div><button id="btn-open-debug"></button><div id="debug-modal"></div><button id="btnCloseDebug"></button><button id="btn-close-debug"></button><div id="debug-modal-overlay"></div><div id="debug-monitor"></div><button id="btn-clear-bookmarks"></button><button id="btn-clear-config"></button><button id="btn-clear-all"></button><button id="btn-diagnose-layout"></button><button id="btn-copy-debug-report"></button><pre id="diagnose-report-output"></pre><button id="tab-btn-monitor"></button><button id="tab-btn-diagnose"></button><div id="debug-tab-content-monitor"></div><div id="debug-tab-content-diagnose"></div></body></html>', {
+        const dom = new JSDOM('<!DOCTYPE html><html><body><div id="app"></div><div id="welcome-screen"></div><div id="reader-screen"></div><div id="drop-zone"></div><input id="file-input" type="file" /><div id="reader-viewport"></div><div id="reader-content"></div><div id="book-title"></div><button id="btn-back"></button><button id="btn-settings"></button><button id="btn-toc"></button><button id="btn-first-page"></button><button id="btn-close-settings"></button><button id="btn-close-toc"></button><div id="settings-drawer"></div><div id="toc-drawer"></div><div id="toc-list"></div><div id="drawer-overlay"></div><div id="page-nav-left"></div><div id="page-nav-right"></div><div class="reader-header"></div><div class="reader-footer"></div><div class="progress-bar-container"></div><div id="progress-bar"></div><div id="reading-percentage"></div><div id="reading-index"></div><div id="developer-books-grid"></div><div id="reader-books-grid"></div><button id="btn-open-debug"></button><div id="debug-modal"></div><button id="btnCloseDebug"></button><button id="btn-close-debug"></button><div id="debug-modal-overlay"></div><div id="debug-monitor"></div><button id="btn-clear-bookmarks"></button><button id="btn-clear-config"></button><button id="btn-clear-all"></button><button id="btn-diagnose-layout"></button><button id="btn-copy-debug-report"></button><pre id="diagnose-report-output"></pre><button id="tab-btn-monitor"></button><button id="tab-btn-diagnose"></button><div id="debug-tab-content-monitor"></div><div id="debug-tab-content-diagnose"></div></body></html>', {
             url: "http://localhost",
             runScripts: "dangerously",
             resources: "usable"
@@ -54,6 +54,8 @@ test.describe('Yuzora Parser Unit Tests', () => {
             activeTimeouts.forEach(id => window.clearTimeout(id));
             window.close();
         }
+        // Force exit to prevent any hanging timers in Node process
+        process.exit(0);
     });
 
     test('should expose Yuzora object on window', () => {
@@ -128,13 +130,26 @@ test.describe('Yuzora Parser Unit Tests', () => {
 
     test('should parse headings (large, medium, small) and preserve rubies inside', () => {
         const resultLarge = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃２字下げ］上　先生と私［＃「上　先生と私」は大見出し］');
-        assert.ok(resultLarge.body.includes('<h2 class="jisage2">上　先生と私</h2>'));
+        assert.ok(resultLarge.body.includes('<h2 id="toc-heading-0" class="jisage2">上　先生と私</h2>'));
+        const tocLarge = window.Yuzora.getCurrentTOC();
+        assert.equal(tocLarge.length, 1);
+        assert.equal(tocLarge[0].id, 'toc-heading-0');
+        assert.equal(tocLarge[0].text, '上　先生と私');
+        assert.equal(tocLarge[0].level, 2);
 
         const resultMedium = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃５字下げ］一［＃「一」は中見出し］');
-        assert.ok(resultMedium.body.includes('<h3 class="jisage5">一</h3>'));
+        assert.ok(resultMedium.body.includes('<h3 id="toc-heading-0" class="jisage5">一</h3>'));
+        const tocMedium = window.Yuzora.getCurrentTOC();
+        assert.equal(tocMedium.length, 1);
+        assert.equal(tocMedium[0].text, '一');
+        assert.equal(tocMedium[0].level, 3);
 
         const resultWithRuby = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃３字下げ］衆口《しゅうこう》［＃「衆口」は大見出し］');
-        assert.ok(resultWithRuby.body.includes('<h2 class="jisage3"><ruby>衆口<rt>しゅうこう</rt></ruby></h2>'));
+        assert.ok(resultWithRuby.body.includes('<h2 id="toc-heading-0" class="jisage3"><ruby>衆口<rt>しゅうこう</rt></ruby></h2>'));
+        const tocWithRuby = window.Yuzora.getCurrentTOC();
+        assert.equal(tocWithRuby.length, 1);
+        assert.equal(tocWithRuby[0].text, '衆口');
+        assert.equal(tocWithRuby[0].level, 2);
     });
 
     test('should expose runLayoutDiagnosis on Yuzora and run it successfully', () => {

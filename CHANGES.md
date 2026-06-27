@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added 目次表示およびジャンプ機能 (TOC) のUI（目次ボタンおよび目次ドロワー）を追加 (ID: 005 - Backlog)。
+- Changed 見出しの階層レベルに応じたインデントと視覚表現（中見出し・小見出しの箇条書きマーク）の追加 (ID: 005 - Backlog)。
+- Changed RTL縦書き表示時のマルチカラムスクロール座標系に対応した精密な見出しジャンプ計算ロジック（`getBoundingClientRect()` 基準）を実装 (ID: 005 - Backlog)。
+- Changed スムーズスクロール完了後に `preventScroll` オプション付きでジャンプ先見出し要素へフォーカス（`focus()`）を当てるアクセシビリティ向上制御を導入 (ID: 005 - Backlog)。
+- Fixed `index.html` 内のインライン `style="..."` 属性をすべて `src/css/style.css` のクラス定義へ移行し、Content Security Policy (style-src 'self') の違反警告を完全に解消 (ID: 005 - Backlog)。
+- Fixed ユニットテストランナー実行時に、残存する JSDOM タイマーが原因でテストプロセスが終了せずハングする問題を `app.test.js` に `process.exit(0)` を追加することで解消 (ID: 005 - Backlog)。
 - Changed [REQ-04] 目次表示およびジャンプ機能 (TOC) のバックログ要件 (docs/backlogs/005-table-of-contents-toc.md) を精査し、ステータスを Approved に更新 (ID: 007)。
 - Changed エージェント行動規範 (.agents/AGENTS.md) に、新スキル (create-backlog, polish-backlog) によるバックログ管理ルールを追記 (ID: 007)。
 - Changed ドキュメント構成の拡張に伴い、docs/README.md およびルートの README.md のディレクトリ構造記述を更新 (ID: 007)。

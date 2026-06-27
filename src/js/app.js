@@ -18,9 +18,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Controls & Navigation
     const btnBack = document.getElementById('btn-back');
     const btnSettings = document.getElementById('btn-settings');
+    const btnTOC = document.getElementById('btn-toc');
     const btnFirstPage = document.getElementById('btn-first-page');
     const btnCloseSettings = document.getElementById('btn-close-settings');
+    const btnCloseTOC = document.getElementById('btn-close-toc');
     const settingsDrawer = document.getElementById('settings-drawer');
+    const tocDrawer = document.getElementById('toc-drawer');
+    const tocList = document.getElementById('toc-list');
     const drawerOverlay = document.getElementById('drawer-overlay');
     const pageNavLeft = document.getElementById('page-nav-left');
     const pageNavRight = document.getElementById('page-nav-right');
@@ -83,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let bookmarkProgress = 0; // 0 to 1 scroll percentage
     let headerTimeout = null;
     let isReflowing = false;
+    let currentTOC = [];
 
     // Viewport layout configurations
     const config = {
@@ -128,10 +133,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Drawer settings toggle
-    btnSettings.addEventListener('click', openSettings);
-    btnCloseSettings.addEventListener('click', closeSettings);
-    drawerOverlay.addEventListener('click', closeSettings);
+    // Drawer settings & TOC toggle
+    if (btnSettings) btnSettings.addEventListener('click', openSettings);
+    if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettings);
+    
+    if (btnTOC) btnTOC.addEventListener('click', openTOC);
+    if (btnCloseTOC) btnCloseTOC.addEventListener('click', closeTOC);
+
+    if (drawerOverlay) {
+        drawerOverlay.addEventListener('click', () => {
+            closeSettings();
+            closeTOC();
+        });
+    }
 
     // Back to Welcome Screen
     btnBack.addEventListener('click', () => {
@@ -1053,6 +1067,9 @@ document.addEventListener('DOMContentLoaded', () => {
                    .replace(/</g, '&lt;')
                    .replace(/>/g, '&gt;');
 
+        currentTOC = [];
+        let headingIndex = 0;
+
         let lines = text.split(/\r?\n/);
         let parsedLines = [];
         let title = '';
@@ -1112,9 +1129,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // Detect headings before formatting the markup
             let isHeading = false;
             let headingLevel = 2; // Default to h2 for large heading
+            let headingText = '';
             const headingMatch = line.match(/［＃「([^」]+)」は(大|中|小)見出し］/);
             if (headingMatch) {
                 isHeading = true;
+                headingText = headingMatch[1];
                 const levelChar = headingMatch[2];
                 if (levelChar === '大') headingLevel = 2;
                 else if (levelChar === '中') headingLevel = 3;
@@ -1133,7 +1152,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 parsedLines.push('<p class="empty-line">&nbsp;</p>');
             } else {
                 if (isHeading) {
-                    parsedLines.push(`<h${headingLevel}${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</h${headingLevel}>`);
+                    const headingId = `toc-heading-${headingIndex++}`;
+                    let cleanText = headingText
+                        .replace(/[｜|]/g, '')
+                        .replace(/《[^》]+》/g, '')
+                        .trim();
+                    currentTOC.push({
+                        id: headingId,
+                        text: cleanText,
+                        level: headingLevel
+                    });
+                    parsedLines.push(`<h${headingLevel} id="${headingId}"${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</h${headingLevel}>`);
                 } else if (line.startsWith('<h2>') || line.startsWith('<h3>')) {
                     parsedLines.push(line);
                 } else {
@@ -1558,11 +1587,103 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerHeaderShow();
     }
 
+    function openTOC() {
+        tocDrawer.classList.add('open');
+        drawerOverlay.classList.add('open');
+        buildTOCList();
+    }
+
+    function closeTOC() {
+        tocDrawer.classList.remove('open');
+        drawerOverlay.classList.remove('open');
+        triggerHeaderShow();
+    }
+
+    function buildTOCList() {
+        tocList.innerHTML = '';
+        if (currentTOC.length === 0) {
+            const emptyMsg = document.createElement('div');
+            emptyMsg.className = 'toc-item';
+            emptyMsg.style.cursor = 'default';
+            emptyMsg.style.color = 'var(--text-muted)';
+            emptyMsg.textContent = '目次情報はありません。';
+            tocList.appendChild(emptyMsg);
+            return;
+        }
+
+        const clientWidth = readerViewport.clientWidth;
+        const currentScroll = Math.abs(readerViewport.scrollLeft);
+
+        currentTOC.forEach((item) => {
+            const element = document.getElementById(item.id);
+            let isActive = false;
+            if (element) {
+                const rect = element.getBoundingClientRect();
+                const containerRect = readerViewport.getBoundingClientRect();
+                
+                let pageIndex = 0;
+                if (config.direction === 'rtl') {
+                    const absolutePosition = (containerRect.right - rect.right) + Math.abs(readerViewport.scrollLeft);
+                    pageIndex = Math.floor(absolutePosition / clientWidth);
+                } else {
+                    const absolutePosition = (rect.left - containerRect.left) + readerViewport.scrollLeft;
+                    pageIndex = Math.floor(absolutePosition / clientWidth);
+                }
+                const currentScrollPage = Math.round(currentScroll / clientWidth);
+                if (pageIndex === currentScrollPage) {
+                    isActive = true;
+                }
+            }
+
+            const itemDiv = document.createElement('div');
+            itemDiv.className = `toc-item toc-item-level-${item.level}${isActive ? ' active' : ''}`;
+            itemDiv.textContent = item.text;
+            itemDiv.addEventListener('click', () => {
+                jumpToHeading(item.id);
+                closeTOC();
+            });
+            tocList.appendChild(itemDiv);
+        });
+    }
+
+    function jumpToHeading(headingId) {
+        const targetElement = document.getElementById(headingId);
+        if (!targetElement) return;
+
+        const rect = targetElement.getBoundingClientRect();
+        const containerRect = readerViewport.getBoundingClientRect();
+        const viewportWidth = readerViewport.clientWidth;
+
+        let pageIndex = 0;
+        if (config.direction === 'rtl') {
+            const absolutePosition = (containerRect.right - rect.right) + Math.abs(readerViewport.scrollLeft);
+            pageIndex = Math.floor(absolutePosition / viewportWidth);
+        } else {
+            const absolutePosition = (rect.left - containerRect.left) + readerViewport.scrollLeft;
+            pageIndex = Math.floor(absolutePosition / viewportWidth);
+        }
+
+        let targetScroll = 0;
+        if (config.direction === 'rtl') {
+            targetScroll = -(pageIndex * viewportWidth);
+        } else {
+            targetScroll = pageIndex * viewportWidth;
+        }
+
+        readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
+
+        // Focus the target element after smooth scroll completes to prevent layout jump or scroll interruption
+        setTimeout(() => {
+            targetElement.setAttribute('tabindex', '-1');
+            targetElement.focus({ preventScroll: true });
+        }, 400);
+    }
+
     // ==========================================================================
     // Header & Footer UI Toggle/Auto-Hide
     // ==========================================================================
     function hideControls() {
-        if (!settingsDrawer.classList.contains('open')) {
+        if (!settingsDrawer.classList.contains('open') && !tocDrawer.classList.contains('open')) {
             readerHeader.classList.add('hidden');
             if (readerFooter) {
                 readerFooter.classList.add('hidden');
@@ -1602,6 +1723,7 @@ document.addEventListener('DOMContentLoaded', () => {
         parseAozoraHTML,
         formatAozoraMarkup,
         config,
-        runLayoutDiagnosis
+        runLayoutDiagnosis,
+        getCurrentTOC: () => currentTOC
     };
 });

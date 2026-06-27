@@ -793,6 +793,98 @@ body.layout-direction-ltr .progress-thumb {
 }
 
 /* ==========================================================================
+   TOC Drawer (Sidebar)
+   ========================================================================== */
+.toc-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 320px;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+    z-index: 200;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.toc-drawer.open {
+    transform: translateX(0) !important;
+}
+
+.toc-list {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 8px;
+    gap: 2px;
+    overflow-y: auto;
+}
+
+.toc-item {
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--text-muted);
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    border-left: 3px solid transparent;
+}
+
+.toc-item:hover {
+    background: var(--bg-body);
+    color: var(--text-color);
+}
+
+.toc-item.active {
+    background: var(--accent-light);
+    color: var(--accent-color);
+    font-weight: 600;
+    border-left-color: var(--accent-color);
+}
+
+/* Indentations for TOC hierarchical structure */
+.toc-item-level-2 {
+    padding-left: 12px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-top: 6px;
+}
+.toc-item-level-2:first-child {
+    margin-top: 0;
+}
+
+.toc-item-level-3 {
+    padding-left: 28px;
+    font-size: 13px;
+}
+.toc-item-level-3::before {
+    content: "•";
+    color: var(--text-muted);
+    margin-right: 6px;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.toc-item-level-4 {
+    padding-left: 44px;
+    font-size: 12px;
+}
+.toc-item-level-4::before {
+    content: "◦";
+    color: var(--text-muted);
+    margin-right: 6px;
+    font-size: 10px;
+    opacity: 0.5;
+}
+
+/* ==========================================================================
    Settings Drawer (Sidebar)
    ========================================================================== */
 .settings-drawer {
@@ -1133,5 +1225,56 @@ body.layout-direction-ltr .progress-thumb {
 }
 .debug-tab-content.hidden {
     display: none !important;
+}
+
+/* Utility Classes to eliminate inline styles (CSP compliance) */
+.hidden-input {
+    display: none !important;
+}
+
+.btn-icon-back {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.mr-8 {
+    margin-right: 8px;
+}
+
+.dev-settings-group {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.btn-open-debug-style {
+    width: 100%;
+    background: var(--border-color);
+    color: var(--text-main);
+    margin-top: 8px;
+}
+
+.debug-section-margin {
+    margin-top: 20px;
+}
+
+.debug-buttons-container {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.debug-monitor-scroll {
+    max-height: 280px;
+}
+
+.diagnose-report-style {
+    white-space: pre-wrap;
+    font-size: 13px;
+    font-family: monospace;
 }
 

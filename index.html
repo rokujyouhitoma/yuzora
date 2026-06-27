@@ -37,7 +37,7 @@
                         <span class="drop-or">または</span>
                         <label class="btn btn-primary">
                             ファイルを選択
-                            <input type="file" id="file-input" accept=".txt,.html,.xhtml" style="display: none;">
+                            <input type="file" id="file-input" accept=".txt,.html,.xhtml" class="hidden-input">
                         </label>
                     </div>
                 </div>
@@ -72,10 +72,15 @@
         <div id="reader-screen" class="reader-screen hidden">
             <!-- Top Controls (Auto-hides) -->
             <header class="reader-header">
-                <button id="btn-back" class="btn-icon" title="ホームに戻る" style="font-size: 22px; line-height: 1;">⌂</button>
+                <button id="btn-back" class="btn-icon btn-icon-back" title="ホームに戻る">⌂</button>
                 <div id="book-title" class="book-title">宮本武蔵</div>
                 <div class="right-controls">
-                    <button id="btn-first-page" class="btn-icon" title="最初のページへ移動" style="margin-right: 8px;">
+                    <button id="btn-toc" class="btn-icon mr-8" title="目次">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                        </svg>
+                    </button>
+                    <button id="btn-first-page" class="btn-icon mr-8" title="最初のページへ移動">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5" />
                         </svg>
@@ -113,6 +118,23 @@
                     <span id="reading-index">1 / 1 ページ</span>
                 </div>
             </footer>
+        </div>
+
+        <!-- TOC Sidebar (Drawer) -->
+        <div id="toc-drawer" class="toc-drawer">
+            <div class="drawer-header">
+                <h2>目次</h2>
+                <button id="btn-close-toc" class="btn-icon" title="目次を閉じる">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="drawer-content">
+                <div id="toc-list" class="toc-list">
+                    <!-- JSによって動的に目次リストが追加されます -->
+                </div>
+            </div>
         </div>
 
         <!-- Settings Sidebar (Drawer) -->
@@ -188,9 +210,9 @@
                 </div>
 
                 <!-- Developer settings -->
-                <div class="settings-group dev-section" style="border-top: 1px solid var(--border-color); padding-top: 20px; margin-top: 20px;">
+                <div class="settings-group dev-section dev-settings-group">
                     <label>開発者向け</label>
-                    <button id="btn-open-debug" class="btn" style="width: 100%; background: var(--border-color); color: var(--text-main); margin-top: 8px;">デバッグ画面を開く</button>
+                    <button id="btn-open-debug" class="btn btn-open-debug-style">デバッグ画面を開く</button>
                 </div>
             </div>
         </div>
@@ -222,7 +244,7 @@
                         </div>
                         
                         <!-- Control Panel -->
-                        <div class="debug-modal-section" style="margin-top: 20px;">
+                        <div class="debug-modal-section debug-section-margin">
                             <h3>localStorage 操作</h3>
                             <div class="debug-buttons">
                                 <button id="btn-clear-bookmarks" class="btn btn-secondary">しおりデータのみ初期化</button>
@@ -237,12 +259,12 @@
                         <!-- Layout Diagnostics Panel -->
                         <div class="debug-modal-section">
                             <h3>レイアウト / 見切れ診断</h3>
-                            <div class="debug-buttons" style="margin-bottom: 12px; display: flex; gap: 10px;">
-                                <button id="btn-diagnose-layout" class="btn btn-primary" style="flex: 1;">現在のページを診断</button>
-                                <button id="btn-copy-debug-report" class="btn btn-secondary" style="flex: 1;" disabled>レポートをコピー</button>
+                            <div class="debug-buttons debug-buttons-container">
+                                <button id="btn-diagnose-layout" class="btn btn-primary flex-1">現在のページを診断</button>
+                                <button id="btn-copy-debug-report" class="btn btn-secondary flex-1" disabled>レポートをコピー</button>
                             </div>
-                            <div class="debug-monitor-container" style="max-height: 280px;">
-                                <pre id="diagnose-report-output" style="white-space: pre-wrap; font-size: 13px; font-family: monospace;">診断を実行してください。</pre>
+                            <div class="debug-monitor-container debug-monitor-scroll">
+                                <pre id="diagnose-report-output" class="diagnose-report-style">診断を実行してください。</pre>
                             </div>
                         </div>
                     </div>
