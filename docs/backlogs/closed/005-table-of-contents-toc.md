@@ -2,7 +2,7 @@
 ID: 005
 種別: Feature
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [FEAT] 目次表示およびジャンプ機能 (TOC) (ID: 005)

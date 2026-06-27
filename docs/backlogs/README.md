@@ -12,7 +12,7 @@
 | **002** | Feature | Low | Draft | しおり手動一覧管理 | [002-manual-bookmark-management.md](002-manual-bookmark-management.md) |
 | **003** | Feature | Low | Draft | PDF/EPUB形式のインポート対応 | [003-pdf-epub-import.md](003-pdf-epub-import.md) |
 | **004** | Refactor | Medium | Draft | CSSスタイルのモジュール化 | [004-css-module.md](004-css-module.md) |
-| **005** | Feature | High | Approved | 目次表示およびジャンプ機能 (TOC) | [005-table-of-contents-toc.md](005-table-of-contents-toc.md) |
+| **005** | Feature | High | Closed | 目次表示およびジャンプ機能 (TOC) | [005-table-of-contents-toc.md](closed/005-table-of-contents-toc.md) |
 | **006** | Enhancement | Low | Approved | 非同期処理による目次抽出および描画の高速化 | [006-async-toc-generation.md](006-async-toc-generation.md) |
 | **007** | Feature | High | Draft | 大容量テキストのインクリメンタル（段階的）パースおよびレンダリング | [007-incremental-text-parsing.md](007-incremental-text-parsing.md) |
 | **008** | Enhancement | Medium | Draft | レイアウト診断レポート生成の非同期・タイムスライス化 | [008-async-layout-diagnostics.md](008-async-layout-diagnostics.md) |

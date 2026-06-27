@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed [MNG-09] 目次表示およびジャンプ機能 (TOC) バックログ (docs/backlogs/closed/005-table-of-contents-toc.md) を、実装完了に伴い Closed に更新し、アーカイブディレクトリへ移動。
 - Added [MNG-09] 目次ドロワーのキーボード・スクリーンリーダー向けアクセシビリティ向上バックログ (docs/backlogs/013-toc-accessibility-enhancement.md) を起票 (ID: 013)。
 - Changed [MNG-09] Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応バックログ (docs/backlogs/012-command-pattern-operation-history.md) を精査し、最大世代数制限（100世代および本のロードコマンド保護）を追加して Approved に更新 (ID: 012)。
 - Added [MNG-09] 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化バックログ (docs/backlogs/011-modularize-src-by-screen-and-bundle.md) を起票 (ID: 011)。
