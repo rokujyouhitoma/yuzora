@@ -1,5 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const path = require('path');
+const fs = require('fs');
 
 test('Capture screenshots of reader pages', async ({ page }) => {
     // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
@@ -17,8 +18,14 @@ test('Capture screenshots of reader pages', async ({ page }) => {
     // Wait for layout to settle
     await page.waitForTimeout(1000);
 
+    // Resolve artifacts directory dynamically and ensure it exists
+    const artifactsDir = process.env.ARTIFACTS_DIR || path.join(__dirname, '../../test-results');
+    if (!fs.existsSync(artifactsDir)) {
+        fs.mkdirSync(artifactsDir, { recursive: true });
+    }
+
     // Save screenshot of Page 1
-    const artifactPath1 = '/root/.gemini/antigravity-ide/brain/6924368e-3ebf-4fff-abbf-f141657e7754/page1.png';
+    const artifactPath1 = path.join(artifactsDir, 'page1.png');
     await page.screenshot({ path: artifactPath1 });
     console.log(`Page 1 screenshot saved to ${artifactPath1}`);
 
@@ -28,7 +35,7 @@ test('Capture screenshots of reader pages', async ({ page }) => {
     await page.waitForTimeout(1000); // Wait for smooth scroll to finish
 
     // Save screenshot of Page 2
-    const artifactPath2 = '/root/.gemini/antigravity-ide/brain/6924368e-3ebf-4fff-abbf-f141657e7754/page2.png';
+    const artifactPath2 = path.join(artifactsDir, 'page2.png');
     await page.screenshot({ path: artifactPath2 });
     console.log(`Page 2 screenshot saved to ${artifactPath2}`);
 });
