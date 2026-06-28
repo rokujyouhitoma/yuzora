@@ -63,7 +63,10 @@
 | **[DSN-01] 基本設計書 (HLD)** | [DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md) | システムアーキテクチャ、コンポーネント役割、画面遷移、デザインシステム等の論理的な設計を定義する。 | 開発チーム、AI Agent | システムアーキテクチャの変更、UIコンポーネント構成の変更時 |
 | **[DSN-02] 詳細設計書 (LLD)** | [DSN-02-low_level_design.md](/docs/DSN-02-low_level_design.md) | 関数仕様、変数、正規表現、ページ計算数式、データスキーマ等の実装に直結する物理設計を定義する。 | 実装担当エージェント、開発者 | コーディング仕様の変更、アルゴリズムの追加・変更時 |
 | **[USR-01] 操作マニュアル** | [USR-01-user_manual.md](/docs/USR-01-user_manual.md) | アプリケーションの操作方法、カスタマイズ設定、しおり保存機能等のユーザー向けガイドを定義する。 | 人間（User）、一般ユーザー | ドキュメントの新規作成、機能変更時 |
-| **[ADR-01] アーキテクチャ意思決定記録** | [adr/ADR-01-predefined-books-and-storage.md](/docs/adr/ADR-01-predefined-books-and-storage.md) | 重要な設計・技術的トレードオフに関する意思決定とその背景、結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 重要な技術選定、アーキテクチャ上の決定を下した時 |
+| **[ADR-01] アーキテクチャ意思決定記録** | [adr/ADR-01-predefined-books-and-storage.md](adr/ADR-01-predefined-books-and-storage.md) | 重要な設計・技術的トレードオフに関する意思決定とその背景、結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 重要な技術選定、アーキテクチャ上の決定を下した時 |
+| **[ADR-02] 循環的複雑度の閾値決定記録** | [adr/ADR-02-cyclomatic-complexity-threshold.md](adr/ADR-02-cyclomatic-complexity-threshold.md) | サイクロマティック複雑度の閾値10の設定理由、およびそれに伴うコードリファクタリング結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 複雑度ルール・閾値の変更、リファクタリング適用時 |
+| **[ADR-03] CI品質ゲートとPagesデプロイ統合記録** | [adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md](adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md) | GitHub Actions CI の導入による自動検証と GitHub Pages デプロイ統合、E2Eテストのネットワーク遮断方針を記録する。 | 開発チーム、将来の開発者、AI Agent | CI/CD検証ルールや本番デプロイポリシーの変更時 |
+
 
 ---
 
