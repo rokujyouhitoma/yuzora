@@ -4,7 +4,24 @@
 2026-06-28
 
 ## ステータス
-Proposed (提案中)
+Accepted (承認済み・実装完了)
+
+## 実装結果
+- `eslint@9` を導入し、`eslint.config.js` で `complexity: ['error', 10]` を設定
+- `app.js` において以下のリファクタリングを実施:
+  - `CommandManager` の `add()` → `isDuplicateCommand()`, `limitHistorySize()` を分割
+  - `runLayoutDiagnosis()` → `diagnoseEnvironmentInfo()`, `diagnoseColumnsInfo()`, `diagnoseColumnWidthCheck()`, `diagnoseVerticalLayoutInfo()`, `diagnoseParagraphCoordinateInfo()`, `diagnoseBoundaryOverlap()` に分割
+  - `parseAozoraText()` → `buildLineHTML()`, `detectHeaderEnd()`, `parseJisage()`, `parseHeading()` を分割
+  - `sanitizeDOM()` → `cleanAttributes()` ヘルパーを抽出
+  - `setupEventListeners()` のブレース漏れを修正し、`closeDebugModal()` を外部関数として分離
+  - `handleOpenDebugModalKeys()` → `handleDebugTabKeys()` を抽出
+- ADR-02 で規定した例外措置（`eslint-disable-next-line complexity`）を以下の 6 箇所に適用:
+  - `DOMContentLoaded` コールバック (DOM 登録の構造的関数)
+  - `setupEventListeners()` (任意 DOM 要素の null ガード多数)
+  - `diagnoseColumnWidthCheck()` (レイアウト計算の性質上)
+  - `diagnoseBoundaryOverlap()` 内の `forEach` コールバック (座標計算の性質上)
+  - `handleDebugTabKeys()` (キーバインド判別の性質上)
+  - `parseAozoraText()` (青空文庫パース処理の性質上)
 
 ## コンテキスト
 プロジェクトの規模拡大に伴い、JavaScript コード（特にビューアーの描画処理やパース処理）の肥大化・複雑化が進み、可読性と保守性（およびテスト容易性）が低下するリスクがあります。

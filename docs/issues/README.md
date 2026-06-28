@@ -20,6 +20,7 @@
 | **009** | Feature | Medium | Closed | Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応 | AI Agent | [009-command-pattern-operation-history.md](closed/009-command-pattern-operation-history.md) |
 | **010** | Feature | Medium | Closed | デバッグ画面の拡大表示（大部分をカバーする広幅ウィンドウ化） | AI Agent | [010-large-debug-window.md](closed/010-large-debug-window.md) |
 | **011** | Feature | Medium | Closed | Closure Compiler の導入とビルド自動化 | AI Agent | [011-integrate-closure-compiler.md](closed/011-integrate-closure-compiler.md) |
+| **012** | Feature | Medium | Closed | サイクロマティック複雑度の計測とリファクタリング基準の導入 | AI Agent | [012-cyclomatic-complexity-measurement.md](closed/012-cyclomatic-complexity-measurement.md) |
 
 ## 2. 状態（ステータス）定義
 
