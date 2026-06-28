@@ -23,6 +23,14 @@ function closeDebugModal() {
     triggerHeaderShow();
 }
 
+function openDebugModal() {
+    if (debugModal && debugModalOverlay) {
+        debugModal.classList.remove("hidden");
+        debugModalOverlay.classList.remove("hidden");
+        CommandManager.updateDebugMonitor();
+    }
+}
+
 function handleProgressScrub(clientX) {
     const rect = progressBarContainer.getBoundingClientRect();
     const width = rect.width;
@@ -60,16 +68,7 @@ function setupEventListeners() {
 
     // Navigation Events
     btnBack.addEventListener("click", () => {
-        // Go back in command history or return to welcome screen
-        welcomeScreen.classList.remove("hidden");
-        readerScreen.classList.add("hidden");
-        // Clear local storage for current reading session name to allow reset
-        localStorage.removeItem("last_read_file_name");
-        localStorage.removeItem("last_read_file_content");
-        localStorage.removeItem("last_read_file_type");
-        currentFileName = "";
-        currentFileContent = "";
-        currentFileType = "";
+        CommandManager.execute(new ExitReaderCommand());
     });
 
     // Scroll Events on viewport
@@ -96,7 +95,7 @@ function setupEventListeners() {
                 return;
             }
             if (e.key === "Escape") {
-                closeDebugModal();
+                CommandManager.execute(new ToggleDebugModalCommand(false));
                 e.preventDefault();
                 return;
             }
@@ -104,8 +103,12 @@ function setupEventListeners() {
 
         // Close setting modal using ESC key
         if (e.key === "Escape") {
-            if (settingsDrawer.classList.contains("open")) closeSettings();
-            if (tocDrawer.classList.contains("open")) closeTOC();
+            if (settingsDrawer.classList.contains("open")) {
+                CommandManager.execute(new ToggleDrawerCommand("settings", false));
+            }
+            if (tocDrawer.classList.contains("open")) {
+                CommandManager.execute(new ToggleDrawerCommand("toc", false));
+            }
             return;
         }
 
@@ -254,17 +257,29 @@ function handleDebugKeyboardShortcuts(e) {
 function setupDrawerControls() {
     // Drawer overlay backdrops click handlers
     drawerOverlay.addEventListener("click", () => {
-        closeSettings();
-        closeTOC();
+        if (settingsDrawer.classList.contains("open")) {
+            CommandManager.execute(new ToggleDrawerCommand("settings", false));
+        }
+        if (tocDrawer.classList.contains("open")) {
+            CommandManager.execute(new ToggleDrawerCommand("toc", false));
+        }
     });
 
     // TOC buttons events
-    btnTOC.addEventListener("click", openTOC);
-    btnCloseTOC.addEventListener("click", closeTOC);
+    btnTOC.addEventListener("click", () => {
+        CommandManager.execute(new ToggleDrawerCommand("toc", true));
+    });
+    btnCloseTOC.addEventListener("click", () => {
+        CommandManager.execute(new ToggleDrawerCommand("toc", false));
+    });
 
     // Settings drawer control hooks
-    btnSettings.addEventListener("click", openSettings);
-    btnCloseSettings.addEventListener("click", closeSettings);
+    btnSettings.addEventListener("click", () => {
+        CommandManager.execute(new ToggleDrawerCommand("settings", true));
+    });
+    btnCloseSettings.addEventListener("click", () => {
+        CommandManager.execute(new ToggleDrawerCommand("settings", false));
+    });
 
     // Page overlays clicking triggers (RTL direction mapping)
     pageNavLeft.addEventListener("click", (e) => {
@@ -309,53 +324,47 @@ function setupDrawerControls() {
     if (btnFirstPage) {
         btnFirstPage.addEventListener("click", () => {
             CommandManager.execute(new NavigatePageCommand(1));
-            closeSettings();
-            closeTOC();
+            CommandManager.execute(new ToggleDrawerCommand("settings", false));
+            CommandManager.execute(new ToggleDrawerCommand("toc", false));
         });
     }
 
     // Modal Close Button hooks
     if (btnCloseDebug) {
-        btnCloseDebug.addEventListener("click", closeDebugModal);
+        btnCloseDebug.addEventListener("click", () => {
+            CommandManager.execute(new ToggleDebugModalCommand(false));
+        });
     }
     if (debugModalOverlay) {
-        debugModalOverlay.addEventListener("click", closeDebugModal);
+        debugModalOverlay.addEventListener("click", () => {
+            CommandManager.execute(new ToggleDebugModalCommand(false));
+        });
     }
     if (btnOpenDebug) {
         btnOpenDebug.addEventListener("click", () => {
-            debugModal.classList.remove("hidden");
-            debugModalOverlay.classList.remove("hidden");
-            CommandManager.updateDebugMonitor();
+            CommandManager.execute(new ToggleDebugModalCommand(true));
         });
     }
 
     // Settings/cache purge tools
     if (btnClearBookmarks) {
         btnClearBookmarks.addEventListener("click", () => {
-            const keys = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith("bookmark_")) keys.push(key);
-            }
-            keys.forEach(k => localStorage.removeItem(k));
+            CommandManager.execute(new ClearStorageCommand("bookmarks"));
             alert("すべてのしおりを消去しました。");
-            checkLastSession();
         });
     }
 
     if (btnClearConfig) {
         btnClearConfig.addEventListener("click", () => {
-            localStorage.removeItem("yuzora_config");
+            CommandManager.execute(new ClearStorageCommand("config"));
             alert("表示設定を初期化しました。");
-            window.location.reload();
         });
     }
 
     if (btnClearAll) {
         btnClearAll.addEventListener("click", () => {
-            localStorage.clear();
+            CommandManager.execute(new ClearStorageCommand("all"));
             alert("すべてのキャッシュデータをリセットしました。");
-            window.location.reload();
         });
     }
 
@@ -631,12 +640,8 @@ function toggleControls(e) {
         return;
     }
 
-    if (readerHeader.classList.contains("hidden")) {
-        triggerHeaderShow();
-    } else {
-        clearTimeout(headerTimeout);
-        hideControls();
-    }
+    const nextVisible = readerHeader.classList.contains("hidden");
+    CommandManager.execute(new ToggleControlsCommand(nextVisible));
 }
 
 document.addEventListener("DOMContentLoaded", () => {

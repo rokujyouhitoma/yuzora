@@ -25,7 +25,7 @@
 | **015** | Feature | Medium | Closed | Closure Compiler の導入とビルド自動化 | [015-integrate-closure-compiler.md](closed/015-integrate-closure-compiler.md) |
 | **016** | Refactor | Medium | Closed | サイクロマティック複雑度の計測とリファクタリング基準の導入 | [016-cyclomatic-complexity-measurement.md](closed/016-cyclomatic-complexity-measurement.md) |
 | **017** | Feature | High | Closed | GitHub Actions CI パイプラインと GitHub Pages デプロイ自動化の導入 | [017-github-actions-ci-and-pages-deploy.md](closed/017-github-actions-ci-and-pages-deploy.md) |
-| **018** | Feature | Medium | Approved | CommandパターンによるUI表示操作の記録と再現 | [018-command-pattern-ui-interactions.md](018-command-pattern-ui-interactions.md) |
+| **018** | Feature | Medium | Promoted | CommandパターンによるUI表示操作の記録と再現 | [018-command-pattern-ui-interactions.md](closed/018-command-pattern-ui-interactions.md) |
 
 ---
 

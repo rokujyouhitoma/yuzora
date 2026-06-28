@@ -554,6 +554,21 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
 - **`SyncBookmarkCommand` (具象クラス)**:
   - パラメータ `params`: `{ progress }`
   - `execute()`: `bookmarkProgress = progress` を設定し、localStorage へのしおり保存（`saveBookmark`）を実行。
+- **`ToggleControlsCommand` (具象クラス)**:
+  - パラメータ `params`: `{ visible }` (boolean)
+  - `execute()`: `visible` に従い、ヘッダー・フッターメニューを表示（`triggerHeaderShow()`）または非表示（`hideControls()`）に切り替える。
+- **`ToggleDrawerCommand` (具象クラス)**:
+  - パラメータ `params`: `{ drawerId, open }` (drawerId: `"settings"` / `"toc"`, open: boolean)
+  - `execute()`: 指定されたドロワーの開閉制御関数（`openSettings()`, `closeSettings()`, `openTOC()`, `closeTOC()`）を呼び出す。
+- **`ExitReaderCommand` (具象クラス)**:
+  - パラメータ `params`: なし
+  - `execute()`: 読書画面を非表示にしてウェルカム画面を表示し、メモリ・localStorage 上の現在の書籍セッション情報をクリアして初期化する。
+- **`ClearStorageCommand` (具象クラス)**:
+  - パラメータ `params`: `{ clearType }` (clearType: `"bookmarks"` / `"config"` / `"all"`)
+  - `execute()`: 指定の領域の localStorage データをクリアする。リプレイ中（`isReplaying` が true）は、スクリプト実行を継続するために `location.reload()` を呼び出さないように制御する。
+- **`ToggleDebugModalCommand` (具象クラス)**:
+  - パラメータ `params`: `{ open }` (boolean)
+  - `execute()`: デバッグ画面の表示（`openDebugModal()`）または非表示（`closeDebugModal()`）を切り替える。
 
 ### 7.2 コマンドマネージャ (`CommandManager`) の設計
 - **履歴管理プロパティ**:

@@ -115,6 +115,145 @@ class SyncBookmarkCommand extends Command {
     }
 }
 
+class ToggleControlsCommand extends Command {
+    constructor(visible) {
+        super("ToggleControls");
+        this.visible = visible;
+    }
+    execute() {
+        if (this.visible) {
+            triggerHeaderShow();
+        } else {
+            if (typeof headerTimeout !== "undefined") clearTimeout(headerTimeout);
+            hideControls();
+        }
+    }
+    toJSON() {
+        return {
+            type: this.type,
+            params: {
+                visible: this.visible
+            }
+        };
+    }
+}
+
+class ToggleDrawerCommand extends Command {
+    constructor(drawerId, open) {
+        super("ToggleDrawer");
+        this.drawerId = drawerId;
+        this.open = open;
+    }
+    execute() {
+        if (this.drawerId === "settings") {
+            if (this.open) {
+                openSettings();
+            } else {
+                closeSettings();
+            }
+        } else if (this.drawerId === "toc") {
+            if (this.open) {
+                openTOC();
+            } else {
+                closeTOC();
+            }
+        }
+    }
+    toJSON() {
+        return {
+            type: this.type,
+            params: {
+                drawerId: this.drawerId,
+                open: this.open
+            }
+        };
+    }
+}
+
+class ExitReaderCommand extends Command {
+    constructor() {
+        super("ExitReader");
+    }
+    execute() {
+        welcomeScreen.classList.remove("hidden");
+        readerScreen.classList.add("hidden");
+        localStorage.removeItem("last_read_file_name");
+        localStorage.removeItem("last_read_file_content");
+        localStorage.removeItem("last_read_file_type");
+        currentFileName = "";
+        currentFileContent = "";
+        currentFileType = "";
+    }
+    toJSON() {
+        return {
+            type: this.type,
+            params: {}
+        };
+    }
+}
+
+class ClearStorageCommand extends Command {
+    constructor(clearType) {
+        super("ClearStorage");
+        this.clearType = clearType;
+    }
+    execute() {
+        if (this.clearType === "bookmarks") {
+            const keys = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith("bookmark_")) {
+                    keys.push(key);
+                }
+            }
+            keys.forEach(k => localStorage.removeItem(k));
+            bookmarkProgress = 0;
+            checkLastSession();
+        } else if (this.clearType === "config") {
+            localStorage.removeItem("yuzora_config");
+            if (!CommandManager.isReplaying) {
+                window.location.reload();
+            }
+        } else if (this.clearType === "all") {
+            localStorage.clear();
+            if (!CommandManager.isReplaying) {
+                window.location.reload();
+            }
+        }
+    }
+    toJSON() {
+        return {
+            type: this.type,
+            params: {
+                clearType: this.clearType
+            }
+        };
+    }
+}
+
+class ToggleDebugModalCommand extends Command {
+    constructor(open) {
+        super("ToggleDebugModal");
+        this.open = open;
+    }
+    execute() {
+        if (this.open) {
+            openDebugModal();
+        } else {
+            closeDebugModal();
+        }
+    }
+    toJSON() {
+        return {
+            type: this.type,
+            params: {
+                open: this.open
+            }
+        };
+    }
+}
+
+
 // Global Operations Command History Manager
 var CommandManager = {
     commandHistory: [],
@@ -183,6 +322,16 @@ var CommandManager = {
                 return new UpdateConfigCommand(item.params.configKey, item.params.configValue);
             case "SyncBookmark":
                 return new SyncBookmarkCommand(item.params.progress);
+            case "ToggleControls":
+                return new ToggleControlsCommand(item.params.visible);
+            case "ToggleDrawer":
+                return new ToggleDrawerCommand(item.params.drawerId, item.params.open);
+            case "ExitReader":
+                return new ExitReaderCommand();
+            case "ClearStorage":
+                return new ClearStorageCommand(item.params.clearType);
+            case "ToggleDebugModal":
+                return new ToggleDebugModalCommand(item.params.open);
             default:
                 throw new Error(`Unknown command type: ${item.type}`);
         }

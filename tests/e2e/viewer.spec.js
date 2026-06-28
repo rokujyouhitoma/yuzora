@@ -173,4 +173,66 @@ test.describe('Yuzora E2E Reader Tests', () => {
             await expect(readerHeader).not.toHaveClass(/hidden/);
         }
     });
+
+    test('should record and replay UI operation commands', async ({ page }) => {
+        // 1. Open a book
+        const bookCard = page.locator('#developer-books-grid .book-card').first();
+        await bookCard.click();
+        await page.waitForSelector('#reader-content p');
+
+        // 2. Open Settings drawer
+        const btnSettings = page.locator('#btn-settings');
+        const settingsDrawer = page.locator('#settings-drawer');
+        await expect(settingsDrawer).not.toHaveClass(/open/);
+        await btnSettings.click();
+        await expect(settingsDrawer).toHaveClass(/open/);
+
+        // Close Settings drawer
+        const btnCloseSettings = page.locator('#btn-close-settings');
+        await btnCloseSettings.click();
+        await expect(settingsDrawer).not.toHaveClass(/open/);
+
+        // 3. Open Debug modal
+        await page.keyboard.press('d');
+        const debugModal = page.locator('#debug-modal');
+        await expect(debugModal).not.toHaveClass(/hidden/);
+
+        // 4. Extract serialized operations JSON
+        const historyTextarea = page.locator('#debug-history-json');
+        const historyJSON = await historyTextarea.inputValue();
+        expect(historyJSON).toContain('ToggleDrawer');
+        expect(historyJSON).toContain('ToggleDebugModal');
+
+        // 5. Close Debug modal
+        const btnCloseDebug = page.locator('#btn-close-debug');
+        await btnCloseDebug.click();
+        await expect(debugModal).toHaveClass(/hidden/);
+
+        // 6. Click Back to Welcome Screen
+        const btnBack = page.locator('#btn-back');
+        await btnBack.click();
+        const welcomeScreen = page.locator('#welcome-screen');
+        await expect(welcomeScreen).not.toHaveClass(/hidden/);
+
+        // 7. Load book again to test replay
+        await bookCard.click();
+        await page.waitForSelector('#reader-content p');
+
+        // 8. Open Debug modal again to import history
+        await page.keyboard.press('d');
+        await expect(debugModal).not.toHaveClass(/hidden/);
+
+        // 9. Input and import operations history
+        await historyTextarea.fill(historyJSON);
+        const btnImportHistory = page.locator('#btn-import-history');
+        await btnImportHistory.click();
+
+        // 10. Wait for replay to complete and verify states
+        // Replay runs at 300ms intervals. Wait enough time (e.g. 2.5s) for the sequence to complete
+        await page.waitForTimeout(2500);
+
+        // Verify drawers and modal are in the end state recorded in the history
+        await expect(settingsDrawer).not.toHaveClass(/open/);
+        await expect(debugModal).not.toHaveClass(/hidden/);
+    });
 });
