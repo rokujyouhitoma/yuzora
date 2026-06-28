@@ -6,252 +6,244 @@
 // Command Pattern for Operation History
 // ==========================================================================
 class Command {
-    execute() {}
-    undo() {}
-    serialize() { return {}; }
-}
-
-class NavigatePageCommand extends Command {
-    constructor(targetPage) {
-        super();
-        this.targetPage = targetPage;
-        this.previousPage = 1;
+    constructor(type) {
+        this.type = type;
     }
-
     execute() {
-        const clientWidth = readerViewport.clientWidth;
-        const currentScroll = Math.abs(readerViewport.scrollLeft);
-        this.previousPage = Math.round(currentScroll / clientWidth) + 1;
-        scrollToPage(this.targetPage);
+        throw new Error("execute() must be implemented");
     }
-
-    undo() {
-        scrollToPage(this.previousPage);
-    }
-
-    serialize() {
-        return { type: 'NavigatePageCommand', targetPage: this.targetPage };
+    toJSON() {
+        return {
+            type: this.type,
+            params: {}
+        };
     }
 }
 
 class LoadBookCommand extends Command {
-    constructor(fileName, fileContent, fileType) {
-        super();
+    constructor(fileName, fileContent) {
+        super("LoadBook");
         this.fileName = fileName;
         this.fileContent = fileContent;
-        this.fileType = fileType;
-        
-        this.previousFileName = currentFileName;
-        this.previousFileContent = currentFileContent;
-        this.previousFileType = currentFileType;
     }
-
     execute() {
         currentFileName = this.fileName;
+        currentFileType = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
         currentFileContent = this.fileContent;
-        currentFileType = this.fileType;
-
-        // Save metadata and content to localStorage for session restore
-        try {
-            localStorage.setItem('last_read_file_name', currentFileName);
-            localStorage.setItem('last_read_file_content', currentFileContent);
-            localStorage.setItem('last_read_file_type', currentFileType);
-        } catch (e) {
-            console.warn('Failed to save book to localStorage for restoration:', e);
-        }
-
+        
         displayBook();
     }
-
-    undo() {
-        currentFileName = this.previousFileName;
-        currentFileContent = this.previousFileContent;
-        currentFileType = this.previousFileType;
-        
-        if (currentFileName) {
-            displayBook();
-        } else {
-            welcomeScreen.classList.remove('hidden');
-            readerScreen.classList.add('hidden');
-        }
-    }
-
-    serialize() {
+    toJSON() {
         return {
-            type: 'LoadBookCommand',
-            fileName: this.fileName,
-            fileContent: this.fileContent,
-            fileType: this.fileType
+            type: this.type,
+            params: {
+                fileName: this.fileName,
+                fileContent: this.fileContent
+            }
+        };
+    }
+}
+
+class NavigatePageCommand extends Command {
+    constructor(targetPage) {
+        super("NavigatePage");
+        this.targetPage = targetPage;
+    }
+    execute() {
+        scrollToPage(this.targetPage);
+    }
+    toJSON() {
+        return {
+            type: this.type,
+            params: {
+                targetPage: this.targetPage
+            }
         };
     }
 }
 
 class UpdateConfigCommand extends Command {
-    constructor(key, value) {
-        super();
-        this.key = key;
-        this.value = value;
-        this.previousValue = config[key];
+    constructor(configKey, configValue) {
+        super("UpdateConfig");
+        this.configKey = configKey;
+        this.configValue = configValue;
     }
-
     execute() {
-        config[this.key] = this.value;
-        saveSettings();
+        config[this.configKey] = this.configValue;
+        updateSettingsUI(this.configKey, this.configValue);
+        
+        isReflowing = true;
         applySettings();
-    }
-
-    undo() {
-        config[this.key] = this.previousValue;
+        setTimeout(() => {
+            const maxScroll = Math.abs(readerViewport.scrollWidth - readerViewport.clientWidth);
+            if (config.direction === 'rtl') {
+                readerViewport.scrollLeft = -(bookmarkProgress * maxScroll);
+            } else {
+                readerViewport.scrollLeft = bookmarkProgress * maxScroll;
+            }
+            isReflowing = false;
+        }, 150);
         saveSettings();
-        applySettings();
     }
-
-    serialize() {
+    toJSON() {
         return {
-            type: 'UpdateConfigCommand',
-            key: this.key,
-            value: this.value
+            type: this.type,
+            params: {
+                configKey: this.configKey,
+                configValue: this.configValue
+            }
         };
     }
 }
 
 class SyncBookmarkCommand extends Command {
     constructor(progress) {
-        super();
+        super("SyncBookmark");
         this.progress = progress;
-        this.previousProgress = bookmarkProgress;
     }
-
     execute() {
         bookmarkProgress = this.progress;
         saveBookmark();
     }
-
-    undo() {
-        bookmarkProgress = this.previousProgress;
-        saveBookmark();
-    }
-
-    serialize() {
+    toJSON() {
         return {
-            type: 'SyncBookmarkCommand',
-            progress: this.progress
+            type: this.type,
+            params: {
+                progress: this.progress
+            }
         };
     }
 }
 
 // Global Operations Command History Manager
 var CommandManager = {
-    history: [],
-    undoneHistory: [],
+    commandHistory: [],
+    isReplaying: false,
 
     isDuplicateCommand(command) {
-        if (this.history.length === 0) return false;
-        const lastCmd = this.history[this.history.length - 1];
-        if (lastCmd.constructor.name !== command.constructor.name) return false;
-
-        if (command instanceof NavigatePageCommand) {
+        if (this.commandHistory.length === 0) return false;
+        const lastCmd = this.commandHistory[this.commandHistory.length - 1];
+        
+        if (command.type === "NavigatePage" && lastCmd.type === "NavigatePage") {
             return lastCmd.targetPage === command.targetPage;
         }
-        if (command instanceof SyncBookmarkCommand) {
+        if (command.type === "SyncBookmark" && lastCmd.type === "SyncBookmark") {
             return Math.abs(lastCmd.progress - command.progress) < 0.001;
-        }
-        if (command instanceof UpdateConfigCommand) {
-            return lastCmd.key === command.key && lastCmd.value === command.value;
-        }
-        if (command instanceof LoadBookCommand) {
-            return lastCmd.fileName === command.fileName;
         }
         return false;
     },
 
     limitHistorySize() {
-        if (this.history.length > 50) {
-            this.history.shift(); // Remove the oldest command
+        if (this.commandHistory.length <= 100) return;
+        // Keep index 0 (LoadBookCommand) protected, discard index 1 (oldest command)
+        if (this.commandHistory[0].type === "LoadBook") {
+            this.commandHistory.splice(1, 1);
+        } else {
+            // Fallback in case first command is not load book
+            this.commandHistory.shift();
         }
     },
 
-    execute(command) {
-        if (this.isDuplicateCommand(command)) {
+    execute(command, isFromReplay = false) {
+        // If replaying and user tries to execute normal actions, ignore it
+        if (this.isReplaying && !isFromReplay) {
             return;
         }
 
+        // Run command
         command.execute();
-        this.history.push(command);
-        this.limitHistorySize();
-        this.undoneHistory = []; // Reset undo chain on new operations
-        this.updateDebugMonitor();
-    },
 
-    undo() {
-        if (this.history.length === 0) return;
-        const command = this.history.pop();
-        command.undo();
-        this.undoneHistory.push(command);
-        this.updateDebugMonitor();
-    },
+        // Record command in history if it is not from replay
+        if (!isFromReplay) {
+            if (this.isDuplicateCommand(command)) {
+                return; // Ignore duplicate consecutive commands
+            }
 
-    redo() {
-        if (this.undoneHistory.length === 0) return;
-        const command = this.undoneHistory.pop();
-        command.execute();
-        this.history.push(command);
-        this.updateDebugMonitor();
+            this.commandHistory.push(command);
+            this.limitHistorySize();
+
+            // Update debug text area with latest history JSON string
+            if (debugHistoryJSON) {
+                debugHistoryJSON.value = this.exportJSON();
+            }
+        }
     },
 
     exportJSON() {
-        const serialized = this.history.map(cmd => cmd.serialize());
-        return JSON.stringify(serialized, null, 2);
+        return JSON.stringify(this.commandHistory.map(cmd => cmd.toJSON()), null, 2);
+    },
+
+    recreateCommand(item) {
+        switch (item.type) {
+            case "LoadBook":
+                return new LoadBookCommand(item.params.fileName, item.params.fileContent);
+            case "NavigatePage":
+                return new NavigatePageCommand(item.params.targetPage);
+            case "UpdateConfig":
+                return new UpdateConfigCommand(item.params.configKey, item.params.configValue);
+            case "SyncBookmark":
+                return new SyncBookmarkCommand(item.params.progress);
+            default:
+                throw new Error(`Unknown command type: ${item.type}`);
+        }
     },
 
     importJSON(jsonString) {
         try {
-            const list = JSON.parse(jsonString);
-            if (!Array.isArray(list)) throw new Error("Imported operations must be an array");
-
-            this.history = [];
-            this.undoneHistory = [];
-
-            list.forEach(data => {
-                let cmd = null;
-                switch (data.type) {
-                    case 'NavigatePageCommand':
-                        cmd = new NavigatePageCommand(data.targetPage);
-                        break;
-                    case 'LoadBookCommand':
-                        cmd = new LoadBookCommand(data.fileName, data.fileContent, data.fileType);
-                        break;
-                    case 'UpdateConfigCommand':
-                        cmd = new UpdateConfigCommand(data.key, data.value);
-                        break;
-                    case 'SyncBookmarkCommand':
-                        cmd = new SyncBookmarkCommand(data.progress);
-                        break;
-                    default:
-                        console.warn('Unknown command type inside import history:', data.type);
-                }
-                if (cmd) {
-                    // Directly push commands to history instead of execute to avoid re-triggering side effects
-                    this.history.push(cmd);
-                }
-            });
-
-            // Re-apply the last state of the history to the app
-            if (this.history.length > 0) {
-                // To restore safely, we clean UI state and execute the last state sequentially
-                const lastCommand = this.history[this.history.length - 1];
-                lastCommand.execute();
+            const rawArray = JSON.parse(jsonString);
+            if (!Array.isArray(rawArray)) {
+                throw new Error("Input operations history must be a JSON array");
             }
-            this.updateDebugMonitor();
-        } catch (e) {
-            console.error('Failed to parse operations history JSON:', e);
-            alert('操作履歴データのパースに失敗しました。正しいJSONファイルかご確認ください。');
+            const commands = [];
+            for (const item of rawArray) {
+                if (!item.type || !item.params) {
+                    throw new Error("Invalid command format in history array");
+                }
+                const cmd = this.recreateCommand(item);
+                if (cmd) {
+                    commands.push(cmd);
+                }
+            }
+            return commands;
+        } catch (err) {
+            console.error("Failed to parse operations history JSON:", err);
+            alert(`履歴データのインポートに失敗しました:\n${err.message}`);
+            return null;
+        }
+    },
+
+    async replay(commands) {
+        if (!commands || commands.length === 0) return;
+        
+        this.isReplaying = true;
+        // Clear current memory history before starting replay
+        this.commandHistory = [];
+        
+        // Mask UI to prevent user interactions during auto replay
+        if (app) app.classList.add('replaying');
+
+        try {
+            for (const cmd of commands) {
+                // Delay execution by 300ms to allow rendering / transition cycles
+                await new Promise(resolve => setTimeout(resolve, 300));
+                this.execute(cmd, true);
+                // Re-populate commandHistory during replay for consistent session state afterward
+                this.commandHistory.push(cmd);
+            }
+            if (debugHistoryJSON) {
+                debugHistoryJSON.value = this.exportJSON();
+            }
+        } catch (err) {
+            console.error("Error during auto-replay operation:", err);
+        } finally {
+            this.isReplaying = false;
+            if (app) app.classList.remove('replaying');
         }
     },
 
     updateDebugMonitor() {
         if (debugMonitor) {
-            debugMonitor.textContent = `History: ${this.history.length} operations. Undone: ${this.undoneHistory.length} operations.`;
+            debugMonitor.textContent = `History: ${this.commandHistory.length} operations.`;
         }
     }
 };

@@ -74,27 +74,53 @@ function loadPredefinedBook(book) {
 }
 
 function displayBook() {
-    if (!currentFileContent) return;
+    let parsedHTML = '';
+    let title = currentFileName;
 
-    isReflowing = true;
-    welcomeScreen.classList.add("hidden");
-    readerScreen.classList.remove("hidden");
-    bookTitle.textContent = currentFileName;
-
-    // Render contents based on file type
-    if (currentFileType === "html") {
-        readerContent.innerHTML = parseAozoraHTML(currentFileContent);
+    if (currentFileType === 'txt') {
+        // Parse plain text with Aozora annotation
+        const parsed = parseAozoraText(currentFileContent);
+        parsedHTML = parsed.body;
+        title = parsed.title || currentFileName.replace('.txt', '');
     } else {
-        readerContent.innerHTML = parseAozoraText(currentFileContent);
+        // XHTML/HTML
+        const parsed = parseAozoraHTML(currentFileContent);
+        parsedHTML = parsed.body;
+        title = parsed.title || currentFileName.replace(/\.(x?html)/, '');
     }
 
-    // Scroll to absolute right (beginning of text) in RTL mode
-    // wait for layout reflow rendering to complete
+    // Override with predefined book title if matched
+    const predefinedBook = PREDEFINED_BOOKS.find(b => currentFileName.includes(b.cardId.toString()));
+    if (predefinedBook) {
+        title = predefinedBook.title;
+    }
+
+    // Apply to viewer
+    bookTitle.textContent = title;
+    document.title = `${title} - ゆうぞら`;
+    readerContent.innerHTML = parsedHTML;
+
+    // Display Reader, Hide Welcome Screen
+    welcomeScreen.classList.add('hidden');
+    readerScreen.classList.remove('hidden');
+
+    // Check if there is a saved bookmark for this file
+    const savedProgress = localStorage.getItem(`bookmark_${currentFileName}`);
+    if (savedProgress) {
+        bookmarkProgress = parseFloat(savedProgress);
+    } else {
+        bookmarkProgress = 0;
+    }
+
+    // Wait a tick for rendering to complete before restoring scroll position
+    isReflowing = true;
     setTimeout(() => {
-        // Setup initial pagination or restore bookmark
-        checkLastSession();
-        isReflowing = false;
+        restoreScrollPosition();
+        updateProgress();
         triggerHeaderShow();
+        setTimeout(() => {
+            isReflowing = false;
+        }, 50);
     }, 100);
 }
 
@@ -117,125 +143,123 @@ function updateProgress() {
         bookmarkProgress = scrollLeft / maxScroll;
     }
 
-    // Command History Sync (Debounced or command throttled inside CommandManager)
-    CommandManager.execute(new SyncBookmarkCommand(bookmarkProgress));
+    // Progress bar percentage (0 to 100)
+    const percentage = Math.min(100, Math.max(0, Math.round(bookmarkProgress * 100)));
+    progressBar.style.width = `${percentage}%`;
+    readingPercentage.textContent = `${percentage}%`;
 
-    // Update progress numbers
-    const currentPage = Math.round(scrollLeft / clientWidth) + 1;
-    const totalPages = Math.round(scrollWidth / clientWidth);
-
-    if (readingPercentage) {
-        const percent = Math.round(bookmarkProgress * 100);
-        readingPercentage.textContent = `${percent}%`;
-    }
-    if (readingIndex) {
-        readingIndex.textContent = `${currentPage} / ${totalPages}`;
-    }
-
-    // Set interactive visual slider bar
-    if (progressBar) {
-        progressBar.style.width = `${bookmarkProgress * 100}%`;
-    }
+    // Calculate pages based on viewport clientWidth
+    const pageCount = Math.round(scrollWidth / clientWidth);
+    const currentPage = Math.min(pageCount, Math.max(1, Math.round(scrollLeft / clientWidth) + 1));
+    readingIndex.textContent = `${currentPage} / ${pageCount} ページ`;
 }
 
 function restoreScrollPosition() {
-    const scrollWidth = readerViewport.scrollWidth;
-    const clientWidth = readerViewport.clientWidth;
-    const maxScroll = scrollWidth - clientWidth;
-    const targetScroll = maxScroll * bookmarkProgress;
-
-    if (config.direction === "rtl") {
-        readerViewport.scrollLeft = -targetScroll;
+    const maxScroll = readerViewport.scrollWidth - readerViewport.clientWidth;
+    if (config.direction === 'rtl') {
+        // In vertical-rl, scrolling forward is in the negative direction.
+        readerViewport.scrollLeft = -(bookmarkProgress * maxScroll);
     } else {
-        readerViewport.scrollLeft = targetScroll;
+        // In vertical-lr, scrolling forward is in the positive direction.
+        readerViewport.scrollLeft = bookmarkProgress * maxScroll;
     }
 }
 
 function restoreScrollPositionSmooth() {
-    const scrollWidth = readerViewport.scrollWidth;
-    const clientWidth = readerViewport.clientWidth;
-    const maxScroll = scrollWidth - clientWidth;
-    const targetScroll = maxScroll * bookmarkProgress;
-
-    readerViewport.scrollTo({
-        left: config.direction === "rtl" ? -targetScroll : targetScroll,
-        behavior: "smooth"
-    });
+    const maxScroll = readerViewport.scrollWidth - readerViewport.clientWidth;
+    const targetScroll = config.direction === 'rtl' ? -(bookmarkProgress * maxScroll) : (bookmarkProgress * maxScroll);
+    readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
 }
 
-function scrollToPage(targetPage) {
-    const clientWidth = readerViewport.clientWidth;
-    const targetScrollLeft = (targetPage - 1) * clientWidth;
-
-    readerViewport.scrollTo({
-        left: config.direction === "rtl" ? -targetScrollLeft : targetScrollLeft,
-        behavior: "smooth"
-    });
+function saveBookmark() {
+    if (currentFileName) {
+        try {
+            localStorage.setItem(`bookmark_${currentFileName}`, bookmarkProgress);
+        } catch (e) {
+            console.warn("Failed to save bookmark position to localStorage:", e);
+        }
+    }
 }
 
 function nextPage() {
     const clientWidth = readerViewport.clientWidth;
     const currentScroll = Math.abs(readerViewport.scrollLeft);
-    const targetScroll = currentScroll + clientWidth;
-    const maxScroll = readerViewport.scrollWidth - clientWidth;
+    const pageCount = Math.round(readerViewport.scrollWidth / clientWidth);
+    const currentPage = Math.round(currentScroll / clientWidth) + 1;
 
-    if (targetScroll <= maxScroll + 10) {
-        readerViewport.scrollTo({
-            left: config.direction === "rtl" ? -targetScroll : targetScroll,
-            behavior: "smooth"
-        });
+    if (currentPage < pageCount) {
+        CommandManager.execute(new NavigatePageCommand(currentPage + 1));
     }
 }
 
 function prevPage() {
     const clientWidth = readerViewport.clientWidth;
     const currentScroll = Math.abs(readerViewport.scrollLeft);
-    const targetScroll = Math.max(0, currentScroll - clientWidth);
+    const currentPage = Math.round(currentScroll / clientWidth) + 1;
 
+    if (currentPage > 1) {
+        CommandManager.execute(new NavigatePageCommand(currentPage - 1));
+    }
+}
+
+function scrollToPage(pageNumber) {
+    const clientWidth = readerViewport.clientWidth;
+    const targetScrollLeft = (pageNumber - 1) * clientWidth;
+    
+    isReflowing = true;
     readerViewport.scrollTo({
-        left: config.direction === "rtl" ? -targetScroll : targetScroll,
-        behavior: "smooth"
+        left: config.direction === 'rtl' ? -targetScrollLeft : targetScrollLeft,
+        behavior: 'smooth'
     });
+    
+    setTimeout(() => {
+        isReflowing = false;
+        // Keep progress and bar updated in real-time
+        const maxScroll = readerViewport.scrollWidth - readerViewport.clientWidth;
+        bookmarkProgress = maxScroll > 0 ? targetScrollLeft / maxScroll : 0;
+        updateProgress();
+        saveBookmark();
+    }, 400); // Wait for transition animation to complete
 }
 
 function handleResize() {
-    if (!currentFileName) return;
-
+    // Avoid double reflow trigger cycles
+    if (isReflowing) return;
+    
     isReflowing = true;
-    // Keep relative reading percentage location on viewport size changes
-    const previousPercentage = bookmarkProgress;
-
+    const oldProgress = bookmarkProgress;
+    
+    // Temporarily reset columns layout width before recalculations to get accurate sizing
+    readerContent.style.width = 'auto';
+    
     setTimeout(() => {
-        bookmarkProgress = previousPercentage;
-        restoreScrollPosition();
-        isReflowing = false;
+        // Enforce column content size width constraints
+        readerContent.style.width = 'max-content';
+        
+        // Restore progress coordinates on new dimensions
+        const maxScroll = Math.abs(readerViewport.scrollWidth - readerViewport.clientWidth);
+        if (config.direction === 'rtl') {
+            readerViewport.scrollLeft = -(oldProgress * maxScroll);
+        } else {
+            readerViewport.scrollLeft = oldProgress * maxScroll;
+        }
+        
+        bookmarkProgress = oldProgress;
         updateProgress();
+        
+        setTimeout(() => {
+            isReflowing = false;
+        }, 50);
     }, 100);
 }
 
-function saveBookmark() {
-    if (!currentFileName) return;
-    try {
-        localStorage.setItem(`bookmark_${currentFileName}`, bookmarkProgress.toString());
-    } catch (e) {
-        console.warn("Failed to save bookmark index to localStorage:", e);
-    }
-}
-
 function checkLastSession() {
-    if (!currentFileName) return;
-
-    const savedProgress = localStorage.getItem(`bookmark_${currentFileName}`);
-    if (savedProgress) {
-        bookmarkProgress = parseFloat(savedProgress);
-        restoreScrollPosition();
+    const lastProgress = localStorage.getItem(`bookmark_${currentFileName}`);
+    if (lastProgress) {
+        bookmarkProgress = parseFloat(lastProgress);
     } else {
         bookmarkProgress = 0;
-        if (config.direction === "rtl") {
-            readerViewport.scrollLeft = 0;
-        } else {
-            readerViewport.scrollLeft = 0;
-        }
     }
+    restoreScrollPosition();
     updateProgress();
 }

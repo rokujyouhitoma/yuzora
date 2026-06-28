@@ -23,6 +23,15 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Setup Java (needed for Closure Compiler)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build main-min.js using make
+        run: make
+
       - name: Run lint
         run: npm run lint
 
@@ -34,12 +43,3 @@ jobs:
 
       - name: Run E2E tests
         run: npm run test:e2e
-
-      - name: Setup Java (needed for Closure Compiler)
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Build main-min.js using make
-        run: make

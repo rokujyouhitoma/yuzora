@@ -39,6 +39,9 @@ test.describe('Yuzora Parser Unit Tests', () => {
         // Mock window.alert
         window.alert = () => {};
 
+        // Mock Element.prototype.scrollTo for JSDOM
+        window.Element.prototype.scrollTo = () => {};
+
         // Load main-min.js code
         const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../main-min.js'), 'utf8');
         const scriptEl = window.document.createElement('script');
@@ -57,8 +60,6 @@ test.describe('Yuzora Parser Unit Tests', () => {
             activeTimeouts.forEach(id => window.clearTimeout(id));
             window.close();
         }
-        // Force exit to prevent any hanging timers in Node process
-        process.exit(0);
     });
 
     test('should expose Yuzora object on window', () => {
