@@ -2,7 +2,7 @@
 ID: 015
 種別: Feature
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [FEAT] Closure Compiler の導入とビルド自動化 (ID: 015)
