@@ -22,7 +22,7 @@
 | **012** | Feature | Medium | Closed | Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応 | [012-command-pattern-operation-history.md](closed/012-command-pattern-operation-history.md) |
 | **013** | Enhancement | Low | Draft | 目次ドロワーのキーボード・スクリーンリーダー向けアクセシビリティ向上 | [013-toc-accessibility-enhancement.md](013-toc-accessibility-enhancement.md) |
 | **014** | Enhancement | Medium | Promoted | デバッグ画面の拡大表示（大部分をカバーする広幅ウィンドウ化） | [014-full-screen-debug-window.md](closed/014-full-screen-debug-window.md) |
-| **015** | Feature | Medium | Draft | Closure Compiler の導入とビルド自動化 | [015-integrate-closure-compiler.md](015-integrate-closure-compiler.md) |
+| **015** | Feature | Medium | Approved | Closure Compiler の導入とビルド自動化 | [015-integrate-closure-compiler.md](015-integrate-closure-compiler.md) |
 
 ---
 
