@@ -2,7 +2,7 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 test('Capture screenshots of reader pages', async ({ page }) => {
-    await page.goto('http://localhost:8080/');
+    await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // Open first book
     const bookCard = page.locator('#developer-books-grid .book-card').first();

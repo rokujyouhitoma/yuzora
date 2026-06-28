@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added Google Closure Compiler (v20240317) の導入およびビルド自動化のための Makefile の新規作成 (ID: 011).
+- Added ビルドされた JavaScript ファイル（`main-min.js`）をロードしてリリース検証を行うための html（`compiled.html`）を index.html から複製して追加 (ID: 011).
+- Changed 環境変数 `TEST_PATH` に基づいてE2Eテスト実行対象のHTMLを動的に切り替えられるように、Playwrightテストスクリプト（`tests/e2e/viewer.spec.js` および `tests/e2e/diagnose.spec.js`）を拡張 (ID: 011).
+- Changed 基本設計書 [DSN-01](file:///workspace/yuzora/yuzora/docs/DSN-01-high_level_design.md) を更新し、表示レイヤーおよび制御レイヤーのコンポーネント役割テーブルに `compiled.html` および `main-min.js` の説明を追記 (ID: 011).
+
 - Changed デバッグモーダルウィンドウ（`#debug-modal`）について、カード風の丸角や枠線、半透明オーバーレイといったウィンドウらしさを美しく残したまま、サイズを大部分（最大横幅 1200px / 最大高さ 90vh）をカバーする広さへと拡大表示化。操作履歴 JSON やレイアウト診断結果テキストエリアもウィンドウ全体の伸縮に合わせて自動で縦に引き伸ばされるよう Flexbox 設定を調整し、デバッグの一覧性を最大化 (ID: 010 - Issue)。
 - Changed [DSN-01]（基本設計書）のデバッグモーダルコンポーネント構成仕様を、大部分カバーする広幅ウィンドウのサイズ拡張方針に合わせて同期更新 (ID: 010 - Issue)。
 

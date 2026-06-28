@@ -39,7 +39,8 @@
 
 * **コア**: HTML5 / Vanilla CSS3 / Pure JavaScript (ES6)
 * **フォント**: Google Fonts (Noto Serif JP, Outfit, Inter)
-* **構成**: フレームワークやビルドツール（Vite, Webpack等）を一切使用しない、軽量なクライアントサイド静的SPA。GitHub Pages などの静的ホスティングで即時公開可能です。
+* **ビルドツール**: Google Closure Compiler (v20240317) / Makefile (開発効率と配布時のパフォーマンス向上のため、JavaScriptの難読化・軽量化をサポート)
+* **構成**: フレームワークを使用しない、軽量なクライアントサイド静的SPA。GitHub Pages などの静的ホスティングで即時公開可能です。
 
 ---
 
@@ -50,7 +51,8 @@ yuzora/
 ├── .github/workflows/static.yml   # GitHub Pages デプロイワークフロー
 ├── docs/                         # 要求仕様・要件・設計書ドキュメント類
 │   ├── adr/                      # アーキテクチャ意思決定記録 (ADR)
-│   │   └── ADR-01-predefined-books-and-storage.md
+│   │   ├── ADR-01-predefined-books-and-storage.md
+│   │   └── ADR-02-cyclomatic-complexity-threshold.md # 循環的複雑度
 │   ├── backlogs/                 # 将来の機能要望・改善のアイデア（台帳と個別要件）
 │   ├── issues/                   # 現在進行中の開発課題・バグ
 │   ├── threat-modeling/          # 包括的脅威モデリング結果（STRIDE分析等）
@@ -68,7 +70,10 @@ yuzora/
 │   │   └── style.css             # アプリケーション共通スタイル
 │   └── js/
 │     └── app.js                  # アプリケーションロジック・ステート管理
-├── index.html                    # メイン HTML (SPA エントリポイント)
+├── tools/                        # ビルド用外部ツール（Closure Compiler 実行jar等）
+├── Makefile                      # ビルドコマンド定義 (make main-min.js)
+├── index.html                    # メイン HTML (SPA エントリポイント - 開発用)
+├── compiled.html                 # リリース検証用 HTML (main-min.js 読み込み)
 ├── LICENSE                       # ライセンスファイル
 └── README.md                     # 本ファイル
 ```
@@ -77,6 +82,7 @@ yuzora/
 
 ## 🚀 ローカルでの実行方法 (Local Running)
 
+### 開発用 (index.html の実行)
 本アプリは完全に静的なSPAであるため、ローカルで動かすには簡易Webサーバーを起動するだけです。
 
 1. **Python3を使用する場合**
@@ -89,6 +95,17 @@ yuzora/
    ```
 
 起動後、ブラウザで [http://localhost:8000](http://localhost:8000) または表示されたアドレスへアクセスしてください。
+
+### リリース検証用 (compiled.html の実行)
+1. ワークスペースルートでビルドを実行して `main-min.js` を生成します。
+   ```bash
+   make
+   ```
+2. 簡易Webサーバーを起動後、ブラウザで `http://localhost:8000/compiled.html` へアクセスしてください。
+3. ビルド成果物の削除：
+   ```bash
+   make clean
+   ```
 
 ---
 

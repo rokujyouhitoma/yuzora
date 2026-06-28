@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Yuzora E2E Reader Tests', () => {
     test.beforeEach(async ({ page }) => {
         // Load the page from local server
-        await page.goto('http://localhost:8080/');
+        await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
     });
 
     test('should load welcome screen and show recommendation cards', async ({ page }) => {
