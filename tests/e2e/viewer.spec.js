@@ -2,6 +2,11 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Yuzora E2E Reader Tests', () => {
     test.beforeEach(async ({ page }) => {
+        // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
+        await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
+        await page.route('https://fonts.googleapis.com/**', route => route.abort());
+        await page.route('https://fonts.gstatic.com/**', route => route.abort());
+
         // Load the page from local server
         await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
     });
@@ -39,6 +44,10 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
         // Open settings drawer
         const btnSettings = page.locator('#btn-settings');
+        const readerHeader = page.locator('.reader-header');
+        if (await readerHeader.getAttribute('class').then(c => c.includes('hidden'))) {
+            await page.click('#reader-viewport');
+        }
         await btnSettings.click();
 
         // Assert settings drawer is open

@@ -2,7 +2,7 @@
 ID: 017
 種別: Feature
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Feature] GitHub Actions CI パイプラインと GitHub Pages デプロイ自動化の導入 (ID: 017)
