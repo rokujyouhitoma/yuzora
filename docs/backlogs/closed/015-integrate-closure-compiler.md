@@ -15,10 +15,10 @@ Google Closure Compiler を用いた JavaScript ファイルのビルド・難�
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [NEW] [Makefile](file:///workspace/yuzora/yuzora/Makefile) (ビルドコマンド定義)
-- [NEW] [compiled.html](file:///workspace/yuzora/yuzora/compiled.html) (main-min.jsを読み込むリリース検証用HTML)
-- [NEW] [tools/closure-compiler/LICENSE](file:///workspace/yuzora/yuzora/tools/closure-compiler/LICENSE) (ライセンス情報)
-- [NEW] [tools/closure-compiler/compiler.jar](file:///workspace/yuzora/yuzora/tools/closure-compiler/compiler.jar) (コンパイラ本体)
+- [NEW] [Makefile](../../../Makefile) (ビルドコマンド定義)
+- [NEW] [compiled.html](../../../compiled.html) (main-min.jsを読み込むリリース検証用HTML)
+- [NEW] [tools/closure-compiler/LICENSE](../../../tools/closure-compiler/LICENSE) (ライセンス情報)
+- [NEW] [tools/closure-compiler/compiler.jar](../../../tools/closure-compiler/compiler.jar) (コンパイラ本体)
 
 ---
 

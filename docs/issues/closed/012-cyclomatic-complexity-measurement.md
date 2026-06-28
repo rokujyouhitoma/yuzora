@@ -24,11 +24,11 @@ ID: 012
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [MODIFY] [package.json](file:///workspace/yuzora/yuzora/package.json) (eslint 依存関係および lint スクリプトの追加)
-- [NEW] [eslint.config.js](file:///workspace/yuzora/yuzora/eslint.config.js) (ESLint 設定および complexity ルールの設定)
-- [MODIFY] [src/js/app.js](file:///workspace/yuzora/yuzora/src/js/app.js) (既存コードの複雑度検証とリファクタリング)
-- [MODIFY] [DSN-02 (詳細設計書)](file:///workspace/yuzora/yuzora/docs/DSN-02-low_level_design.md) (関数分割等の設計反映)
-- [MODIFY] [ADR-02](file:///workspace/yuzora/yuzora/docs/adr/ADR-02-cyclomatic-complexity-threshold.md) (ステータスを Accepted に更新)
+- [MODIFY] [package.json](../../../package.json) (eslint 依存関係および lint スクリプトの追加)
+- [NEW] [eslint.config.js](../../../eslint.config.js) (ESLint 設定および complexity ルールの設定)
+- [MODIFY] [src/js/app.js](../../../src/js/app.js) (既存コードの複雑度検証とリファクタリング)
+- [MODIFY] [DSN-02 (詳細設計書)](../../../docs/DSN-02-low_level_design.md) (関数分割等の設計反映)
+- [MODIFY] [ADR-02](../../../docs/adr/ADR-02-cyclomatic-complexity-threshold.md) (ステータスを Accepted に更新)
 
 ---
 

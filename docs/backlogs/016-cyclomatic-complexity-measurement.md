@@ -12,7 +12,7 @@ ID: 016
 閾値の設定および自動検証手法については、論理的検討のもと [ADR-02](../adr/ADR-02-cyclomatic-complexity-threshold.md) として決定された内容に従う。
 
 ## 2. 影響範囲と関連ファイル / Scope & Affected Files
-- [package.json](file:///workspace/yuzora/yuzora/package.json) (静的解析関連ライブラリやスクリプト定義の確認)
+- [package.json](../../package.json) (静的解析関連ライブラリやスクリプト定義の確認)
 - Linter設定ファイル（`.eslintrc.json` または `eslint.config.js`）
 - `src/js/` 配下の既存の全JSファイル（ルール導入による既存コードのエラー有無の検証とリファクタリング）
 
