@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Fixed E2E テスト (`tests/e2e/diagnose.spec.js`) において、スクリーンショットの出力先パスにエージェント環境専用の絶対パスがハードコードされていたため、環境変数 `ARTIFACTS_DIR` またはプロジェクト直下の相対パス `./test-results` を動的に使用するよう修正。また、書き込み前に出力先ディレクトリを自動作成するようにし、GitHub Actions CI 上での `EACCES: permission denied` エラーを解消 (ID: 015)。
+
 - Fixed プリデファインド本（オススメ書籍）が UTF-8 でエンコードされているため、`loadPredefinedBook` でデコードする際に UTF-8 を第一優先でデコードするように修正し、コンソールでの Shift_JIS デコード失敗警告ログを解消 (ID: 014)。
 
 - Added GitHub Actions の CI ワークフローファイル (`.github/workflows/ci.yml`) を新規作成し、全ブランチへの push および main への PR で lint・ユニットテスト・E2E テスト・makeビルドを自動実行するよう設定 (ID: 013)。
