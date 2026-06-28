@@ -1,0 +1,180 @@
+/* ==========================================================================
+   Design System & Variables
+   ========================================================================== */
+:root {
+    --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    --transition-fast: all 0.15s ease;
+    --font-ui: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* Reader Layout Paddings */
+    --reader-padding-top: 76px; /* 64px header + 12px padding */
+    --reader-padding-bottom: 52px; /* 40px footer + 12px padding */
+    --reader-padding-x: 0px;
+    --reader-viewport-padding-x: 24px;
+    
+    /* Theme Defaults (Sepia / 和紙) */
+    --bg-app: #f5eedc;
+    --bg-card: #fdfaf2;
+    --bg-ui: rgba(253, 250, 242, 0.85);
+    --text-main: #2c221e;
+    --text-muted: #705f55;
+    --border-color: rgba(112, 95, 85, 0.15);
+    --accent-color: #a67c52;
+    --accent-hover: #8e623b;
+    --shadow-sm: 0 2px 8px rgba(44, 34, 30, 0.04);
+    --shadow-md: 0 8px 30px rgba(44, 34, 30, 0.08);
+    --shadow-lg: 0 16px 40px rgba(44, 34, 30, 0.12);
+    --ruby-color: #8c7667;
+    --scrollbar-track: rgba(112, 95, 85, 0.05);
+    --scrollbar-thumb: rgba(112, 95, 85, 0.2);
+}
+
+/* Theme: Light (明) */
+.theme-light {
+    --bg-app: #f8f9fa;
+    --bg-card: #ffffff;
+    --bg-ui: rgba(255, 255, 255, 0.85);
+    --text-main: #1a1a1a;
+    --text-muted: #666666;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --accent-color: #4f46e5;
+    --accent-hover: #4338ca;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.02);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.08);
+    --ruby-color: #555555;
+    --scrollbar-track: rgba(0, 0, 0, 0.03);
+    --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+}
+
+/* Theme: Dark (暗) */
+.theme-dark {
+    --bg-app: #18181a;
+    --bg-card: #222225;
+    --bg-ui: rgba(34, 34, 37, 0.85);
+    --text-main: #e3e3e6;
+    --text-muted: #95959f;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --accent-color: #818cf8;
+    --accent-hover: #6366f1;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.4);
+    --ruby-color: #b0b0b8;
+    --scrollbar-track: rgba(255, 255, 255, 0.03);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+}
+
+/* Theme: Black (漆黒) */
+.theme-black {
+    --bg-app: #000000;
+    --bg-card: #121212;
+    --bg-ui: rgba(18, 18, 18, 0.85);
+    --text-main: #b8b8b8;
+    --text-muted: #6e6e6e;
+    --border-color: rgba(255, 255, 255, 0.05);
+    --accent-color: #a78bfa;
+    --accent-hover: #8b5cf6;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --ruby-color: #8a8a8a;
+    --scrollbar-track: rgba(255, 255, 255, 0.02);
+    --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+}
+
+/* ==========================================================================
+   Base Styles & Reset
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--bg-app);
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+a:hover {
+    color: var(--accent-hover);
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   App Layout
+   ========================================================================== */
+.app-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border: none;
+    outline: none;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+    background: var(--bg-card);
+    color: var(--text-main);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    outline: none;
+}
+.btn-icon:hover {
+    background: var(--accent-color);
+    color: #ffffff;
+    border-color: var(--accent-color);
+    transform: scale(1.05);
+}
+.btn-icon svg {
+    width: 20px;
+    height: 20px;
+}
+

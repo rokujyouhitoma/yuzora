@@ -1,0 +1,282 @@
+/* ==========================================================================
+   Utility Classes & Animations
+   ========================================================================== */
+.hidden {
+    display: none !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar customize for reading viewport */
+.reader-viewport::-webkit-scrollbar {
+    height: 6px;
+}
+.reader-viewport::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+.reader-viewport::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 3px;
+}
+.reader-viewport::-webkit-scrollbar-thumb:hover {
+    background-color: var(--accent-color);
+}
+
+/* ==========================================================================
+   Debug Modal Screen
+   ========================================================================== */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -48%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.debug-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 90vh;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    direction: ltr;
+    writing-mode: horizontal-tb;
+}
+.debug-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 99;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+.debug-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.debug-modal-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-main);
+}
+.debug-modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.debug-modal-section h3 {
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.debug-monitor-container {
+    background: rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 12px;
+    font-family: monospace;
+    font-size: 12px;
+    max-height: 300px;
+    overflow-y: auto;
+    color: var(--text-main);
+}
+.theme-dark .debug-monitor-container,
+.theme-black .debug-monitor-container {
+    background: rgba(255, 255, 255, 0.04);
+}
+.debug-monitor-container pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.debug-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.debug-history-textarea {
+    width: 100%;
+    height: 250px;
+    font-family: monospace;
+    font-size: 11px;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--text-main);
+    resize: vertical;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+.theme-dark .debug-history-textarea,
+.theme-black .debug-history-textarea {
+    background: rgba(255, 255, 255, 0.04);
+}
+.debug-buttons button {
+    width: 100%;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: #ffffff;
+    border: none;
+}
+.btn-danger:hover {
+    background-color: #bd2130;
+}
+.btn-success {
+    background-color: #28a745 !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+.btn-success:hover {
+    background-color: #218838 !important;
+}
+.btn-secondary {
+    background-color: var(--border-color);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+.btn-secondary:hover {
+    background-color: var(--accent-hover);
+    color: #ffffff;
+    border-color: var(--accent-hover);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Debug Tabs */
+.debug-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.02);
+}
+.theme-dark .debug-tabs,
+.theme-black .debug-tabs {
+    background: rgba(255, 255, 255, 0.02);
+}
+.debug-tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    border-bottom: 2px solid transparent;
+    font-size: 14px;
+}
+.debug-tab-btn.active {
+    color: var(--text-main);
+    font-weight: 600;
+    border-bottom-color: var(--accent-color);
+}
+.debug-tab-btn:hover {
+    background: rgba(0, 0, 0, 0.02);
+}
+.theme-dark .debug-tab-btn:hover,
+.theme-black .debug-tab-btn:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+.debug-tab-content.hidden {
+    display: none !important;
+}
+
+/* Utility Classes to eliminate inline styles (CSP compliance) */
+.hidden-input {
+    display: none !important;
+}
+
+.btn-icon-back {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.mr-8 {
+    margin-right: 8px;
+}
+
+.dev-settings-group {
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+
+.btn-open-debug-style {
+    width: 100%;
+    background: var(--border-color);
+    color: var(--text-main);
+    margin-top: 8px;
+}
+
+.debug-section-margin {
+    margin-top: 20px;
+}
+
+.debug-buttons-container {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.debug-monitor-scroll {
+    max-height: 450px;
+}
+
+.diagnose-report-style {
+    white-space: pre-wrap;
+    font-size: 13px;
+    font-family: monospace;
+}
+
+#app.replaying {
+    pointer-events: none !important;
+    cursor: wait !important;
+}
+

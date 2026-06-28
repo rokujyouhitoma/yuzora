@@ -39,8 +39,8 @@ test.describe('Yuzora Parser Unit Tests', () => {
         // Mock window.alert
         window.alert = () => {};
 
-        // Load app.js code
-        const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../src/js/app.js'), 'utf8');
+        // Load main-min.js code
+        const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../main-min.js'), 'utf8');
         const scriptEl = window.document.createElement('script');
         scriptEl.textContent = appJsCode;
         window.document.body.appendChild(scriptEl);

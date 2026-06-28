@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed 巨大なモノリスとなっていた JavaScript (`app.js`) および CSS (`style.css`) を画面/機能ごとのモジュールファイル (`src/js/modules/*.js`, `src/css/modules/*.css`) に完全分割 (ID: 016)。
+- Changed `Makefile` にビルドルールを追加し、モジュール CSS の結合による `style.css` 生成、および依存順序を考慮したモジュール JS の Closure Compiler による `main-min.js` 難読化・軽量化ビルドを自動化 (ID: 016)。
+- Changed 開発用 HTML (`index.html`) では機能モジュールファイルを直接個別ロードし、デプロイ・本番用 HTML (`compiled.html`) では結合・難読化後のビルドアセット（`style.css`, `main-min.js`）をロードするように分離 (ID: 016)。
+- Changed 分割された JS モジュールの `JSDOM` ユニットテストを正常に継続するため、`app.test.js` 内で読み込むコード対象を結合後の `main-min.js` に修正 (ID: 016)。
+
 - Fixed E2E テスト (`tests/e2e/diagnose.spec.js`) において、スクリーンショットの出力先パスにエージェント環境専用の絶対パスがハードコードされていたため、環境変数 `ARTIFACTS_DIR` またはプロジェクト直下の相対パス `./test-results` を動的に使用するよう修正。また、書き込み前に出力先ディレクトリを自動作成するようにし、GitHub Actions CI 上での `EACCES: permission denied` エラーを解消 (ID: 015)。
 
 - Fixed プリデファインド本（オススメ書籍）が UTF-8 でエンコードされているため、`loadPredefinedBook` でデコードする際に UTF-8 を第一優先でデコードするように修正し、コンソールでの Shift_JIS デコード失敗警告ログを解消 (ID: 014)。

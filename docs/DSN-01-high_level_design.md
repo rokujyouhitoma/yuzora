@@ -14,12 +14,27 @@
 graph TD
     subgraph Browser["Webブラウザ (Client-side)"]
         subgraph View["View (表示層)"]
-            HTML["HTML (index.html)"]
-            CSS["CSS (style.css)"]
+            HTML["HTML (index.html / compiled.html)"]
+            subgraph CSSModules["CSS modules/*"]
+                CSS_Base["base.css"]
+                CSS_Welcome["welcome.css"]
+                CSS_Reader["reader.css"]
+                CSS_Drawers["drawers.css"]
+                CSS_Debug["debug.css"]
+            end
+            CSS_Bundle["style.css (makeで統合)"]
         end
         
         subgraph Controller["Controller (制御層)"]
-            JS["JavaScript (app.js)"]
+            subgraph JSModules["JS modules/*"]
+                JS_Config["config.js"]
+                JS_Cmds["commands.js"]
+                JS_Parser["parser.js"]
+                JS_Diag["diagnostics.js"]
+                JS_Viewer["viewer.js"]
+                JS_UI["ui.js"]
+            end
+            JS_Bundle["main-min.js (makeで難読化)"]
         end
         
         subgraph Storage["Storage (永続化層)"]
@@ -28,19 +43,19 @@ graph TD
     end
     
     User["ユーザー"] <-->|"操作 / 閲覧"| View
-    View -->|"イベント発火"| JS
-    JS -->|"DOM操作 / 描画更新"| View
-    JS <-->|"設定・しおり保存/復元"| LocalStorage
-    User -->|"ファイルをドラッグ＆ドロップ / 選択"| JS
+    View -->|"イベント発火"| JSModules
+    JSModules -->|"DOM操作 / 描画更新"| View
+    JSModules <-->|"設定・しおり保存/復元"| LocalStorage
+    User -->|"ファイルをドラッグ＆ドロップ / 選択"| JSModules
 ```
 
 ### 1.2 各コンポーネントの役割
 
 | レイヤー / コンポーネント | 技術・ファイル名 | 役割と責務 |
 | :--- | :--- | :--- |
-| **表示レイヤー (View)** | [index.html](/index.html)<br>[compiled.html](/compiled.html) (リリース検証用)<br>[style.css](/src/css/style.css) | ユーザーインターフェースの構造定義およびスタイリング。縦書き表示レイアウトの提供、各種設定パネル（ドロワー）およびウェルカム画面の構築。`compiled.html` はビルドされた `main-min.js` を読み込みます。 |
-| **制御レイヤー (Controller)** | [app.js](/src/js/app.js)<br>`main-min.js` (ビルド成果物) | ファイル読み込み、Shift_JISデコード、青空文庫記法のパース、表示設定の動的適用、スクロール進捗率の計算、LocalStorageとの連携等のアプリケーションロジック。 |
-| **永続化レイヤー (Storage)** | `localStorage` | セッションを跨いだユーザー設定（テーマ、フォントサイズ等）およびしおり情報（読了進捗率、最後に読んだファイルの内容・メタデータ）の永続化。 |
+| **表示レイヤー (View)** | [index.html](/index.html) (開発用)<br>[compiled.html](/compiled.html) (デプロイ用)<br>[src/css/modules/](/src/css/modules/) (開発用CSS)<br>[src/css/style.css](/src/css/style.css) (統合CSS) | ユーザーインターフェースの構造定義およびスタイリング。開発時には機能・画面単位に細分化された CSS モジュールを使用し、本番デプロイ時（`compiled.html`）には `make` にて統合された `style.css` を読み込む。 |
+| **制御レイヤー (Controller)** | [src/js/modules/](/src/js/modules/) (開発用JS)<br>`main-min.js` (ビルド成果物) | ファイル読み込み、記法パース、表示設定適用、座標診断、しおり保存などのアプリケーションロジック。開発時にはモジュールファイルを個別に読み込み、本番ビルド（`make`）時には Closure Compiler で最適化・カプセル化された `main-min.js` を生成する。 |
+| **永続化レイヤー (Storage)** | `localStorage` | セッションを跨いだユーザー設定およびしおり情報（読了進捗率、最後に読んだファイルの内容・メタデータ）の永続化。 |
 
 ### 1.3 アーキテクチャドメインとADR（意思決定記録）の位置づけ
 * **TOGAF EA との位置づけ**:

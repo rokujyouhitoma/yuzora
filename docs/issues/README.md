@@ -24,7 +24,7 @@
 | **013** | Feature | High | Closed | GitHub Actions CI パイプラインと GitHub Pages デプロイ自動化の導入 | AI Agent | [013-github-actions-ci-and-pages-deploy.md](closed/013-github-actions-ci-and-pages-deploy.md) |
 | **014** | Bug | Medium | Closed | オススメ書籍ロード時のShift_JISデコード警告ログの発生 | AI Agent | [014-predefined-book-decoding-warning.md](closed/014-predefined-book-decoding-warning.md) |
 | **015** | Bug | High | Closed | GitHub Actions CI でのスクリーンショット保存先権限エラー | AI Agent | [015-github-actions-ci-permission-denied.md](closed/015-github-actions-ci-permission-denied.md) |
-| **016** | Feature | Medium | In Progress | 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 | AI Agent | [016-modularize-src-by-screen-and-bundle.md](016-modularize-src-by-screen-and-bundle.md) |
+| **016** | Feature | Medium | Closed | 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 | AI Agent | [016-modularize-src-by-screen-and-bundle.md](closed/016-modularize-src-by-screen-and-bundle.md) |
 
 
 
