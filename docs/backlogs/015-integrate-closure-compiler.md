@@ -48,6 +48,7 @@ Google Closure Compiler を用いた JavaScript ファイルのビルド・難�
 ## 4. 完了条件 / Success Criteria (DoD)
 - [ ] `/tools/closure-compiler/` 配下に、元の配布名のままで実行可能な Closure Compiler の jar ファイルおよび `LICENSE` ファイルが正しく配置されていること。
 - [ ] ルートディレクトリの `Makefile` を用いて、`make main-min.js` コマンドで `src/js/app.js` から `main-min.js` が警告・エラーなくコンパイル出力されること。
+- [ ] `make clean` コマンドを実行した際、生成された `main-min.js` が正しく削除されること。
 - [ ] `index.html` をベースに `compiled.html` が新設され、読み込むスクリプトが `main-min.js` に切り替わっていること（`index.html` 自体は開発用として残されていること）。
 - [ ] `compiled.html` をブラウザで開いた際、書籍のロード、ページめくり、テーマ設定の切り替え、デバッグ機能、リプレイ機能が `index.html` と全く同一に正常動作すること。
 - [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
