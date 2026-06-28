@@ -26,6 +26,7 @@
 | **015** | Bug | High | Closed | GitHub Actions CI でのスクリーンショット保存先権限エラー | AI Agent | [015-github-actions-ci-permission-denied.md](closed/015-github-actions-ci-permission-denied.md) |
 | **016** | Feature | Medium | Closed | 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 | AI Agent | [016-modularize-src-by-screen-and-bundle.md](closed/016-modularize-src-by-screen-and-bundle.md) |
 | **017** | Bug | Medium | Closed | キーボードの上・下矢印キーによるメニュー表示切替が機能しない | AI Agent | [017-toggle-menu-with-arrow-keys.md](closed/017-toggle-menu-with-arrow-keys.md) |
+| **018** | Bug | High | Closed | デバッグ画面で「レイアウト診断」タブに切り替わらない | AI Agent | [018-fix-debug-tab-switching.md](closed/018-fix-debug-tab-switching.md) |
 
 
 

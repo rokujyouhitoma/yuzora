@@ -406,15 +406,15 @@ function setupDrawerControls() {
         tabBtnMonitor.addEventListener("click", () => {
             tabBtnMonitor.classList.add("active");
             tabBtnDiagnose.classList.remove("active");
-            tabContentMonitor.classList.add("active");
-            tabContentDiagnose.classList.remove("active");
+            tabContentMonitor.classList.remove("hidden");
+            tabContentDiagnose.classList.add("hidden");
         });
 
         tabBtnDiagnose.addEventListener("click", () => {
             tabBtnDiagnose.classList.add("active");
             tabBtnMonitor.classList.remove("active");
-            tabContentDiagnose.classList.add("active");
-            tabContentMonitor.classList.remove("active");
+            tabContentDiagnose.classList.remove("hidden");
+            tabContentMonitor.classList.add("hidden");
             runLayoutDiagnosis(); // Auto analyze layout when switching tab
         });
     }

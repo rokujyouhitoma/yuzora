@@ -113,15 +113,28 @@ test.describe('Yuzora E2E Reader Tests', () => {
         await page.keyboard.press('d');
         await expect(debugModal).not.toHaveClass(/hidden/);
 
+        const tabContentMonitor = page.locator('#debug-tab-content-monitor');
+        const tabContentDiagnose = page.locator('#debug-tab-content-diagnose');
+
+        // Verify initial state: Monitor visible, Diagnose hidden
+        await expect(tabContentMonitor).not.toHaveClass(/hidden/);
+        await expect(tabContentDiagnose).toHaveClass(/hidden/);
+
         // Press '2' to switch to Layout Diagnosis tab
         const tabDiagnose = page.locator('#tab-btn-diagnose');
         await page.keyboard.press('2');
         await expect(tabDiagnose).toHaveClass(/active/);
+        // Verify Diagnose is visible and Monitor is hidden
+        await expect(tabContentDiagnose).not.toHaveClass(/hidden/);
+        await expect(tabContentMonitor).toHaveClass(/hidden/);
 
         // Press '1' to switch to System Monitor tab
         const tabMonitor = page.locator('#tab-btn-monitor');
         await page.keyboard.press('1');
         await expect(tabMonitor).toHaveClass(/active/);
+        // Verify Monitor is visible and Diagnose is hidden
+        await expect(tabContentMonitor).not.toHaveClass(/hidden/);
+        await expect(tabContentDiagnose).toHaveClass(/hidden/);
 
         // Press 'Escape' to close debug modal
         await page.keyboard.press('Escape');
