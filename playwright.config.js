@@ -18,7 +18,7 @@ module.exports = defineConfig({
     headless: true,
   },
   webServer: {
-    command: 'npx -y http-server -p 8080 -c-1',
+    command: 'node node_modules/http-server/bin/http-server -p 8080 -c-1',
     url: 'http://localhost:8080',
     reuseExistingServer: true,
     timeout: 10000,

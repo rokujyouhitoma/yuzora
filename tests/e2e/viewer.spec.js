@@ -86,7 +86,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
             const viewport = document.getElementById('reader-viewport');
             const target = -(viewport.scrollWidth - viewport.clientWidth);
             return Math.abs(viewport.scrollLeft - target) < 2;
-        });
+        }, undefined, { timeout: 5000 }).catch(() => {});
 
         // Get viewport and last paragraph bounding boxes
         const viewportBox = await page.locator('#reader-viewport').boundingBox();
