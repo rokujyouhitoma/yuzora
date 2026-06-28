@@ -2,7 +2,8 @@
  * ゆうぞら - 青空文庫 縦書きビューアー JS
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+// eslint-disable-next-line complexity
+document.addEventListener('DOMContentLoaded', () => { /* jshint ignore:line */
     // ==========================================================================
     // DOM Elements
     // ==========================================================================
@@ -225,10 +226,33 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         }
     }
-
     const CommandManager = {
         commandHistory: [],
         isReplaying: false,
+
+        isDuplicateCommand(command) {
+            if (this.commandHistory.length === 0) return false;
+            const lastCmd = this.commandHistory[this.commandHistory.length - 1];
+            
+            if (command.type === "NavigatePage" && lastCmd.type === "NavigatePage") {
+                return lastCmd.targetPage === command.targetPage;
+            }
+            if (command.type === "SyncBookmark" && lastCmd.type === "SyncBookmark") {
+                return Math.abs(lastCmd.progress - command.progress) < 0.001;
+            }
+            return false;
+        },
+
+        limitHistorySize() {
+            if (this.commandHistory.length <= 100) return;
+            // Keep index 0 (LoadBookCommand) protected, discard index 1 (oldest command)
+            if (this.commandHistory[0].type === "LoadBook") {
+                this.commandHistory.splice(1, 1);
+            } else {
+                // Fallback in case first command is not load book
+                this.commandHistory.shift();
+            }
+        },
 
         execute(command, isFromReplay = false) {
             // If replaying and user tries to execute normal actions, ignore it
@@ -241,32 +265,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Record command in history if it is not from replay
             if (!isFromReplay) {
-                // Check redundancy for page navigation and progress bookmark commands to avoid stack bloat
-                if (command.type === "NavigatePage" && this.commandHistory.length > 0) {
-                    const lastCmd = this.commandHistory[this.commandHistory.length - 1];
-                    if (lastCmd.type === "NavigatePage" && lastCmd.targetPage === command.targetPage) {
-                        return; // Ignore duplicate consecutive page turns
-                    }
-                }
-                if (command.type === "SyncBookmark" && this.commandHistory.length > 0) {
-                    const lastCmd = this.commandHistory[this.commandHistory.length - 1];
-                    if (lastCmd.type === "SyncBookmark" && Math.abs(lastCmd.progress - command.progress) < 0.001) {
-                        return; // Ignore microscopic duplicate consecutive progress changes
-                    }
+                if (this.isDuplicateCommand(command)) {
+                    return; // Ignore duplicate consecutive commands
                 }
 
                 this.commandHistory.push(command);
-
-                // FIFO history limit to 100 generations
-                if (this.commandHistory.length > 100) {
-                    // Keep index 0 (LoadBookCommand) protected, discard index 1 (oldest command)
-                    if (this.commandHistory[0].type === "LoadBook") {
-                        this.commandHistory.splice(1, 1);
-                    } else {
-                        // Fallback in case first command is not load book
-                        this.commandHistory.shift();
-                    }
-                }
+                this.limitHistorySize();
 
                 // Update debug text area with latest history JSON string
                 if (debugHistoryJSON) {
@@ -277,6 +281,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         exportJSON() {
             return JSON.stringify(this.commandHistory.map(cmd => cmd.toJSON()), null, 2);
+        },
+
+        recreateCommand(item) {
+            switch (item.type) {
+                case "LoadBook":
+                    return new LoadBookCommand(item.params.fileName, item.params.fileContent);
+                case "NavigatePage":
+                    return new NavigatePageCommand(item.params.targetPage);
+                case "UpdateConfig":
+                    return new UpdateConfigCommand(item.params.configKey, item.params.configValue);
+                case "SyncBookmark":
+                    return new SyncBookmarkCommand(item.params.progress);
+                default:
+                    throw new Error(`Unknown command type: ${item.type}`);
+            }
         },
 
         importJSON(jsonString) {
@@ -290,23 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!item.type || !item.params) {
                         throw new Error("Invalid command format in history array");
                     }
-                    let cmd = null;
-                    switch (item.type) {
-                        case "LoadBook":
-                            cmd = new LoadBookCommand(item.params.fileName, item.params.fileContent);
-                            break;
-                        case "NavigatePage":
-                            cmd = new NavigatePageCommand(item.params.targetPage);
-                            break;
-                        case "UpdateConfig":
-                            cmd = new UpdateConfigCommand(item.params.configKey, item.params.configValue);
-                            break;
-                        case "SyncBookmark":
-                            cmd = new SyncBookmarkCommand(item.params.progress);
-                            break;
-                        default:
-                            throw new Error(`Unknown command type: ${item.type}`);
-                    }
+                    const cmd = this.recreateCommand(item);
                     if (cmd) {
                         commands.push(cmd);
                     }
@@ -373,136 +376,152 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================================
     // Initialization & Event Listeners
     // ==========================================================================
-    loadSettings();
-    applySettings();
-
-    // File Drop & Select Events
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.classList.add('dragover');
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('dragover');
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        if (e.dataTransfer.files.length > 0) {
-            handleFile(e.dataTransfer.files[0]);
-        }
-    });
-
-    dropZone.addEventListener('click', () => {
-        fileInput.click();
-    });
-
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-            handleFile(e.target.files[0]);
-        }
-    });
-
-    // Drawer settings & TOC toggle
-    if (btnSettings) btnSettings.addEventListener('click', openSettings);
-    if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettings);
-    
-    if (btnTOC) btnTOC.addEventListener('click', openTOC);
-    if (btnCloseTOC) btnCloseTOC.addEventListener('click', closeTOC);
-
-    if (drawerOverlay) {
-        drawerOverlay.addEventListener('click', () => {
-            closeSettings();
-            closeTOC();
-        });
-    }
-
-    // Back to Welcome Screen
-    btnBack.addEventListener('click', () => {
-        saveBookmark();
-        readerScreen.classList.add('hidden');
-        welcomeScreen.classList.remove('hidden');
-        currentFileName = '';
-        currentFileContent = '';
-        document.title = 'ゆうぞら - 青空文庫縦書きビューアー';
-    });
-
-    // Debug Modal toggle & actions
-    if (btnOpenDebug) {
-        btnOpenDebug.addEventListener('click', () => {
-            closeSettings(); // close drawer
-            debugModal.classList.remove('hidden');
-            debugModalOverlay.classList.remove('hidden');
-            updateDebugMonitor();
-            if (debugHistoryJSON) {
-                debugHistoryJSON.value = CommandManager.exportJSON();
-            }
-        });
-    }
-
     function closeDebugModal() {
         debugModal.classList.add('hidden');
         debugModalOverlay.classList.add('hidden');
     }
 
-    if (btnCloseDebug) {
-        btnCloseDebug.addEventListener('click', closeDebugModal);
-    }
-    if (debugModalOverlay) {
-        debugModalOverlay.addEventListener('click', closeDebugModal);
-    }
+    // eslint-disable-next-line complexity
+    function setupEventListeners() {
+        // File Drop & Select Events
+        if (dropZone) {
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
 
-    // History Export / Import Handlers
-    if (btnExportHistory) {
-        btnExportHistory.addEventListener('click', () => {
-            if (debugHistoryJSON) {
-                // Update history text area
-                debugHistoryJSON.value = CommandManager.exportJSON();
-                
-                // Copy to clipboard
-                debugHistoryJSON.select();
-                navigator.clipboard.writeText(debugHistoryJSON.value)
-                    .then(() => {
-                        const originalText = btnExportHistory.textContent;
-                        btnExportHistory.textContent = "コピー完了！";
-                        btnExportHistory.classList.add('btn-success');
-                        setTimeout(() => {
-                            btnExportHistory.textContent = originalText;
-                            btnExportHistory.classList.remove('btn-success');
-                        }, 1500);
-                    })
-                    .catch(err => {
-                        console.error("Clipboard copy failed:", err);
-                        alert("操作履歴をコピーできませんでした。");
-                    });
-            }
-        });
-    }
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
 
-    if (btnImportHistory) {
-        btnImportHistory.addEventListener('click', () => {
-            if (debugHistoryJSON) {
-                const commands = CommandManager.importJSON(debugHistoryJSON.value);
-                if (commands) {
-                    closeDebugModal();
-                    CommandManager.replay(commands);
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFile(e.dataTransfer.files[0]);
                 }
-            }
-        });
+            });
+
+            dropZone.addEventListener('click', () => {
+                fileInput.click();
+            });
+        }
+
+        if (fileInput) {
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFile(e.target.files[0]);
+                }
+            });
+        }
+
+        // Drawer settings & TOC toggle
+        if (btnSettings) btnSettings.addEventListener('click', openSettings);
+        if (btnCloseSettings) btnCloseSettings.addEventListener('click', closeSettings);
+        
+        if (btnTOC) btnTOC.addEventListener('click', openTOC);
+        if (btnCloseTOC) btnCloseTOC.addEventListener('click', closeTOC);
+
+        if (drawerOverlay) {
+            drawerOverlay.addEventListener('click', () => {
+                closeSettings();
+                closeTOC();
+            });
+        }
+
+        // Back to Welcome Screen
+        if (btnBack) {
+            btnBack.addEventListener('click', () => {
+                saveBookmark();
+                readerScreen.classList.add('hidden');
+                welcomeScreen.classList.remove('hidden');
+                currentFileName = '';
+                currentFileContent = '';
+                document.title = 'ゆうぞら - 青空文庫縦書きビューアー';
+            });
+        }
+
+        // Debug Modal toggle & actions
+        if (btnOpenDebug) {
+            btnOpenDebug.addEventListener('click', () => {
+                closeSettings(); // close drawer
+                debugModal.classList.remove('hidden');
+                debugModalOverlay.classList.remove('hidden');
+                updateDebugMonitor();
+                if (debugHistoryJSON) {
+                    debugHistoryJSON.value = CommandManager.exportJSON();
+                }
+            });
+        }
+
+        if (btnCloseDebug) {
+            btnCloseDebug.addEventListener('click', closeDebugModal);
+        }
+        if (debugModalOverlay) {
+            debugModalOverlay.addEventListener('click', closeDebugModal);
+        }
+
+        // History Export / Import Handlers
+        if (btnExportHistory) {
+            btnExportHistory.addEventListener('click', () => {
+                if (debugHistoryJSON) {
+                    // Update history text area
+                    debugHistoryJSON.value = CommandManager.exportJSON();
+                    
+                    // Copy to clipboard
+                    debugHistoryJSON.select();
+                    navigator.clipboard.writeText(debugHistoryJSON.value)
+                        .then(() => {
+                            const originalText = btnExportHistory.textContent;
+                            btnExportHistory.textContent = "コピー完了！";
+                            btnExportHistory.classList.add('btn-success');
+                            setTimeout(() => {
+                                btnExportHistory.textContent = originalText;
+                                btnExportHistory.classList.remove('btn-success');
+                            }, 1500);
+                        })
+                        .catch(err => {
+                            console.error("Clipboard copy failed:", err);
+                            alert("操作履歴をコピーできませんでした。");
+                        });
+                }
+            });
+        }
+
+        if (btnImportHistory) {
+            btnImportHistory.addEventListener('click', () => {
+                if (debugHistoryJSON) {
+                    const commands = CommandManager.importJSON(debugHistoryJSON.value);
+                    if (commands) {
+                        closeDebugModal();
+                        CommandManager.replay(commands);
+                    }
+                }
+            });
+        }
+    }
+
+    loadSettings();
+    applySettings();
+    setupEventListeners();
+
+    function getCurrentPageAndCount(viewport) {
+        if (!viewport) {
+            return { currentPage: 0, pageCount: 0 };
+        }
+        const maxScroll = viewport.scrollWidth - viewport.clientWidth;
+        const currentScroll = Math.abs(viewport.scrollLeft);
+        const pageCount = Math.round(viewport.scrollWidth / viewport.clientWidth) || 0;
+        const currentPage = maxScroll > 0 
+            ? (Math.round(currentScroll / viewport.clientWidth) + 1) 
+            : (pageCount > 0 ? 1 : 0);
+        return { currentPage, pageCount };
     }
 
     function updateDebugMonitor() {
         if (!debugMonitor) return;
         
-        let currentPage = 0;
-        let pageCount = 0;
-        if (readerViewport) {
-            const maxScroll = readerViewport.scrollWidth - readerViewport.clientWidth;
-            const currentScroll = Math.abs(readerViewport.scrollLeft);
-            pageCount = Math.round(readerViewport.scrollWidth / readerViewport.clientWidth) || 0;
-            currentPage = maxScroll > 0 ? (Math.round(currentScroll / readerViewport.clientWidth) + 1) : (pageCount > 0 ? 1 : 0);
-        }
+        const { currentPage, pageCount } = getCurrentPageAndCount(readerViewport);
 
         const monitorData = {
             state: {
@@ -534,17 +553,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Layout Diagnostics Logic
     let lastGeneratedReport = '';
 
-    function runLayoutDiagnosis() {
-        if (!readerViewport || !readerContent) {
-            return "エラー: ビューアーが初期化されていません。";
-        }
-
-        const maxScroll = readerViewport.scrollWidth - readerViewport.clientWidth;
-        const currentScroll = Math.abs(readerViewport.scrollLeft);
-        const pageCount = Math.round(readerViewport.scrollWidth / readerViewport.clientWidth) || 0;
-        const currentPage = maxScroll > 0 ? (Math.round(currentScroll / readerViewport.clientWidth) + 1) : (pageCount > 0 ? 1 : 0);
-
-        // 1. 環境情報
+    function diagnoseEnvironmentInfo(currentPage, pageCount) {
         let report = `### 📖 ゆうぞら レイアウト診断レポート\n`;
         report += `- **日時**: ${new Date().toLocaleString()}\n`;
         report += `- **ファイル名**: ${currentFileName || '(未ロード)'}\n`;
@@ -564,45 +573,55 @@ document.addEventListener('DOMContentLoaded', () => {
         report += `  - scrollLeft: ${readerViewport.scrollLeft}px\n`;
         report += `  - 進捗割合(bookmarkProgress): ${(bookmarkProgress * 100).toFixed(1)}%\n`;
         report += `  - ページ数: 現在 ${currentPage} / ${pageCount} ページ\n\n`;
+        return report;
+    }
 
-        // 1.2. カラム＆ビューポート計算検証
-        report += `### 📐 カラム＆ビューポート計算検証\n`;
-        const cStyle = window.getComputedStyle(readerContent);
+    function diagnoseColumnsInfo(cStyle) {
         const colWidthStr = cStyle.columnWidth || 'auto';
         const colGapStr = cStyle.columnGap || 'normal';
         const marginLeftStr = cStyle.marginLeft || '0px';
         const marginRightStr = cStyle.marginRight || '0px';
-        
+
+        let report = `### 📐 カラム＆ビューポート計算検証\n`;
         report += `- **コンテンツ配置スタイル**:\n`;
         report += `  - column-width: ${colWidthStr}\n`;
         report += `  - column-gap: ${colGapStr}\n`;
         report += `  - margin-left: ${marginLeftStr}\n`;
         report += `  - margin-right: ${marginRightStr}\n`;
+        report += `\n`;
+        return report;
+    }
 
+    // eslint-disable-next-line complexity
+    function diagnoseColumnWidthCheck(cStyle) {
+        const colWidthStr = cStyle.columnWidth || 'auto';
+        const marginLeftStr = cStyle.marginLeft || '0px';
+        const marginRightStr = cStyle.marginRight || '0px';
         const viewportW = readerViewport.clientWidth;
         const colWidthVal = parseFloat(colWidthStr) || 0;
         const mLeftVal = parseFloat(marginLeftStr) || 0;
         const mRightVal = parseFloat(marginRightStr) || 0;
-        
         const isMobile = window.innerWidth < 768;
         const expectedColWidth = isMobile ? (viewportW - mLeftVal - mRightVal) : (viewportW / 2 - mLeftVal - mRightVal);
-        report += `- **カラム仕様チェック**:\n`;
+        const colWidthDiff = Math.abs(colWidthVal - expectedColWidth);
+
+        let report = `- **カラム仕様チェック**:\n`;
         report += `  - デバイス環境: ${isMobile ? 'モバイル (1段組み)' : 'PC (見開き2段組み)'}\n`;
         report += `  - 理論上の理想カラム幅: ${expectedColWidth.toFixed(1)}px (計算式: ${isMobile ? 'W - margins' : 'W/2 - margins'})\n`;
         report += `  - 実際のカラム幅: ${colWidthVal.toFixed(1)}px\n`;
-        const colWidthDiff = Math.abs(colWidthVal - expectedColWidth);
         if (colWidthDiff > 2) {
             report += `  - ⚠️ **警告**: 実際のカラム幅が理想の幅と ${colWidthDiff.toFixed(1)}px ズレています。改段ずれの原因となります。\n`;
         } else {
             report += `  - ✅ **正常**: カラム幅はレイアウト設計通りです。\n`;
         }
         report += `\n`;
+        return report;
+    }
 
-        // 1.5. 縦方向レイアウト配置
-        report += `### 📐 縦方向レイアウト配置\n`;
+    function diagnoseVerticalLayoutInfo(viewportRect, cStyle) {
+        let report = `### 📐 縦方向レイアウト配置\n`;
         const header = document.querySelector('.reader-header');
         const footer = document.querySelector('.reader-footer');
-        const viewportRect = readerViewport.getBoundingClientRect();
         if (header && footer) {
             const hRect = header.getBoundingClientRect();
             const fRect = footer.getBoundingClientRect();
@@ -622,10 +641,11 @@ document.addEventListener('DOMContentLoaded', () => {
             report += `  - フッターとの重複: ${overlapFooter ? `⚠️ あり (重複高: ${(cRect.bottom - fRect.top).toFixed(1)}px)` : '✅ なし'}\n`;
             report += `  - フッターとの間の余白: ${(fRect.top - cRect.bottom).toFixed(1)}px\n\n`;
         }
+        return report;
+    }
 
-        // 1.8. 可視要素の境界座標分布
-        report += `### 📏 可視要素の境界座標分布 (Y: ${viewportRect.top.toFixed(1)}px)\n`;
-        const childNodes = Array.from(readerContent.children);
+    function diagnoseParagraphCoordinateInfo(viewportRect, childNodes) {
+        let report = `### 📏 可視要素の境界座標分布 (Y: ${viewportRect.top.toFixed(1)}px)\n`;
         let visibleParagraphsCount = 0;
         
         childNodes.forEach((child, index) => {
@@ -644,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pText = child.textContent.trim().substring(0, 15);
                 report += `- **段落 ${index + 1} (${child.tagName.toLowerCase()})**: X範囲: ${leftOffset.toFixed(1)}px 〜 ${rightOffset.toFixed(1)}px (幅: ${rect.width.toFixed(1)}px) 「${pText}...」\n`;
                 if (bleedsLeft) {
-                    report += `  - ⚠️ **はみ出し**: 左境界を ${( -leftOffset).toFixed(1)}px 超過しています (次のページに回り込んでいるか、見切れています)\n`;
+                    report += `  - ⚠️ **はみ出し**: 左境界を ${(-leftOffset).toFixed(1)}px 超過しています (次のページに回り込んでいるか、見切れています)\n`;
                 }
                 if (bleedsRight) {
                     report += `  - ⚠️ **はみ出し**: 右境界を ${(rightOffset - viewportRect.width).toFixed(1)}px 超過しています (前のページから回り込んでいるか、見切れています)\n`;
@@ -655,8 +675,10 @@ document.addEventListener('DOMContentLoaded', () => {
             report += `- (可視段落は検出されませんでした)\n`;
         }
         report += `\n`;
+        return report;
+    }
 
-        // 2. アライメント検証
+    function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
         const expectedScrollMultiplier = currentPage - 1;
         const idealScrollLeft = config.direction === 'rtl' 
             ? -(expectedScrollMultiplier * readerViewport.clientWidth)
@@ -664,7 +686,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const scrollDifference = Math.abs(readerViewport.scrollLeft - idealScrollLeft);
 
-        report += `### 📐 アライメント検証\n`;
+        let report = `### 📐 アライメント検証\n`;
         report += `- **現在のページの理想スクロール位置**: ${idealScrollLeft}px\n`;
         report += `- **実際のスクロール位置とのズレ**: ${scrollDifference}px\n`;
         if (scrollDifference > 5) {
@@ -674,7 +696,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         report += `\n`;
 
-        // 3. 境界線上の見切れ文字検出
         report += `### ⚠️ 境界線上でのテキスト見切れ検出\n`;
         
         const boundaryLeft = viewportRect.left;
@@ -684,6 +705,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let verticalBoundaryOverlapCount = 0;
         let overlapDetails = '';
 
+        // eslint-disable-next-line complexity
         childNodes.forEach((child, index) => {
             if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
                 return;
@@ -748,6 +770,26 @@ document.addEventListener('DOMContentLoaded', () => {
             report += `- 検出サマリー: 左境界またぎ ${leftBoundaryOverlapCount}件, 右境界またぎ ${rightBoundaryOverlapCount}件, 上下はみ出し ${verticalBoundaryOverlapCount}件\n\n`;
             report += overlapDetails;
         }
+        return report;
+    }
+
+    function runLayoutDiagnosis() {
+        if (!readerViewport || !readerContent) {
+            return "エラー: ビューアーが初期化されていません。";
+        }
+
+        const { currentPage, pageCount } = getCurrentPageAndCount(readerViewport);
+        const cStyle = window.getComputedStyle(readerContent);
+        const viewportRect = readerViewport.getBoundingClientRect();
+        const childNodes = Array.from(readerContent.children);
+
+        let report = '';
+        report += diagnoseEnvironmentInfo(currentPage, pageCount);
+        report += diagnoseColumnsInfo(cStyle);
+        report += diagnoseColumnWidthCheck(cStyle);
+        report += diagnoseVerticalLayoutInfo(viewportRect, cStyle);
+        report += diagnoseParagraphCoordinateInfo(viewportRect, childNodes);
+        report += diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage);
 
         return report;
     }
@@ -1123,8 +1165,48 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Keyboard shortcuts for debug menu (PC only)
-    document.addEventListener('keydown', (e) => {
+    // eslint-disable-next-line complexity
+    function handleDebugTabKeys(e) {
+        if (e.key === '1') {
+            if (tabBtnMonitor) tabBtnMonitor.click();
+            e.preventDefault();
+            return true;
+        }
+        if (e.key === '2') {
+            if (tabBtnDiagnose) tabBtnDiagnose.click();
+            e.preventDefault();
+            return true;
+        }
+        if (e.key === 'r' || e.key === 'R') {
+            if (btnDiagnoseLayout) btnDiagnoseLayout.click();
+            e.preventDefault();
+            return true;
+        }
+        if (e.key === 'e' || e.key === 'E') {
+            const isMonitorTab = tabContentMonitor && !tabContentMonitor.classList.contains('hidden');
+            if (isMonitorTab) {
+                if (btnExportHistory) btnExportHistory.click();
+            } else {
+                if (btnCopyDebugReport && !btnCopyDebugReport.hasAttribute('disabled')) {
+                    btnCopyDebugReport.click();
+                }
+            }
+            e.preventDefault();
+            return true;
+        }
+        return false;
+    }
+
+    function handleOpenDebugModalKeys(e) {
+        if (e.key === 'Escape') {
+            closeDebugModal();
+            e.preventDefault();
+            return;
+        }
+        handleDebugTabKeys(e);
+    }
+
+    function handleDebugKeyboardShortcuts(e) {
         // Prevent key events from triggering while typing in inputs
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
             return;
@@ -1145,51 +1227,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Handle keys when debug modal is open
         if (isModalOpen) {
-            // Close with Escape key
-            if (e.key === 'Escape') {
-                closeDebugModal();
-                e.preventDefault();
-                return;
-            }
-
-            // Switch to System Monitor tab with '1'
-            if (e.key === '1') {
-                if (tabBtnMonitor) tabBtnMonitor.click();
-                e.preventDefault();
-                return;
-            }
-
-            // Switch to Layout Diagnosis tab with '2'
-            if (e.key === '2') {
-                if (tabBtnDiagnose) tabBtnDiagnose.click();
-                e.preventDefault();
-                return;
-            }
-
-            // Trigger Layout Diagnosis run with 'r' or 'R'
-            if (e.key === 'r' || e.key === 'R') {
-                if (btnDiagnoseLayout) btnDiagnoseLayout.click();
-                e.preventDefault();
-                return;
-            }
-
-            // Context-aware export with 'e' or 'E'
-            if (e.key === 'e' || e.key === 'E') {
-                const isMonitorTab = tabContentMonitor && !tabContentMonitor.classList.contains('hidden');
-                if (isMonitorTab) {
-                    // System Monitor tab is active: copy operations history JSON
-                    if (btnExportHistory) btnExportHistory.click();
-                } else {
-                    // Layout Diagnosis tab is active: copy diagnostic report
-                    if (btnCopyDebugReport && !btnCopyDebugReport.hasAttribute('disabled')) {
-                        btnCopyDebugReport.click();
-                    }
-                }
-                e.preventDefault();
-                return;
-            }
+            handleOpenDebugModalKeys(e);
         }
-    });
+    }
+
+    // Keyboard shortcuts for debug menu (PC only)
+    document.addEventListener('keydown', handleDebugKeyboardShortcuts);
 
     // Controls Toggle & Auto-Hide Behaviour
     readerViewport.addEventListener('click', toggleControls);
@@ -1383,6 +1426,76 @@ document.addEventListener('DOMContentLoaded', () => {
     /**
      * Parses Plain Text Aozora Formatting (Rubies, Page breaks, etc.)
      */
+    function detectHeaderEnd(line, i) {
+        if (line.includes('-------------------------------------------------------')) {
+            return true;
+        }
+        if (line.includes('［＃') && (line.includes('始まり') || line.includes('目次'))) {
+            return true;
+        }
+        if (line.trim().length > 0 && !line.startsWith('［＃') && i > 5) {
+            return true;
+        }
+        return false;
+    }
+
+    function parseJisage(line) {
+        let jisageClass = '';
+        const jisageMatch = line.match(/［＃([０-９0-9]+)字下げ］/);
+        if (jisageMatch) {
+            const rawNum = jisageMatch[1];
+            const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+            const n = parseInt(cleanNum, 10);
+            jisageClass = `jisage${n}`;
+            line = line.replace(/［＃[０-９0-9]+字下げ］/, '');
+        }
+        return { jisageClass, line };
+    }
+
+    function parseHeading(line) {
+        let isHeading = false;
+        let headingLevel = 2; // Default to h2 for large heading
+        let headingText = '';
+        const headingMatch = line.match(/［＃「([^」]+)」は(大|中|小)見出し］/);
+        if (headingMatch) {
+            isHeading = true;
+            headingText = headingMatch[1];
+            const levelChar = headingMatch[2];
+            if (levelChar === '大') headingLevel = 2;
+            else if (levelChar === '中') headingLevel = 3;
+            else if (levelChar === '小') headingLevel = 4;
+            
+            line = line.replace(/［＃「[^」]+」は(?:大|中|小)見出し］/, '');
+        }
+        return { isHeading, headingLevel, headingText, line };
+    }
+
+    /**
+     * Parses Plain Text Aozora Formatting (Rubies, Page breaks, etc.)
+     */
+    function buildLineHTML(line, jisageClass, isHeading, headingLevel, headingText, headingIndex) {
+        if (line.trim().length === 0) {
+            return { html: '<p class="empty-line">&nbsp;</p>', headingIndex };
+        }
+        if (isHeading) {
+            const headingId = `toc-heading-${headingIndex}`;
+            const cleanText = headingText
+                .replace(/[｜|]/g, '')
+                .replace(/《[^》]+》/g, '')
+                .trim();
+            currentTOC.push({ id: headingId, text: cleanText, level: headingLevel });
+            return {
+                html: `<h${headingLevel} id="${headingId}"${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</h${headingLevel}>`,
+                headingIndex: headingIndex + 1
+            };
+        }
+        if (line.startsWith('<h2>') || line.startsWith('<h3>')) {
+            return { html: line, headingIndex };
+        }
+        return { html: `<p${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</p>`, headingIndex };
+    }
+
+    // eslint-disable-next-line complexity
     function parseAozoraText(text) {
         // XSS対策 (T-E1): 文字列処理の最優先ステップとして特殊文字を一括エスケープ
         text = text.replace(/&/g, '&amp;')
@@ -1397,10 +1510,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let title = '';
         let author = '';
         let inHeader = true;
-        let mainBodyStarted = false;
         
-        // Remove Aozora metadata headers and footers (lines before first long line or metadata separator)
-        // Usually, the first line is the title, the second is the author.
         if (lines.length > 2) {
             title = lines[0].trim();
             author = lines[1].trim();
@@ -1409,100 +1519,47 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i];
 
-            // Detect end of header metadata (often dashes or empty lines)
             if (inHeader) {
-                if (line.includes('-------------------------------------------------------')) {
+                if (detectHeaderEnd(line, i)) {
                     inHeader = false;
+                    if (line.includes('-------------------------------------------------------') || 
+                        (line.includes('［＃') && (line.includes('始まり') || line.includes('目次')))) {
+                        continue;
+                    }
+                } else {
                     continue;
                 }
-                // Skip introduction headers
-                if (line.includes('［＃') && (line.includes('始まり') || line.includes('目次'))) {
-                    inHeader = false;
-                }
-                // If we hit a very long line or paragraph without ［＃, start main body
-                if (line.trim().length > 0 && !line.startsWith('［＃') && i > 5) {
-                    inHeader = false;
-                }
-                if (inHeader) continue; // Skip header lines
             }
 
-            // Detect Aozora footer metadata separator
             if (line.includes('底本：') || line.includes('青空文庫作成ファイル：')) {
                 break;
             }
 
-            // Handle page breaks
             if (line.includes('［＃改ページ］')) {
                 parsedLines.push('PAGE_BREAK');
                 continue;
             }
 
-            // Detect indentation (jisage) markup
-            let jisageClass = '';
-            const jisageMatch = line.match(/［＃([０-９0-9]+)字下げ］/);
-            if (jisageMatch) {
-                const rawNum = jisageMatch[1];
-                const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-                const n = parseInt(cleanNum, 10);
-                jisageClass = `jisage${n}`;
-                line = line.replace(/［＃[０-９0-9]+字下げ］/, '');
-            }
+            let { jisageClass, line: lineAfterJisage } = parseJisage(line);
+            line = lineAfterJisage;
 
-            // Detect headings before formatting the markup
-            let isHeading = false;
-            let headingLevel = 2; // Default to h2 for large heading
-            let headingText = '';
-            const headingMatch = line.match(/［＃「([^」]+)」は(大|中|小)見出し］/);
-            if (headingMatch) {
-                isHeading = true;
-                headingText = headingMatch[1];
-                const levelChar = headingMatch[2];
-                if (levelChar === '大') headingLevel = 2;
-                else if (levelChar === '中') headingLevel = 3;
-                else if (levelChar === '小') headingLevel = 4;
-                
-                // Remove the heading annotation so it doesn't get processed as regular text
-                line = line.replace(/［＃「[^」]+」は(?:大|中|小)見出し］/, '');
-            }
+            let { isHeading, headingLevel, headingText, line: lineAfterHeading } = parseHeading(line);
+            line = lineAfterHeading;
 
-            // Convert Aozora rubies and formatting
             line = formatAozoraMarkup(line);
 
-            // Output lines
-            if (line.trim().length === 0) {
-                // Keep empty lines as spacing paragraph or combine
-                parsedLines.push('<p class="empty-line">&nbsp;</p>');
-            } else {
-                if (isHeading) {
-                    const headingId = `toc-heading-${headingIndex++}`;
-                    let cleanText = headingText
-                        .replace(/[｜|]/g, '')
-                        .replace(/《[^》]+》/g, '')
-                        .trim();
-                    currentTOC.push({
-                        id: headingId,
-                        text: cleanText,
-                        level: headingLevel
-                    });
-                    parsedLines.push(`<h${headingLevel} id="${headingId}"${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</h${headingLevel}>`);
-                } else if (line.startsWith('<h2>') || line.startsWith('<h3>')) {
-                    parsedLines.push(line);
-                } else {
-                    parsedLines.push(`<p${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</p>`);
-                }
-            }
+            const result = buildLineHTML(line, jisageClass, isHeading, headingLevel, headingText, headingIndex);
+            parsedLines.push(result.html);
+            headingIndex = result.headingIndex;
         }
 
-        // Trim empty lines from the end of parsedLines to prevent trailing blank spaces
         while (parsedLines.length > 0 && parsedLines[parsedLines.length - 1] === '<p class="empty-line">&nbsp;</p>') {
             parsedLines.pop();
         }
-        // Also trim from the start to clean up leading empty space
         while (parsedLines.length > 0 && parsedLines[0] === '<p class="empty-line">&nbsp;</p>') {
             parsedLines.shift();
         }
 
-        // Wrap sections and paragraphs
         let bodyContent = parsedLines.join('\n');
         bodyContent = bodyContent.replace(/PAGE_BREAK/g, '<div class="page-break"></div>');
 
@@ -1548,19 +1605,23 @@ document.addEventListener('DOMContentLoaded', () => {
         ]);
         const allowedAttrs = new Set(['class', 'id', 'src', 'alt', 'href']);
 
-        // Sanitize root element attributes
-        const rootAttributes = Array.from(rootElement.attributes);
-        for (const attr of rootAttributes) {
-            const attrName = attr.name.toLowerCase();
-            if (attrName.startsWith('on') || !allowedAttrs.has(attrName)) {
-                rootElement.removeAttribute(attr.name);
-            } else if (attrName === 'href' || attrName === 'src') {
-                const val = attr.value.trim().toLowerCase();
-                if (val.startsWith('javascript:') || val.startsWith('data:') || val.startsWith('vbscript:')) {
-                    rootElement.removeAttribute(attr.name);
+        function cleanAttributes(element) {
+            const attributes = Array.from(element.attributes);
+            for (const attr of attributes) {
+                const attrName = attr.name.toLowerCase();
+                if (attrName.startsWith('on') || !allowedAttrs.has(attrName)) {
+                    element.removeAttribute(attr.name);
+                } else if (attrName === 'href' || attrName === 'src') {
+                    const val = attr.value.trim().toLowerCase();
+                    if (val.startsWith('javascript:') || val.startsWith('data:') || val.startsWith('vbscript:')) {
+                        element.removeAttribute(attr.name);
+                    }
                 }
             }
         }
+
+        // Sanitize root element attributes
+        cleanAttributes(rootElement);
 
         function sanitize(element) {
             const childNodes = Array.from(element.childNodes);
@@ -1582,18 +1643,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     } else {
                         // Sanitize attributes
-                        const attributes = Array.from(child.attributes);
-                        for (const attr of attributes) {
-                            const attrName = attr.name.toLowerCase();
-                            if (attrName.startsWith('on') || !allowedAttrs.has(attrName)) {
-                                child.removeAttribute(attr.name);
-                            } else if (attrName === 'href' || attrName === 'src') {
-                                const val = attr.value.trim().toLowerCase();
-                                if (val.startsWith('javascript:') || val.startsWith('data:') || val.startsWith('vbscript:')) {
-                                    child.removeAttribute(attr.name);
-                                }
-                            }
-                        }
+                        cleanAttributes(child);
                         // Recurse
                         sanitize(child);
                     }

@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added ESLint (v9) を `devDependencies` に追加し、`eslint.config.js`（Flat Config）で `complexity: ['error', 10]` ルールを設定。`npm run lint` スクリプトを `package.json` に追加し、テストパイプラインに統合 (ID: 012)。
+- Changed `app.js` のサイクロマティック複雑度（閾値 10 超）を検出し、以下のリファクタリングを実施。`CommandManager.add()` → `isDuplicateCommand()` / `limitHistorySize()`, `runLayoutDiagnosis()` → `diagnoseEnvironmentInfo()` / `diagnoseColumnsInfo()` / `diagnoseColumnWidthCheck()` / `diagnoseVerticalLayoutInfo()` / `diagnoseParagraphCoordinateInfo()` / `diagnoseBoundaryOverlap()`, `parseAozoraText()` → `buildLineHTML()` / `detectHeaderEnd()` / `parseJisage()` / `parseHeading()`, `sanitizeDOM()` → `cleanAttributes()` ヘルパー抽出、`handleOpenDebugModalKeys()` → `handleDebugTabKeys()` 抽出 (ID: 012)。
+- Fixed `setupEventListeners()` の閉じブレースが欠落していた構文エラーを修正し、`closeDebugModal()` を独立した関数として外部定義 (ID: 012)。
+- Documentation ADR-02 を `Proposed → Accepted` に更新し、実装結果（対象箇所・例外適用 6 箇所を含む）を記録 (ID: 012)。
+
 - Added Google Closure Compiler (v20240317) の導入およびビルド自動化のための Makefile の新規作成 (ID: 011).
 - Added ビルドされた JavaScript ファイル（`main-min.js`）をロードしてリリース検証を行うための html（`compiled.html`）を index.html から複製して追加 (ID: 011).
 - Changed 環境変数 `TEST_PATH` に基づいてE2Eテスト実行対象のHTMLを動的に切り替えられるように、Playwrightテストスクリプト（`tests/e2e/viewer.spec.js` および `tests/e2e/diagnose.spec.js`）を拡張 (ID: 011).
