@@ -2,7 +2,7 @@
 ID: 011
 種別: Feature
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] Closure Compiler の導入とビルド自動化 (ID: 011)

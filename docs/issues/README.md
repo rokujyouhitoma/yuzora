@@ -19,7 +19,7 @@
 | **008** | Bug | Medium | Closed | 目次ジャンプ先がRTL縦書き時に微小にズレる問題 | AI Agent | [008-toc-jump-misalignment-in-rtl.md](closed/008-toc-jump-misalignment-in-rtl.md) |
 | **009** | Feature | Medium | Closed | Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応 | AI Agent | [009-command-pattern-operation-history.md](closed/009-command-pattern-operation-history.md) |
 | **010** | Feature | Medium | Closed | デバッグ画面の拡大表示（大部分をカバーする広幅ウィンドウ化） | AI Agent | [010-large-debug-window.md](closed/010-large-debug-window.md) |
-| **011** | Feature | Medium | In Progress | Closure Compiler の導入とビルド自動化 | AI Agent | [011-integrate-closure-compiler.md](011-integrate-closure-compiler.md) |
+| **011** | Feature | Medium | Closed | Closure Compiler の導入とビルド自動化 | AI Agent | [011-integrate-closure-compiler.md](closed/011-integrate-closure-compiler.md) |
 
 ## 2. 状態（ステータス）定義
 
