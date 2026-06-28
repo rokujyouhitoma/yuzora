@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added GitHub Actions の CI ワークフローファイル (`.github/workflows/ci.yml`) を新規作成し、全ブランチへの push および main への PR で lint・ユニットテスト・E2E テスト・makeビルドを自動実行するよう設定 (ID: 013)。
+- Changed GitHub Pages へのデプロイワークフローファイル (`.github/workflows/static.yml`) を拡張し、CI ワークフローの成功に依存させて自動デプロイするよう変更。また、デプロイ直前に `make` を実行して `main-min.js` を成果物に含めるよう追加 (ID: 013)。
+- Changed Playwright の E2E テスト (`tests/e2e/viewer.spec.js` および `tests/e2e/diagnose.spec.js`) において、外部 Web フォントのネットワーク要求をインターセプトしてブロックする処理を追加し、サンドボックス環境でのネットワーク遅延によるタイムアウトを解消してテスト実行を高速化・安定化 (ID: 013)。
+
 - Added ESLint (v9) を `devDependencies` に追加し、`eslint.config.js`（Flat Config）で `complexity: ['error', 10]` ルールを設定。`npm run lint` スクリプトを `package.json` に追加し、テストパイプラインに統合 (ID: 012)。
 - Changed `app.js` のサイクロマティック複雑度（閾値 10 超）を検出し、以下のリファクタリングを実施。`CommandManager.add()` → `isDuplicateCommand()` / `limitHistorySize()`, `runLayoutDiagnosis()` → `diagnoseEnvironmentInfo()` / `diagnoseColumnsInfo()` / `diagnoseColumnWidthCheck()` / `diagnoseVerticalLayoutInfo()` / `diagnoseParagraphCoordinateInfo()` / `diagnoseBoundaryOverlap()`, `parseAozoraText()` → `buildLineHTML()` / `detectHeaderEnd()` / `parseJisage()` / `parseHeading()`, `sanitizeDOM()` → `cleanAttributes()` ヘルパー抽出、`handleOpenDebugModalKeys()` → `handleDebugTabKeys()` 抽出 (ID: 012)。
 - Fixed `setupEventListeners()` の閉じブレースが欠落していた構文エラーを修正し、`closeDebugModal()` を独立した関数として外部定義 (ID: 012)。

@@ -2,6 +2,11 @@ const { test, expect } = require('@playwright/test');
 const path = require('path');
 
 test('Capture screenshots of reader pages', async ({ page }) => {
+    // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
+    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
+    await page.route('https://fonts.googleapis.com/**', route => route.abort());
+    await page.route('https://fonts.gstatic.com/**', route => route.abort());
+
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // Open first book
