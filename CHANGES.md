@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Fixed プリデファインド本（オススメ書籍）が UTF-8 でエンコードされているため、`loadPredefinedBook` でデコードする際に UTF-8 を第一優先でデコードするように修正し、コンソールでの Shift_JIS デコード失敗警告ログを解消 (ID: 014)。
+
 - Added GitHub Actions の CI ワークフローファイル (`.github/workflows/ci.yml`) を新規作成し、全ブランチへの push および main への PR で lint・ユニットテスト・E2E テスト・makeビルドを自動実行するよう設定 (ID: 013)。
 - Changed GitHub Pages へのデプロイワークフローファイル (`.github/workflows/static.yml`) を拡張し、CI ワークフローの成功に依存させて自動デプロイするよう変更。また、デプロイ直前に `make` を実行して `main-min.js` を成果物に含めるよう追加 (ID: 013)。
 - Changed Playwright の E2E テスト (`tests/e2e/viewer.spec.js` および `tests/e2e/diagnose.spec.js`) において、外部 Web フォントのネットワーク要求をインターセプトしてブロックする処理を追加し、サンドボックス環境でのネットワーク遅延によるタイムアウトを解消してテスト実行を高速化・安定化 (ID: 013)。
