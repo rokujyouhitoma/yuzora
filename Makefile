@@ -1,13 +1,28 @@
 COMPILER = tools/closure-compiler/closure-compiler-v20240317.jar
-SRC = src/js/app.js
-OUT = main-min.js
+JS_SRCS = src/js/modules/config.js \
+          src/js/modules/commands.js \
+          src/js/modules/parser.js \
+          src/js/modules/diagnostics.js \
+          src/js/modules/viewer.js \
+          src/js/modules/ui.js
+JS_OUT = main-min.js
 
-all: $(OUT)
+CSS_SRCS = src/css/modules/base.css \
+           src/css/modules/welcome.css \
+           src/css/modules/reader.css \
+           src/css/modules/drawers.css \
+           src/css/modules/debug.css
+CSS_OUT = src/css/style.css
 
-$(OUT): $(SRC)
-	java -jar $(COMPILER) --compilation_level SIMPLE_OPTIMIZATIONS --js $(SRC) --js_output_file $(OUT)
+all: $(JS_OUT) $(CSS_OUT)
+
+$(JS_OUT): $(JS_SRCS)
+	java -jar $(COMPILER) --compilation_level SIMPLE_OPTIMIZATIONS --js $(JS_SRCS) --js_output_file $(JS_OUT)
+
+$(CSS_OUT): $(CSS_SRCS)
+	cat $(CSS_SRCS) > $(CSS_OUT)
 
 clean:
-	rm -f $(OUT)
+	rm -f $(JS_OUT) $(CSS_OUT)
 
 .PHONY: all clean

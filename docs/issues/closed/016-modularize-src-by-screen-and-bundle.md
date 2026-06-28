@@ -2,7 +2,7 @@
 ID: 016
 種別: Feature
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 (ID: 016)
