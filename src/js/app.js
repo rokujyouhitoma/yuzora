@@ -1357,12 +1357,12 @@ document.addEventListener('DOMContentLoaded', () => { /* jshint ignore:line */
             .then(arrayBuffer => {
                 let text = '';
                 try {
-                    const decoder = new TextDecoder('shift-jis', { fatal: true });
+                    const decoder = new TextDecoder('utf-8', { fatal: true });
                     text = decoder.decode(arrayBuffer);
                 } catch (err) {
-                    console.warn("Shift_JIS decode failed (fatal=true), falling back to UTF-8 for predefined book", err);
-                    const utf8Decoder = new TextDecoder('utf-8');
-                    text = utf8Decoder.decode(arrayBuffer);
+                    console.warn("UTF-8 decode failed (fatal=true), falling back to Shift_JIS for predefined book", err);
+                    const sjisDecoder = new TextDecoder('shift-jis');
+                    text = sjisDecoder.decode(arrayBuffer);
                 }
                 CommandManager.execute(new LoadBookCommand(`${book.cardId}_yoko.txt`, text));
             })
