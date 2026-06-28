@@ -121,6 +121,10 @@ function setupEventListeners() {
                 if (e.key === "ArrowLeft") prevPage();
                 if (e.key === "ArrowRight") nextPage();
             }
+            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                toggleControls(e);
+                e.preventDefault();
+            }
         }
     });
 

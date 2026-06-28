@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Fixed キーボードの上矢印キー（`ArrowUp`）および下矢印キー（`ArrowDown`）押下時に、読書画面のメニュー（ヘッダー・フッター）表示状態（トグル）が切り替わらない不具合を修正。ブラウザのスクロール等のデフォルト動作も抑制 (ID: 017)。
 - Changed 巨大なモノリスとなっていた JavaScript (`app.js`) および CSS (`style.css`) を画面/機能ごとのモジュールファイル (`src/js/modules/*.js`, `src/css/modules/*.css`) に完全分割 (ID: 016)。
 - Changed `Makefile` にビルドルールを追加し、モジュール CSS の結合による `style.css` 生成、および依存順序を考慮したモジュール JS の Closure Compiler による `main-min.js` 難読化・軽量化ビルドを自動化 (ID: 016)。
 - Changed 開発用 HTML (`index.html`) では機能モジュールファイルを直接個別ロードし、デプロイ・本番用 HTML (`compiled.html`) では結合・難読化後のビルドアセット（`style.css`, `main-min.js`）をロードするように分離 (ID: 016)。

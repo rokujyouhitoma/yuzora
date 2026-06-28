@@ -127,4 +127,37 @@ test.describe('Yuzora E2E Reader Tests', () => {
         await page.keyboard.press('Escape');
         await expect(debugModal).toHaveClass(/hidden/);
     });
+
+    test('should toggle reader header/footer visibility using ArrowUp/ArrowDown keys', async ({ page }) => {
+        // Open a book
+        const bookCard = page.locator('#developer-books-grid .book-card').first();
+        await bookCard.click();
+        await page.waitForSelector('#reader-content p');
+
+        const readerHeader = page.locator('.reader-header');
+
+        // Capture initial class list
+        const initialClass = await readerHeader.getAttribute('class');
+        const initiallyHidden = initialClass.includes('hidden');
+
+        // Press 'ArrowDown' key
+        await page.keyboard.press('ArrowDown');
+
+        // Verify the class has toggled
+        if (initiallyHidden) {
+            await expect(readerHeader).not.toHaveClass(/hidden/);
+        } else {
+            await expect(readerHeader).toHaveClass(/hidden/);
+        }
+
+        // Press 'ArrowUp' key
+        await page.keyboard.press('ArrowUp');
+
+        // Verify it toggles back
+        if (initiallyHidden) {
+            await expect(readerHeader).toHaveClass(/hidden/);
+        } else {
+            await expect(readerHeader).not.toHaveClass(/hidden/);
+        }
+    });
 });
