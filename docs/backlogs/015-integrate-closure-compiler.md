@@ -25,7 +25,7 @@ Google Closure Compiler を用いた JavaScript ファイルのビルド・難�
 ## 3. 要件と技術的アプローチ / Requirements & Technical Approach
 
 1. **コンパイラの配置**:
-   - `/tools/closure-compiler/` ディレクトリ配下に、Closure Compiler の実行 jar ファイルを `compiler.jar` の名称で配置します（動作環境には Java JDK 11 以上が必要ですが、本環境には Java 21 が導入済みのため動作可能です）。
+   - `/tools/closure-compiler/` ディレクトリ配下に、配布されている Closure Compiler の実行 jar ファイルを、名前を変更せずに元の配布ファイル名（例: `closure-compiler-*.jar`）のままで配置します（動作環境には Java JDK 11 以上が必要ですが、本環境には Java 21 が導入済みのため動作可能です）。
    - 同ディレクトリに Closure Compiler の公式 `LICENSE` ファイルを配置します。
 
 2. **最適化レベル（Compilation Levels）の選定**:
@@ -42,7 +42,7 @@ Google Closure Compiler を用いた JavaScript ファイルのビルド・難�
 ---
 
 ## 4. 完了条件 / Success Criteria (DoD)
-- [ ] `/tools/closure-compiler/` 配下に実行可能な `compiler.jar` および `LICENSE` ファイルが正しく配置されていること。
+- [ ] `/tools/closure-compiler/` 配下に、元の配布名のままで実行可能な Closure Compiler の jar ファイルおよび `LICENSE` ファイルが正しく配置されていること。
 - [ ] ルートディレクトリの `Makefile` を用いて、`make build` コマンドで `src/js/app.js` から `main-min.js` が警告・エラーなくコンパイル出力されること。
 - [ ] ビルドされた `main-min.js` を `index.html` に読み込ませて動作させた際、書籍のロード、ページめくり、テーマ設定の切り替え、デバッグ機能、リプレイ機能が全く同一に正常動作すること。
 - [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
