@@ -275,4 +275,65 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const updatedSecondTOCItem = tocList.locator('.toc-item').nth(1);
         await expect(updatedSecondTOCItem).toHaveClass(/active/);
     });
+
+    test('should navigate backward and forward using left/right overlay clicks in RTL mode', async ({ page }) => {
+        // 1. Open a book (Kokoro by default is RTL)
+        await page.locator('#developer-books-grid .book-card').first().click();
+        await page.waitForSelector('#reader-content p');
+
+        // Verify we start at Page 1
+        const readingIndex = page.locator('#reading-index');
+        await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);
+
+        // In RTL, clicking left side (page-nav-left) goes to Next page (Page 2)
+        const btnLeft = page.locator('#page-nav-left');
+        await btnLeft.click();
+        await page.waitForTimeout(600); // Wait for transition
+        await expect(readingIndex).toHaveText(/2 \/ \d+ ページ/);
+
+        // Click again to go to Page 3
+        await btnLeft.click();
+        await page.waitForTimeout(600);
+        await expect(readingIndex).toHaveText(/3 \/ \d+ ページ/);
+
+        // In RTL, clicking right side (page-nav-right) goes to Previous page (Page 2)
+        const btnRight = page.locator('#page-nav-right');
+        await btnRight.click();
+        await page.waitForTimeout(600);
+        await expect(readingIndex).toHaveText(/2 \/ \d+ ページ/);
+
+        // Click again to go to Page 1
+        await btnRight.click();
+        await page.waitForTimeout(600);
+        await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);
+    });
+
+    test('should navigate forward and backward using touch swipe gestures in RTL mode', async ({ page }) => {
+        // 1. Open a book (Kokoro by default is RTL)
+        await page.locator('#developer-books-grid .book-card').first().click();
+        await page.waitForSelector('#reader-content p');
+
+        const readingIndex = page.locator('#reading-index');
+        await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);
+
+        // In RTL, Right Swipe (finger moves left to right: startX=200 to endX=400) goes to Next page (Page 2)
+        await page.dispatchEvent('#reader-viewport', 'touchstart', {
+            touches: [{ identifier: 0, clientX: 200, clientY: 300 }]
+        });
+        await page.dispatchEvent('#reader-viewport', 'touchend', {
+            changedTouches: [{ identifier: 0, clientX: 400, clientY: 300 }]
+        });
+        await page.waitForTimeout(600); // Wait for transition
+        await expect(readingIndex).toHaveText(/2 \/ \d+ ページ/);
+
+        // In RTL, Left Swipe (finger moves right to left: startX=400 to endX=200) goes to Previous page (Page 1)
+        await page.dispatchEvent('#reader-viewport', 'touchstart', {
+            touches: [{ identifier: 0, clientX: 400, clientY: 300 }]
+        });
+        await page.dispatchEvent('#reader-viewport', 'touchend', {
+            changedTouches: [{ identifier: 0, clientX: 200, clientY: 300 }]
+        });
+        await page.waitForTimeout(600); // Wait for transition
+        await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);
+    });
 });

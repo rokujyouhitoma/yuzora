@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added タッチデバイス向けのスワイプジェスチャーによるページ送り機能を追加 (`ui.js`) (ID: 022)。
+- Fixed 右から左（RTL）送り設定時に、画面右側のナビゲーションエリアをクリック/タップしても前のページに戻らない off-by-one 計算バグを、`scrollToPage` への呼び出し共通化により解消 (`commands.js`) (ID: 022)。
+- Added RTL時のクリック/タップおよびタッチスワイプでの正確なページ遷移を検証するE2E自動テストを追加 (`viewer.spec.js`) (ID: 022)。
+
 - Added `locator.js` を新規作成し、依存解決のための Service Locator パターンを導入 (ID: 019)。
 - Added `locator.js` の動作を検証する単体テストを追加 (ID: 019)。
 - Changed `config.js` 内に `AppState` クラスを定義し、従来グローバルだった状態変数およびDOM要素参照群をすべてクラス内にカプセル化 (ID: 019)。

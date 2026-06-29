@@ -53,12 +53,7 @@ class NavigatePageCommand extends Command {
     execute() {
         const state = window.locator.resolve(AppState);
         if (state.readerViewport) {
-            const pageWidth = state.readerViewport.clientWidth;
-            if (state.config.direction === "rtl") {
-                state.readerViewport.scrollLeft = -(this.targetPage * pageWidth);
-            } else {
-                state.readerViewport.scrollLeft = this.targetPage * pageWidth;
-            }
+            scrollToPage(this.targetPage);
         }
     }
     toJSON() {

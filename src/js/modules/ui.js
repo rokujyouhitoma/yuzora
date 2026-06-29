@@ -164,6 +164,44 @@ function setupEventListeners() {
     document.addEventListener("touchend", () => {
         isDraggingProgressBar = false;
     });
+
+    // Swipe gestures support on readerViewport
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    readerViewport.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+    }, { passive: true });
+
+    readerViewport.addEventListener("touchend", (e) => {
+        if (e.changedTouches.length === 1) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+
+            // Check if horizontal swipe distance is over 50px and is dominant
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (config.direction === "rtl") {
+                    if (deltaX > 0) {
+                        nextPage();
+                    } else {
+                        prevPage();
+                    }
+                } else {
+                    if (deltaX > 0) {
+                        prevPage();
+                    } else {
+                        nextPage();
+                    }
+                }
+            }
+        }
+    }, { passive: true });
 }
 
 let scrollVelocity = 0;
