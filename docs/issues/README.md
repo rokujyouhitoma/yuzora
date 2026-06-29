@@ -29,6 +29,7 @@
 | **018** | Bug | High | Closed | デバッグ画面で「レイアウト診断」タブに切り替わらない | AI Agent | [018-fix-debug-tab-switching.md](closed/018-fix-debug-tab-switching.md) |
 | **019** | Feature | Medium | Closed | CommandパターンによるUI表示操作の記録と再現 | AI Agent | [019-command-pattern-ui-interactions.md](closed/019-command-pattern-ui-interactions.md) |
 | **020** | Feature | Low | Closed | 非同期処理による目次抽出および描画の高速化 | AI Agent | [020-async-toc-generation.md](closed/020-async-toc-generation.md) |
+| **021** | Feature | Medium | Closed | Locatorパターンによるグローバル変数の削減と依存関係の明確化 | AI Agent | [021-implement-locator-pattern.md](closed/021-implement-locator-pattern.md) |
 
 
 

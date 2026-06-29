@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `locator.js` を新規作成し、依存解決のための Service Locator パターンを導入 (ID: 019)。
+- Added `locator.js` の動作を検証する単体テストを追加 (ID: 019)。
+- Changed `config.js` 内に `AppState` クラスを定義し、従来グローバルだった状態変数およびDOM要素参照群をすべてクラス内にカプセル化 (ID: 019)。
+- Changed `config.js` 末尾において `Object.defineProperty` を用い、レガシーグローバル変数アクセスおよびDOM参照を `AppState` にルーティングするプロキシゲッター/セッターを定義して互換性を維持 (ID: 019)。
+- Changed `commands.js`, `parser.js`, `viewer.js`, `ui.js` 内の直接的なグローバル状態アクセスを、`window.locator.resolve(AppState)` を介したアクセスへとリファクタリング (ID: 019)。
+- Documentation `DSN-02-low_level_design.md` のセクション 1 に Service Locator パターン、`AppState` クラス、およびプロキシラッパーの設計物理仕様を追記 (ID: 019)。
+
 - Added 非同期の IntersectionObserver を用いたアクティブ見出し判定、および requestAnimationFrame を用いた目次リストのチャンク（遅延）描画による目次描画の高速化とレイアウトスラッシングの解消 (ID: 020)。
 - Added UI操作（メニュー切り替え、設定・目次ドロワー開閉、デバッグ画面開閉、ホーム遷移、キャッシュクリア等）をCommandパターンによる操作履歴の記録・再現対象に追加 (ID: 019)。
 - Fixed デバッグ画面において、「レイアウト診断」タブをクリックまたはキーボードの `2` を押下した際、表示が切り替わらない不具合を修正 (ID: 018)。

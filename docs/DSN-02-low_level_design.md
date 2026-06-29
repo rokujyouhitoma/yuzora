@@ -12,9 +12,24 @@
 
 ---
 
-## 1. プログラム内部状態管理 (State Variables)
+## 1. プログラム内部状態管理 (State Variables & Service Locator)
 
-[src/js/modules/config.js](/src/js/modules/config.js) の内部において、アプリケーションの動作状態は以下のグローバル変数で管理されます。
+アプリケーションの動作状態やDOM要素の参照は、グローバル変数に直接保持するのではなく、**Service Locatorパターン**を用いて管理します。これにより、グローバルスコープの汚染を防ぎ、モジュール間の疎結合化とテスタビリティ（モック化の容易さ）を実現します。
+
+### 1.1 サービスロケーター (`Locator` クラス)
+[src/js/modules/locator.js](/src/js/modules/locator.js) に実装された `Locator` クラスは、依存解決のためのレジストリとして機能します。
+
+- **`window.locator`**: `Locator` クラスのグローバルなシングルトンインスタンス。
+- **主要メソッド**:
+  - `register(Class, instance)`: 特定のクラスに対するオブジェクトインスタンスを登録します。
+  - `resolve(Class)`: 登録されたクラスインスタンスを返します。未登録の場合はエラーをスローします。
+  - `locate(Class)`: クラスを解決します。未登録の場合は自動的に引数のクラスから新規インスタンスを生成してキャッシュし、それを返します。
+
+### 1.2 アプリケーション状態管理 (`AppState` クラス)
+[src/js/modules/config.js](/src/js/modules/config.js) に定義された `AppState` クラスは、アプリケーションのデータモデルおよびDOM要素の参照を一元管理します。
+
+- **`AppState` インスタンス**: 起動時に `window.locator.register(AppState, new AppState())` を介してサービスロケーターへ登録されます。
+- **状態管理用のプロパティ群**:
 
 | 変数名 | 型 | 初期値 | 役割・説明 |
 | :--- | :--- | :--- | :--- |
@@ -25,7 +40,7 @@
 | `headerTimeout` | `number \| null` | `null` | ヘッダーおよび操作UIの自動非表示タイマーID（`setTimeout` の返り値）。マウス移動やタップの度にリセットされます。 |
 | `config` | `Object` | (下記参照) | アプリケーションの表示設定オブジェクト。 |
 
-### `config` オブジェクトの構成
+#### `config` オブジェクトの構成
 ```json
 {
   "theme": "sepia",       // 適用中テーマ ("sepia" | "light" | "dark" | "black")
@@ -35,6 +50,9 @@
   "spacing": "spacing-normal"  // 文字間 ("spacing-tight" | "spacing-normal" | "spacing-loose")
 }
 ```
+
+### 1.3 レガシー互換用のプロキシ定義 (Proxy Getters/Setters)
+既存モジュールとのシームレスな統合およびリファクタリングの影響範囲最小化のため、`window` オブジェクト上に `Object.defineProperty` を用いたプロキシプロパティが定義されています。これにより、従来のグローバル変数アクセス（例: `currentFileName = "..."`）や各種DOM要素へのアクセスは、内部で自動的に `window.locator.resolve(AppState)` 経由でのプロパティアクセスへとルーティングされます。
 
 ---
 

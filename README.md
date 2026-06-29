@@ -67,9 +67,10 @@ yuzora/
 ├── src/                          # ソースコード
 │   ├── books/                    # 同梱オススメ書籍データ（宮本武蔵、こころ、故郷）
 │   ├── css/
-│   │   └── style.css             # アプリケーション共通スタイル
+│   │   ├── modules/              # 機能別分割スタイルシートファイル群
+│   │   └── style.css             # 結合・生成されたアプリケーション共通スタイル
 │   └── js/
-│     └── app.js                  # アプリケーションロジック・ステート管理
+│       └── modules/              # 機能別分割JavaScriptファイル群（locator.js, config.js等）
 ├── tools/                        # ビルド用外部ツール（Closure Compiler 実行jar等）
 ├── Makefile                      # ビルドコマンド定義 (make main-min.js)
 ├── index.html                    # メイン HTML (SPA エントリポイント - 開発用)

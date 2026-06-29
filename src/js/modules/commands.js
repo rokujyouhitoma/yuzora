@@ -27,9 +27,10 @@ class LoadBookCommand extends Command {
         this.fileContent = fileContent;
     }
     execute() {
-        currentFileName = this.fileName;
-        currentFileType = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
-        currentFileContent = this.fileContent;
+        const state = window.locator.resolve(AppState);
+        state.currentFileName = this.fileName;
+        state.currentFileType = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
+        state.currentFileContent = this.fileContent;
         
         displayBook();
     }
@@ -50,7 +51,15 @@ class NavigatePageCommand extends Command {
         this.targetPage = targetPage;
     }
     execute() {
-        scrollToPage(this.targetPage);
+        const state = window.locator.resolve(AppState);
+        if (state.readerViewport) {
+            const pageWidth = state.readerViewport.clientWidth;
+            if (state.config.direction === "rtl") {
+                state.readerViewport.scrollLeft = -(this.targetPage * pageWidth);
+            } else {
+                state.readerViewport.scrollLeft = this.targetPage * pageWidth;
+            }
+        }
     }
     toJSON() {
         return {
@@ -69,19 +78,20 @@ class UpdateConfigCommand extends Command {
         this.configValue = configValue;
     }
     execute() {
-        config[this.configKey] = this.configValue;
+        const state = window.locator.resolve(AppState);
+        state.config[this.configKey] = this.configValue;
         updateSettingsUI(this.configKey, this.configValue);
         
-        isReflowing = true;
+        state.isReflowing = true;
         applySettings();
         setTimeout(() => {
-            const maxScroll = Math.abs(readerViewport.scrollWidth - readerViewport.clientWidth);
-            if (config.direction === 'rtl') {
-                readerViewport.scrollLeft = -(bookmarkProgress * maxScroll);
+            const maxScroll = Math.abs(state.readerViewport.scrollWidth - state.readerViewport.clientWidth);
+            if (state.config.direction === 'rtl') {
+                state.readerViewport.scrollLeft = -(state.bookmarkProgress * maxScroll);
             } else {
-                readerViewport.scrollLeft = bookmarkProgress * maxScroll;
+                state.readerViewport.scrollLeft = state.bookmarkProgress * maxScroll;
             }
-            isReflowing = false;
+            state.isReflowing = false;
         }, 150);
         saveSettings();
     }
@@ -102,8 +112,8 @@ class SyncBookmarkCommand extends Command {
         this.progress = progress;
     }
     execute() {
-        bookmarkProgress = this.progress;
-        saveBookmark();
+        const state = window.locator.resolve(AppState);
+        state.bookmarkProgress = this.progress;
     }
     toJSON() {
         return {
@@ -124,7 +134,8 @@ class ToggleControlsCommand extends Command {
         if (this.visible) {
             triggerHeaderShow();
         } else {
-            if (typeof headerTimeout !== "undefined") clearTimeout(headerTimeout);
+            const state = window.locator.resolve(AppState);
+            if (state.headerTimeout) clearTimeout(state.headerTimeout);
             hideControls();
         }
     }
@@ -145,17 +156,23 @@ class ToggleDrawerCommand extends Command {
         this.open = open;
     }
     execute() {
-        if (this.drawerId === "settings") {
-            if (this.open) {
-                openSettings();
-            } else {
-                closeSettings();
+        const state = window.locator.resolve(AppState);
+        const drawer = this.drawerId === "settings" ? state.settingsDrawer : state.tocDrawer;
+        if (!drawer) return;
+
+        if (this.open) {
+            drawer.classList.add("open");
+            if (state.drawerOverlay) state.drawerOverlay.classList.add("active");
+            if (this.drawerId === "toc") {
+                buildTOCList();
+                updateActiveTOCItemUI();
             }
-        } else if (this.drawerId === "toc") {
-            if (this.open) {
-                openTOC();
-            } else {
-                closeTOC();
+        } else {
+            drawer.classList.remove("open");
+            // Only hide overlay if both drawers are closed
+            const otherDrawer = this.drawerId === "settings" ? state.tocDrawer : state.settingsDrawer;
+            if (otherDrawer && !otherDrawer.classList.contains("open")) {
+                if (state.drawerOverlay) state.drawerOverlay.classList.remove("active");
             }
         }
     }
@@ -175,14 +192,15 @@ class ExitReaderCommand extends Command {
         super("ExitReader");
     }
     execute() {
-        welcomeScreen.classList.remove("hidden");
-        readerScreen.classList.add("hidden");
+        const state = window.locator.resolve(AppState);
+        state.welcomeScreen.classList.remove("hidden");
+        state.readerScreen.classList.add("hidden");
         localStorage.removeItem("last_read_file_name");
         localStorage.removeItem("last_read_file_content");
         localStorage.removeItem("last_read_file_type");
-        currentFileName = "";
-        currentFileContent = "";
-        currentFileType = "";
+        state.currentFileName = "";
+        state.currentFileContent = "";
+        state.currentFileType = "";
     }
     toJSON() {
         return {
@@ -198,6 +216,7 @@ class ClearStorageCommand extends Command {
         this.clearType = clearType;
     }
     execute() {
+        const state = window.locator.resolve(AppState);
         if (this.clearType === "bookmarks") {
             const keys = [];
             for (let i = 0; i < localStorage.length; i++) {
@@ -207,7 +226,7 @@ class ClearStorageCommand extends Command {
                 }
             }
             keys.forEach(k => localStorage.removeItem(k));
-            bookmarkProgress = 0;
+            state.bookmarkProgress = 0;
             checkLastSession();
         } else if (this.clearType === "config") {
             localStorage.removeItem("yuzora_config");
@@ -255,9 +274,11 @@ class ToggleDebugModalCommand extends Command {
 
 
 // Global Operations Command History Manager
-var CommandManager = {
-    commandHistory: [],
-    isReplaying: false,
+class CommandManagerClass {
+    constructor() {
+        this.commandHistory = [];
+        this.isReplaying = false;
+    }
 
     isDuplicateCommand(command) {
         if (this.commandHistory.length === 0) return false;
@@ -270,7 +291,7 @@ var CommandManager = {
             return Math.abs(lastCmd.progress - command.progress) < 0.001;
         }
         return false;
-    },
+    }
 
     limitHistorySize() {
         if (this.commandHistory.length <= 100) return;
@@ -281,7 +302,7 @@ var CommandManager = {
             // Fallback in case first command is not load book
             this.commandHistory.shift();
         }
-    },
+    }
 
     execute(command, isFromReplay = false) {
         // If replaying and user tries to execute normal actions, ignore it
@@ -302,15 +323,16 @@ var CommandManager = {
             this.limitHistorySize();
 
             // Update debug text area with latest history JSON string
-            if (debugHistoryJSON) {
-                debugHistoryJSON.value = this.exportJSON();
+            const state = window.locator.resolve(AppState);
+            if (state.debugHistoryJSON) {
+                state.debugHistoryJSON.value = this.exportJSON();
             }
         }
-    },
+    }
 
     exportJSON() {
         return JSON.stringify(this.commandHistory.map(cmd => cmd.toJSON()), null, 2);
-    },
+    }
 
     recreateCommand(item) {
         switch (item.type) {
@@ -335,7 +357,7 @@ var CommandManager = {
             default:
                 throw new Error(`Unknown command type: ${item.type}`);
         }
-    },
+    }
 
     importJSON(jsonString) {
         try {
@@ -359,7 +381,7 @@ var CommandManager = {
             alert(`履歴データのインポートに失敗しました:\n${err.message}`);
             return null;
         }
-    },
+    }
 
     async replay(commands) {
         if (!commands || commands.length === 0) return;
@@ -369,7 +391,8 @@ var CommandManager = {
         this.commandHistory = [];
         
         // Mask UI to prevent user interactions during auto replay
-        if (app) app.classList.add('replaying');
+        const state = window.locator.resolve(AppState);
+        if (state.app) state.app.classList.add('replaying');
 
         try {
             for (const cmd of commands) {
@@ -379,20 +402,27 @@ var CommandManager = {
                 // Re-populate commandHistory during replay for consistent session state afterward
                 this.commandHistory.push(cmd);
             }
-            if (debugHistoryJSON) {
-                debugHistoryJSON.value = this.exportJSON();
+            if (state.debugHistoryJSON) {
+                state.debugHistoryJSON.value = this.exportJSON();
             }
         } catch (err) {
             console.error("Error during auto-replay operation:", err);
         } finally {
             this.isReplaying = false;
-            if (app) app.classList.remove('replaying');
-        }
-    },
-
-    updateDebugMonitor() {
-        if (debugMonitor) {
-            debugMonitor.textContent = `History: ${this.commandHistory.length} operations.`;
+            if (state.app) state.app.classList.remove('replaying');
         }
     }
-};
+
+    updateDebugMonitor() {
+        const state = window.locator.resolve(AppState);
+        if (state.debugMonitor) {
+            state.debugMonitor.textContent = `History: ${this.commandHistory.length} operations.`;
+        }
+    }
+}
+
+// Register CommandManagerClass in Locator
+window.locator.register(CommandManagerClass, new CommandManagerClass());
+
+// Compatibility global variable
+var CommandManager = window.locator.resolve(CommandManagerClass);
