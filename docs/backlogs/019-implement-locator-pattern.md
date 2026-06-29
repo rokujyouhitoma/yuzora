@@ -12,5 +12,7 @@ ID: 019
 
 これにより、グローバル汚染を防ぎ、モジュール間の依存関係を明示的かつ堅牢に制御します。また、テストコードにおけるモック差し替えの容易性やコードの再利用性を高めます。
 
+具体的には、Locator に対して解決対象のクラス（Class）を指定した際、登録されているそのインスタンスオブジェクトを解決（返却）する仕組みとします。
+
 ### 参考 URL
 - https://github.com/rokujyouhitoma/horse-racing-game-js/blob/master/src/js/lib/locator.js
