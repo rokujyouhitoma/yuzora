@@ -27,6 +27,7 @@
 | **017** | Feature | High | Closed | GitHub Actions CI パイプラインと GitHub Pages デプロイ自動化の導入 | [017-github-actions-ci-and-pages-deploy.md](closed/017-github-actions-ci-and-pages-deploy.md) |
 | **018** | Feature | Medium | Promoted | CommandパターンによるUI表示操作の記録と再現 | [018-command-pattern-ui-interactions.md](closed/018-command-pattern-ui-interactions.md) |
 | **019** | Refactor | Medium | Draft | Locatorパターンによるグローバル変数の削減と依存関係の明確化 | [019-implement-locator-pattern.md](019-implement-locator-pattern.md) |
+| **020** | Feature | Medium | Draft | Routerの実装とURLによる状態ディスパッチ機能 | [020-implement-router.md](020-implement-router.md) |
 
 ---
 
