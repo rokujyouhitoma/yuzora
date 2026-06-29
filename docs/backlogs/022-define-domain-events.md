@@ -12,5 +12,7 @@ ID: 022
 
 これにより、イベント定義を明確化し、各モジュールがリッスンすべきイベント名や、通知とともに渡されるペイロードデータ（書籍情報、しおり進捗割合等）の仕様を一元管理し、コードの保守性と堅牢性を向上させます。
 
+本イベントの登録・ディスパッチ処理は、[021-implement-event-emitter.md](021-implement-event-emitter.md) で定義される DOM Level 2 Events 準拠のインターフェース設計を利用します。
+
 ### 参考 URL
 - https://github.com/rokujyouhitoma/horse-racing-game-js/blob/master/src/js/game/events.js
