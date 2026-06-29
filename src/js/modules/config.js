@@ -149,6 +149,8 @@ var bookmarkProgress = 0; // 0 to 1 scroll percentage
 var headerTimeout = null;
 var isReflowing = false;
 var currentTOC = [];
+var activeHeadingId = null;
+var tocObserver = null;
 
 // Viewport layout configurations
 var config = {

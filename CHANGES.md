@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added 非同期の IntersectionObserver を用いたアクティブ見出し判定、および requestAnimationFrame を用いた目次リストのチャンク（遅延）描画による目次描画の高速化とレイアウトスラッシングの解消 (ID: 020)。
 - Added UI操作（メニュー切り替え、設定・目次ドロワー開閉、デバッグ画面開閉、ホーム遷移、キャッシュクリア等）をCommandパターンによる操作履歴の記録・再現対象に追加 (ID: 019)。
 - Fixed デバッグ画面において、「レイアウト診断」タブをクリックまたはキーボードの `2` を押下した際、表示が切り替わらない不具合を修正 (ID: 018)。
 - Fixed キーボードの上矢印キー（`ArrowUp`）および下矢印キー（`ArrowDown`）押下時に、読書画面のメニュー（ヘッダー・フッター）表示状態（トグル）が切り替わらない不具合を修正。ブラウザのスクロール等のデフォルト動作も抑制 (ID: 017)。

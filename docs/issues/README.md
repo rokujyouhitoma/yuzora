@@ -28,6 +28,7 @@
 | **017** | Bug | Medium | Closed | キーボードの上・下矢印キーによるメニュー表示切替が機能しない | AI Agent | [017-toggle-menu-with-arrow-keys.md](closed/017-toggle-menu-with-arrow-keys.md) |
 | **018** | Bug | High | Closed | デバッグ画面で「レイアウト診断」タブに切り替わらない | AI Agent | [018-fix-debug-tab-switching.md](closed/018-fix-debug-tab-switching.md) |
 | **019** | Feature | Medium | Closed | CommandパターンによるUI表示操作の記録と再現 | AI Agent | [019-command-pattern-ui-interactions.md](closed/019-command-pattern-ui-interactions.md) |
+| **020** | Feature | Low | Closed | 非同期処理による目次抽出および描画の高速化 | AI Agent | [020-async-toc-generation.md](closed/020-async-toc-generation.md) |
 
 
 

@@ -100,6 +100,9 @@ function displayBook() {
     document.title = `${title} - ゆうぞら`;
     readerContent.innerHTML = parsedHTML;
 
+    // Set default activeHeadingId to the first TOC item if available
+    activeHeadingId = (currentTOC && currentTOC.length > 0) ? currentTOC[0].id : null;
+
     // Display Reader, Hide Welcome Screen
     welcomeScreen.classList.add('hidden');
     readerScreen.classList.remove('hidden');
@@ -118,6 +121,9 @@ function displayBook() {
         restoreScrollPosition();
         updateProgress();
         triggerHeaderShow();
+        if (typeof setupTOCObserver === "function") {
+            setupTOCObserver();
+        }
         setTimeout(() => {
             isReflowing = false;
         }, 50);

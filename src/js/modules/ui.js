@@ -535,7 +535,13 @@ function closeTOC() {
     triggerHeaderShow();
 }
 
+var activeTOCAnimationId = null;
+
 function buildTOCList() {
+    if (activeTOCAnimationId) {
+        cancelAnimationFrame(activeTOCAnimationId);
+        activeTOCAnimationId = null;
+    }
     tocList.innerHTML = "";
     if (currentTOC.length === 0) {
         const emptyMsg = document.createElement("div");
@@ -547,44 +553,99 @@ function buildTOCList() {
         return;
     }
 
-    const clientWidth = readerViewport.clientWidth;
-    const currentScroll = Math.abs(readerViewport.scrollLeft);
+    let index = 0;
+    const chunkSize = 100;
 
-    currentTOC.forEach((item) => {
-        const element = document.getElementById(item.id);
-        let isActive = false;
-        if (element) {
-            const rect = element.getBoundingClientRect();
-            const containerRect = readerViewport.getBoundingClientRect();
-            
-            let pageIndex = 0;
-            if (config.direction === "rtl") {
-                const absolutePosition = (containerRect.right - rect.right) + Math.abs(readerViewport.scrollLeft);
-                pageIndex = Math.floor(absolutePosition / clientWidth);
+    function renderChunk() {
+        const fragment = document.createDocumentFragment();
+        const limit = Math.min(index + chunkSize, currentTOC.length);
+
+        for (; index < limit; index++) {
+            const item = currentTOC[index];
+            const isActive = (item.id === activeHeadingId);
+            const itemDiv = document.createElement("div");
+            itemDiv.className = `toc-item toc-item-level-${item.level}${isActive ? " active" : ""}`;
+            itemDiv.textContent = item.text;
+            itemDiv.setAttribute("data-heading-id", item.id);
+            itemDiv.addEventListener("click", () => {
+                jumpToHeading(item.id);
+                closeTOC();
+            });
+            fragment.appendChild(itemDiv);
+        }
+
+        tocList.appendChild(fragment);
+
+        if (index < currentTOC.length) {
+            activeTOCAnimationId = requestAnimationFrame(renderChunk);
+        } else {
+            activeTOCAnimationId = null;
+        }
+    }
+
+    renderChunk();
+}
+
+var visibleHeadingIds = new Set();
+
+function setupTOCObserver() {
+    visibleHeadingIds.clear();
+    if (tocObserver) {
+        tocObserver.disconnect();
+    }
+
+    const options = {
+        root: readerViewport,
+        threshold: 0.1
+    };
+
+    tocObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                visibleHeadingIds.add(entry.target.id);
             } else {
-                const absolutePosition = (rect.left - containerRect.left) + readerViewport.scrollLeft;
-                pageIndex = Math.floor(absolutePosition / clientWidth);
+                visibleHeadingIds.delete(entry.target.id);
             }
-            const currentScrollPage = Math.round(currentScroll / clientWidth);
-            if (pageIndex === currentScrollPage) {
-                isActive = true;
+        });
+
+        if (visibleHeadingIds.size > 0) {
+            const firstVisible = currentTOC.find(item => visibleHeadingIds.has(item.id));
+            if (firstVisible) {
+                activeHeadingId = firstVisible.id;
             }
         }
 
-        const itemDiv = document.createElement("div");
-        itemDiv.className = `toc-item toc-item-level-${item.level}${isActive ? " active" : ""}`;
-        itemDiv.textContent = item.text;
-        itemDiv.addEventListener("click", () => {
-            jumpToHeading(item.id);
-            closeTOC();
-        });
-        tocList.appendChild(itemDiv);
+        if (activeHeadingId && tocDrawer.classList.contains("open")) {
+            updateActiveTOCItemUI();
+        }
+    }, options);
+
+    currentTOC.forEach(item => {
+        const el = document.getElementById(item.id);
+        if (el) {
+            tocObserver.observe(el);
+        }
     });
 }
+
+function updateActiveTOCItemUI() {
+    const items = tocList.querySelectorAll(".toc-item");
+    items.forEach(item => {
+        const headingId = item.getAttribute("data-heading-id");
+        if (headingId === activeHeadingId) {
+            item.classList.add("active");
+        } else {
+            item.classList.remove("active");
+        }
+    });
+}
+
 
 function jumpToHeading(headingId) {
     const targetElement = document.getElementById(headingId);
     if (!targetElement) return;
+
+    activeHeadingId = headingId;
 
     const rect = targetElement.getBoundingClientRect();
     const containerRect = readerViewport.getBoundingClientRect();

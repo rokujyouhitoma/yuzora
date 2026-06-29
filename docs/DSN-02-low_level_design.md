@@ -620,4 +620,24 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
 4. **アライメントスクロール移動**:
    `scrollToPage(P_{target} + 1)` を実行し、RTL時は $- (P_{target} \times W_{viewport})$、LTR時は $P_{target} \times W_{viewport}$ へスクロールします。これにより、見出し要素が回り込み誤差によって手前のページの左カラム（画面左側）に追いやられるのを防ぎ、移動先のページの右端（画面の最も右側）に正確に表示されるようにします。
 
+## 8. 非同期目次制御仕様 (Asynchronous TOC Generation & Rendering)
+
+目次（TOC）抽出およびドロワー表示の高速化と、メインスレッドへの負荷削減のための設計仕様です。
+
+### 8.1 IntersectionObserver による現在位置判定設計
+- **アクティブ見出しの判定排除**: スクロール毎または目次描画毎の同期的・反復的な `getBoundingClientRect()` 呼び出しを排除し、非同期の `IntersectionObserver` で表示中の見出しを追従します。
+- **オブザーバー設定 (`setupTOCObserver`)**:
+  - `root: readerViewport` (読書用スクロールコンテナ)
+  - `threshold: 0.1` (10% の領域が交差した時点で発火)
+- **判定アルゴリズム**:
+  - 交差した見出し要素（`isIntersecting === true`）を検知した際、その要素の ID を `activeHeadingId` に設定します。
+  - 目次ドロワーが開いている（`.toc-drawer.open`）場合、ドロワー内部のハイライト表示（`updateActiveTOCItemUI()`）を呼び出します。これにより、閉じている間は DOM 再描画コストを一切発生させません。
+
+### 8.2 requestAnimationFrame による Progressive Chunked 描画
+- **描画バッチ化**: 目次ドロワーを開く（`openTOC()`）際、`DocumentFragment` を生成してバッチ構築します。
+- **チャンク化スケジュールアルゴリズム**:
+  - 目次項目数が膨大な場合におけるメインスレッドの占有（カクつき）を避けるため、1フレームあたり **`100件`** ずつ描画処理を分割します。
+  - 1チャンク挿入後、まだ未描画の項目がある場合は `requestAnimationFrame` で次のチャンク処理をスケジュールします。
+
+
 

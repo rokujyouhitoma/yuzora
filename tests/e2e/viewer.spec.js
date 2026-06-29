@@ -235,4 +235,41 @@ test.describe('Yuzora E2E Reader Tests', () => {
         await expect(settingsDrawer).not.toHaveClass(/open/);
         await expect(debugModal).not.toHaveClass(/hidden/);
     });
+
+    test('should observe headings and render TOC chunked progressive list', async ({ page }) => {
+        // 1. Open a book
+        const bookCard = page.locator('#developer-books-grid .book-card').first();
+        await bookCard.click();
+        await page.waitForSelector('#reader-content p');
+
+        // 2. Click TOC button to open drawer
+        const btnTOC = page.locator('#btn-toc');
+        const tocDrawer = page.locator('#toc-drawer');
+        await expect(tocDrawer).not.toHaveClass(/open/);
+        await btnTOC.click();
+        await expect(tocDrawer).toHaveClass(/open/);
+
+        // 3. Verify TOC items are progressive rendered
+        const tocList = page.locator('#toc-list');
+        const firstTOCItem = tocList.locator('.toc-item').first();
+        await expect(firstTOCItem).toBeVisible();
+
+        // Initially, the first heading should be active (highlighted)
+        await expect(firstTOCItem).toHaveClass(/active/);
+
+        // 4. Click a different heading to jump
+        const secondTOCItem = tocList.locator('.toc-item').nth(1);
+        await secondTOCItem.click();
+
+        // Drawer should close automatically on click
+        await expect(tocDrawer).not.toHaveClass(/open/);
+
+        // 5. Open TOC drawer again
+        await btnTOC.click();
+        await expect(tocDrawer).toHaveClass(/open/);
+
+        // Verify the second heading is now active
+        const updatedSecondTOCItem = tocList.locator('.toc-item').nth(1);
+        await expect(updatedSecondTOCItem).toHaveClass(/active/);
+    });
 });
