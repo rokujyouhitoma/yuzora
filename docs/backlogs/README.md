@@ -32,6 +32,7 @@
 | **022** | Refactor | Medium | Draft | ビジネスロジック固有のイベント定義 | [022-define-domain-events.md](022-define-domain-events.md) |
 | **023** | Refactor | Medium | Draft | Publish/Subscribe パターンによるイベント通知モデルの実装 | [023-implement-pubsub.md](023-implement-pubsub.md) |
 | **024** | Refactor | Medium | Draft | Scene遷移（画面遷移）フレームワークの実装によるモジュール分離 | [024-implement-scene-framework.md](024-implement-scene-framework.md) |
+| **025** | Refactor | Medium | Draft | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | [025-implement-repository.md](025-implement-repository.md) |
 
 ---
 
