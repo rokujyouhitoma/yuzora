@@ -580,6 +580,8 @@ function buildTOCList() {
             activeTOCAnimationId = requestAnimationFrame(renderChunk);
         } else {
             activeTOCAnimationId = null;
+            // Update active state now that all DOM items have been appended
+            updateActiveTOCItemUI();
         }
     }
 
@@ -587,6 +589,10 @@ function buildTOCList() {
 }
 
 var visibleHeadingIds = new Set();
+// Timestamp (ms) until which the IntersectionObserver must not override activeHeadingId.
+// Set by jumpToHeading() to prevent scroll-triggered observer callbacks from resetting
+// the explicitly-chosen heading immediately after a programmatic jump.
+var jumpLockUntil = 0;
 
 function setupTOCObserver() {
     visibleHeadingIds.clear();
@@ -608,7 +614,7 @@ function setupTOCObserver() {
             }
         });
 
-        if (visibleHeadingIds.size > 0) {
+        if (visibleHeadingIds.size > 0 && Date.now() >= jumpLockUntil) {
             const firstVisible = currentTOC.find(item => visibleHeadingIds.has(item.id));
             if (firstVisible) {
                 activeHeadingId = firstVisible.id;
@@ -646,6 +652,10 @@ function jumpToHeading(headingId) {
     if (!targetElement) return;
 
     activeHeadingId = headingId;
+    // Lock the IntersectionObserver from overriding activeHeadingId for 800ms
+    // so that the scroll-triggered observer callback doesn't reset it to the
+    // first document-order heading before the viewport finishes moving.
+    jumpLockUntil = Date.now() + 800;
 
     const rect = targetElement.getBoundingClientRect();
     const containerRect = readerViewport.getBoundingClientRect();

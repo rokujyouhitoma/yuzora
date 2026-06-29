@@ -264,6 +264,9 @@ test.describe('Yuzora E2E Reader Tests', () => {
         // Drawer should close automatically on click
         await expect(tocDrawer).not.toHaveClass(/open/);
 
+        // Wait for smooth scroll and IntersectionObserver to settle
+        await page.waitForTimeout(1000);
+
         // 5. Open TOC drawer again
         await btnTOC.click();
         await expect(tocDrawer).toHaveClass(/open/);

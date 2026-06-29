@@ -165,7 +165,8 @@ class ToggleDrawerCommand extends Command {
             if (state.drawerOverlay) state.drawerOverlay.classList.add("active");
             if (this.drawerId === "toc") {
                 buildTOCList();
-                updateActiveTOCItemUI();
+                // Note: updateActiveTOCItemUI() is called inside buildTOCList's final renderChunk
+                // to ensure active state is applied after all DOM items are populated.
             }
         } else {
             drawer.classList.remove("open");

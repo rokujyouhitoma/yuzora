@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file.
 - Changed `commands.js`, `parser.js`, `viewer.js`, `ui.js` 内の直接的なグローバル状態アクセスを、`window.locator.resolve(AppState)` を介したアクセスへとリファクタリング (ID: 019)。
 - Documentation `DSN-02-low_level_design.md` のセクション 1 に Service Locator パターン、`AppState` クラス、およびプロキシラッパーの設計物理仕様を追記 (ID: 019)。
 
+- Fixed `jumpToHeading` 実行直後に `IntersectionObserver` コールバックが `activeHeadingId` を文書順先頭見出しに上書きしてしまうレースコンディションを修正。`jumpLockUntil` タイムスタンプを導入し、ジャンプ後 800ms 間はオブザーバーによる上書きをブロックするよう変更 (`ui.js`)。
+- Fixed `buildTOCList` の非同期チャンクレンダリング完了前に `updateActiveTOCItemUI` が呼ばれていた問題を修正。`renderChunk` の最終フレーム完了後にのみ `updateActiveTOCItemUI` を呼ぶよう変更し、TOC 再表示時にアクティブ見出しが正しくハイライトされるようになった (`ui.js`, `commands.js`)。
+
 - Added 非同期の IntersectionObserver を用いたアクティブ見出し判定、および requestAnimationFrame を用いた目次リストのチャンク（遅延）描画による目次描画の高速化とレイアウトスラッシングの解消 (ID: 020)。
 - Added UI操作（メニュー切り替え、設定・目次ドロワー開閉、デバッグ画面開閉、ホーム遷移、キャッシュクリア等）をCommandパターンによる操作履歴の記録・再現対象に追加 (ID: 019)。
 - Fixed デバッグ画面において、「レイアウト診断」タブをクリックまたはキーボードの `2` を押下した際、表示が切り替わらない不具合を修正 (ID: 018)。
