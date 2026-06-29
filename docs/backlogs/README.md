@@ -34,6 +34,7 @@
 | **024** | Refactor | Medium | Approved | Scene遷移（画面遷移）フレームワークの実装によるモジュール分離 | [024-implement-scene-framework.md](024-implement-scene-framework.md) |
 | **025** | Refactor | Medium | Approved | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | [025-implement-repository.md](025-implement-repository.md) |
 | **026** | Refactor | Medium | Draft | JavaScriptの "use strict" 有効化 | [026-enable-use-strict.md](026-enable-use-strict.md) |
+| **027** | Enhancement | Medium | Draft | Closure Compilerのコンパイルオプション厳格化 | [027-strict-closure-compiler-options.md](027-strict-closure-compiler-options.md) |
 
 ---
 
