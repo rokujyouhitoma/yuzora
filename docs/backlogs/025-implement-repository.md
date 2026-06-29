@@ -29,6 +29,7 @@ Yuzora の進捗保存（しおり情報）、表示設定、および読書セ�
 1. **Repositoryインターフェースの統一**:
    - 基底 `Repository` クラスを定義し、一般的な CRUD 処理（`get`, `save`, `delete`等）のシグネチャを定めます。
    - `LocalStorageRepository` 具象クラスを実装し、内部での `JSON.stringify` / `JSON.parse` シリアライズ・デシリアライズ、および例外発生時の安全な代替ハンドリングをカプセル化します。
+   - テストや一時的なメモリ保存用として、シンプルな JavaScript オブジェクト（`{}`）をデータストアとするインメモリ実装（`InMemoryRepository`）も標準構成に含めます。
 2. **ドメインリポジトリの分離**:
    - `BookmarkRepository`, `SettingsRepository` のようなドメインごとの具象リポジトリを用意し、ストレージのキー名称（マジックストリング）を各クラス内に隠蔽・一元管理します。
 3. **テストにおけるモックストレージ差し替え化**:
