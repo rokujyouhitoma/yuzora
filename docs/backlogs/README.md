@@ -26,13 +26,13 @@
 | **016** | Refactor | Medium | Closed | サイクロマティック複雑度の計測とリファクタリング基準の導入 | [016-cyclomatic-complexity-measurement.md](closed/016-cyclomatic-complexity-measurement.md) |
 | **017** | Feature | High | Closed | GitHub Actions CI パイプラインと GitHub Pages デプロイ自動化の導入 | [017-github-actions-ci-and-pages-deploy.md](closed/017-github-actions-ci-and-pages-deploy.md) |
 | **018** | Feature | Medium | Promoted | CommandパターンによるUI表示操作の記録と再現 | [018-command-pattern-ui-interactions.md](closed/018-command-pattern-ui-interactions.md) |
-| **019** | Refactor | Medium | Draft | Locatorパターンによるグローバル変数の削減と依存関係の明確化 | [019-implement-locator-pattern.md](019-implement-locator-pattern.md) |
-| **020** | Feature | Medium | Draft | Routerの実装とURLによる状態ディスパッチ機能 | [020-implement-router.md](020-implement-router.md) |
-| **021** | Refactor | Medium | Draft | Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 | [021-implement-event-emitter.md](021-implement-event-emitter.md) |
-| **022** | Refactor | Medium | Draft | ビジネスロジック固有のイベント定義 | [022-define-domain-events.md](022-define-domain-events.md) |
-| **023** | Refactor | Medium | Draft | Publish/Subscribe パターンによるイベント通知モデルの実装 | [023-implement-pubsub.md](023-implement-pubsub.md) |
-| **024** | Refactor | Medium | Draft | Scene遷移（画面遷移）フレームワークの実装によるモジュール分離 | [024-implement-scene-framework.md](024-implement-scene-framework.md) |
-| **025** | Refactor | Medium | Draft | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | [025-implement-repository.md](025-implement-repository.md) |
+| **019** | Refactor | Medium | Approved | Locatorパターンによるグローバル変数の削減と依存関係の明確化 | [019-implement-locator-pattern.md](019-implement-locator-pattern.md) |
+| **020** | Feature | Medium | Approved | Routerの実装とURLによる状態ディスパッチ機能 | [020-implement-router.md](020-implement-router.md) |
+| **021** | Refactor | Medium | Approved | Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 | [021-implement-event-emitter.md](021-implement-event-emitter.md) |
+| **022** | Refactor | Medium | Approved | ビジネスロジック固有のイベント定義 | [022-define-domain-events.md](022-define-domain-events.md) |
+| **023** | Refactor | Medium | Approved | Publish/Subscribe パターンによるイベント通知モデルの実装 | [023-implement-pubsub.md](023-implement-pubsub.md) |
+| **024** | Refactor | Medium | Approved | Scene遷移（画面遷移）フレームワークの実装によるモジュール分離 | [024-implement-scene-framework.md](024-implement-scene-framework.md) |
+| **025** | Refactor | Medium | Approved | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | [025-implement-repository.md](025-implement-repository.md) |
 
 ---
 
