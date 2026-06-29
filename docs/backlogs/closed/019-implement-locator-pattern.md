@@ -2,7 +2,7 @@
 ID: 019
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] Locatorパターンによるグローバル変数の削減と依存関係の明確化 (ID: 019)
