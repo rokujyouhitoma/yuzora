@@ -1,6 +1,7 @@
 /**
  * Yuzora - Aozora Bunko Text/HTML Parser & Sanitizer Module
  */
+"use strict";
 
 function detectHeaderEnd(line, i) {
     if (line.includes('-------------------------------------------------------')) {

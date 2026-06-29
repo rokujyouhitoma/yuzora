@@ -1,6 +1,7 @@
 /**
  * Yuzora - User Interface, Event Handlers & Settings Controller Module
  */
+"use strict";
 
 function updateSettingsUI(key, value) {
     if (key === "theme") {

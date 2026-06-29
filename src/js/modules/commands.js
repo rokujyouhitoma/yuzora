@@ -1,6 +1,7 @@
 /**
  * Yuzora - Command Pattern Operations Module
  */
+"use strict";
 
 // ==========================================================================
 // Command Pattern for Operation History

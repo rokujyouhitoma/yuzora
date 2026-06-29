@@ -1,6 +1,7 @@
 /**
  * Yuzora - Book Loading, Pagination & Viewer Controller Module
  */
+"use strict";
 
 function handleFile(file) {
     if (!file) return;

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Refactor 全JavaScriptソースファイル（`src/js/modules/*.js`）の先頭行に `"use strict";` （厳格モード）を適用 (ID: 023)。
 - Added タッチデバイス向けのスワイプジェスチャーによるページ送り機能を追加 (`ui.js`) (ID: 022)。
 - Fixed 右から左（RTL）送り設定時に、画面右側のナビゲーションエリアをクリック/タップしても前のページに戻らない off-by-one 計算バグを、`scrollToPage` への呼び出し共通化により解消 (`commands.js`) (ID: 022)。
 - Added RTL時のクリック/タップおよびタッチスワイプでの正確なページ遷移を検証するE2E自動テストを追加 (`viewer.spec.js`) (ID: 022)。

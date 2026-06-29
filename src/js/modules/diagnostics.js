@@ -1,6 +1,7 @@
 /**
  * Yuzora - Layout Diagnostics & Boundary Checks Module
  */
+"use strict";
 
 function getCurrentPageAndCount(viewport) {
     if (!viewport) {

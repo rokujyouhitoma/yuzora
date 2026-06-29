@@ -1,6 +1,7 @@
 /**
  * Yuzora - Service Locator Module
  */
+"use strict";
 
 class Locator {
     /**

@@ -1,6 +1,7 @@
 /**
  * Yuzora - Configuration & Global State Variables Module
  */
+"use strict";
 
 class AppState {
     constructor() {
