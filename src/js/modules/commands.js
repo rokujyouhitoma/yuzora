@@ -277,6 +277,14 @@ class CommandManagerClass {
         this.isReplaying = false;
     }
 
+    undo() {
+        console.warn("Undo operation is not implemented.");
+    }
+
+    redo() {
+        console.warn("Redo operation is not implemented.");
+    }
+
     isDuplicateCommand(command) {
         if (this.commandHistory.length === 0) return false;
         const lastCmd = this.commandHistory[this.commandHistory.length - 1];
@@ -422,4 +430,5 @@ class CommandManagerClass {
 window.locator.register(CommandManagerClass, new CommandManagerClass());
 
 // Compatibility global variable
-var CommandManager = window.locator.resolve(CommandManagerClass);
+/** @type {!CommandManagerClass} */
+var CommandManager = /** @type {!CommandManagerClass} */ (window.locator.resolve(CommandManagerClass));

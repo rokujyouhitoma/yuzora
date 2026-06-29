@@ -2,7 +2,7 @@
 ID: 027
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENHANCEMENT] Closure Compilerのコンパイルオプション厳格化 (ID: 027)

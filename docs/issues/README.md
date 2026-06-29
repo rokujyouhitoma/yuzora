@@ -32,6 +32,8 @@
 | **021** | Feature | Medium | Closed | Locatorパターンによるグローバル変数の削減と依存関係の明確化 | AI Agent | [021-implement-locator-pattern.md](closed/021-implement-locator-pattern.md) |
 | **022** | Bug | High | Closed | 右から左（RTL/標準）送り時のページナビゲーション不具合 | AI Agent | [022-rtl-page-navigation-issue.md](closed/022-rtl-page-navigation-issue.md) |
 | **023** | Refactor | Medium | Closed | JavaScriptの "use strict" 有効化 | AI Agent | [023-enable-use-strict.md](closed/023-enable-use-strict.md) |
+| **024** | Enhancement | Medium | Closed | Closure Compilerのコンパイルオプション厳格化 | AI Agent | [024-strict-closure-compiler-options.md](closed/024-strict-closure-compiler-options.md) |
+
 
 
 

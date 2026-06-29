@@ -34,7 +34,11 @@ class Locator {
         if (!this.container.has(Class)) {
             throw new Error(`Class ${Class.name || Class} is not registered in Locator.`);
         }
-        return this.container.get(Class);
+        const instance = this.container.get(Class);
+        if (!instance) {
+            throw new Error(`Class ${Class.name || Class} instance is null or undefined.`);
+        }
+        return instance;
     }
 
     /**
@@ -51,7 +55,11 @@ class Locator {
                 throw new Error(`Failed to auto-instantiate Class ${Class.name || Class} in Locator: ${e.message}`);
             }
         }
-        return this.container.get(Class);
+        const instance = this.container.get(Class);
+        if (!instance) {
+            throw new Error(`Class ${Class.name || Class} instance is null or undefined.`);
+        }
+        return instance;
     }
 }
 

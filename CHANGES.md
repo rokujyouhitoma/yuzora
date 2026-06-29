@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `Makefile` に Closure Compiler の詳細警告設定（`--warning_level VERBOSE`）および各種厳格化オプションを追加し、グローバルプロキシ用の externs 宣言ファイルを新設 (ID: 024)。
 - Refactor 全JavaScriptソースファイル（`src/js/modules/*.js`）の先頭行に `"use strict";` （厳格モード）を適用 (ID: 023)。
 - Added タッチデバイス向けのスワイプジェスチャーによるページ送り機能を追加 (`ui.js`) (ID: 022)。
 - Fixed 右から左（RTL）送り設定時に、画面右側のナビゲーションエリアをクリック/タップしても前のページに戻らない off-by-one 計算バグを、`scrollToPage` への呼び出し共通化により解消 (`commands.js`) (ID: 022)。

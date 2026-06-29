@@ -493,9 +493,11 @@ function loadSettings() {
         const saved = localStorage.getItem("yuzora_config");
         if (saved) {
             const parsed = JSON.parse(saved);
-            Object.keys(parsed).forEach(key => {
-                config[key] = parsed[key];
-            });
+            if (parsed && typeof parsed === "object") {
+                Object.keys(/** @type {!Object} */ (parsed)).forEach(key => {
+                    config[key] = parsed[key];
+                });
+            }
         }
     } catch (e) {
         console.warn("Failed to load configuration settings from localStorage:", e);

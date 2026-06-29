@@ -20,12 +20,12 @@ function handleFile(file) {
             const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
             try {
                 const text = utf8Decoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, text, "txt"));
+                CommandManager.execute(new LoadBookCommand(file.name, text));
             } catch (err) {
                 // Fallback to Shift_JIS on UTF-8 decode failure for user uploaded files
                 const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
                 const text = sjisDecoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, text, "txt"));
+                CommandManager.execute(new LoadBookCommand(file.name, text));
             }
         };
         reader.readAsArrayBuffer(file);
@@ -37,11 +37,11 @@ function handleFile(file) {
             const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
             try {
                 const htmlText = utf8Decoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, htmlText, "html"));
+                CommandManager.execute(new LoadBookCommand(file.name, htmlText));
             } catch (err) {
                 const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
                 const htmlText = sjisDecoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, htmlText, "html"));
+                CommandManager.execute(new LoadBookCommand(file.name, htmlText));
             }
         };
         reader.readAsArrayBuffer(file);
@@ -61,12 +61,12 @@ function loadPredefinedBook(book) {
             const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
             try {
                 const text = utf8Decoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(bookData.title, text, "txt"));
+                CommandManager.execute(new LoadBookCommand(bookData.title, text));
             } catch (err) {
                 console.warn("Shift_JIS decode failed (fatal=true), falling back to UTF-8 for predefined book", err);
                 const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
                 const text = sjisDecoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(bookData.title, text, "txt"));
+                CommandManager.execute(new LoadBookCommand(bookData.title, text));
             }
         })
         .catch(error => {
