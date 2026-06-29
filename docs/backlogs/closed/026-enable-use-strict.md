@@ -2,7 +2,7 @@
 ID: 026
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Promoted
 ---
 
 # [REFACTOR] JavaScriptの "use strict" 有効化 (ID: 026)
