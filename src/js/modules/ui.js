@@ -807,6 +807,24 @@ document.addEventListener("DOMContentLoaded", () => {
     setupEventListeners();
     setupDrawerControls();
 
+    const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
+
+    // Listen to book rendered event to update UI controls and TOC observers
+    eventBus.addEventListener("book-rendered", () => {
+        triggerHeaderShow();
+        setupTOCObserver();
+    });
+
+    // Listen to debug modal toggles
+    eventBus.addEventListener("toggle-debug-modal", (e) => {
+        const detail = /** @type {{open: boolean}} */ (e.detail);
+        if (detail.open) {
+            openDebugModal();
+        } else {
+            closeDebugModal();
+        }
+    });
+
     // Check last session for auto-restore
     const lastName = localStorage.getItem("last_read_file_name");
     const lastContent = localStorage.getItem("last_read_file_content");
@@ -816,7 +834,10 @@ document.addEventListener("DOMContentLoaded", () => {
         currentFileName = lastName;
         currentFileContent = lastContent;
         currentFileType = lastType || "txt";
-        displayBook();
+        eventBus.dispatchEvent(new YuzoraEvent("book-loaded", {
+            fileName: lastName,
+            fileContent: lastContent
+        }));
     }
 
     // Expose core functions for testing/debugging

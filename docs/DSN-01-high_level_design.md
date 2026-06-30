@@ -27,6 +27,8 @@ graph TD
         
         subgraph Controller["Controller (制御層)"]
             subgraph JSModules["JS modules/*"]
+                JS_Locator["locator.js"]
+                JS_Event["event.js"]
                 JS_Config["config.js"]
                 JS_Cmds["commands.js"]
                 JS_Parser["parser.js"]

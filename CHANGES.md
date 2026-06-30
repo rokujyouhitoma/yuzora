@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added イベント駆動型アーキテクチャを実現するため、`src/js/modules/event.js` を新設し、`YuzoraEvent` および `YuzoraEventTarget` クラスによるカスタムイベントバスを導入 (ID: 026)。
+- Changed `Makefile` および `index.html` に `src/js/modules/event.js` を追加し、本番難読化ビルドおよび開発時動作への統合を完了 (ID: 026)。
+- Changed `commands.js` をリファクタリングし、`LoadBookCommand`、`NavigatePageCommand`、`ToggleDebugModalCommand` の実行時にUIやビューアーの関数を直接呼ぶ代わりに `YuzoraEventTarget` を通じたイベント（`book-loaded`、`navigate-page`、`toggle-debug-modal`）のディスパッチへと変更 (ID: 026)。
+- Changed `viewer.js` をリファクタリングし、`book-loaded` および `navigate-page` イベントを監視して処理をトリガーするとともに、書籍レンダリング完了時に `book-rendered` イベントをディスパッチするようにデカップリング (ID: 026)。
+- Changed `ui.js` をリファクタリングし、`book-rendered` および `toggle-debug-modal` イベントを監視してヘッダー表示や目次オブザーバー設定などのUI処理を実行するように結合を解消 (ID: 026)。
+- Added `tools/externs.js` に `YuzoraEventInterface` および `YuzoraEventTargetInterface` を追加し、アドバンスドコンパイルでのプロパティ名破壊を防止 (ID: 026)。
+- Added `tests/unit/event.test.js` にイベント駆動の動作を検証する単体テストを追加し、`package.json` の `test:unit` スクリプトへ登録 (ID: 026)。
+- Documentation `DSN-01-high_level_design.md` および `DSN-02-low_level_design.md` を更新し、イベント駆動型アーキテクチャの基本概念および詳細インターフェース仕様を追記 (ID: 026)。
 - Changed `Makefile` で Closure Compiler のコンパイルレベルを `ADVANCED_OPTIMIZATIONS` に引き上げ、警告をすべてエラー化 (`--jscomp_error=*`)、および `ECMASCRIPT_NEXT`・`--strict_mode_input=true` を適用 (ID: 025)。
 - Changed `tools/externs.js` に `LocatorInterface`, `CommandInterface`, `CommandManagerInterface` および `AppState` 内の全プロキシプロパティ定義を追加し、アドバンスドコンパイルによる名前解決の破壊とプロパティ名短縮を防止 (ID: 025)。
 - Changed `commands.js`, `locator.js` をリファクタリングして上記インターフェースの JSDoc `@implements` およびメソッド `@override` 記述を適用 (ID: 025)。

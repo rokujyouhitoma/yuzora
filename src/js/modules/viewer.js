@@ -123,10 +123,9 @@ function displayBook() {
     setTimeout(() => {
         restoreScrollPosition();
         updateProgress();
-        triggerHeaderShow();
-        if (typeof setupTOCObserver === "function") {
-            setupTOCObserver();
-        }
+        
+        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
+        eventBus.dispatchEvent(new YuzoraEvent("book-rendered"));
         setTimeout(() => {
             state.isReflowing = false;
         }, 50);
@@ -282,3 +281,19 @@ function checkLastSession() {
     restoreScrollPosition();
     updateProgress();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
+
+    // Listen to book loading requests
+    eventBus.addEventListener("book-loaded", (e) => {
+        displayBook();
+    });
+
+    // Listen to page navigation requests
+    eventBus.addEventListener("navigate-page", (e) => {
+        const detail = /** @type {{targetPage: number}} */ (e.detail);
+        scrollToPage(detail.targetPage);
+    });
+});
+

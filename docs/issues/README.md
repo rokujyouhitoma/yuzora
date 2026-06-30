@@ -34,6 +34,7 @@
 | **023** | Refactor | Medium | Closed | JavaScriptの "use strict" 有効化 | AI Agent | [023-enable-use-strict.md](closed/023-enable-use-strict.md) |
 | **024** | Enhancement | Medium | Closed | Closure Compilerのコンパイルオプション厳格化 | AI Agent | [024-strict-closure-compiler-options.md](closed/024-strict-closure-compiler-options.md) |
 | **025** | Enhancement | Medium | Closed | Closure CompilerのADVANCED_OPTIMIZATIONS適用と警告の全面エラー化 | AI Agent | [025-advanced-closure-compiler-options.md](closed/025-advanced-closure-compiler-options.md) |
+| **026** | Feature | Medium | Closed | Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 | AI Agent | [026-implement-event-emitter.md](closed/026-implement-event-emitter.md) |
 
 
 

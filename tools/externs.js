@@ -69,6 +69,10 @@ Window.prototype.locator;
 
 /** @type {Object} */
 Window.prototype.Yuzora;
+/** @type {Object} */
+Window.prototype.YuzoraEvent;
+/** @type {Object} */
+Window.prototype.YuzoraEventTarget;
 
 // CSSStyleDeclaration prototype extensions
 /** @type {string} */
@@ -276,3 +280,37 @@ Yuzora.LoadBookCommand;
 Yuzora.NavigatePageCommand;
 Yuzora.UpdateConfigCommand;
 Yuzora.SyncBookmarkCommand;
+
+// YuzoraEvent Interface definition
+/**
+ * @interface
+ */
+function YuzoraEventInterface() {}
+/** @type {string} */
+YuzoraEventInterface.prototype.type;
+/** @type {?} */
+YuzoraEventInterface.prototype.detail;
+/** @type {?Object} */
+YuzoraEventInterface.prototype.target;
+
+// YuzoraEventTarget Interface definition
+/**
+ * @interface
+ */
+function YuzoraEventTargetInterface() {}
+/**
+ * @param {string} type
+ * @param {function(!YuzoraEventInterface):void} listener
+ */
+YuzoraEventTargetInterface.prototype.addEventListener = function(type, listener) {};
+/**
+ * @param {string} type
+ * @param {function(!YuzoraEventInterface):void} listener
+ */
+YuzoraEventTargetInterface.prototype.removeEventListener = function(type, listener) {};
+/**
+ * @param {!YuzoraEventInterface} event
+ */
+YuzoraEventTargetInterface.prototype.dispatchEvent = function(event) {};
+
+

@@ -39,7 +39,11 @@ class LoadBookCommand extends Command {
         state.currentFileType = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
         state.currentFileContent = this.fileContent;
         
-        displayBook();
+        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
+        eventBus.dispatchEvent(new YuzoraEvent("book-loaded", {
+            fileName: this.fileName,
+            fileContent: this.fileContent
+        }));
     }
     /** @override */
     toJSON() {
@@ -62,7 +66,10 @@ class NavigatePageCommand extends Command {
     execute() {
         const state = window.locator.resolve(AppState);
         if (state.readerViewport) {
-            scrollToPage(this.targetPage);
+            const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
+            eventBus.dispatchEvent(new YuzoraEvent("navigate-page", {
+                targetPage: this.targetPage
+            }));
         }
     }
     /** @override */
@@ -275,11 +282,10 @@ class ToggleDebugModalCommand extends Command {
     }
     /** @override */
     execute() {
-        if (this.open) {
-            openDebugModal();
-        } else {
-            closeDebugModal();
-        }
+        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
+        eventBus.dispatchEvent(new YuzoraEvent("toggle-debug-modal", {
+            open: this.open
+        }));
     }
     /** @override */
     toJSON() {

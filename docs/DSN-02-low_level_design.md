@@ -54,6 +54,28 @@
 ### 1.3 レガシー互換用のプロキシ定義 (Proxy Getters/Setters)
 既存モジュールとのシームレスな統合およびリファクタリングの影響範囲最小化のため、`window` オブジェクト上に `Object.defineProperty` を用いたプロキシプロパティが定義されています。これにより、従来のグローバル変数アクセス（例: `currentFileName = "..."`）や各種DOM要素へのアクセスは、内部で自動的に `window.locator.resolve(AppState)` 経由でのプロパティアクセスへとルーティングされます。
 
+### 1.4 イベント駆動アーキテクチャ (Event Driven Architecture)
+モジュール間の密結合を防ぎ、ビューアー制御（`viewer.js`）、UI制御（`ui.js`）、およびコマンド実行（`commands.js`）を疎結合に保つため、専用のカスタムイベントディスパッチャ（イベントバス）を導入しています。
+
+#### 1.4.1 `YuzoraEvent` クラス
+イベント発火時にメタデータを含めて伝播させるための専用イベントオブジェクトクラスです。
+- **プロパティ**:
+  - `type` (`string`): イベントの識別文字列名（例: `"book-loaded"`）。
+  - `detail` (`*`): 任意のイベントペイロードデータオブジェクト。
+  - `target` (`?Object`): イベントのディスパッチ元インスタンス参照。
+
+#### 1.4.2 `YuzoraEventTarget` クラス
+DOM Level 2 の `EventTarget` に準拠したカスタムイベントリスナーの登録・削除・配信機能を提供するクラスです。
+- **メソッド**:
+  - `addEventListener(type, listener)`: 特定イベントへのハンドラ登録。
+  - `removeEventListener(type, listener)`: ハンドラの登録解除。
+  - `dispatchEvent(event)`: 登録されているすべてのリスナーに対する非同期/同期的な通知処理の実行。
+
+#### 1.4.3 サービスロケーターへの登録と疎結合の実現
+`YuzoraEventTarget` はシングルトンとして `Locator` に登録され、システム全体で共有されます。
+- `commands.js` はビューやビューアーの具象関数を直接呼び出す代わりに、`YuzoraEventTarget` 経由でイベント（`book-loaded` や `navigate-page`）をディスパッチします。
+- `viewer.js` や `ui.js` は `DOMContentLoaded` のタイミングでイベント登録を行い、イベント検知をトリガーに対応する処理を起動します。
+
 ---
 
 ## 2. ファイル解析・パースロジック (File Parsing & Conversion)
