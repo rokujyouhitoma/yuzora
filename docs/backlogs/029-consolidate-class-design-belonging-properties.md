@@ -101,7 +101,21 @@ classDiagram
     Locator --> YuzoraEventTarget : 管理・解決
 ```
 
-### 3.2 移行手順 (Migration Steps)
+### 3.2 各クラスの責務定義 (Class Responsibilities)
+
+各ドメインオブジェクトが担う具体的な責務とカプセル化対象のプロパティは以下の通りです。
+
+| クラス名 | 主な責務・役割 | 保持するプロパティ・状態 |
+| :--- | :--- | :--- |
+| **`Locator`** | **「依存性注入・サービス解決」**<br>各モジュールが必要とするシングルトンクラスやモデルインスタンスの登録・解決を一元管理し、モジュール間の参照結合を最小限に抑える。 | `registry` (クラス名とインスタンスのマップ) |
+| **`AppState`** | **「View・DOM操作の仲介」**<br>HTML要素（DOMツリー）への実体参照、およびUIのレイアウトに依存する一時的・物理的な表示状態（ドロワーやメニューの開閉状態、非表示用タイマー等）のみを保持する。 | `welcomeScreen`, `readerScreen`, `readerViewport`, `readerContent`, `bookTitle` 等のDOM参照、`headerTimeout` (タイマーID)、`settingsDrawerOpen` / `tocDrawerOpen` (開閉フラグ) |
+| **`BookModel`** | **「書籍データ・メタデータのカプセル化」**<br>現在ロードされている書籍（テキストまたはHTML）のデータとメタデータ、パース結果（大中小見出し・目次ツリー）、スクロールリフローによって算出された全ページ数等の「本そのもの」のドメイン状態を保持する。 | `title` (作品名), `content` (生テキスト), `type` (`txt` / `html`), `totalPages` (総ページ数), `currentPage` (現在表示ページ), `toc` (見出しデータ配列) |
+| **`ConfigModel`** | **「表示設定の永続化と適用」**<br>ユーザーのテーマ、フォント書体、文字サイズ、行間、文字送り設定、読書方向（RTL/LTR）などの設定値を保持し、LocalStorageへの保存・復元、およびCSSカスタムプロパティ（CSS変数）へのクラス変更適用を担う。 | `theme`, `font`, `size`, `lh`, `spacing`, `direction` |
+| **`BookmarkModel`** | **「読了位置（座標）の記録・追跡」**<br>アクティブな書籍に対する進行割合座標（`bookmarkProgress` 0.0〜1.0）を監視し、LocalStorage上の `bookmark_<fileName>` キーと同期する。 | `bookmarkProgress` (0.0 〜 1.0 の実数) |
+| **`CommandManagerClass`**| **「操作履歴の蓄積と再現制御」**<br>実行された全コマンドオブジェクトの履歴管理、Undo/Redoスタックの制御、およびデバッグパネルからインポートされたJSON履歴データの非同期インターバル自動再生（リプレイ）を制御する。 | `commandHistory` (履歴配列), `commandIndex` (再生インデックス位置), `isReplaying` (自動リプレイ実行中フラグ) |
+| **`YuzoraEventTarget`** | **「疎結合なメッセージ伝播バス」**<br>W3C EventTarget 仕様に準拠し、任意のモジュール（UI、Viewer等）からのドメインイベント配信要求をリスナー群へ通知・仲介する。 | `listeners_` (イベントリスナーの登録マップ) |
+
+### 3.3 移行手順 (Migration Steps)
 
 1. **クラス定義の新設 (`config.js`)**:
    - `BookModel`, `ConfigModel`, `BookmarkModel` クラスを定義。
