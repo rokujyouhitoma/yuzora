@@ -29,7 +29,7 @@
 | **019** | Refactor | Medium | Closed | Locatorパターンによるグローバル変数の削減と依存関係の明確化 | [019-implement-locator-pattern.md](closed/019-implement-locator-pattern.md) |
 | **020** | Feature | Medium | Approved | Routerの実装とURLによる状態ディスパッチ機能 | [020-implement-router.md](020-implement-router.md) |
 | **021** | Refactor | Medium | Promoted | Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 | [021-implement-event-emitter.md](closed/021-implement-event-emitter.md) |
-| **022** | Refactor | Medium | Approved | ビジネスロジック固有のイベント定義 | [022-define-domain-events.md](022-define-domain-events.md) |
+| **022** | Refactor | Medium | Promoted | ビジネスロジック固有のイベント定義 | [022-define-domain-events.md](closed/022-define-domain-events.md) |
 | **023** | Refactor | Medium | Approved | Publish/Subscribe パターンによるイベント通知モデルの実装 | [023-implement-pubsub.md](023-implement-pubsub.md) |
 | **024** | Refactor | Medium | Approved | Scene遷移（画面遷移）フレームワークの実装によるモジュール分離 | [024-implement-scene-framework.md](024-implement-scene-framework.md) |
 | **025** | Refactor | Medium | Approved | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | [025-implement-repository.md](025-implement-repository.md) |

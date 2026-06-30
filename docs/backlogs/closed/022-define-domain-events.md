@@ -2,7 +2,7 @@
 ID: 022
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Promoted
 ---
 
 # [REFACTOR] 読書ビューアーのドメイン固有イベントの定義 (ID: 022)
