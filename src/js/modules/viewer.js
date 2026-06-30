@@ -6,12 +6,9 @@
 function handleFile(file) {
     if (!file) return;
 
-    const state = window.locator.resolve(AppState);
-    state.currentFileName = file.name;
     const reader = new FileReader();
 
     if (file.name.endsWith(".txt")) {
-        state.currentFileType = "txt";
         reader.onload = function(e) {
             // Text files (Aozora Shift_JIS/UTF-8 format)
             const buffer = e.target.result;
@@ -30,7 +27,6 @@ function handleFile(file) {
         };
         reader.readAsArrayBuffer(file);
     } else if (file.name.endsWith(".html") || file.name.endsWith(".htm")) {
-        state.currentFileType = "html";
         reader.onload = function(e) {
             const buffer = e.target.result;
             // Decode HTML with utf-8 first, fallback to shift-jis
@@ -76,50 +72,53 @@ function loadPredefinedBook(book) {
 }
 
 function displayBook() {
-    const state = window.locator.resolve(AppState);
-    let parsedHTML = '';
-    let title = state.currentFileName;
+    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
 
-    if (state.currentFileType === 'txt') {
+    let parsedHTML = '';
+    let title = bookModel.title;
+
+    if (bookModel.type === 'txt') {
         // Parse plain text with Aozora annotation
-        const parsed = parseAozoraText(state.currentFileContent);
+        const parsed = parseAozoraText(bookModel.content);
         parsedHTML = parsed.body;
-        title = parsed.title || state.currentFileName.replace('.txt', '');
+        title = parsed.title || bookModel.title.replace('.txt', '');
     } else {
         // XHTML/HTML
-        const parsed = parseAozoraHTML(state.currentFileContent);
+        const parsed = parseAozoraHTML(bookModel.content);
         parsedHTML = parsed.body;
-        title = parsed.title || state.currentFileName.replace(/\.(x?html)/, '');
+        title = parsed.title || bookModel.title.replace(/\.(x?html)/, '');
     }
 
     // Override with predefined book title if matched
-    const predefinedBook = PREDEFINED_BOOKS.find(b => state.currentFileName.includes(b.cardId.toString()));
+    const predefinedBook = PREDEFINED_BOOKS.find(b => bookModel.title.includes(b.cardId.toString()));
     if (predefinedBook) {
         title = predefinedBook.title;
     }
 
     // Apply to viewer
-    state.bookTitle.textContent = title;
+    viewContext.bookTitle.textContent = title;
     document.title = `${title} - ゆうぞら`;
-    state.readerContent.innerHTML = parsedHTML;
+    viewContext.readerContent.innerHTML = parsedHTML;
 
     // Set default activeHeadingId to the first TOC item if available
-    state.activeHeadingId = (state.currentTOC && state.currentTOC.length > 0) ? state.currentTOC[0].id : null;
+    viewContext.activeHeadingId = (bookModel.toc && bookModel.toc.length > 0) ? bookModel.toc[0].id : null;
 
     // Display Reader, Hide Welcome Screen
-    state.welcomeScreen.classList.add('hidden');
-    state.readerScreen.classList.remove('hidden');
+    viewContext.welcomeScreen.classList.add('hidden');
+    viewContext.readerScreen.classList.remove('hidden');
 
     // Check if there is a saved bookmark for this file
-    const savedProgress = localStorage.getItem(`bookmark_${state.currentFileName}`);
+    const savedProgress = localStorage.getItem(`bookmark_${bookModel.title}`);
     if (savedProgress) {
-        state.bookmarkProgress = parseFloat(savedProgress);
+        bookmarkModel.bookmarkProgress = parseFloat(savedProgress);
     } else {
-        state.bookmarkProgress = 0;
+        bookmarkModel.bookmarkProgress = 0;
     }
 
     // Wait a tick for rendering to complete before restoring scroll position
-    state.isReflowing = true;
+    viewContext.isReflowing = true;
     setTimeout(() => {
         restoreScrollPosition();
         updateProgress();
@@ -127,78 +126,80 @@ function displayBook() {
         const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
         eventBus.dispatchEvent(new YuzoraEvent("book-rendered"));
         setTimeout(() => {
-            state.isReflowing = false;
+            viewContext.isReflowing = false;
         }, 50);
     }, 100);
 }
 
 function handleScroll() {
-    const state = window.locator.resolve(AppState);
-    if (state.isReflowing) return;
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    if (viewContext.isReflowing) return;
     updateProgress();
 }
 
 function updateProgress() {
-    const state = window.locator.resolve(AppState);
-    if (!state.readerViewport) return;
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    if (!viewContext.readerViewport) return;
 
-    const scrollLeft = Math.abs(state.readerViewport.scrollLeft);
-    const scrollWidth = state.readerViewport.scrollWidth;
-    const clientWidth = state.readerViewport.clientWidth;
+    const scrollLeft = Math.abs(viewContext.readerViewport.scrollLeft);
+    const scrollWidth = viewContext.readerViewport.scrollWidth;
+    const clientWidth = viewContext.readerViewport.clientWidth;
     const maxScroll = scrollWidth - clientWidth;
 
     if (maxScroll <= 0) {
-        state.bookmarkProgress = 0;
+        bookmarkModel.bookmarkProgress = 0;
     } else {
-        state.bookmarkProgress = scrollLeft / maxScroll;
+        bookmarkModel.bookmarkProgress = scrollLeft / maxScroll;
     }
 
     // Progress bar percentage (0 to 100)
-    const percentage = Math.min(100, Math.max(0, Math.round(state.bookmarkProgress * 100)));
-    state.progressBar.style.width = `${percentage}%`;
-    state.readingPercentage.textContent = `${percentage}%`;
+    const percentage = Math.min(100, Math.max(0, Math.round(bookmarkModel.bookmarkProgress * 100)));
+    if (viewContext.progressBar) viewContext.progressBar.style.width = `${percentage}%`;
+    if (viewContext.readingPercentage) viewContext.readingPercentage.textContent = `${percentage}%`;
 
     // Calculate pages based on viewport clientWidth
     const pageCount = Math.round(scrollWidth / clientWidth);
     const currentPage = Math.min(pageCount, Math.max(1, Math.round(scrollLeft / clientWidth) + 1));
-    state.readingIndex.textContent = `${currentPage} / ${pageCount} ページ`;
+    if (viewContext.readingIndex) viewContext.readingIndex.textContent = `${currentPage} / ${pageCount} ページ`;
 }
 
 function restoreScrollPosition() {
-    const state = window.locator.resolve(AppState);
-    const maxScroll = state.readerViewport.scrollWidth - state.readerViewport.clientWidth;
-    if (state.config.direction === 'rtl') {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
+    if (configModel.direction === 'rtl') {
         // In vertical-rl, scrolling forward is in the negative direction.
-        state.readerViewport.scrollLeft = -(state.bookmarkProgress * maxScroll);
+        viewContext.readerViewport.scrollLeft = -(bookmarkModel.bookmarkProgress * maxScroll);
     } else {
         // In vertical-lr, scrolling forward is in the positive direction.
-        state.readerViewport.scrollLeft = state.bookmarkProgress * maxScroll;
+        viewContext.readerViewport.scrollLeft = bookmarkModel.bookmarkProgress * maxScroll;
     }
 }
 
 function restoreScrollPositionSmooth() {
-    const state = window.locator.resolve(AppState);
-    const maxScroll = state.readerViewport.scrollWidth - state.readerViewport.clientWidth;
-    const targetScroll = state.config.direction === 'rtl' ? -(state.bookmarkProgress * maxScroll) : (state.bookmarkProgress * maxScroll);
-    state.readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
+    const targetScroll = configModel.direction === 'rtl' ? -(bookmarkModel.bookmarkProgress * maxScroll) : (bookmarkModel.bookmarkProgress * maxScroll);
+    viewContext.readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
 }
 
 function saveBookmark() {
-    const state = window.locator.resolve(AppState);
-    if (state.currentFileName) {
-        try {
-            localStorage.setItem(`bookmark_${state.currentFileName}`, state.bookmarkProgress);
-        } catch (e) {
-            console.warn("Failed to save bookmark position to localStorage:", e);
-        }
+    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    if (bookModel.title) {
+        bookmarkModel.save(bookModel.title, bookmarkModel.bookmarkProgress);
     }
 }
 
 function nextPage() {
-    const state = window.locator.resolve(AppState);
-    const clientWidth = state.readerViewport.clientWidth;
-    const currentScroll = Math.abs(state.readerViewport.scrollLeft);
-    const pageCount = Math.round(state.readerViewport.scrollWidth / clientWidth);
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const clientWidth = viewContext.readerViewport.clientWidth;
+    const currentScroll = Math.abs(viewContext.readerViewport.scrollLeft);
+    const pageCount = Math.round(viewContext.readerViewport.scrollWidth / clientWidth);
     const currentPage = Math.round(currentScroll / clientWidth) + 1;
 
     if (currentPage < pageCount) {
@@ -207,9 +208,9 @@ function nextPage() {
 }
 
 function prevPage() {
-    const state = window.locator.resolve(AppState);
-    const clientWidth = state.readerViewport.clientWidth;
-    const currentScroll = Math.abs(state.readerViewport.scrollLeft);
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const clientWidth = viewContext.readerViewport.clientWidth;
+    const currentScroll = Math.abs(viewContext.readerViewport.scrollLeft);
     const currentPage = Math.round(currentScroll / clientWidth) + 1;
 
     if (currentPage > 1) {
@@ -218,65 +219,70 @@ function prevPage() {
 }
 
 function scrollToPage(pageNumber) {
-    const state = window.locator.resolve(AppState);
-    const clientWidth = state.readerViewport.clientWidth;
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const clientWidth = viewContext.readerViewport.clientWidth;
     const targetScrollLeft = (pageNumber - 1) * clientWidth;
     
-    state.isReflowing = true;
-    state.readerViewport.scrollTo({
-        left: state.config.direction === 'rtl' ? -targetScrollLeft : targetScrollLeft,
+    viewContext.isReflowing = true;
+    viewContext.readerViewport.scrollTo({
+        left: configModel.direction === 'rtl' ? -targetScrollLeft : targetScrollLeft,
         behavior: 'smooth'
     });
     
     setTimeout(() => {
-        state.isReflowing = false;
+        viewContext.isReflowing = false;
         // Keep progress and bar updated in real-time
-        const maxScroll = state.readerViewport.scrollWidth - state.readerViewport.clientWidth;
-        state.bookmarkProgress = maxScroll > 0 ? targetScrollLeft / maxScroll : 0;
+        const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
+        bookmarkModel.bookmarkProgress = maxScroll > 0 ? targetScrollLeft / maxScroll : 0;
         updateProgress();
         saveBookmark();
     }, 400); // Wait for transition animation to complete
 }
 
 function handleResize() {
-    const state = window.locator.resolve(AppState);
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
     // Avoid double reflow trigger cycles
-    if (state.isReflowing) return;
+    if (viewContext.isReflowing) return;
     
-    state.isReflowing = true;
-    const oldProgress = state.bookmarkProgress;
+    viewContext.isReflowing = true;
+    const oldProgress = bookmarkModel.bookmarkProgress;
     
     // Temporarily reset columns layout width before recalculations to get accurate sizing
-    state.readerContent.style.width = 'auto';
+    viewContext.readerContent.style.width = 'auto';
     
     setTimeout(() => {
         // Enforce column content size width constraints
-        state.readerContent.style.width = 'max-content';
+        viewContext.readerContent.style.width = 'max-content';
         
         // Restore progress coordinates on new dimensions
-        const maxScroll = Math.abs(state.readerViewport.scrollWidth - state.readerViewport.clientWidth);
-        if (state.config.direction === 'rtl') {
-            state.readerViewport.scrollLeft = -(oldProgress * maxScroll);
+        const maxScroll = Math.abs(viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth);
+        if (configModel.direction === 'rtl') {
+            viewContext.readerViewport.scrollLeft = -(oldProgress * maxScroll);
         } else {
-            state.readerViewport.scrollLeft = oldProgress * maxScroll;
+            viewContext.readerViewport.scrollLeft = oldProgress * maxScroll;
         }
         
-        state.bookmarkProgress = oldProgress;
+        bookmarkModel.bookmarkProgress = oldProgress;
         updateProgress();
         
         setTimeout(() => {
-            state.isReflowing = false;
+            viewContext.isReflowing = false;
         }, 50);
     }, 100);
 }
 
 function checkLastSession() {
-    const state = window.locator.resolve(AppState);
-    const lastProgress = localStorage.getItem(`bookmark_${state.currentFileName}`);
+    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const lastProgress = localStorage.getItem(`bookmark_${bookModel.title}`);
     if (lastProgress) {
-        state.bookmarkProgress = parseFloat(lastProgress);
+        bookmarkModel.bookmarkProgress = parseFloat(lastProgress);
     } else {
-        state.bookmarkProgress = 0;
+        bookmarkModel.bookmarkProgress = 0;
     }
     restoreScrollPosition();
     updateProgress();
@@ -296,4 +302,3 @@ document.addEventListener("DOMContentLoaded", () => {
         scrollToPage(detail.targetPage);
     });
 });
-

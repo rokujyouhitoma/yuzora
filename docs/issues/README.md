@@ -35,10 +35,7 @@
 | **024** | Enhancement | Medium | Closed | Closure Compilerのコンパイルオプション厳格化 | AI Agent | [024-strict-closure-compiler-options.md](closed/024-strict-closure-compiler-options.md) |
 | **025** | Enhancement | Medium | Closed | Closure CompilerのADVANCED_OPTIMIZATIONS適用と警告の全面エラー化 | AI Agent | [025-advanced-closure-compiler-options.md](closed/025-advanced-closure-compiler-options.md) |
 | **026** | Feature | Medium | Closed | Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 | AI Agent | [026-implement-event-emitter.md](closed/026-implement-event-emitter.md) |
-
-
-
-
+| **027** | Refactor | Medium | Closed | クラス設計の統合とすべての状態・プロパティのカプセル化 | AI Agent | [027-consolidate-class-design-belonging-properties.md](closed/027-consolidate-class-design-belonging-properties.md) |
 
 
 

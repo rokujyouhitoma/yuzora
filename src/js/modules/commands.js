@@ -34,10 +34,10 @@ class LoadBookCommand extends Command {
     }
     /** @override */
     execute() {
-        const state = window.locator.resolve(AppState);
-        state.currentFileName = this.fileName;
-        state.currentFileType = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
-        state.currentFileContent = this.fileContent;
+        const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+        bookModel.title = this.fileName;
+        bookModel.type = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
+        bookModel.content = this.fileContent;
         
         const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
         eventBus.dispatchEvent(new YuzoraEvent("book-loaded", {
@@ -64,8 +64,8 @@ class NavigatePageCommand extends Command {
     }
     /** @override */
     execute() {
-        const state = window.locator.resolve(AppState);
-        if (state.readerViewport) {
+        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        if (viewContext.readerViewport) {
             const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
             eventBus.dispatchEvent(new YuzoraEvent("navigate-page", {
                 targetPage: this.targetPage
@@ -91,20 +91,23 @@ class UpdateConfigCommand extends Command {
     }
     /** @override */
     execute() {
-        const state = window.locator.resolve(AppState);
-        state.config[this.configKey] = this.configValue;
+        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+        
+        configModel[this.configKey] = this.configValue;
         updateSettingsUI(this.configKey, this.configValue);
         
-        state.isReflowing = true;
+        viewContext.isReflowing = true;
         applySettings();
         setTimeout(() => {
-            const maxScroll = Math.abs(state.readerViewport.scrollWidth - state.readerViewport.clientWidth);
-            if (state.config.direction === 'rtl') {
-                state.readerViewport.scrollLeft = -(state.bookmarkProgress * maxScroll);
+            const maxScroll = Math.abs(viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth);
+            if (configModel.direction === 'rtl') {
+                viewContext.readerViewport.scrollLeft = -(bookmarkModel.bookmarkProgress * maxScroll);
             } else {
-                state.readerViewport.scrollLeft = state.bookmarkProgress * maxScroll;
+                viewContext.readerViewport.scrollLeft = bookmarkModel.bookmarkProgress * maxScroll;
             }
-            state.isReflowing = false;
+            viewContext.isReflowing = false;
         }, 150);
         saveSettings();
     }
@@ -127,8 +130,8 @@ class SyncBookmarkCommand extends Command {
     }
     /** @override */
     execute() {
-        const state = window.locator.resolve(AppState);
-        state.bookmarkProgress = this.progress;
+        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+        bookmarkModel.bookmarkProgress = this.progress;
     }
     /** @override */
     toJSON() {
@@ -151,8 +154,8 @@ class ToggleControlsCommand extends Command {
         if (this.visible) {
             triggerHeaderShow();
         } else {
-            const state = window.locator.resolve(AppState);
-            if (state.headerTimeout) clearTimeout(state.headerTimeout);
+            const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+            if (viewContext.headerTimeout) clearTimeout(viewContext.headerTimeout);
             hideControls();
         }
     }
@@ -175,13 +178,13 @@ class ToggleDrawerCommand extends Command {
     }
     /** @override */
     execute() {
-        const state = window.locator.resolve(AppState);
-        const drawer = this.drawerId === "settings" ? state.settingsDrawer : state.tocDrawer;
+        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        const drawer = this.drawerId === "settings" ? viewContext.settingsDrawer : viewContext.tocDrawer;
         if (!drawer) return;
 
         if (this.open) {
             drawer.classList.add("open");
-            if (state.drawerOverlay) state.drawerOverlay.classList.add("active");
+            if (viewContext.drawerOverlay) viewContext.drawerOverlay.classList.add("active");
             if (this.drawerId === "toc") {
                 buildTOCList();
                 // Note: updateActiveTOCItemUI() is called inside buildTOCList's final renderChunk
@@ -190,9 +193,9 @@ class ToggleDrawerCommand extends Command {
         } else {
             drawer.classList.remove("open");
             // Only hide overlay if both drawers are closed
-            const otherDrawer = this.drawerId === "settings" ? state.tocDrawer : state.settingsDrawer;
+            const otherDrawer = this.drawerId === "settings" ? viewContext.tocDrawer : viewContext.settingsDrawer;
             if (otherDrawer && !otherDrawer.classList.contains("open")) {
-                if (state.drawerOverlay) state.drawerOverlay.classList.remove("active");
+                if (viewContext.drawerOverlay) viewContext.drawerOverlay.classList.remove("active");
             }
         }
     }
@@ -214,15 +217,14 @@ class ExitReaderCommand extends Command {
     }
     /** @override */
     execute() {
-        const state = window.locator.resolve(AppState);
-        state.welcomeScreen.classList.remove("hidden");
-        state.readerScreen.classList.add("hidden");
+        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+        viewContext.welcomeScreen.classList.remove("hidden");
+        viewContext.readerScreen.classList.add("hidden");
         localStorage.removeItem("last_read_file_name");
         localStorage.removeItem("last_read_file_content");
         localStorage.removeItem("last_read_file_type");
-        state.currentFileName = "";
-        state.currentFileContent = "";
-        state.currentFileType = "";
+        bookModel.clear();
     }
     /** @override */
     toJSON() {
@@ -240,7 +242,7 @@ class ClearStorageCommand extends Command {
     }
     /** @override */
     execute() {
-        const state = window.locator.resolve(AppState);
+        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
         if (this.clearType === "bookmarks") {
             const keys = [];
             for (let i = 0; i < localStorage.length; i++) {
@@ -250,7 +252,7 @@ class ClearStorageCommand extends Command {
                 }
             }
             keys.forEach(k => localStorage.removeItem(k));
-            state.bookmarkProgress = 0;
+            bookmarkModel.bookmarkProgress = 0;
             checkLastSession();
         } else if (this.clearType === "config") {
             localStorage.removeItem("yuzora_config");
@@ -300,11 +302,12 @@ class ToggleDebugModalCommand extends Command {
 
 
 /**
- * @implements {CommandManagerInterface}
+ * @implements {CommandHistoryInterface}
  */
-class CommandManagerClass {
+class CommandHistory {
     constructor() {
         this.commandHistory = [];
+        this.commandIndex = 0;
         this.isReplaying = false;
     }
 
@@ -360,11 +363,12 @@ class CommandManagerClass {
 
             this.commandHistory.push(command);
             this.limitHistorySize();
+            this.commandIndex = this.commandHistory.length;
 
             // Update debug text area with latest history JSON string
-            const state = window.locator.resolve(AppState);
-            if (state.debugHistoryJSON) {
-                state.debugHistoryJSON.value = this.exportJSON();
+            const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+            if (viewContext.debugHistoryJSON) {
+                viewContext.debugHistoryJSON.value = this.exportJSON();
             }
         }
     }
@@ -430,10 +434,11 @@ class CommandManagerClass {
         this.isReplaying = true;
         // Clear current memory history before starting replay
         this.commandHistory = [];
+        this.commandIndex = 0;
         
         // Mask UI to prevent user interactions during auto replay
-        const state = window.locator.resolve(AppState);
-        if (state.app) state.app.classList.add('replaying');
+        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        if (viewContext.app) viewContext.app.classList.add('replaying');
 
         try {
             for (const cmd of commands) {
@@ -442,30 +447,37 @@ class CommandManagerClass {
                 this.execute(cmd, true);
                 // Re-populate commandHistory during replay for consistent session state afterward
                 this.commandHistory.push(cmd);
+                this.commandIndex = this.commandHistory.length;
             }
-            if (state.debugHistoryJSON) {
-                state.debugHistoryJSON.value = this.exportJSON();
+            if (viewContext.debugHistoryJSON) {
+                viewContext.debugHistoryJSON.value = this.exportJSON();
             }
         } catch (err) {
             console.error("Error during auto-replay operation:", err);
         } finally {
             this.isReplaying = false;
-            if (state.app) state.app.classList.remove('replaying');
+            if (viewContext.app) viewContext.app.classList.remove('replaying');
         }
     }
 
     /** @override */
     updateDebugMonitor() {
-        const state = window.locator.resolve(AppState);
-        if (state.debugMonitor) {
-            state.debugMonitor.textContent = `History: ${this.commandHistory.length} operations.`;
+        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        if (viewContext.debugMonitor) {
+            viewContext.debugMonitor.textContent = `History: ${this.commandHistory.length} operations.`;
         }
     }
 }
 
-// Register CommandManagerClass in Locator
-window.locator.register(CommandManagerClass, new CommandManagerClass());
+// Compatibility alias for CommandManagerClass
+const CommandManagerClass = CommandHistory;
+
+// Register CommandHistory in Locator
+const globalCommandHistory = new CommandHistory();
+window.locator.register(CommandHistory, globalCommandHistory);
+window.locator.register(CommandManagerClass, globalCommandHistory); // For backwards compatibility
 
 // Compatibility global variable
 /** @type {!CommandManagerInterface} */
-var CommandManager = /** @type {!CommandManagerInterface} */ (window.locator.resolve(CommandManagerClass));
+var CommandManager = /** @type {!CommandManagerInterface} */ (window.locator.resolve(CommandHistory));
+

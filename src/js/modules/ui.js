@@ -4,77 +4,88 @@
 "use strict";
 
 function updateSettingsUI(key, value) {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
     if (key === "theme") {
         document.body.className = `theme-${value}`;
     } else if (key === "font") {
-        readerContent.className = "reader-content";
-        readerContent.classList.add(value, `direction-${config.direction}`, config.size, config.lh, config.spacing);
+        viewContext.readerContent.className = "reader-content";
+        viewContext.readerContent.classList.add(value, `direction-${configModel.direction}`, configModel.size, configModel.lh, configModel.spacing);
     } else if (key === "direction") {
         applySettings(); // Changing writing directions changes multi columns configurations entirely
     } else if (key === "size" || key === "lh" || key === "spacing") {
-        readerContent.className = "reader-content";
-        readerContent.classList.add(config.font, `direction-${config.direction}`, config.size, config.lh, config.spacing);
+        viewContext.readerContent.className = "reader-content";
+        viewContext.readerContent.classList.add(configModel.font, `direction-${configModel.direction}`, configModel.size, configModel.lh, configModel.spacing);
         handleResize(); // Trigger bounds recalibration on font sizing metrics updates
     }
 }
 
 function closeDebugModal() {
-    debugModal.classList.add("hidden");
-    debugModalOverlay.classList.add("hidden");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    viewContext.debugModal.classList.add("hidden");
+    viewContext.debugModalOverlay.classList.add("hidden");
     triggerHeaderShow();
 }
 
 function openDebugModal() {
-    if (debugModal && debugModalOverlay) {
-        debugModal.classList.remove("hidden");
-        debugModalOverlay.classList.remove("hidden");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    if (viewContext.debugModal && viewContext.debugModalOverlay) {
+        viewContext.debugModal.classList.remove("hidden");
+        viewContext.debugModalOverlay.classList.remove("hidden");
         CommandManager.updateDebugMonitor();
     }
 }
 
 function handleProgressScrub(clientX) {
-    const rect = progressBarContainer.getBoundingClientRect();
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const rect = viewContext.progressBarContainer.getBoundingClientRect();
     const width = rect.width;
     const clickX = Math.max(0, Math.min(width, clientX - rect.left));
     const targetProgress = clickX / width;
 
-    bookmarkProgress = targetProgress;
+    bookmarkModel.bookmarkProgress = targetProgress;
     restoreScrollPositionSmooth();
     updateProgress();
 }
 
 function setupEventListeners() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+
     // Drop Zone Events
-    dropZone.addEventListener("dragover", (e) => {
+    viewContext.dropZone.addEventListener("dragover", (e) => {
         e.preventDefault();
-        dropZone.classList.add("dragover");
+        viewContext.dropZone.classList.add("dragover");
     });
 
-    dropZone.addEventListener("dragleave", () => {
-        dropZone.classList.remove("dragover");
+    viewContext.dropZone.addEventListener("dragleave", () => {
+        viewContext.dropZone.classList.remove("dragover");
     });
 
-    dropZone.addEventListener("drop", (e) => {
+    viewContext.dropZone.addEventListener("drop", (e) => {
         e.preventDefault();
-        dropZone.classList.remove("dragover");
-        const file = e.dataTransfer.files[0];
+        viewContext.dropZone.classList.remove("dragover");
+        const dragEvent = /** @type {!DragEvent} */ (e);
+        const file = dragEvent.dataTransfer.files[0];
         handleFile(file);
     });
 
     // File Input Events
-    fileInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
+    viewContext.fileInput.addEventListener("change", (e) => {
+        const inputElement = /** @type {!HTMLInputElement} */ (e.target);
+        const file = inputElement.files[0];
         handleFile(file);
     });
 
     // Navigation Events
-    btnBack.addEventListener("click", () => {
+    viewContext.btnBack.addEventListener("click", () => {
         CommandManager.execute(new ExitReaderCommand());
     });
 
     // Scroll Events on viewport
     let scrollTimeout;
-    readerViewport.addEventListener("scroll", () => {
+    viewContext.readerViewport.addEventListener("scroll", () => {
         handleScroll();
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(handleScrollDebounced, 150);
@@ -87,10 +98,10 @@ function setupEventListeners() {
     // eslint-disable-next-line complexity
     document.addEventListener("keydown", (e) => {
         const keyEvent = /** @type {!KeyboardEvent} */ (e);
-        if (readerScreen.classList.contains("hidden")) return;
+        if (viewContext.readerScreen.classList.contains("hidden")) return;
         
         // Modal Keyboard Navigation Tab Focus traps
-        const isModalOpen = debugModal && !debugModal.classList.contains("hidden");
+        const isModalOpen = viewContext.debugModal && !viewContext.debugModal.classList.contains("hidden");
         if (isModalOpen) {
             if (keyEvent.key === "Tab") {
                 handleDebugTabKeys(keyEvent);
@@ -98,20 +109,8 @@ function setupEventListeners() {
             }
             if (keyEvent.key === "Escape") {
                 CommandManager.execute(new ToggleDebugModalCommand(false));
-                keyEvent.preventDefault();
                 return;
             }
-        }
-
-        // Close setting modal using ESC key
-        if (keyEvent.key === "Escape") {
-            if (settingsDrawer.classList.contains("open")) {
-                CommandManager.execute(new ToggleDrawerCommand("settings", false));
-            }
-            if (tocDrawer.classList.contains("open")) {
-                CommandManager.execute(new ToggleDrawerCommand("toc", false));
-            }
-            return;
         }
 
         // Keyboard shortcuts to trigger debug dashboard / commands
@@ -119,7 +118,7 @@ function setupEventListeners() {
 
         // Key controls for scrolling/pages flipping (only when debug modal is NOT open)
         if (!isModalOpen) {
-            if (config.direction === "rtl") {
+            if (configModel.direction === "rtl") {
                 if (keyEvent.key === "ArrowLeft") nextPage();
                 if (keyEvent.key === "ArrowRight") prevPage();
             } else {
@@ -133,47 +132,11 @@ function setupEventListeners() {
         }
     });
 
-    // Tap/Click controls inside reader screen to toggle menu overlay controls
-    readerViewport.addEventListener("click", toggleControls);
-
-    // Overlay Progress Bar Click/Scrub Seek Event
-    let isDraggingProgressBar = false;
-    progressBarContainer.addEventListener("mousedown", (e) => {
-        isDraggingProgressBar = true;
-        handleProgressScrub(e.clientX);
-    });
-
-    document.addEventListener("mousemove", (e) => {
-        if (!isDraggingProgressBar) return;
-        handleProgressScrub(e.clientX);
-    });
-
-    document.addEventListener("mouseup", () => {
-        isDraggingProgressBar = false;
-    });
-
-    // Drag scrub support for mobile touch events
-    progressBarContainer.addEventListener("touchstart", (e) => {
-        const touchEvent = /** @type {!TouchEvent} */ (e);
-        isDraggingProgressBar = true;
-        handleProgressScrub(touchEvent.touches[0].clientX);
-    });
-
-    document.addEventListener("touchmove", (e) => {
-        const touchEvent = /** @type {!TouchEvent} */ (e);
-        if (!isDraggingProgressBar) return;
-        handleProgressScrub(touchEvent.touches[0].clientX);
-    });
-
-    document.addEventListener("touchend", () => {
-        isDraggingProgressBar = false;
-    });
-
-    // Swipe gestures support on readerViewport
+    // Touch Navigation / Swipe Gestures on viewport
     let touchStartX = 0;
     let touchStartY = 0;
 
-    readerViewport.addEventListener("touchstart", (e) => {
+    viewContext.readerViewport.addEventListener("touchstart", (e) => {
         const touchEvent = /** @type {!TouchEvent} */ (e);
         if (touchEvent.touches.length === 1) {
             touchStartX = touchEvent.touches[0].clientX;
@@ -181,7 +144,7 @@ function setupEventListeners() {
         }
     }, { passive: true });
 
-    readerViewport.addEventListener("touchend", (e) => {
+    viewContext.readerViewport.addEventListener("touchend", (e) => {
         const touchEvent = /** @type {!TouchEvent} */ (e);
         if (touchEvent.changedTouches.length === 1) {
             const touchEndX = touchEvent.changedTouches[0].clientX;
@@ -192,7 +155,7 @@ function setupEventListeners() {
 
             // Check if horizontal swipe distance is over 50px and is dominant
             if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (config.direction === "rtl") {
+                if (configModel.direction === "rtl") {
                     if (deltaX > 0) {
                         nextPage();
                     } else {
@@ -208,22 +171,62 @@ function setupEventListeners() {
             }
         }
     }, { passive: true });
+
+    // Progress scrub bar interactions
+    let isScrubbing = false;
+
+    viewContext.progressBarContainer.addEventListener("mousedown", (e) => {
+        const mouseEvent = /** @type {!MouseEvent} */ (e);
+        isScrubbing = true;
+        handleProgressScrub(mouseEvent.clientX);
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!isScrubbing) return;
+        const mouseEvent = /** @type {!MouseEvent} */ (e);
+        handleProgressScrub(mouseEvent.clientX);
+    });
+
+    document.addEventListener("mouseup", () => {
+        if (isScrubbing) {
+            isScrubbing = false;
+            saveBookmark();
+        }
+    });
+
+    viewContext.progressBarContainer.addEventListener("touchstart", (e) => {
+        const touchEvent = /** @type {!TouchEvent} */ (e);
+        isScrubbing = true;
+        handleProgressScrub(touchEvent.touches[0].clientX);
+    }, { passive: true });
+
+    viewContext.progressBarContainer.addEventListener("touchmove", (e) => {
+        if (!isScrubbing) return;
+        const touchEvent = /** @type {!TouchEvent} */ (e);
+        handleProgressScrub(touchEvent.touches[0].clientX);
+    }, { passive: true });
+
+    viewContext.progressBarContainer.addEventListener("touchend", () => {
+        if (isScrubbing) {
+            isScrubbing = false;
+            saveBookmark();
+        }
+    }, { passive: true });
 }
 
-let scrollVelocity = 0;
-let lastScrollLeft = 0;
-let lastScrollTime = 0;
-
 function handleScrollDebounced() {
-    if (isReflowing) return;
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    if (viewContext.isReflowing) return;
     snapScrollPosition();
 }
 
 function snapScrollPosition() {
-    if (isReflowing) return;
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    if (viewContext.isReflowing) return;
 
-    const scrollLeft = Math.abs(readerViewport.scrollLeft);
-    const clientWidth = readerViewport.clientWidth;
+    const scrollLeft = Math.abs(viewContext.readerViewport.scrollLeft);
+    const clientWidth = viewContext.readerViewport.clientWidth;
 
     // Calculate nearest page boundary offset index matching grid sizes
     const pageIndex = Math.round(scrollLeft / clientWidth);
@@ -231,16 +234,17 @@ function snapScrollPosition() {
 
     // Apply magnetic scrolling alignment snaps
     if (Math.abs(scrollLeft - targetScrollLeft) > 5) {
-        readerViewport.scrollTo({
-            left: config.direction === "rtl" ? -targetScrollLeft : targetScrollLeft,
+        viewContext.readerViewport.scrollTo({
+            left: configModel.direction === "rtl" ? -targetScrollLeft : targetScrollLeft,
             behavior: "smooth"
         });
     }
 }
 
 function handleDebugTabKeys(e) {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     const focusableElementsString = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const focusableElements = debugModal.querySelectorAll(focusableElementsString);
+    const focusableElements = viewContext.debugModal.querySelectorAll(focusableElementsString);
     const firstFocusable = focusableElements[0];
     const lastFocusable = focusableElements[focusableElements.length - 1];
 
@@ -257,21 +261,21 @@ function handleDebugTabKeys(e) {
     }
 }
 
-// eslint-disable-next-line complexity
 function handleDebugKeyboardShortcuts(e) {
     // Prevent key events from triggering while typing in inputs
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
         return;
     }
 
-    const isModalOpen = debugModal && !debugModal.classList.contains("hidden");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const isModalOpen = viewContext.debugModal && !viewContext.debugModal.classList.contains("hidden");
 
     // Toggle debug modal with 'd' or 'D'
     if (e.key === "d" || e.key === "D") {
         if (isModalOpen) {
             closeDebugModal();
         } else {
-            if (btnOpenDebug) btnOpenDebug.click();
+            if (viewContext.btnOpenDebug) viewContext.btnOpenDebug.click();
         }
         e.preventDefault();
         return;
@@ -290,54 +294,56 @@ function handleDebugKeyboardShortcuts(e) {
     // Tab key selection inside modal using keyboard numbers 1 or 2
     if (isModalOpen) {
         if (e.key === '1') {
-            if (tabBtnMonitor) tabBtnMonitor.click();
+            if (viewContext.tabBtnMonitor) viewContext.tabBtnMonitor.click();
         } else if (e.key === '2') {
-            if (tabBtnDiagnose) tabBtnDiagnose.click();
+            if (viewContext.tabBtnDiagnose) viewContext.tabBtnDiagnose.click();
         }
     }
 }
 
-// eslint-disable-next-line complexity
 function setupDrawerControls() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+
     // Drawer overlay backdrops click handlers
-    drawerOverlay.addEventListener("click", () => {
-        if (settingsDrawer.classList.contains("open")) {
+    viewContext.drawerOverlay.addEventListener("click", () => {
+        if (viewContext.settingsDrawer.classList.contains("open")) {
             CommandManager.execute(new ToggleDrawerCommand("settings", false));
         }
-        if (tocDrawer.classList.contains("open")) {
+        if (viewContext.tocDrawer.classList.contains("open")) {
             CommandManager.execute(new ToggleDrawerCommand("toc", false));
         }
     });
 
     // TOC buttons events
-    btnTOC.addEventListener("click", () => {
+    viewContext.btnTOC.addEventListener("click", () => {
         CommandManager.execute(new ToggleDrawerCommand("toc", true));
     });
-    btnCloseTOC.addEventListener("click", () => {
+    viewContext.btnCloseTOC.addEventListener("click", () => {
         CommandManager.execute(new ToggleDrawerCommand("toc", false));
     });
 
     // Settings drawer control hooks
-    btnSettings.addEventListener("click", () => {
+    viewContext.btnSettings.addEventListener("click", () => {
         CommandManager.execute(new ToggleDrawerCommand("settings", true));
     });
-    btnCloseSettings.addEventListener("click", () => {
+    viewContext.btnCloseSettings.addEventListener("click", () => {
         CommandManager.execute(new ToggleDrawerCommand("settings", false));
     });
 
     // Page overlays clicking triggers (RTL direction mapping)
-    pageNavLeft.addEventListener("click", (e) => {
+    viewContext.pageNavLeft.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (config.direction === "rtl") {
+        if (configModel.direction === "rtl") {
             nextPage();
         } else {
             prevPage();
         }
     });
 
-    pageNavRight.addEventListener("click", (e) => {
+    viewContext.pageNavRight.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (config.direction === "rtl") {
+        if (configModel.direction === "rtl") {
             prevPage();
         } else {
             nextPage();
@@ -365,8 +371,8 @@ function setupDrawerControls() {
     });
 
     // Header Home icon control
-    if (btnFirstPage) {
-        btnFirstPage.addEventListener("click", () => {
+    if (viewContext.btnFirstPage) {
+        viewContext.btnFirstPage.addEventListener("click", () => {
             CommandManager.execute(new NavigatePageCommand(1));
             CommandManager.execute(new ToggleDrawerCommand("settings", false));
             CommandManager.execute(new ToggleDrawerCommand("toc", false));
@@ -374,54 +380,54 @@ function setupDrawerControls() {
     }
 
     // Modal Close Button hooks
-    if (btnCloseDebug) {
-        btnCloseDebug.addEventListener("click", () => {
+    if (viewContext.btnCloseDebug) {
+        viewContext.btnCloseDebug.addEventListener("click", () => {
             CommandManager.execute(new ToggleDebugModalCommand(false));
         });
     }
-    if (debugModalOverlay) {
-        debugModalOverlay.addEventListener("click", () => {
+    if (viewContext.debugModalOverlay) {
+        viewContext.debugModalOverlay.addEventListener("click", () => {
             CommandManager.execute(new ToggleDebugModalCommand(false));
         });
     }
-    if (btnOpenDebug) {
-        btnOpenDebug.addEventListener("click", () => {
+    if (viewContext.btnOpenDebug) {
+        viewContext.btnOpenDebug.addEventListener("click", () => {
             CommandManager.execute(new ToggleDebugModalCommand(true));
         });
     }
 
     // Settings/cache purge tools
-    if (btnClearBookmarks) {
-        btnClearBookmarks.addEventListener("click", () => {
+    if (viewContext.btnClearBookmarks) {
+        viewContext.btnClearBookmarks.addEventListener("click", () => {
             CommandManager.execute(new ClearStorageCommand("bookmarks"));
             alert("すべてのしおりを消去しました。");
         });
     }
 
-    if (btnClearConfig) {
-        btnClearConfig.addEventListener("click", () => {
+    if (viewContext.btnClearConfig) {
+        viewContext.btnClearConfig.addEventListener("click", () => {
             CommandManager.execute(new ClearStorageCommand("config"));
             alert("表示設定を初期化しました。");
         });
     }
 
-    if (btnClearAll) {
-        btnClearAll.addEventListener("click", () => {
+    if (viewContext.btnClearAll) {
+        viewContext.btnClearAll.addEventListener("click", () => {
             CommandManager.execute(new ClearStorageCommand("all"));
             alert("すべてのキャッシュデータをリセットしました。");
         });
     }
 
     // Diagnostics layout analyzer hooks
-    if (btnDiagnoseLayout) {
-        btnDiagnoseLayout.addEventListener("click", runLayoutDiagnosis);
+    if (viewContext.btnDiagnoseLayout) {
+        viewContext.btnDiagnoseLayout.addEventListener("click", runLayoutDiagnosis);
     }
 
-    if (btnCopyDebugReport) {
-        btnCopyDebugReport.addEventListener("click", () => {
-            if (diagnoseReportOutput) {
-                diagnoseReportOutput.select();
-                navigator.clipboard.writeText(diagnoseReportOutput.value)
+    if (viewContext.btnCopyDebugReport) {
+        viewContext.btnCopyDebugReport.addEventListener("click", () => {
+            if (viewContext.diagnoseReportOutput) {
+                viewContext.diagnoseReportOutput.select();
+                navigator.clipboard.writeText(viewContext.diagnoseReportOutput.value)
                     .then(() => alert("診断レポートをクリップボードにコピーしました。"))
                     .catch(() => alert("コピーに失敗しました。"));
             }
@@ -429,11 +435,11 @@ function setupDrawerControls() {
     }
 
     // Operations History Export/Import controls
-    if (btnExportHistory) {
-        btnExportHistory.addEventListener("click", () => {
-            if (debugHistoryJSON) {
+    if (viewContext.btnExportHistory) {
+        viewContext.btnExportHistory.addEventListener("click", () => {
+            if (viewContext.debugHistoryJSON) {
                 const exported = CommandManager.exportJSON();
-                debugHistoryJSON.value = exported;
+                viewContext.debugHistoryJSON.value = exported;
                 navigator.clipboard.writeText(exported)
                     .then(() => alert("操作履歴JSONをコピーし、出力エリアに表示しました。"))
                     .catch(() => alert("コピーに失敗しました。"));
@@ -441,10 +447,10 @@ function setupDrawerControls() {
         });
     }
 
-    if (btnImportHistory) {
-        btnImportHistory.addEventListener("click", () => {
-            if (debugHistoryJSON) {
-                const data = debugHistoryJSON.value.trim();
+    if (viewContext.btnImportHistory) {
+        viewContext.btnImportHistory.addEventListener("click", () => {
+            if (viewContext.debugHistoryJSON) {
+                const data = viewContext.debugHistoryJSON.value.trim();
                 if (data) {
                     CommandManager.importJSON(data);
                 } else {
@@ -455,19 +461,19 @@ function setupDrawerControls() {
     }
 
     // Diagnostics Modal tabs selectors
-    if (tabBtnMonitor && tabBtnDiagnose) {
-        tabBtnMonitor.addEventListener("click", () => {
-            tabBtnMonitor.classList.add("active");
-            tabBtnDiagnose.classList.remove("active");
-            tabContentMonitor.classList.remove("hidden");
-            tabContentDiagnose.classList.add("hidden");
+    if (viewContext.tabBtnMonitor && viewContext.tabBtnDiagnose) {
+        viewContext.tabBtnMonitor.addEventListener("click", () => {
+            viewContext.tabBtnMonitor.classList.add("active");
+            viewContext.tabBtnDiagnose.classList.remove("active");
+            viewContext.tabContentMonitor.classList.remove("hidden");
+            viewContext.tabContentDiagnose.classList.add("hidden");
         });
 
-        tabBtnDiagnose.addEventListener("click", () => {
-            tabBtnDiagnose.classList.add("active");
-            tabBtnMonitor.classList.remove("active");
-            tabContentDiagnose.classList.remove("hidden");
-            tabContentMonitor.classList.add("hidden");
+        viewContext.tabBtnDiagnose.addEventListener("click", () => {
+            viewContext.tabBtnDiagnose.classList.add("active");
+            viewContext.tabBtnMonitor.classList.remove("active");
+            viewContext.tabContentDiagnose.classList.remove("hidden");
+            viewContext.tabContentMonitor.classList.add("hidden");
             runLayoutDiagnosis(); // Auto analyze layout when switching tab
         });
     }
@@ -486,65 +492,15 @@ function setupButtonGroup(selector, configKey, callback) {
 }
 
 function saveSettings() {
-    try {
-        localStorage.setItem("yuzora_config", JSON.stringify(config));
-    } catch (e) {
-        console.warn("Failed to save configuration settings to localStorage:", e);
-    }
+    window.locator.resolve(ConfigModel).save();
 }
 
 function loadSettings() {
-    try {
-        const saved = localStorage.getItem("yuzora_config");
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed && typeof parsed === "object") {
-                Object.keys(/** @type {!Object} */ (parsed)).forEach(key => {
-                    config[key] = parsed[key];
-                });
-            }
-        }
-    } catch (e) {
-        console.warn("Failed to load configuration settings from localStorage:", e);
-    }
+    window.locator.resolve(ConfigModel).load();
 }
 
 function applySettings() {
-    document.body.className = `theme-${config.theme}`;
-
-    if (!readerContent || !readerViewport) return;
-
-    readerViewport.style.direction = config.direction;
-
-    readerContent.className = "reader-content";
-    readerContent.classList.add(config.font, `direction-${config.direction}`, config.size, config.lh, config.spacing);
-
-    // Update navigation overlays page titles based on direction
-    if (config.direction === "rtl") {
-        pageNavLeft.title = "次のページへ";
-        pageNavRight.title = "前のページへ";
-    } else {
-        pageNavLeft.title = "前のページへ";
-        pageNavRight.title = "次のページへ";
-    }
-
-    // Update first page button chevron icon direction
-    const btnFirstPagePath = btnFirstPage ? btnFirstPage.querySelector("path") : null;
-    if (btnFirstPagePath) {
-        if (config.direction === "rtl") {
-            btnFirstPagePath.setAttribute("d", "M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5");
-        } else {
-            btnFirstPagePath.setAttribute("d", "M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5");
-        }
-    }
-
-    // Update Button States in Drawer UI
-    syncButtonState(".theme-selector button", "theme", config.theme);
-    syncButtonState(".font-selector button", "font", config.font);
-    syncButtonState(".direction-selector button", "direction", config.direction);
-    syncButtonState(".size-selector button", "size", config.size);
-    syncButtonState(".lh-selector button", "lh", config.lh);
-    syncButtonState(".spacing-selector button", "spacing", config.spacing);
+    window.locator.resolve(ConfigModel).apply();
 }
 
 function syncButtonState(selector, attrName, value) {
@@ -559,43 +515,49 @@ function syncButtonState(selector, attrName, value) {
 }
 
 function openSettings() {
-    settingsDrawer.classList.add("open");
-    drawerOverlay.classList.add("open");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    viewContext.settingsDrawer.classList.add("open");
+    viewContext.drawerOverlay.classList.add("open");
 }
 
 function closeSettings() {
-    settingsDrawer.classList.remove("open");
-    drawerOverlay.classList.remove("open");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    viewContext.settingsDrawer.classList.remove("open");
+    viewContext.drawerOverlay.classList.remove("open");
     triggerHeaderShow();
 }
 
 function openTOC() {
-    tocDrawer.classList.add("open");
-    drawerOverlay.classList.add("open");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    viewContext.tocDrawer.classList.add("open");
+    viewContext.drawerOverlay.classList.add("open");
     buildTOCList();
 }
 
 function closeTOC() {
-    tocDrawer.classList.remove("open");
-    drawerOverlay.classList.remove("open");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    viewContext.tocDrawer.classList.remove("open");
+    viewContext.drawerOverlay.classList.remove("open");
     triggerHeaderShow();
 }
 
 var activeTOCAnimationId = null;
 
 function buildTOCList() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
     if (activeTOCAnimationId) {
         cancelAnimationFrame(activeTOCAnimationId);
         activeTOCAnimationId = null;
     }
-    tocList.innerHTML = "";
-    if (currentTOC.length === 0) {
+    viewContext.tocList.innerHTML = "";
+    if (!bookModel.toc || bookModel.toc.length === 0) {
         const emptyMsg = document.createElement("div");
         emptyMsg.className = "toc-item";
         emptyMsg.style.cursor = "default";
         emptyMsg.style.color = "var(--text-muted)";
         emptyMsg.textContent = "目次情報はありません。";
-        tocList.appendChild(emptyMsg);
+        viewContext.tocList.appendChild(emptyMsg);
         return;
     }
 
@@ -604,11 +566,11 @@ function buildTOCList() {
 
     function renderChunk() {
         const fragment = document.createDocumentFragment();
-        const limit = Math.min(index + chunkSize, currentTOC.length);
+        const limit = Math.min(index + chunkSize, bookModel.toc.length);
 
         for (; index < limit; index++) {
-            const item = currentTOC[index];
-            const isActive = (item.id === activeHeadingId);
+            const item = bookModel.toc[index];
+            const isActive = (item.id === viewContext.activeHeadingId);
             const itemDiv = document.createElement("div");
             itemDiv.className = `toc-item toc-item-level-${item.level}${isActive ? " active" : ""}`;
             itemDiv.textContent = item.text;
@@ -620,9 +582,9 @@ function buildTOCList() {
             fragment.appendChild(itemDiv);
         }
 
-        tocList.appendChild(fragment);
+        viewContext.tocList.appendChild(fragment);
 
-        if (index < currentTOC.length) {
+        if (index < bookModel.toc.length) {
             activeTOCAnimationId = requestAnimationFrame(renderChunk);
         } else {
             activeTOCAnimationId = null;
@@ -641,17 +603,19 @@ var visibleHeadingIds = new Set();
 var jumpLockUntil = 0;
 
 function setupTOCObserver() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
     visibleHeadingIds.clear();
-    if (tocObserver) {
-        tocObserver.disconnect();
+    if (viewContext.tocObserver) {
+        viewContext.tocObserver.disconnect();
     }
 
     const options = {
-        root: readerViewport,
+        root: viewContext.readerViewport,
         threshold: 0.1
     };
 
-    tocObserver = new IntersectionObserver((entries) => {
+    viewContext.tocObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 visibleHeadingIds.add(entry.target.id);
@@ -661,30 +625,33 @@ function setupTOCObserver() {
         });
 
         if (visibleHeadingIds.size > 0 && Date.now() >= jumpLockUntil) {
-            const firstVisible = currentTOC.find(item => visibleHeadingIds.has(item.id));
+            const firstVisible = bookModel.toc.find(item => visibleHeadingIds.has(item.id));
             if (firstVisible) {
-                activeHeadingId = firstVisible.id;
+                viewContext.activeHeadingId = firstVisible.id;
             }
         }
 
-        if (activeHeadingId && tocDrawer.classList.contains("open")) {
+        if (viewContext.activeHeadingId && viewContext.tocDrawer.classList.contains("open")) {
             updateActiveTOCItemUI();
         }
     }, options);
 
-    currentTOC.forEach(item => {
-        const el = document.getElementById(item.id);
-        if (el) {
-            tocObserver.observe(el);
-        }
-    });
+    if (bookModel.toc) {
+        bookModel.toc.forEach(item => {
+            const el = document.getElementById(item.id);
+            if (el) {
+                viewContext.tocObserver.observe(el);
+            }
+        });
+    }
 }
 
 function updateActiveTOCItemUI() {
-    const items = tocList.querySelectorAll(".toc-item");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const items = viewContext.tocList.querySelectorAll(".toc-item");
     items.forEach(item => {
         const headingId = item.getAttribute("data-heading-id");
-        if (headingId === activeHeadingId) {
+        if (headingId === viewContext.activeHeadingId) {
             item.classList.add("active");
         } else {
             item.classList.remove("active");
@@ -692,30 +659,31 @@ function updateActiveTOCItemUI() {
     });
 }
 
-
 function jumpToHeading(headingId) {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
     const targetElement = document.getElementById(headingId);
     if (!targetElement) return;
 
-    activeHeadingId = headingId;
+    viewContext.activeHeadingId = headingId;
     // Lock the IntersectionObserver from overriding activeHeadingId for 800ms
     // so that the scroll-triggered observer callback doesn't reset it to the
     // first document-order heading before the viewport finishes moving.
     jumpLockUntil = Date.now() + 800;
 
     const rect = targetElement.getBoundingClientRect();
-    const containerRect = readerViewport.getBoundingClientRect();
-    const viewportWidth = readerViewport.clientWidth;
+    const containerRect = viewContext.readerViewport.getBoundingClientRect();
+    const viewportWidth = viewContext.readerViewport.clientWidth;
 
     let pageIndex = 0;
-    if (config.direction === "rtl") {
-        const absoluteRight = (containerRect.right - rect.right) + Math.abs(readerViewport.scrollLeft);
-        const absoluteLeft = (containerRect.right - rect.left) + Math.abs(readerViewport.scrollLeft);
+    if (configModel.direction === "rtl") {
+        const absoluteRight = (containerRect.right - rect.right) + Math.abs(viewContext.readerViewport.scrollLeft);
+        const absoluteLeft = (containerRect.right - rect.left) + Math.abs(viewContext.readerViewport.scrollLeft);
         const absoluteCenter = (absoluteRight + absoluteLeft) / 2;
         pageIndex = Math.floor(absoluteCenter / viewportWidth);
     } else {
-        const absoluteLeft = (rect.left - containerRect.left) + readerViewport.scrollLeft;
-        const absoluteRight = (rect.right - containerRect.left) + readerViewport.scrollLeft;
+        const absoluteLeft = (rect.left - containerRect.left) + viewContext.readerViewport.scrollLeft;
+        const absoluteRight = (rect.right - containerRect.left) + viewContext.readerViewport.scrollLeft;
         const absoluteCenter = (absoluteLeft + absoluteRight) / 2;
         pageIndex = Math.floor(absoluteCenter / viewportWidth);
     }
@@ -731,127 +699,212 @@ function jumpToHeading(headingId) {
 }
 
 function hideControls() {
-    if (!settingsDrawer.classList.contains("open") && !tocDrawer.classList.contains("open")) {
-        readerHeader.classList.add("hidden");
-        if (readerFooter) {
-            readerFooter.classList.add("hidden");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    if (!viewContext.settingsDrawer.classList.contains("open") && !viewContext.tocDrawer.classList.contains("open")) {
+        viewContext.readerHeader.classList.add("hidden");
+        if (viewContext.readerFooter) {
+            viewContext.readerFooter.classList.add("hidden");
         }
     }
 }
 
 function triggerHeaderShow() {
-    readerHeader.classList.remove("hidden");
-    if (readerFooter) {
-        readerFooter.classList.remove("hidden");
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    viewContext.readerHeader.classList.remove("hidden");
+    if (viewContext.readerFooter) {
+        viewContext.readerFooter.classList.remove("hidden");
     }
     
-    clearTimeout(headerTimeout);
-    headerTimeout = setTimeout(() => {
+    clearTimeout(viewContext.headerTimeout);
+    viewContext.headerTimeout = setTimeout(() => {
         hideControls();
     }, 3000); // Hide after 3 seconds of inactivity
 }
 
 function toggleControls(e) {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     // Prevent toggle if clicking interactive elements inside reader viewport
     if (e && e.type === "click" && (e.target.closest("a") || e.target.closest("ruby") || e.target.closest("button"))) {
         return;
     }
 
-    const nextVisible = readerHeader.classList.contains("hidden");
+    const nextVisible = viewContext.readerHeader.classList.contains("hidden");
     CommandManager.execute(new ToggleControlsCommand(nextVisible));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    initializeDOMElements();
-
-    // Setup predefined books grids on start welcome screen
-    if (developerBooksGrid) {
-        developerBooksGrid.innerHTML = "";
-        PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
-            const card = document.createElement("div");
-            card.className = "book-card";
-            card.setAttribute("data-book-id", book.id);
-            card.innerHTML = `
-                <div class="book-card-title">${book.shortTitle}</div>
-                <div class="book-card-author">${book.author}</div>
-            `;
-            card.addEventListener("click", () => {
-                loadPredefinedBook(book.id);
-            });
-            developerBooksGrid.appendChild(card);
-        });
+/**
+ * @implements {YuzoraInterface}
+ */
+class Yuzora {
+    constructor() {
+        /**
+         * @public
+         * @type {!LocatorInterface}
+         */
+        this.locator = window.locator;
     }
 
-    if (readerBooksGrid) {
-        readerBooksGrid.innerHTML = "";
-        PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
-            const card = document.createElement("div");
-            card.className = "book-card";
-            card.setAttribute("data-book-id", book.id);
-            card.innerHTML = `
-                <div class="book-card-title">${book.shortTitle}</div>
-                <div class="book-card-author">${book.author}</div>
-            `;
-            card.addEventListener("click", () => {
-                loadPredefinedBook(book.id);
+    /** @override */
+    boot() {
+        initializeDOMElements();
+
+        const viewContext = /** @type {!ViewContextInterface} */ (this.locator.resolve(ViewContext));
+
+        // Setup predefined books grids on start welcome screen
+        if (viewContext.developerBooksGrid) {
+            viewContext.developerBooksGrid.innerHTML = "";
+            PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
+                const card = document.createElement("div");
+                card.className = "book-card";
+                card.setAttribute("data-book-id", book.id);
+                card.innerHTML = `
+                    <div class="book-card-title">${book.shortTitle}</div>
+                    <div class="book-card-author">${book.author}</div>
+                `;
+                card.addEventListener("click", () => {
+                    loadPredefinedBook(book.id);
+                });
+                viewContext.developerBooksGrid.appendChild(card);
             });
-            readerBooksGrid.appendChild(card);
-        });
-    }
-
-    // Load Settings
-    loadSettings();
-    applySettings();
-
-    // Bind Event Listeners
-    setupEventListeners();
-    setupDrawerControls();
-
-    const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-
-    // Listen to book rendered event to update UI controls and TOC observers
-    eventBus.addEventListener("book-rendered", () => {
-        triggerHeaderShow();
-        setupTOCObserver();
-    });
-
-    // Listen to debug modal toggles
-    eventBus.addEventListener("toggle-debug-modal", (e) => {
-        const detail = /** @type {{open: boolean}} */ (e.detail);
-        if (detail.open) {
-            openDebugModal();
-        } else {
-            closeDebugModal();
         }
-    });
 
-    // Check last session for auto-restore
-    const lastName = localStorage.getItem("last_read_file_name");
-    const lastContent = localStorage.getItem("last_read_file_content");
-    const lastType = localStorage.getItem("last_read_file_type");
+        if (viewContext.readerBooksGrid) {
+            viewContext.readerBooksGrid.innerHTML = "";
+            PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
+                const card = document.createElement("div");
+                card.className = "book-card";
+                card.setAttribute("data-book-id", book.id);
+                card.innerHTML = `
+                    <div class="book-card-title">${book.shortTitle}</div>
+                    <div class="book-card-author">${book.author}</div>
+                `;
+                card.addEventListener("click", () => {
+                    loadPredefinedBook(book.id);
+                });
+                viewContext.readerBooksGrid.appendChild(card);
+            });
+        }
 
-    if (lastName && lastContent) {
-        currentFileName = lastName;
-        currentFileContent = lastContent;
-        currentFileType = lastType || "txt";
-        eventBus.dispatchEvent(new YuzoraEvent("book-loaded", {
-            fileName: lastName,
-            fileContent: lastContent
-        }));
+        // Load Settings
+        loadSettings();
+        applySettings();
+
+        // Bind Event Listeners
+        setupEventListeners();
+        setupDrawerControls();
+
+        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (this.locator.resolve(YuzoraEventTarget));
+
+        // Listen to book rendered event to update UI controls and TOC observers
+        eventBus.addEventListener("book-rendered", () => {
+            triggerHeaderShow();
+            setupTOCObserver();
+        });
+
+        // Listen to debug modal toggles
+        eventBus.addEventListener("toggle-debug-modal", (e) => {
+            const detail = /** @type {{open: boolean}} */ (e.detail);
+            if (detail.open) {
+                openDebugModal();
+            } else {
+                closeDebugModal();
+            }
+        });
+
+        // Check last session for auto-restore
+        const lastName = localStorage.getItem("last_read_file_name");
+        const lastContent = localStorage.getItem("last_read_file_content");
+        const lastType = localStorage.getItem("last_read_file_type");
+
+        if (lastName && lastContent) {
+            const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));
+            bookModel.title = lastName;
+            bookModel.content = lastContent;
+            bookModel.type = lastType || "txt";
+            eventBus.dispatchEvent(new YuzoraEvent("book-loaded", {
+                fileName: lastName,
+                fileContent: lastContent
+            }));
+        }
     }
 
-    // Expose core functions for testing/debugging
-    window['Yuzora'] = {
-        'parseAozoraText': parseAozoraText,
-        'parseAozoraHTML': parseAozoraHTML,
-        'formatAozoraMarkup': formatAozoraMarkup,
-        'config': config,
-        'runLayoutDiagnosis': runLayoutDiagnosis,
-        'getCurrentTOC': () => currentTOC,
-        'CommandManager': CommandManager,
-        'LoadBookCommand': LoadBookCommand,
-        'NavigatePageCommand': NavigatePageCommand,
-        'UpdateConfigCommand': UpdateConfigCommand,
-        'SyncBookmarkCommand': SyncBookmarkCommand
-    };
+    /**
+     * @override
+     * @param {string} text
+     * @return {{title: string, body: string}}
+     */
+    parseAozoraText(text) {
+        return parseAozoraText(text);
+    }
+
+    /**
+     * @override
+     * @param {string} html
+     * @return {{title: string, body: string}}
+     */
+    parseAozoraHTML(html) {
+        return parseAozoraHTML(html);
+    }
+
+    /**
+     * @override
+     * @param {string} markup
+     * @return {string}
+     */
+    formatAozoraMarkup(markup) {
+        return formatAozoraMarkup(markup);
+    }
+
+    /**
+     * @override
+     * @return {string}
+     */
+    runLayoutDiagnosis() {
+        return runLayoutDiagnosis();
+    }
+
+    /**
+     * @override
+     * @return {!Array}
+     */
+    getCurrentTOC() {
+        return this.locator.resolve(BookModel).toc;
+    }
+
+    /** @override */
+    get config() {
+        return this.locator.resolve(ConfigModel);
+    }
+
+    /** @override */
+    get CommandManager() {
+        return this.locator.resolve(CommandHistory);
+    }
+
+    /** @override */
+    get LoadBookCommand() {
+        return LoadBookCommand;
+    }
+
+    /** @override */
+    get NavigatePageCommand() {
+        return NavigatePageCommand;
+    }
+
+    /** @override */
+    get UpdateConfigCommand() {
+        return UpdateConfigCommand;
+    }
+
+    /** @override */
+    get SyncBookmarkCommand() {
+        return SyncBookmarkCommand;
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const yuzora = new Yuzora();
+    window.locator.register(Yuzora, yuzora);
+    yuzora.boot();
+    window['Yuzora'] = yuzora;
 });

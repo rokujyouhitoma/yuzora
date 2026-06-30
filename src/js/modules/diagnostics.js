@@ -17,24 +17,29 @@ function getCurrentPageAndCount(viewport) {
 }
 
 function diagnoseEnvironmentInfo(currentPage, pageCount) {
+    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+
     let report = `### 📖 ゆうぞら レイアウト診断レポート\n`;
     report += `- **日時**: ${new Date().toLocaleString()}\n`;
-    report += `- **ファイル名**: ${currentFileName || '(未ロード)'}\n`;
-    report += `- **ファイル種別**: ${currentFileType || '(なし)'}\n`;
+    report += `- **ファイル名**: ${bookModel.title || '(未ロード)'}\n`;
+    report += `- **ファイル種別**: ${bookModel.type || '(なし)'}\n`;
     report += `- **表示設定**:\n`;
-    report += `  - テーマ: ${config.theme}\n`;
-    report += `  - 書体: ${config.font === 'font-mincho' ? '明朝体' : 'ゴシック体'}\n`;
-    report += `  - 送り方向: ${config.direction === 'rtl' ? '右から左 (RTL)' : '左から右 (LTR)'}\n`;
-    report += `  - 文字サイズ: ${config.size}\n`;
-    report += `  - 行間: ${config.lh}\n`;
-    report += `  - 文字間: ${config.spacing}\n`;
+    report += `  - テーマ: ${configModel.theme}\n`;
+    report += `  - 書体: ${configModel.font === 'font-mincho' ? '明朝体' : 'ゴシック体'}\n`;
+    report += `  - 送り方向: ${configModel.direction === 'rtl' ? '右から左 (RTL)' : '左から右 (LTR)'}\n`;
+    report += `  - 文字サイズ: ${configModel.size}\n`;
+    report += `  - 行間: ${configModel.lh}\n`;
+    report += `  - 文字間: ${configModel.spacing}\n`;
     report += `- **画面サイズ**:\n`;
-    report += `  - ビューポート幅(clientWidth): ${readerViewport.clientWidth}px\n`;
-    report += `  - ビューポート高(clientHeight): ${readerViewport.clientHeight}px\n`;
-    report += `  - コンテンツ全体幅(scrollWidth): ${readerViewport.scrollWidth}px\n`;
+    report += `  - ビューポート幅(clientWidth): ${viewContext.readerViewport.clientWidth}px\n`;
+    report += `  - ビューポート高(clientHeight): ${viewContext.readerViewport.clientHeight}px\n`;
+    report += `  - コンテンツ全体幅(scrollWidth): ${viewContext.readerViewport.scrollWidth}px\n`;
     report += `- **スクロール状態**:\n`;
-    report += `  - scrollLeft: ${readerViewport.scrollLeft}px\n`;
-    report += `  - 進捗割合(bookmarkProgress): ${(bookmarkProgress * 100).toFixed(1)}%\n`;
+    report += `  - scrollLeft: ${viewContext.readerViewport.scrollLeft}px\n`;
+    report += `  - 進捗割合(bookmarkProgress): ${(bookmarkModel.bookmarkProgress * 100).toFixed(1)}%\n`;
     report += `  - ページ数: 現在 ${currentPage} / ${pageCount} ページ\n\n`;
     return report;
 }
@@ -57,10 +62,11 @@ function diagnoseColumnsInfo(cStyle) {
 
 // eslint-disable-next-line complexity
 function diagnoseColumnWidthCheck(cStyle) {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     const colWidthStr = cStyle.columnWidth || 'auto';
     const marginLeftStr = cStyle.marginLeft || '0px';
     const marginRightStr = cStyle.marginRight || '0px';
-    const viewportW = readerViewport.clientWidth;
+    const viewportW = viewContext.readerViewport.clientWidth;
     const colWidthVal = parseFloat(colWidthStr) || 0;
     const mLeftVal = parseFloat(marginLeftStr) || 0;
     const mRightVal = parseFloat(marginRightStr) || 0;
@@ -82,13 +88,14 @@ function diagnoseColumnWidthCheck(cStyle) {
 }
 
 function diagnoseVerticalLayoutInfo(viewportRect, cStyle) {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     let report = `### 📐 縦方向レイアウト配置\n`;
     const header = document.querySelector('.reader-header');
     const footer = document.querySelector('.reader-footer');
     if (header && footer) {
         const hRect = header.getBoundingClientRect();
         const fRect = footer.getBoundingClientRect();
-        const cRect = readerContent.getBoundingClientRect();
+        const cRect = viewContext.readerContent.getBoundingClientRect();
         
         report += `- **ヘッダー Y座標範囲**: ${hRect.top.toFixed(1)}px 〜 ${hRect.bottom.toFixed(1)}px (高さ: ${hRect.height.toFixed(1)}px)\n`;
         report += `- **フッター Y座標範囲**: ${fRect.top.toFixed(1)}px 〜 ${fRect.bottom.toFixed(1)}px (高さ: ${fRect.height.toFixed(1)}px)\n`;
@@ -142,12 +149,14 @@ function diagnoseParagraphCoordinateInfo(viewportRect, childNodes) {
 }
 
 function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     const expectedScrollMultiplier = currentPage - 1;
-    const idealScrollLeft = config.direction === 'rtl' 
-        ? -(expectedScrollMultiplier * readerViewport.clientWidth)
-        : (expectedScrollMultiplier * readerViewport.clientWidth);
+    const idealScrollLeft = configModel.direction === 'rtl' 
+        ? -(expectedScrollMultiplier * viewContext.readerViewport.clientWidth)
+        : (expectedScrollMultiplier * viewContext.readerViewport.clientWidth);
     
-    const scrollDifference = Math.abs(readerViewport.scrollLeft - idealScrollLeft);
+    const scrollDifference = Math.abs(viewContext.readerViewport.scrollLeft - idealScrollLeft);
 
     let report = `### 📐 アライメント検証\n`;
     report += `- **現在のページの理想スクロール位置**: ${idealScrollLeft}px\n`;
@@ -182,7 +191,7 @@ function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
         const overflowBottom = rect.bottom > viewportRect.bottom + 2;
         if (overflowTop || overflowBottom) {
             overlapDetails += `- **縦方向はみ出し**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) がビューポートの上下境界からはみ出しています。\n`;
-            overlapDetails += `  - 要素のY座標範囲: ${rect.top.toFixed(1)}px 〜 ${rect.bottom.toFixed(1)}px (ビューポート: ${viewportRect.top.toFixed(1)}px 〜 ${viewportRect.bottom.toFixed(1)}px)\n`;
+            overlapDetails += `  - 要素 of Y座標範囲: ${rect.top.toFixed(1)}px 〜 ${rect.bottom.toFixed(1)}px (ビューポート: ${viewportRect.top.toFixed(1)}px 〜 ${viewportRect.bottom.toFixed(1)}px)\n`;
             overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
             verticalBoundaryOverlapCount++;
         }
@@ -237,14 +246,15 @@ function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
 }
 
 function runLayoutDiagnosis() {
-    if (!readerViewport || !readerContent) {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    if (!viewContext.readerViewport || !viewContext.readerContent) {
         return "エラー: ビューアーが初期化されていません。";
     }
 
-    const { currentPage, pageCount } = getCurrentPageAndCount(readerViewport);
-    const cStyle = window.getComputedStyle(readerContent);
-    const viewportRect = readerViewport.getBoundingClientRect();
-    const childNodes = Array.from(readerContent.children);
+    const { currentPage, pageCount } = getCurrentPageAndCount(viewContext.readerViewport);
+    const cStyle = window.getComputedStyle(viewContext.readerContent);
+    const viewportRect = viewContext.readerViewport.getBoundingClientRect();
+    const childNodes = Array.from(viewContext.readerContent.children);
 
     let report = '';
     report += diagnoseEnvironmentInfo(currentPage, pageCount);
@@ -255,8 +265,8 @@ function runLayoutDiagnosis() {
     report += diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage);
 
     // Render diagnostic report to debug diagnostics tab textarea
-    if (diagnoseReportOutput) {
-        diagnoseReportOutput.textContent = report;
+    if (viewContext.diagnoseReportOutput) {
+        viewContext.diagnoseReportOutput.textContent = report;
     }
 
     return report;

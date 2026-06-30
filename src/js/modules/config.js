@@ -3,7 +3,10 @@
  */
 "use strict";
 
-class AppState {
+/**
+ * @implements {ViewContextInterface}
+ */
+class ViewContext {
     constructor() {
         // DOM Elements (Placeholders)
         this.app = null;
@@ -67,33 +70,15 @@ class AppState {
         this.tabContentMonitor = null;
         this.tabContentDiagnose = null;
 
-        // State Variables
-        this.currentFileName = '';
-        this.currentFileContent = '';
-        this.currentFileType = ''; // 'txt' or 'html'
-        this.bookmarkProgress = 0; // 0 to 1 scroll percentage
+        // UI/Layout related states
         this.headerTimeout = null;
         this.isReflowing = false;
-        this.currentTOC = [];
         this.activeHeadingId = null;
         this.tocObserver = null;
 
-        // Viewport layout configurations
-        this.config = {
-            theme: 'sepia',
-            font: 'font-gothic',
-            direction: 'rtl',
-            size: 'size-md',
-            lh: 'line-height-normal',
-            spacing: 'spacing-normal'
-        };
-
-        this.localStorageKeys = [
-            'last_read_file_name',
-            'last_read_file_content',
-            'last_read_file_type',
-            'yuzora_config'
-        ];
+        // Drawer open/closed states
+        this.settingsDrawerOpen = false;
+        this.tocDrawerOpen = false;
     }
 
     initializeDOMElements() {
@@ -153,6 +138,186 @@ class AppState {
     }
 }
 
+/**
+ * @implements {BookModelInterface}
+ */
+class BookModel {
+    constructor() {
+        this.title = '';
+        this.content = '';
+        this.type = ''; // 'txt' or 'html'
+        this.totalPages = 0;
+        this.currentPage = 0;
+        this.toc = [];
+    }
+
+    /**
+     * @override
+     * @return {boolean}
+     */
+    isEmpty() {
+        return !this.title || !this.content;
+    }
+
+    /** @override */
+    clear() {
+        this.title = '';
+        this.content = '';
+        this.type = '';
+        this.totalPages = 0;
+        this.currentPage = 0;
+        this.toc = [];
+    }
+}
+
+/**
+ * @implements {ConfigModelInterface}
+ */
+class ConfigModel {
+    constructor() {
+        this.theme = 'sepia';
+        this.font = 'font-gothic';
+        this.direction = 'rtl';
+        this.size = 'size-md';
+        this.lh = 'line-height-normal';
+        this.spacing = 'spacing-normal';
+    }
+
+    /** @override */
+    load() {
+        try {
+            const saved = localStorage.getItem('yuzora_config');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (parsed && typeof parsed === "object") {
+                    const parsedConfig = /** @type {!Object<string, string>} */ (parsed);
+                    if (parsedConfig['theme']) this.theme = parsedConfig['theme'];
+                    if (parsedConfig['font']) this.font = parsedConfig['font'];
+                    if (parsedConfig['direction']) this.direction = parsedConfig['direction'];
+                    if (parsedConfig['size']) this.size = parsedConfig['size'];
+                    if (parsedConfig['lh']) this.lh = parsedConfig['lh'];
+                    if (parsedConfig['spacing']) this.spacing = parsedConfig['spacing'];
+                }
+            }
+        } catch (e) {
+            console.warn("Failed to load configuration settings from localStorage:", e);
+        }
+    }
+
+    /** @override */
+    save() {
+        try {
+            const data = {
+                'theme': this.theme,
+                'font': this.font,
+                'direction': this.direction,
+                'size': this.size,
+                'lh': this.lh,
+                'spacing': this.spacing
+            };
+            localStorage.setItem('yuzora_config', JSON.stringify(data));
+        } catch (e) {
+            console.warn("Failed to save configuration settings to localStorage:", e);
+        }
+    }
+
+    /** @override */
+    apply() {
+        document.body.className = `theme-${this.theme}`;
+
+        const viewContext = /** @type {!ViewContext} */ (window.locator.resolve(ViewContext));
+        if (!viewContext.readerContent || !viewContext.readerViewport) return;
+
+        viewContext.readerViewport.style.direction = this.direction;
+
+        viewContext.readerContent.className = "reader-content";
+        viewContext.readerContent.classList.add(this.font, `direction-${this.direction}`, this.size, this.lh, this.spacing);
+
+        // Update navigation overlays page titles based on direction
+        if (this.direction === "rtl") {
+            viewContext.pageNavLeft.title = "次のページへ";
+            viewContext.pageNavRight.title = "前のページへ";
+        } else {
+            viewContext.pageNavLeft.title = "前のページへ";
+            viewContext.pageNavRight.title = "次のページへ";
+        }
+
+        // Update first page button chevron icon direction
+        const btnFirstPagePath = viewContext.btnFirstPage ? viewContext.btnFirstPage.querySelector("path") : null;
+        if (btnFirstPagePath) {
+            if (this.direction === "rtl") {
+                btnFirstPagePath.setAttribute("d", "M11.25 4.5l7.5 7.5-7.5 7.5m-6-15l7.5 7.5-7.5 7.5");
+            } else {
+                btnFirstPagePath.setAttribute("d", "M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5");
+            }
+        }
+
+        // Update Button States in Drawer UI
+        if (typeof syncButtonState === "function") {
+            syncButtonState(".theme-selector button", "theme", this.theme);
+            syncButtonState(".font-selector button", "font", this.font);
+            syncButtonState(".direction-selector button", "direction", this.direction);
+            syncButtonState(".size-selector button", "size", this.size);
+            syncButtonState(".lh-selector button", "lh", this.lh);
+            syncButtonState(".spacing-selector button", "spacing", this.spacing);
+        }
+    }
+}
+
+/**
+ * @implements {BookmarkModelInterface}
+ */
+class BookmarkModel {
+    constructor() {
+        this.bookmarkProgress = 0;
+    }
+
+    /**
+     * @override
+     * @param {string} fileName
+     * @param {number} progress
+     */
+    save(fileName, progress) {
+        if (fileName) {
+            this.bookmarkProgress = progress;
+            try {
+                localStorage.setItem(`bookmark_${fileName}`, progress.toString());
+            } catch (e) {
+                console.warn("Failed to save bookmark position to localStorage:", e);
+            }
+        }
+    }
+
+    /**
+     * @override
+     * @param {string} fileName
+     * @return {number}
+     */
+    load(fileName) {
+        if (!fileName) {
+            this.bookmarkProgress = 0;
+            return 0;
+        }
+        try {
+            const savedProgress = localStorage.getItem(`bookmark_${fileName}`);
+            if (savedProgress) {
+                this.bookmarkProgress = parseFloat(savedProgress);
+            } else {
+                this.bookmarkProgress = 0;
+            }
+        } catch (e) {
+            console.warn("Failed to load bookmark position from localStorage:", e);
+            this.bookmarkProgress = 0;
+        }
+        return this.bookmarkProgress;
+    }
+
+    /** @override */
+    clear() {
+        this.bookmarkProgress = 0;
+    }
+}
+
 // Predefined Recommended Books Data (Keep as global/constant data)
 var PREDEFINED_BOOKS = [
     { id: "kokoro", title: "こころ", shortTitle: "こころ", cardId: 773, path: "src/books/773_yoko.txt", category: "developer", author: "夏目漱石", meta: "夏目漱石" },
@@ -170,36 +335,12 @@ var PREDEFINED_BOOKS = [
 
 // Compatibility wrapper function
 function initializeDOMElements() {
-    window.locator.resolve(AppState).initializeDOMElements();
+    window.locator.resolve(ViewContext).initializeDOMElements();
 }
 
-// Register AppState in the global locator
-window.locator.register(AppState, new AppState());
-
-// Define compatibility getters/setters on window to route legacy global variables to AppState in locator
-[
-    'currentFileName', 'currentFileContent', 'currentFileType', 'bookmarkProgress',
-    'headerTimeout', 'isReflowing', 'currentTOC', 'activeHeadingId', 'tocObserver', 'config',
-    'app', 'welcomeScreen', 'readerScreen', 'dropZone', 'fileInput', 'readerViewport',
-    'readerContent', 'bookTitle', 'btnBack', 'btnSettings', 'btnTOC', 'btnFirstPage',
-    'btnCloseSettings', 'btnCloseTOC', 'settingsDrawer', 'tocDrawer', 'tocList',
-    'drawerOverlay', 'pageNavLeft', 'pageNavRight', 'readerHeader', 'readerFooter',
-    'progressBarContainer', 'progressBar', 'readingPercentage', 'readingIndex',
-    'developerBooksGrid', 'readerBooksGrid', 'btnOpenDebug', 'debugModal', 'btnCloseDebug',
-    'debugModalOverlay', 'debugMonitor', 'btnClearBookmarks', 'btnClearConfig', 'btnClearAll',
-    'btnDiagnoseLayout', 'btnCopyDebugReport', 'diagnoseReportOutput', 'debugHistoryJSON',
-    'btnExportHistory', 'btnImportHistory', 'tabBtnMonitor', 'tabBtnDiagnose',
-    'tabContentMonitor', 'tabContentDiagnose', 'localStorageKeys'
-].forEach(prop => {
-    Object.defineProperty(window, prop, {
-        get() {
-            const state = window.locator.resolve(AppState);
-            return state[prop];
-        },
-        set(val) {
-            const state = window.locator.resolve(AppState);
-            state[prop] = val;
-        },
-        configurable: true
-    });
-});
+// Register ViewContext and new Models in the global locator
+const globalViewContext = new ViewContext();
+window.locator.register(ViewContext, globalViewContext);
+window.locator.register(BookModel, new BookModel());
+window.locator.register(ConfigModel, new ConfigModel());
+window.locator.register(BookmarkModel, new BookmarkModel());

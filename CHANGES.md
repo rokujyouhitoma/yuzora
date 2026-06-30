@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added クラス設計の統合のため、`BookModel`（データ）、`ConfigModel`（表示設定）、`BookmarkModel`（しおり・進捗）の各ドメインモデルクラスを追加 (ID: 027)。
+- Changed レガシーな `AppState` クラスおよび `window` 上のグローバル互換用プロキシ定義を完全に削除し、`ViewContext` はUI要素の参照と一時状態のみを管理するようにリファクタリング (ID: 027)。
+- Changed `ui.js`, `viewer.js`, `commands.js`, `diagnostics.js`, `parser.js` 内のプロキシ経由のグローバルアクセスを、サービスロケーターから直接解決したモデルオブジェクトのプロパティ参照へと全面的に移行 (ID: 027)。
+- Changed `tools/externs.js` に `ViewContextInterface` の全DOM要素および設定関連プロパティ定義を追加し、アドバンスドコンパイルでのプロパティ名破損を完全に防止 (ID: 027)。
+- Documentation `DSN-02-low_level_design.md` を更新し、`AppState` からドメインモデル/コンテキスト分離アーキテクチャへの更新、およびクラス設計仕様を追記 (ID: 027)。
+
 - Added イベント駆動型アーキテクチャを実現するため、`src/js/modules/event.js` を新設し、`YuzoraEvent` および `YuzoraEventTarget` クラスによるカスタムイベントバスを導入 (ID: 026)。
 - Changed `Makefile` および `index.html` に `src/js/modules/event.js` を追加し、本番難読化ビルドおよび開発時動作への統合を完了 (ID: 026)。
 - Changed `commands.js` をリファクタリングし、`LoadBookCommand`、`NavigatePageCommand`、`ToggleDebugModalCommand` の実行時にUIやビューアーの関数を直接呼ぶ代わりに `YuzoraEventTarget` を通じたイベント（`book-loaded`、`navigate-page`、`toggle-debug-modal`）のディスパッチへと変更 (ID: 026)。

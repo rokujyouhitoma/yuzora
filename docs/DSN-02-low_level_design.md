@@ -25,34 +25,55 @@
   - `resolve(Class)`: 登録されたクラスインスタンスを返します。未登録の場合はエラーをスローします。
   - `locate(Class)`: クラスを解決します。未登録の場合は自動的に引数のクラスから新規インスタンスを生成してキャッシュし、それを返します。
 
-### 1.2 アプリケーション状態管理 (`AppState` クラス)
-[src/js/modules/config.js](/src/js/modules/config.js) に定義された `AppState` クラスは、アプリケーションのデータモデルおよびDOM要素の参照を一元管理します。
+### 1.2 アプリケーションドメインモデルおよびコンテキスト設計
 
-- **`AppState` インスタンス**: 起動時に `window.locator.register(AppState, new AppState())` を介してサービスロケーターへ登録されます。
-- **状態管理用のプロパティ群**:
+[src/js/modules/config.js](../src/js/modules/config.js) に定義された各ドメインクラスおよびコンテキストクラスは、アプリケーションのデータ、設定、表示状態、およびDOM要素への参照を関心事ごとに分離して管理します。起動時に各クラスのインスタンスはサービスロケーター（`Locator`）に登録され、他モジュールからはロケーター経由で直接解決されます。グローバル変数や `window` プロキシへのアクセスは完全に排除されています。
 
-| 変数名 | 型 | 初期値 | 役割・説明 |
-| :--- | :--- | :--- | :--- |
-| `currentFileName` | `string` | `""` | 読み込み中のファイルの名前（例: `yushin.txt`）。LocalStorageにおけるしおり保存用の個別キー名として利用されます。 |
-| `currentFileContent` | `string` | `""` | 読み込まれ、デコードされたファイルの生のテキスト/HTMLコンテンツ。セッション復元時にLocalStorageへ一時保存されます。 |
-| `currentFileType` | `string` | `""` | 拡張子から抽出したファイル形式（`"txt"` または `"html"`）。パース処理の分岐決定に使用されます。 |
-| `bookmarkProgress` | `number` | `0` | 現在の閲覧位置を示す進捗率（`0.0` 〜 `1.0`）。スクロール位置と連動し、ページ幅が変化した際の再計算基準になります。 |
-| `headerTimeout` | `number \| null` | `null` | ヘッダーおよび操作UIの自動非表示タイマーID（`setTimeout` の返り値）。マウス移動やタップの度にリセットされます。 |
-| `config` | `Object` | (下記参照) | アプリケーションの表示設定オブジェクト。 |
+#### 1.2.1 `ViewContext`（表示・UIコンテキスト）
+一時的なUI状態やレイアウト制御値、および初期化されたすべてのDOM要素参照を保持します。
+- **プロパティ**:
+  - `headerTimeout` (`number | null`): ヘッダーの自動非表示タイマーID。
+  - `isReflowing` (`boolean`): レイアウト再計算（リフロー）中フラグ。
+  - `activeHeadingId` (`string | null`): 現在表示中の目次項目ID。
+  - `tocObserver` (`IntersectionObserver | null`): 目次スクロール監視用のIntersectionObserver。
+  - `settingsDrawerOpen` / `tocDrawerOpen` (`boolean`): 各種引き出しメニューの開閉状態。
+  - その他すべてのDOM要素（`app`, `welcomeScreen`, `readerScreen`, `readerViewport`, `readerContent` 等）への参照。
 
-#### `config` オブジェクトの構成
-```json
-{
-  "theme": "sepia",       // 適用中テーマ ("sepia" | "light" | "dark" | "black")
-  "font": "font-mincho",  // 適用中書体 ("font-mincho" | "font-gothic")
-  "size": "size-md",      // 文字サイズ ("size-sm" | "size-md" | "size-lg" | "size-xl")
-  "lh": "line-height-normal", // 行間 ("line-height-tight" | "line-height-normal" | "line-height-loose")
-  "spacing": "spacing-normal"  // 文字間 ("spacing-tight" | "spacing-normal" | "spacing-loose")
-}
-```
+#### 1.2.2 `BookModel`（書籍データモデル）
+現在読み込んでいる書籍ファイルのメタデータ、テキスト/HTML本文、および目次情報を管理します。
+- **プロパティ**:
+  - `title` (`string`): 書籍名（ファイル名）。
+  - `content` (`string`): 読み込んだ生テキストまたはHTMLデータ。
+  - `type` (`string`): ファイルタイプ (`"txt"` | `"html"`)。
+  - `totalPages` (`number`): 総ページ数。
+  - `currentPage` (`number`): 現在の表示ページ位置。
+  - `toc` (`Array`): 抽出された見出し・目次のリスト。
+- **メソッド**:
+  - `isEmpty()`: 書籍がロードされていない場合は `true` を返します。
+  - `clear()`: 書籍データを初期化します。
 
-### 1.3 レガシー互換用のプロキシ定義 (Proxy Getters/Setters)
-既存モジュールとのシームレスな統合およびリファクタリングの影響範囲最小化のため、`window` オブジェクト上に `Object.defineProperty` を用いたプロキシプロパティが定義されています。これにより、従来のグローバル変数アクセス（例: `currentFileName = "..."`）や各種DOM要素へのアクセスは、内部で自動的に `window.locator.resolve(AppState)` 経由でのプロパティアクセスへとルーティングされます。
+#### 1.2.3 `ConfigModel`（表示設定モデル）
+ユーザー設定（テーマ、フォント、文字サイズ、行間等）を保持し、永続化（LocalStorageへの保存・読込）およびスタイル適用を実行します。
+- **プロパティ**:
+  - `theme` (`string`): 現在の配色テーマ (`"sepia"` | `"light"` | `"dark"` | `"black"`)。
+  - `font` (`string`): 適用中書体 (`"font-mincho"` | `"font-gothic"`)。
+  - `direction` (`string`): 文字方向 (`"rtl"` | `"ltr"`)。
+  - `size` (`string`): 文字サイズ (`"size-sm"` | `"size-md"` | `"size-lg"` | `"size-xl"`)。
+  - `lh` (`string`): 行間設定。
+  - `spacing` (`string`): 文字間設定。
+- **メソッド**:
+  - `load()`: LocalStorageから設定データを読み込みます。
+  - `save()`: 現在の設定データをLocalStorageへ保存します.
+  - `apply()`: 現在の設定内容をDOMツリー全体（`document.body`、フォントクラス等）に適用します。
+
+#### 1.2.4 `BookmarkModel`（しおり・進捗管理モデル）
+書籍ごとの読書進行状況を保持・永続化します。
+- **プロパティ**:
+  - `bookmarkProgress` (`number`): 現在の閲覧進捗率（`0.0` 〜 `1.0`）。
+- **メソッド**:
+  - `save(fileName, progress)`: 指定した書籍の進捗を永続化保存します。
+  - `load(fileName)`: 指定した書籍の進捗を復元して返します。
+  - `clear()`: 保存されたしおりデータをすべて削除します。
 
 ### 1.4 イベント駆動アーキテクチャ (Event Driven Architecture)
 モジュール間の密結合を防ぎ、ビューアー制御（`viewer.js`）、UI制御（`ui.js`）、およびコマンド実行（`commands.js`）を疎結合に保つため、専用のカスタムイベントディスパッチャ（イベントバス）を導入しています。

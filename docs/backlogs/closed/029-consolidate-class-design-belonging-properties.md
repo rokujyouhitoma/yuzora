@@ -2,7 +2,7 @@
 ID: 029
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] クラス設計の統合とすべての状態・プロパティのカプセル化 (ID: 029)
