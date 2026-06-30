@@ -2,7 +2,7 @@
 ID: 028
 種別: Refactor
 優先度: Medium
-ステータス: Open (New)
+ステータス: Open (In Progress)
 ---
 
 # [REFACTOR] 読書ビューアーのドメイン固有イベントの定義 (ID: 028)
@@ -50,3 +50,4 @@ Target Branch: `feat/028-define-domain-events`
 - [ ] 定義した15種類のドメインイベントを表す定数（`YuzoraEventType`）が `event.js` に正しく定義されていること。
 - [ ] 既存のマジックストリングによる `dispatchEvent` をこれら定義に基づいた参照方式に統一リファクタリングされること。
 - [ ] すべてのE2Eテストおよびユニットテストが100%パスし、動作にデグレードがないこと。
+- [ ] 実装内容が [DSN-01](../docs/DSN-01-high_level_design.md) および更新された [DSN-02](../docs/DSN-02-low_level_design.md) の設計仕様と完全に一致していること。
