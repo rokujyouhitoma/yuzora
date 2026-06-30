@@ -85,7 +85,7 @@ classDiagram
         +load(fileName: string) number
         +clear()
     }
-    class CommandManager {
+    class CommandHistory {
         +commandHistory: Array
         +commandIndex: number
         +isReplaying: boolean
@@ -105,7 +105,7 @@ classDiagram
     Locator --> BookModel : 管理・解決
     Locator --> ConfigModel : 管理・解決
     Locator --> BookmarkModel : 管理・解決
-    Locator --> CommandManager : 管理・解決
+    Locator --> CommandHistory : 管理・解決
     Locator --> YuzoraEventTarget : 管理・解決
 ```
 
@@ -121,7 +121,7 @@ classDiagram
 | **`BookModel`** | **「書籍データ・メタデータのカプセル化」**<br>現在ロードされている書籍（テキストまたはHTML）のデータとメタデータ、パース結果（大中小見出し・目次ツリー）、スクロールリフローによって算出された全ページ数等の「本そのもの」のドメイン状態を保持する。 | `title` (作品名), `content` (生テキスト), `type` (`txt` / `html`), `totalPages` (総ページ数), `currentPage` (現在表示ページ), `toc` (見出しデータ配列) |
 | **`ConfigModel`** | **「表示設定の永続化と適用」**<br>ユーザーのテーマ、フォント書体、文字サイズ、行間、文字送り設定、読書方向（RTL/LTR）などの設定値を保持し、LocalStorageへの保存・復元、およびCSSカスタムプロパティ（CSS変数）へのクラス変更適用を担う。 | `theme`, `font`, `size`, `lh`, `spacing`, `direction` |
 | **`BookmarkModel`** | **「読了位置（座標）の記録・追跡」**<br>アクティブな書籍に対する進行割合座標（`bookmarkProgress` 0.0〜1.0）を監視し、LocalStorage上の `bookmark_<fileName>` キーと同期する。 | `bookmarkProgress` (0.0 〜 1.0 の実数) |
-| **`CommandManager`**| **「操作履歴の蓄積と再現制御」**<br>実行された全コマンドオブジェクトの履歴管理、Undo/Redoスタックの制御、およびデバッグパネルからインポートされたJSON履歴データの非同期インターバル自動再生（リプレイ）を制御する。 | `commandHistory` (履歴配列), `commandIndex` (再生インデックス位置), `isReplaying` (自動リプレイ実行中フラグ) |
+| **`CommandHistory`**| **「操作履歴の蓄積と再現制御」**<br>実行された全コマンドオブジェクトの履歴管理、Undo/Redoスタックの制御、およびデバッグパネルからインポートされたJSON履歴データの非同期インターバル自動再生（リプレイ）を制御する。 | `commandHistory` (履歴配列), `commandIndex` (再生インデックス位置), `isReplaying` (自動リプレイ実行中フラグ) |
 | **`YuzoraEventTarget`** | **「疎結合なメッセージ伝播バス」**<br>W3C EventTarget 仕様に準拠し、任意のモジュール（UI、Viewer等）からのドメインイベント配信要求をリスナー群へ通知・仲介する。 | `listeners_` (イベントリスナーの登録マップ) |
 
 ### 3.3 移行手順 (Migration Steps)
