@@ -2,7 +2,7 @@
 ID: 028
 種別: Refactor
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [REFACTOR] 読書ビューアーのドメイン固有イベントの定義 (ID: 028)
