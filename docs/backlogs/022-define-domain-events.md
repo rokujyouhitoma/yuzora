@@ -234,6 +234,75 @@ ID: 022
 ---
 
 ## 4. 完了条件 / Success Criteria (DoD)
-- [ ] 定義した15種類のドメインイベントを表す型定義、またはクラス/定数が `event.js` に正しく定義されていること。
-- [ ] 既存のマジックストリングによる `dispatchEvent` をこれら定義に基づいた参照方式に統一リファクタリングされること。
-- [ ] すべてのE2Eテストおよびユニットテストが100%パスし、動作にデグレードがないこと。
+- [ ] 定義した15種類のドメインイベントを表す定数（`YuzoraEventType`）が `event.js` に定義されていること。
+- [ ] 各イベントに対応する型定義（JSDoc型注記）が定義され、Closure Compiler で型安全が検証されること。
+- [ ] 既存モジュール（`commands.js`, `viewer.js`, `ui.js`）内のマジックストリングによるイベント発火および購読が、定義された定数（例: `YuzoraEventType.BOOK_LOADED`）に全面移行されていること。
+- [ ] すべての自動テスト（ユニットテスト、E2Eテスト）が100%成功し、表示、ページ遷移、しおり、デバッグ等の動作にデグレードがないこと。
+
+---
+
+## 5. 設計アプローチとシーケンスフロー / Design Approach & Sequence Flow
+
+### 5.1 シーケンスフロー (Sequence Flow Example)
+
+ユーザーが書籍をロードした際の、イベント通知フローを以下に示します。モジュール間は `YuzoraEventTarget`（イベントバス）を介した一方向のイベント流となり、直接的なモジュール間コールは発生しません。
+
+```mermaid
+sequenceDiagram
+    participant UI as ui.js (User Interface)
+    participant Cmd as commands.js (Command Pattern)
+    participant Bus as event.js (YuzoraEventTarget)
+    participant View as viewer.js (Viewer Screen)
+
+    UI->>Cmd: Execute LoadBookCommand
+    Cmd->>Bus: Dispatch YuzoraEventType.BOOK_LOADED<br/>(detail: fileName, fileContent)
+    Bus->>View: Notify YuzoraEventType.BOOK_LOADED listener
+    View->>View: Parse, render, calculate pages
+    View->>Bus: Dispatch YuzoraEventType.BOOK_RENDERED
+    Bus->>UI: Notify YuzoraEventType.BOOK_RENDERED listener
+    UI->>UI: Show header temporarily & setup observers
+```
+
+### 5.2 定数・型定義の方針 (Type & Constant Definition)
+- **`YuzoraEventType` 定数の定義**:
+  ```javascript
+  /**
+   * @const
+   * @enum {string}
+   */
+  const YuzoraEventType = {
+      BOOK_LOAD_START: 'book-load-start',
+      BOOK_LOADED: 'book-loaded',
+      BOOK_RENDERED: 'book-rendered',
+      BOOK_LOAD_FAILED: 'book-load-failed',
+      NAVIGATE_PAGE: 'navigate-page',
+      PAGE_CHANGED: 'page-changed',
+      CONFIG_CHANGED: 'config-changed',
+      TOC_GENERATED: 'toc-generated',
+      TOC_ACTIVE_CHANGED: 'toc-active-changed',
+      TOGGLE_DEBUG_MODAL: 'toggle-debug-modal',
+      TOGGLE_CONTROLS: 'toggle-controls',
+      TOGGLE_DRAWER: 'toggle-drawer',
+      HISTORY_UPDATED: 'history-updated',
+      DIAGNOSE_RUN: 'diagnose-run',
+      DIAGNOSE_COMPLETED: 'diagnose-completed'
+  };
+  ```
+- Closure Compiler でプロパティ名が難読化（圧縮）されないよう、`src/externs.js` に `YuzoraEventType` 関連のプロパティを定義します。
+
+---
+
+## 6. セキュリティとパフォーマンスの考慮事項 / Security & Performance
+
+- **データサニタイズ**: イベントのペイロード（特に `book-loaded` の `fileContent` 等）に不正なコードが含まれている場合、描画レイヤー（`viewer.js`）で確実にサニタイズ（エスケープ）されるように制御を維持します。イベントバスそれ自体はデータの信頼性を保証しないため、各受信側で適切な検証を行います。
+- **パフォーマンス考慮（イベントバーストの抑制）**: `page-changed` イベントはスクロールに伴って頻繁に発生する可能性があります。`viewer.js` のスクロール検知処理において適切にデバウンス（150ms程度）を実行した後に `page-changed` を発火させることで、UI更新（しおり書き込みやページ番号表示）が連続して発生しスレッドを占有するレイアウトスラッシングを完全に防止します。
+
+---
+
+## 7. 段階的実装手順 / Implementation Steps
+
+1. **`src/externs.js` の更新**: `YuzoraEventType` 定数を難読化から保護するための定義を追加します。
+2. **`src/js/modules/event.js` の変更**: `YuzoraEventType` 定数および各種イベントペイロードの JSDoc コメント型注記を定義します。
+3. **`commands.js`, `viewer.js`, `ui.js` の書き換え**: 既存のマジックストリングによるイベント参照を `YuzoraEventType.X` に書き換えます。
+4. **テスト検証**: `npm run test:unit` および `npm run test:e2e` を実行し、全件動作確認を行います。
+
