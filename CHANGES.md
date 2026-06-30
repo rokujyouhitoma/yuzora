@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added イベント識別子の型安全性を高めるため、15種類のドメインイベント種別をカプセル化した定数オブジェクト `YuzoraEventType` を `event.js` に追加 (ID: 028)。
+- Changed `commands.js`, `viewer.js`, `ui.js` 内のマジックストリングによるイベントの通知・購読を、`YuzoraEventType` 定数参照へと全面的に移行 (ID: 028)。
+- Changed コマンド実行層とUI層のデカップリングのため、`CommandHistory` 内の直接的なテキストエリア更新を廃止し、操作履歴の変更を `HISTORY_UPDATED` イベント経由でUIに通知する方式に変更 (ID: 028)。
+- Documentation `DSN-02-low_level_design.md` を更新し、`YuzoraEventType` の詳細仕様および全15イベントのペイロード・ライフサイクル表を追加 (ID: 028)。
+
 - Added クラス設計の統合のため、`BookModel`（データ）、`ConfigModel`（表示設定）、`BookmarkModel`（しおり・進捗）の各ドメインモデルクラスを追加 (ID: 027)。
 - Changed レガシーな `AppState` クラスおよび `window` 上のグローバル互換用プロキシ定義を完全に削除し、`ViewContext` はUI要素の参照と一時状態のみを管理するようにリファクタリング (ID: 027)。
 - Changed `ui.js`, `viewer.js`, `commands.js`, `diagnostics.js`, `parser.js` 内のプロキシ経由のグローバルアクセスを、サービスロケーターから直接解決したモデルオブジェクトのプロパティ参照へと全面的に移行 (ID: 027)。

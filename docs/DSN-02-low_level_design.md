@@ -94,8 +94,29 @@ DOM Level 2 の `EventTarget` に準拠したカスタムイベントリスナ�
 
 #### 1.4.3 サービスロケーターへの登録と疎結合の実現
 `YuzoraEventTarget` はシングルトンとして `Locator` に登録され、システム全体で共有されます。
-- `commands.js` はビューやビューアーの具象関数を直接呼び出す代わりに、`YuzoraEventTarget` 経由でイベント（`book-loaded` や `navigate-page`）をディスパッチします。
+- `commands.js` はビューやビューアーの具象関数を直接呼び出す代わりに、`YuzoraEventTarget` 経由でイベント（`YuzoraEventType`）をディスパッチします。
 - `viewer.js` や `ui.js` は `DOMContentLoaded` のタイミングでイベント登録を行い、イベント検知をトリガーに対応する処理を起動します。
+
+#### 1.4.4 `YuzoraEventType` 定数 (Enum)
+イベント名でのマジックストリング使用を排除し、型安全な通知を実現するため、以下のイベント種別定数を `event.js` に定義し、`window.YuzoraEventType` に公開しています。
+
+| 定数キー名 | イベント識別子 (値) | ペイロード (`detail`) | 概要 |
+| :--- | :--- | :--- | :--- |
+| `BOOK_LOAD_START` | `'book-load-start'` | `{ fileName, source }` | 書籍ロード開始要求時 |
+| `BOOK_LOADED` | `'book-loaded'` | `{ fileName, fileContent }` | 書籍のロードおよびデコード完了時 |
+| `BOOK_RENDERED` | `'book-rendered'` | `null` | ビューポートへの流し込み描画完了時 |
+| `BOOK_LOAD_FAILED` | `'book-load-failed'` | `{ fileName, error }` | ロード/パース時エラー発生時 |
+| `NAVIGATE_PAGE` | `'navigate-page'` | `{ targetPage }` | 特定ページへの遷移要求時 |
+| `PAGE_CHANGED` | `'page-changed'` | `{ currentPage, totalPages, bookmarkProgress }` | ページ位置変更・進行度更新時 |
+| `CONFIG_CHANGED` | `'config-changed'` | `{ key, value, config }` | 表示設定（テーマ等）変更完了時 |
+| `TOC_GENERATED` | `'toc-generated'` | `{ toc }` | 目次抽出・ツリー構造生成時 |
+| `TOC_ACTIVE_CHANGED`| `'toc-active-changed'` | `{ activeHeadingId }` | アクティブ見出し変更時 |
+| `TOGGLE_DEBUG_MODAL`| `'toggle-debug-modal'` | `{ open }` | デバッグモーダル表示切り替え要求時 |
+| `TOGGLE_CONTROLS` | `'toggle-controls'` | `{ visible }` | メニューUI表示切り替え要求時 |
+| `TOGGLE_DRAWER` | `'toggle-drawer'` | `{ drawerId, open }` | 設定/目次ドロワー開閉要求時 |
+| `HISTORY_UPDATED` | `'history-updated'` | `{ history, canUndo, canRedo }` | コマンド履歴スタック更新時 |
+| `DIAGNOSE_RUN` | `'diagnose-run'` | `{ timestamp }` | レイアウト座標診断実行要求時 |
+| `DIAGNOSE_COMPLETED`| `'diagnose-completed'` | `{ report, issuesCount }` | 座標診断レポート生成完了時 |
 
 ---
 

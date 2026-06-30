@@ -40,7 +40,7 @@ class LoadBookCommand extends Command {
         bookModel.content = this.fileContent;
         
         const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-        eventBus.dispatchEvent(new YuzoraEvent("book-loaded", {
+        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.BOOK_LOADED, {
             fileName: this.fileName,
             fileContent: this.fileContent
         }));
@@ -67,7 +67,7 @@ class NavigatePageCommand extends Command {
         const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
         if (viewContext.readerViewport) {
             const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-            eventBus.dispatchEvent(new YuzoraEvent("navigate-page", {
+            eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.NAVIGATE_PAGE, {
                 targetPage: this.targetPage
             }));
         }
@@ -285,7 +285,7 @@ class ToggleDebugModalCommand extends Command {
     /** @override */
     execute() {
         const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-        eventBus.dispatchEvent(new YuzoraEvent("toggle-debug-modal", {
+        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.TOGGLE_DEBUG_MODAL, {
             open: this.open
         }));
     }
@@ -365,11 +365,7 @@ class CommandHistory {
             this.limitHistorySize();
             this.commandIndex = this.commandHistory.length;
 
-            // Update debug text area with latest history JSON string
-            const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-            if (viewContext.debugHistoryJSON) {
-                viewContext.debugHistoryJSON.value = this.exportJSON();
-            }
+            this.notifyHistoryUpdated_();
         }
     }
 
@@ -449,15 +445,25 @@ class CommandHistory {
                 this.commandHistory.push(cmd);
                 this.commandIndex = this.commandHistory.length;
             }
-            if (viewContext.debugHistoryJSON) {
-                viewContext.debugHistoryJSON.value = this.exportJSON();
-            }
+            this.notifyHistoryUpdated_();
         } catch (err) {
             console.error("Error during auto-replay operation:", err);
         } finally {
             this.isReplaying = false;
             if (viewContext.app) viewContext.app.classList.remove('replaying');
         }
+    }
+
+    /**
+     * @private
+     */
+    notifyHistoryUpdated_() {
+        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
+        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.HISTORY_UPDATED, {
+            history: this.commandHistory.map(cmd => cmd.toJSON()),
+            canUndo: false,
+            canRedo: false
+        }));
     }
 
     /** @override */

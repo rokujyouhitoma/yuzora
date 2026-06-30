@@ -796,18 +796,26 @@ class Yuzora {
         const eventBus = /** @type {!YuzoraEventTargetInterface} */ (this.locator.resolve(YuzoraEventTarget));
 
         // Listen to book rendered event to update UI controls and TOC observers
-        eventBus.addEventListener("book-rendered", () => {
+        eventBus.addEventListener(YuzoraEventType.BOOK_RENDERED, () => {
             triggerHeaderShow();
             setupTOCObserver();
         });
 
         // Listen to debug modal toggles
-        eventBus.addEventListener("toggle-debug-modal", (e) => {
+        eventBus.addEventListener(YuzoraEventType.TOGGLE_DEBUG_MODAL, (e) => {
             const detail = /** @type {{open: boolean}} */ (e.detail);
             if (detail.open) {
                 openDebugModal();
             } else {
                 closeDebugModal();
+            }
+        });
+
+        // Listen to command history updates
+        eventBus.addEventListener(YuzoraEventType.HISTORY_UPDATED, (e) => {
+            const detail = /** @type {{history: !Array<!Object>}} */ (e.detail);
+            if (viewContext.debugHistoryJSON) {
+                viewContext.debugHistoryJSON.value = JSON.stringify(detail.history, null, 2);
             }
         });
 
@@ -821,7 +829,7 @@ class Yuzora {
             bookModel.title = lastName;
             bookModel.content = lastContent;
             bookModel.type = lastType || "txt";
-            eventBus.dispatchEvent(new YuzoraEvent("book-loaded", {
+            eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.BOOK_LOADED, {
                 fileName: lastName,
                 fileContent: lastContent
             }));

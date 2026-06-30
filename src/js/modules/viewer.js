@@ -124,7 +124,7 @@ function displayBook() {
         updateProgress();
         
         const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-        eventBus.dispatchEvent(new YuzoraEvent("book-rendered"));
+        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.BOOK_RENDERED));
         setTimeout(() => {
             viewContext.isReflowing = false;
         }, 50);
@@ -292,12 +292,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
 
     // Listen to book loading requests
-    eventBus.addEventListener("book-loaded", (e) => {
+    eventBus.addEventListener(YuzoraEventType.BOOK_LOADED, (e) => {
         displayBook();
     });
 
     // Listen to page navigation requests
-    eventBus.addEventListener("navigate-page", (e) => {
+    eventBus.addEventListener(YuzoraEventType.NAVIGATE_PAGE, (e) => {
         const detail = /** @type {{targetPage: number}} */ (e.detail);
         scrollToPage(detail.targetPage);
     });
