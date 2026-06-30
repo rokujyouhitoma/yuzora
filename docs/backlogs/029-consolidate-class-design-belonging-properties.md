@@ -35,6 +35,13 @@ ID: 029
 ```mermaid
 classDiagram
     direction TB
+    class Yuzora {
+        +locator: Locator
+        +boot()
+        +parseAozoraText(text: string) string
+        +parseAozoraHTML(html: string) string
+        +runLayoutDiagnosis()
+    }
     class Locator {
         +register(Class, instance)
         +resolve(Class) instance
@@ -93,6 +100,7 @@ classDiagram
         +dispatchEvent(event)
     }
 
+    Yuzora --> Locator : 所有・利用
     Locator --> AppState : 管理・解決
     Locator --> BookModel : 管理・解決
     Locator --> ConfigModel : 管理・解決
@@ -107,6 +115,7 @@ classDiagram
 
 | クラス名 | 主な責務・役割 | 保持するプロパティ・状態 |
 | :--- | :--- | :--- |
+| **`Yuzora`** | **「アプリケーションの統括・エントリーポイント」**<br>アプリケーション全体の起動・ライフサイクル管理、各種主要シングルトン・モデルの初期化（`boot()`）、および外部公開用のパースAPIやレイアウト診断等のファサードAPIの提供を担う。 | `locator` (Locatorインスタンスの参照) |
 | **`Locator`** | **「依存性注入・サービス解決」**<br>各モジュールが必要とするシングルトンクラスやモデルインスタンスの登録・解決を一元管理し、モジュール間の参照結合を最小限に抑える。 | `registry` (クラス名とインスタンスのマップ) |
 | **`AppState`** | **「View・DOM操作の仲介」**<br>HTML要素（DOMツリー）への実体参照、およびUIのレイアウトに依存する一時的・物理的な表示状態（ドロワーやメニューの開閉状態、非表示用タイマー等）のみを保持する。 | `welcomeScreen`, `readerScreen`, `readerViewport`, `readerContent`, `bookTitle` 等のDOM参照、`headerTimeout` (タイマーID)、`settingsDrawerOpen` / `tocDrawerOpen` (開閉フラグ) |
 | **`BookModel`** | **「書籍データ・メタデータのカプセル化」**<br>現在ロードされている書籍（テキストまたはHTML）のデータとメタデータ、パース結果（大中小見出し・目次ツリー）、スクロールリフローによって算出された全ページ数等の「本そのもの」のドメイン状態を保持する。 | `title` (作品名), `content` (生テキスト), `type` (`txt` / `html`), `totalPages` (総ページ数), `currentPage` (現在表示ページ), `toc` (見出しデータ配列) |
