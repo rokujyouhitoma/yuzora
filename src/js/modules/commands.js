@@ -6,13 +6,18 @@
 // ==========================================================================
 // Command Pattern for Operation History
 // ==========================================================================
+/**
+ * @implements {CommandInterface}
+ */
 class Command {
     constructor(type) {
         this.type = type;
     }
+    /** @override */
     execute() {
         throw new Error("execute() must be implemented");
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -27,6 +32,7 @@ class LoadBookCommand extends Command {
         this.fileName = fileName;
         this.fileContent = fileContent;
     }
+    /** @override */
     execute() {
         const state = window.locator.resolve(AppState);
         state.currentFileName = this.fileName;
@@ -35,6 +41,7 @@ class LoadBookCommand extends Command {
         
         displayBook();
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -51,12 +58,14 @@ class NavigatePageCommand extends Command {
         super("NavigatePage");
         this.targetPage = targetPage;
     }
+    /** @override */
     execute() {
         const state = window.locator.resolve(AppState);
         if (state.readerViewport) {
             scrollToPage(this.targetPage);
         }
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -73,6 +82,7 @@ class UpdateConfigCommand extends Command {
         this.configKey = configKey;
         this.configValue = configValue;
     }
+    /** @override */
     execute() {
         const state = window.locator.resolve(AppState);
         state.config[this.configKey] = this.configValue;
@@ -91,6 +101,7 @@ class UpdateConfigCommand extends Command {
         }, 150);
         saveSettings();
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -107,10 +118,12 @@ class SyncBookmarkCommand extends Command {
         super("SyncBookmark");
         this.progress = progress;
     }
+    /** @override */
     execute() {
         const state = window.locator.resolve(AppState);
         state.bookmarkProgress = this.progress;
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -126,6 +139,7 @@ class ToggleControlsCommand extends Command {
         super("ToggleControls");
         this.visible = visible;
     }
+    /** @override */
     execute() {
         if (this.visible) {
             triggerHeaderShow();
@@ -135,6 +149,7 @@ class ToggleControlsCommand extends Command {
             hideControls();
         }
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -151,6 +166,7 @@ class ToggleDrawerCommand extends Command {
         this.drawerId = drawerId;
         this.open = open;
     }
+    /** @override */
     execute() {
         const state = window.locator.resolve(AppState);
         const drawer = this.drawerId === "settings" ? state.settingsDrawer : state.tocDrawer;
@@ -173,6 +189,7 @@ class ToggleDrawerCommand extends Command {
             }
         }
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -188,6 +205,7 @@ class ExitReaderCommand extends Command {
     constructor() {
         super("ExitReader");
     }
+    /** @override */
     execute() {
         const state = window.locator.resolve(AppState);
         state.welcomeScreen.classList.remove("hidden");
@@ -199,6 +217,7 @@ class ExitReaderCommand extends Command {
         state.currentFileContent = "";
         state.currentFileType = "";
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -212,6 +231,7 @@ class ClearStorageCommand extends Command {
         super("ClearStorage");
         this.clearType = clearType;
     }
+    /** @override */
     execute() {
         const state = window.locator.resolve(AppState);
         if (this.clearType === "bookmarks") {
@@ -237,6 +257,7 @@ class ClearStorageCommand extends Command {
             }
         }
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -252,6 +273,7 @@ class ToggleDebugModalCommand extends Command {
         super("ToggleDebugModal");
         this.open = open;
     }
+    /** @override */
     execute() {
         if (this.open) {
             openDebugModal();
@@ -259,6 +281,7 @@ class ToggleDebugModalCommand extends Command {
             closeDebugModal();
         }
     }
+    /** @override */
     toJSON() {
         return {
             type: this.type,
@@ -270,17 +293,21 @@ class ToggleDebugModalCommand extends Command {
 }
 
 
-// Global Operations Command History Manager
+/**
+ * @implements {CommandManagerInterface}
+ */
 class CommandManagerClass {
     constructor() {
         this.commandHistory = [];
         this.isReplaying = false;
     }
 
+    /** @override */
     undo() {
         console.warn("Undo operation is not implemented.");
     }
 
+    /** @override */
     redo() {
         console.warn("Redo operation is not implemented.");
     }
@@ -309,6 +336,7 @@ class CommandManagerClass {
         }
     }
 
+    /** @override */
     execute(command, isFromReplay = false) {
         // If replaying and user tries to execute normal actions, ignore it
         if (this.isReplaying && !isFromReplay) {
@@ -335,6 +363,7 @@ class CommandManagerClass {
         }
     }
 
+    /** @override */
     exportJSON() {
         return JSON.stringify(this.commandHistory.map(cmd => cmd.toJSON()), null, 2);
     }
@@ -364,6 +393,7 @@ class CommandManagerClass {
         }
     }
 
+    /** @override */
     importJSON(jsonString) {
         try {
             const rawArray = JSON.parse(jsonString);
@@ -418,6 +448,7 @@ class CommandManagerClass {
         }
     }
 
+    /** @override */
     updateDebugMonitor() {
         const state = window.locator.resolve(AppState);
         if (state.debugMonitor) {
@@ -430,5 +461,5 @@ class CommandManagerClass {
 window.locator.register(CommandManagerClass, new CommandManagerClass());
 
 // Compatibility global variable
-/** @type {!CommandManagerClass} */
-var CommandManager = /** @type {!CommandManagerClass} */ (window.locator.resolve(CommandManagerClass));
+/** @type {!CommandManagerInterface} */
+var CommandManager = /** @type {!CommandManagerInterface} */ (window.locator.resolve(CommandManagerClass));

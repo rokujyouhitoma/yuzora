@@ -35,7 +35,7 @@
 | **025** | Refactor | Medium | Approved | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | [025-implement-repository.md](025-implement-repository.md) |
 | **026** | Refactor | Medium | Closed | JavaScriptの "use strict" 有効化 | [026-enable-use-strict.md](closed/026-enable-use-strict.md) |
 | **027** | Enhancement | Medium | Closed | Closure Compilerのコンパイルオプション厳格化 | [027-strict-closure-compiler-options.md](closed/027-strict-closure-compiler-options.md) |
-| **028** | Enhancement | Medium | Approved | Closure CompilerのADVANCED_OPTIMIZATIONS適用と警告の全面エラー化 | [028-advanced-closure-compiler-options.md](028-advanced-closure-compiler-options.md) |
+| **028** | Enhancement | Medium | Closed | Closure CompilerのADVANCED_OPTIMIZATIONS適用と警告の全面エラー化 | [028-advanced-closure-compiler-options.md](closed/028-advanced-closure-compiler-options.md) |
 
 ---
 

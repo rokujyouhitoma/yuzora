@@ -2,7 +2,7 @@
 ID: 028
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENHANCEMENT] Closure CompilerのADVANCED_OPTIMIZATIONS適用と警告の全面エラー化 (ID: 028)

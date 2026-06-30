@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed `Makefile` で Closure Compiler のコンパイルレベルを `ADVANCED_OPTIMIZATIONS` に引き上げ、警告をすべてエラー化 (`--jscomp_error=*`)、および `ECMASCRIPT_NEXT`・`--strict_mode_input=true` を適用 (ID: 025)。
+- Changed `tools/externs.js` に `LocatorInterface`, `CommandInterface`, `CommandManagerInterface` および `AppState` 内の全プロキシプロパティ定義を追加し、アドバンスドコンパイルによる名前解決の破壊とプロパティ名短縮を防止 (ID: 025)。
+- Changed `commands.js`, `locator.js` をリファクタリングして上記インターフェースの JSDoc `@implements` およびメソッド `@override` 記述を適用 (ID: 025)。
+- Changed `ui.js` 内で `window.Yuzora` APIを文字列リテラルキーによって露出し、コンパイル後のテスト実行時における名前解決エラーを解消 (ID: 025)。
 - Added `Makefile` に Closure Compiler の詳細警告設定（`--warning_level VERBOSE`）および各種厳格化オプションを追加し、グローバルプロキシ用の externs 宣言ファイルを新設 (ID: 024)。
 - Refactor 全JavaScriptソースファイル（`src/js/modules/*.js`）の先頭行に `"use strict";` （厳格モード）を適用 (ID: 023)。
 - Added タッチデバイス向けのスワイプジェスチャーによるページ送り機能を追加 (`ui.js`) (ID: 022)。

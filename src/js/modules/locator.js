@@ -3,6 +3,9 @@
  */
 "use strict";
 
+/**
+ * @implements {LocatorInterface}
+ */
 class Locator {
     /**
      * @param {Map<Function, Object>} [container]
@@ -19,6 +22,7 @@ class Locator {
      * Register an instance for a Class constructor.
      * @param {!Function} Class
      * @param {!Object} instance
+     * @override
      */
     register(Class, instance) {
         this.container.set(Class, instance);
@@ -29,6 +33,7 @@ class Locator {
      * Throws an error if the class is not registered.
      * @param {!Function} Class
      * @return {!Object}
+     * @override
      */
     resolve(Class) {
         if (!this.container.has(Class)) {
@@ -46,6 +51,7 @@ class Locator {
      * Throws an error if auto-instantiation fails.
      * @param {!Function} Class
      * @return {!Object}
+     * @override
      */
     locate(Class) {
         if (!this.container.has(Class)) {

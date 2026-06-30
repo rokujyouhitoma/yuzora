@@ -18,7 +18,17 @@ CSS_OUT = src/css/style.css
 all: $(JS_OUT) $(CSS_OUT)
 
 $(JS_OUT): $(JS_SRCS)
-	java -jar $(COMPILER) --compilation_level SIMPLE_OPTIMIZATIONS --warning_level VERBOSE --jscomp_error=checkVars --jscomp_error=undefinedVars --jscomp_error=globalThis --externs tools/externs.js --js $(JS_SRCS) --js_output_file $(JS_OUT)
+	java -jar $(COMPILER) \
+		--compilation_level ADVANCED_OPTIMIZATIONS \
+		--warning_level VERBOSE \
+		--jscomp_error=* \
+		--jscomp_off=lintChecks \
+		--language_in ECMASCRIPT_NEXT \
+		--language_out ECMASCRIPT_NEXT \
+		--strict_mode_input=true \
+		--externs tools/externs.js \
+		--js $(JS_SRCS) \
+		--js_output_file $(JS_OUT)
 
 $(CSS_OUT): $(CSS_SRCS)
 	cat $(CSS_SRCS) > $(CSS_OUT)

@@ -86,24 +86,25 @@ function setupEventListeners() {
     // Keyboard Shortcuts
     // eslint-disable-next-line complexity
     document.addEventListener("keydown", (e) => {
+        const keyEvent = /** @type {!KeyboardEvent} */ (e);
         if (readerScreen.classList.contains("hidden")) return;
         
         // Modal Keyboard Navigation Tab Focus traps
         const isModalOpen = debugModal && !debugModal.classList.contains("hidden");
         if (isModalOpen) {
-            if (e.key === "Tab") {
-                handleDebugTabKeys(e);
+            if (keyEvent.key === "Tab") {
+                handleDebugTabKeys(keyEvent);
                 return;
             }
-            if (e.key === "Escape") {
+            if (keyEvent.key === "Escape") {
                 CommandManager.execute(new ToggleDebugModalCommand(false));
-                e.preventDefault();
+                keyEvent.preventDefault();
                 return;
             }
         }
 
         // Close setting modal using ESC key
-        if (e.key === "Escape") {
+        if (keyEvent.key === "Escape") {
             if (settingsDrawer.classList.contains("open")) {
                 CommandManager.execute(new ToggleDrawerCommand("settings", false));
             }
@@ -114,20 +115,20 @@ function setupEventListeners() {
         }
 
         // Keyboard shortcuts to trigger debug dashboard / commands
-        handleDebugKeyboardShortcuts(e);
+        handleDebugKeyboardShortcuts(keyEvent);
 
         // Key controls for scrolling/pages flipping (only when debug modal is NOT open)
         if (!isModalOpen) {
             if (config.direction === "rtl") {
-                if (e.key === "ArrowLeft") nextPage();
-                if (e.key === "ArrowRight") prevPage();
+                if (keyEvent.key === "ArrowLeft") nextPage();
+                if (keyEvent.key === "ArrowRight") prevPage();
             } else {
-                if (e.key === "ArrowLeft") prevPage();
-                if (e.key === "ArrowRight") nextPage();
+                if (keyEvent.key === "ArrowLeft") prevPage();
+                if (keyEvent.key === "ArrowRight") nextPage();
             }
-            if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                toggleControls(e);
-                e.preventDefault();
+            if (keyEvent.key === "ArrowUp" || keyEvent.key === "ArrowDown") {
+                toggleControls(keyEvent);
+                keyEvent.preventDefault();
             }
         }
     });
@@ -153,13 +154,15 @@ function setupEventListeners() {
 
     // Drag scrub support for mobile touch events
     progressBarContainer.addEventListener("touchstart", (e) => {
+        const touchEvent = /** @type {!TouchEvent} */ (e);
         isDraggingProgressBar = true;
-        handleProgressScrub(e.touches[0].clientX);
+        handleProgressScrub(touchEvent.touches[0].clientX);
     });
 
     document.addEventListener("touchmove", (e) => {
+        const touchEvent = /** @type {!TouchEvent} */ (e);
         if (!isDraggingProgressBar) return;
-        handleProgressScrub(e.touches[0].clientX);
+        handleProgressScrub(touchEvent.touches[0].clientX);
     });
 
     document.addEventListener("touchend", () => {
@@ -171,16 +174,18 @@ function setupEventListeners() {
     let touchStartY = 0;
 
     readerViewport.addEventListener("touchstart", (e) => {
-        if (e.touches.length === 1) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
+        const touchEvent = /** @type {!TouchEvent} */ (e);
+        if (touchEvent.touches.length === 1) {
+            touchStartX = touchEvent.touches[0].clientX;
+            touchStartY = touchEvent.touches[0].clientY;
         }
     }, { passive: true });
 
     readerViewport.addEventListener("touchend", (e) => {
-        if (e.changedTouches.length === 1) {
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
+        const touchEvent = /** @type {!TouchEvent} */ (e);
+        if (touchEvent.changedTouches.length === 1) {
+            const touchEndX = touchEvent.changedTouches[0].clientX;
+            const touchEndY = touchEvent.changedTouches[0].clientY;
 
             const deltaX = touchEndX - touchStartX;
             const deltaY = touchEndY - touchStartY;
@@ -815,17 +820,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Expose core functions for testing/debugging
-    window.Yuzora = {
-        parseAozoraText,
-        parseAozoraHTML,
-        formatAozoraMarkup,
-        config,
-        runLayoutDiagnosis,
-        getCurrentTOC: () => currentTOC,
-        CommandManager,
-        LoadBookCommand,
-        NavigatePageCommand,
-        UpdateConfigCommand,
-        SyncBookmarkCommand
+    window['Yuzora'] = {
+        'parseAozoraText': parseAozoraText,
+        'parseAozoraHTML': parseAozoraHTML,
+        'formatAozoraMarkup': formatAozoraMarkup,
+        'config': config,
+        'runLayoutDiagnosis': runLayoutDiagnosis,
+        'getCurrentTOC': () => currentTOC,
+        'CommandManager': CommandManager,
+        'LoadBookCommand': LoadBookCommand,
+        'NavigatePageCommand': NavigatePageCommand,
+        'UpdateConfigCommand': UpdateConfigCommand,
+        'SyncBookmarkCommand': SyncBookmarkCommand
     };
 });
