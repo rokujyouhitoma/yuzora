@@ -27,7 +27,7 @@ $(JS_OUT): $(JS_SRCS)
 		--language_in ECMASCRIPT_NEXT \
 		--language_out ECMASCRIPT_NEXT \
 		--strict_mode_input=true \
-		--externs tools/externs.js \
+		--externs src/externs.js \
 		--js $(JS_SRCS) \
 		--js_output_file $(JS_OUT)
 
