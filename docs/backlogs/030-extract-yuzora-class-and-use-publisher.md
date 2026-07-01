@@ -36,7 +36,9 @@ ID: 030
    - `removeEventListener` -> `yuzora.publisher.unsubscribe(topic, callback)`
    - `dispatchEvent` -> `yuzora.publisher.publish(topic, data)`
    - これに沿って、`ui.js`, `viewer.js`, `commands.js` 内のカスタムイベント呼び出しを書き換えます。
-3. **Closure Compiler への適合性**:
+3. **`window` オブジェクトへの直接アクセスの削減**:
+   - 各ソースコード内に存在する `window.locator` や `window.locator.resolve` などの `window` プレフィックスを削除し、グローバルスコープ変数 `locator` を直接参照するようクリーンアップします。
+4. **Closure Compiler への適合性**:
    - `externs.js` に `Yuzora.prototype.publisher;` を定義し、Advanced 難読化ビルド時にメンバ変数が破壊されないようにします。
 
 ---
