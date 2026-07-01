@@ -261,51 +261,55 @@ function handleDebugTabKeys(e) {
     }
 }
 
-function handleDebugKeyboardShortcuts(e) {
-    // Prevent key events from triggering while typing in inputs
-    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable) {
-        return;
+function isTypingInInput_(e) {
+    return e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.isContentEditable;
+}
+
+function handleToggleDebugKey_(e, isModalOpen, viewContext) {
+    if (e.key !== "d" && e.key !== "D") return;
+    if (isModalOpen) {
+        closeDebugModal();
+    } else {
+        if (viewContext.btnOpenDebug) viewContext.btnOpenDebug.click();
     }
+    e.preventDefault();
+}
 
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const isModalOpen = viewContext.debugModal && !viewContext.debugModal.classList.contains("hidden");
-
-    // Toggle debug modal with 'd' or 'D'
-    if (e.key === "d" || e.key === "D") {
-        if (isModalOpen) {
-            closeDebugModal();
-        } else {
-            if (viewContext.btnOpenDebug) viewContext.btnOpenDebug.click();
-        }
-        e.preventDefault();
-        return;
-    }
-
-    // Ctrl+Z / Ctrl+Y operation undos
-    if (e.ctrlKey && e.key === "z") {
+function handleUndoRedoKeys_(e) {
+    if (!e.ctrlKey) return;
+    if (e.key === "z") {
         e.preventDefault();
         CommandManager.undo();
-    }
-    if (e.ctrlKey && e.key === "y") {
+    } else if (e.key === "y") {
         e.preventDefault();
         CommandManager.redo();
     }
+}
 
-    // Tab key selection inside modal using keyboard numbers 1 or 2
-    if (isModalOpen) {
-        if (e.key === '1') {
-            if (viewContext.tabBtnMonitor) viewContext.tabBtnMonitor.click();
-        } else if (e.key === '2') {
-            if (viewContext.tabBtnDiagnose) viewContext.tabBtnDiagnose.click();
-        }
+function handleModalOpenKeys_(e, viewContext) {
+    if (e.key === '1') {
+        if (viewContext.tabBtnMonitor) viewContext.tabBtnMonitor.click();
+    } else if (e.key === '2') {
+        if (viewContext.tabBtnDiagnose) viewContext.tabBtnDiagnose.click();
     }
 }
 
-function setupDrawerControls() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+function handleDebugKeyboardShortcuts(e) {
+    if (isTypingInInput_(e)) return;
 
-    // Drawer overlay backdrops click handlers
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const isModalOpen = /** @type {boolean} */ (!!(viewContext.debugModal && !viewContext.debugModal.classList.contains("hidden")));
+
+    handleToggleDebugKey_(e, isModalOpen, viewContext);
+    handleUndoRedoKeys_(e);
+
+    if (isModalOpen) {
+        handleModalOpenKeys_(e, viewContext);
+    }
+}
+
+function setupDrawerOverlayAndToggles_() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     viewContext.drawerOverlay.addEventListener("click", () => {
         if (viewContext.settingsDrawer.classList.contains("open")) {
             CommandManager.execute(new ToggleDrawerCommand("settings", false));
@@ -315,7 +319,6 @@ function setupDrawerControls() {
         }
     });
 
-    // TOC buttons events
     viewContext.btnTOC.addEventListener("click", () => {
         CommandManager.execute(new ToggleDrawerCommand("toc", true));
     });
@@ -323,15 +326,18 @@ function setupDrawerControls() {
         CommandManager.execute(new ToggleDrawerCommand("toc", false));
     });
 
-    // Settings drawer control hooks
     viewContext.btnSettings.addEventListener("click", () => {
         CommandManager.execute(new ToggleDrawerCommand("settings", true));
     });
     viewContext.btnCloseSettings.addEventListener("click", () => {
         CommandManager.execute(new ToggleDrawerCommand("settings", false));
     });
+}
 
-    // Page overlays clicking triggers (RTL direction mapping)
+function setupPageNavigationOverlays_() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+
     viewContext.pageNavLeft.addEventListener("click", (e) => {
         e.stopPropagation();
         if (configModel.direction === "rtl") {
@@ -350,7 +356,16 @@ function setupDrawerControls() {
         }
     });
 
-    // Bind setting selector button groups
+    if (viewContext.btnFirstPage) {
+        viewContext.btnFirstPage.addEventListener("click", () => {
+            CommandManager.execute(new NavigatePageCommand(1));
+            CommandManager.execute(new ToggleDrawerCommand("settings", false));
+            CommandManager.execute(new ToggleDrawerCommand("toc", false));
+        });
+    }
+}
+
+function setupSettingSelectorGroups_() {
     setupButtonGroup(".theme-selector button", "theme", (val) => {
         CommandManager.execute(new UpdateConfigCommand("theme", val));
     });
@@ -369,34 +384,10 @@ function setupDrawerControls() {
     setupButtonGroup(".spacing-selector button", "spacing", (val) => {
         CommandManager.execute(new UpdateConfigCommand("spacing", val));
     });
+}
 
-    // Header Home icon control
-    if (viewContext.btnFirstPage) {
-        viewContext.btnFirstPage.addEventListener("click", () => {
-            CommandManager.execute(new NavigatePageCommand(1));
-            CommandManager.execute(new ToggleDrawerCommand("settings", false));
-            CommandManager.execute(new ToggleDrawerCommand("toc", false));
-        });
-    }
-
-    // Modal Close Button hooks
-    if (viewContext.btnCloseDebug) {
-        viewContext.btnCloseDebug.addEventListener("click", () => {
-            CommandManager.execute(new ToggleDebugModalCommand(false));
-        });
-    }
-    if (viewContext.debugModalOverlay) {
-        viewContext.debugModalOverlay.addEventListener("click", () => {
-            CommandManager.execute(new ToggleDebugModalCommand(false));
-        });
-    }
-    if (viewContext.btnOpenDebug) {
-        viewContext.btnOpenDebug.addEventListener("click", () => {
-            CommandManager.execute(new ToggleDebugModalCommand(true));
-        });
-    }
-
-    // Settings/cache purge tools
+function setupStorageResetButtons_() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     if (viewContext.btnClearBookmarks) {
         viewContext.btnClearBookmarks.addEventListener("click", () => {
             CommandManager.execute(new ClearStorageCommand("bookmarks"));
@@ -417,8 +408,30 @@ function setupDrawerControls() {
             alert("すべてのキャッシュデータをリセットしました。");
         });
     }
+}
 
-    // Diagnostics layout analyzer hooks
+function setupDebugModalOpenClose_() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    if (viewContext.btnCloseDebug) {
+        viewContext.btnCloseDebug.addEventListener("click", () => {
+            CommandManager.execute(new ToggleDebugModalCommand(false));
+        });
+    }
+    if (viewContext.debugModalOverlay) {
+        viewContext.debugModalOverlay.addEventListener("click", () => {
+            CommandManager.execute(new ToggleDebugModalCommand(false));
+        });
+    }
+    if (viewContext.btnOpenDebug) {
+        viewContext.btnOpenDebug.addEventListener("click", () => {
+            CommandManager.execute(new ToggleDebugModalCommand(true));
+        });
+    }
+}
+
+function setupDebugModalHistoryAndTabs_() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+
     if (viewContext.btnDiagnoseLayout) {
         viewContext.btnDiagnoseLayout.addEventListener("click", runLayoutDiagnosis);
     }
@@ -434,7 +447,6 @@ function setupDrawerControls() {
         });
     }
 
-    // Operations History Export/Import controls
     if (viewContext.btnExportHistory) {
         viewContext.btnExportHistory.addEventListener("click", () => {
             if (viewContext.debugHistoryJSON) {
@@ -459,8 +471,10 @@ function setupDrawerControls() {
             }
         });
     }
+}
 
-    // Diagnostics Modal tabs selectors
+function setupTabSelectors_() {
+    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
     if (viewContext.tabBtnMonitor && viewContext.tabBtnDiagnose) {
         viewContext.tabBtnMonitor.addEventListener("click", () => {
             viewContext.tabBtnMonitor.classList.add("active");
@@ -474,9 +488,19 @@ function setupDrawerControls() {
             viewContext.tabBtnMonitor.classList.remove("active");
             viewContext.tabContentDiagnose.classList.remove("hidden");
             viewContext.tabContentMonitor.classList.add("hidden");
-            runLayoutDiagnosis(); // Auto analyze layout when switching tab
+            runLayoutDiagnosis();
         });
     }
+}
+
+function setupDrawerControls() {
+    setupDrawerOverlayAndToggles_();
+    setupPageNavigationOverlays_();
+    setupSettingSelectorGroups_();
+    setupStorageResetButtons_();
+    setupDebugModalOpenClose_();
+    setupDebugModalHistoryAndTabs_();
+    setupTabSelectors_();
 }
 
 function setupButtonGroup(selector, configKey, callback) {

@@ -190,18 +190,25 @@ class ConfigModel {
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (parsed && typeof parsed === "object") {
-                    const parsedConfig = /** @type {!Object<string, string>} */ (parsed);
-                    if (parsedConfig['theme']) this.theme = parsedConfig['theme'];
-                    if (parsedConfig['font']) this.font = parsedConfig['font'];
-                    if (parsedConfig['direction']) this.direction = parsedConfig['direction'];
-                    if (parsedConfig['size']) this.size = parsedConfig['size'];
-                    if (parsedConfig['lh']) this.lh = parsedConfig['lh'];
-                    if (parsedConfig['spacing']) this.spacing = parsedConfig['spacing'];
+                    this.applyParsed_(/** @type {!Object<string, string>} */ (parsed));
                 }
             }
         } catch (e) {
             console.warn("Failed to load configuration settings from localStorage:", e);
         }
+    }
+
+    /**
+     * @private
+     * @param {!Object<string, string>} parsedConfig
+     */
+    applyParsed_(parsedConfig) {
+        if (parsedConfig['theme']) this.theme = parsedConfig['theme'];
+        if (parsedConfig['font']) this.font = parsedConfig['font'];
+        if (parsedConfig['direction']) this.direction = parsedConfig['direction'];
+        if (parsedConfig['size']) this.size = parsedConfig['size'];
+        if (parsedConfig['lh']) this.lh = parsedConfig['lh'];
+        if (parsedConfig['spacing']) this.spacing = parsedConfig['spacing'];
     }
 
     /** @override */

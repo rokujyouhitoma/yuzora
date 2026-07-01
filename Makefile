@@ -16,7 +16,10 @@ CSS_SRCS = src/css/modules/base.css \
            src/css/modules/debug.css
 CSS_OUT = src/css/style.css
 
-all: $(JS_OUT) $(CSS_OUT)
+all: lint $(JS_OUT) $(CSS_OUT)
+
+lint:
+	npm run lint
 
 $(JS_OUT): $(JS_SRCS)
 	java -jar $(COMPILER) \
@@ -37,4 +40,4 @@ $(CSS_OUT): $(CSS_SRCS)
 clean:
 	rm -f $(JS_OUT) $(CSS_OUT)
 
-.PHONY: all clean
+.PHONY: all clean lint

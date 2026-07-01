@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Fixed ESLint循環的複雑度（Cyclomatic Complexity）の制限値超過を解消するため、`ConfigModel.load`、`handleDebugKeyboardShortcuts`、および `setupDrawerControls` を複数のヘルパーメソッド・関数にリファクタリング・分割 (ID: 029)。
+- Added ビルド前に静的検証が必ず実行されるよう、`Makefile` に `lint` ターゲットを追加し、`all` ターゲットの依存関係に設定 (ID: 029)。
+
 - Added イベント識別子の型安全性を高めるため、15種類のドメインイベント種別をカプセル化した定数オブジェクト `YuzoraEventType` を `event.js` に追加 (ID: 028)。
 - Changed `commands.js`, `viewer.js`, `ui.js` 内のマジックストリングによるイベントの通知・購読を、`YuzoraEventType` 定数参照へと全面的に移行 (ID: 028)。
 - Changed コマンド実行層とUI層のデカップリングのため、`CommandHistory` 内の直接的なテキストエリア更新を廃止し、操作履歴の変更を `HISTORY_UPDATED` イベント経由でUIに通知する方式に変更 (ID: 028)。

@@ -2,7 +2,7 @@
 ID: 029
 種別: Bug
 優先度: High
-ステータス: Open (New)
+ステータス: Closed
 ---
 
 # [BUG/SEC] ESLint complexity limit errors in config.js and ui.js (ID: 029)
@@ -58,6 +58,6 @@ Target Branch: `fix/029-lint-complexity-errors`
 ---
 
 ## 6. 完了条件 / Success Criteria (DoD)
-- [ ] すべてのソースファイルで `npm run lint` が警告・エラーなしで正常終了すること。
-- [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
-- [ ] 実装内容が [DSN-01](../docs/DSN-01-high_level_design.md) および [DSN-02](../docs/DSN-02-low_level_design.md) の設計仕様と完全に一致していること。
+- [x] すべてのソースファイルで `npm run lint` が警告・エラーなしで正常終了すること。
+- [x] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] 実装内容が [DSN-01](../docs/DSN-01-high_level_design.md) および [DSN-02](../docs/DSN-02-low_level_design.md) の設計仕様と完全に一致していること。
