@@ -38,6 +38,7 @@
 | **027** | Refactor | Medium | Closed | クラス設計の統合とすべての状態・プロパティのカプセル化 | AI Agent | [027-consolidate-class-design-belonging-properties.md](closed/027-consolidate-class-design-belonging-properties.md) |
 | **028** | Refactor | Medium | Closed | 読書ビューアーのドメイン固有イベントの定義 | AI Agent | [028-define-domain-events.md](closed/028-define-domain-events.md) |
 | **029** | Bug | High | Closed | ESLint循環的複雑度警告の修正 | AI Agent | [029-fix-lint-complexity-errors.md](closed/029-fix-lint-complexity-errors.md) |
+| **030** | Refactor | Medium | New | Publish/Subscribe パターンによるイベント通知モデルの実装 | AI Agent | [030-implement-pubsub.md](030-implement-pubsub.md) |
 
 
 

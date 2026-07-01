@@ -30,7 +30,7 @@
 | **020** | Feature | Medium | Approved | Routerの実装とURLによる状態ディスパッチ機能 | [020-implement-router.md](020-implement-router.md) |
 | **021** | Refactor | Medium | Promoted | Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 | [021-implement-event-emitter.md](closed/021-implement-event-emitter.md) |
 | **022** | Refactor | Medium | Promoted | ビジネスロジック固有のイベント定義 | [022-define-domain-events.md](closed/022-define-domain-events.md) |
-| **023** | Refactor | Medium | Approved | Publish/Subscribe パターンによるイベント通知モデルの実装 | [023-implement-pubsub.md](023-implement-pubsub.md) |
+| **023** | Refactor | Medium | Promoted | Publish/Subscribe パターンによるイベント通知モデルの実装 | [023-implement-pubsub.md](023-implement-pubsub.md) |
 | **024** | Refactor | Medium | Approved | Scene遷移（画面遷移）フレームワークの実装によるモジュール分離 | [024-implement-scene-framework.md](024-implement-scene-framework.md) |
 | **025** | Refactor | Medium | Approved | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | [025-implement-repository.md](025-implement-repository.md) |
 | **026** | Refactor | Medium | Closed | JavaScriptの "use strict" 有効化 | [026-enable-use-strict.md](closed/026-enable-use-strict.md) |
