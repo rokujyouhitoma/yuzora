@@ -2,7 +2,7 @@
 ID: 023
 種別: Refactor
 優先度: Medium
-ステータス: In Progress
+ステータス: Closed
 ---
 
 # [REFACTOR] Publish/Subscribe パターンによるイベント通知モデルの実装 (ID: 023)

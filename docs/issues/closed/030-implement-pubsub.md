@@ -2,7 +2,7 @@
 ID: 030
 種別: Refactor
 優先度: Medium
-ステータス: Open (New)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] Publish/Subscribe パターンによるイベント通知モデルの実装 (ID: 030)
@@ -35,7 +35,7 @@ Target Branch: `feat/030-implement-pubsub`
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] `subscribe` / `unsubscribe` / `publish` の基本的な購読配信フローを検証するユニットテストがパスすること。
-- [ ] 購読解除したリスナーに対して追加の通知が送信されないこと。
-- [ ] 既存の全テスト・機能が壊れずに維持されていること。
-- [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] `subscribe` / `unsubscribe` / `publish` の基本的な購読配信フローを検証するユニットテストがパスすること。
+- [x] 購読解除したリスナーに対して追加の通知が送信されないこと。
+- [x] 既存の全テスト・機能が壊れずに維持されていること。
+- [x] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
