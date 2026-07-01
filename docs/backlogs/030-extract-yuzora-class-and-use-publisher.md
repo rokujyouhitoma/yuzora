@@ -2,7 +2,7 @@
 ID: 030
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: In Progress
 ---
 
 # [REFACTOR] Yuzoraクラスのファイル分割とPublisher連携 (ID: 030)

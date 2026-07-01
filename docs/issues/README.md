@@ -39,6 +39,7 @@
 | **028** | Refactor | Medium | Closed | 読書ビューアーのドメイン固有イベントの定義 | AI Agent | [028-define-domain-events.md](closed/028-define-domain-events.md) |
 | **029** | Bug | High | Closed | ESLint循環的複雑度警告の修正 | AI Agent | [029-fix-lint-complexity-errors.md](closed/029-fix-lint-complexity-errors.md) |
 | **030** | Refactor | Medium | Closed | Publish/Subscribe パターンによるイベント通知モデルの実装 | AI Agent | [030-implement-pubsub.md](closed/030-implement-pubsub.md) |
+| **031** | Refactor | Medium | New | Yuzoraクラスのファイル分割とPublisher連携 | AI Agent | [031-extract-yuzora-class-and-use-publisher.md](031-extract-yuzora-class-and-use-publisher.md) |
 
 
 
