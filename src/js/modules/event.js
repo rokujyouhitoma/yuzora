@@ -88,7 +88,7 @@ class YuzoraEventTarget {
 }
 
 // Register event bus singleton in Locator
-window.locator.register(YuzoraEventTarget, new YuzoraEventTarget());
+locator.register(YuzoraEventTarget, new YuzoraEventTarget());
 
 /**
  * @const

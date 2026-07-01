@@ -4,8 +4,8 @@
 "use strict";
 
 function updateSettingsUI(key, value) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     if (key === "theme") {
         document.body.className = `theme-${value}`;
     } else if (key === "font") {
@@ -21,14 +21,14 @@ function updateSettingsUI(key, value) {
 }
 
 function closeDebugModal() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.debugModal.classList.add("hidden");
     viewContext.debugModalOverlay.classList.add("hidden");
     triggerHeaderShow();
 }
 
 function openDebugModal() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (viewContext.debugModal && viewContext.debugModalOverlay) {
         viewContext.debugModal.classList.remove("hidden");
         viewContext.debugModalOverlay.classList.remove("hidden");
@@ -37,8 +37,8 @@ function openDebugModal() {
 }
 
 function handleProgressScrub(clientX) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const rect = viewContext.progressBarContainer.getBoundingClientRect();
     const width = rect.width;
     const clickX = Math.max(0, Math.min(width, clientX - rect.left));
@@ -50,8 +50,8 @@ function handleProgressScrub(clientX) {
 }
 
 function setupEventListeners() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
 
     // Drop Zone Events
     viewContext.dropZone.addEventListener("dragover", (e) => {
@@ -215,14 +215,14 @@ function setupEventListeners() {
 }
 
 function handleScrollDebounced() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (viewContext.isReflowing) return;
     snapScrollPosition();
 }
 
 function snapScrollPosition() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     if (viewContext.isReflowing) return;
 
     const scrollLeft = Math.abs(viewContext.readerViewport.scrollLeft);
@@ -242,7 +242,7 @@ function snapScrollPosition() {
 }
 
 function handleDebugTabKeys(e) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const focusableElementsString = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const focusableElements = viewContext.debugModal.querySelectorAll(focusableElementsString);
     const firstFocusable = focusableElements[0];
@@ -297,7 +297,7 @@ function handleModalOpenKeys_(e, viewContext) {
 function handleDebugKeyboardShortcuts(e) {
     if (isTypingInInput_(e)) return;
 
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const isModalOpen = /** @type {boolean} */ (!!(viewContext.debugModal && !viewContext.debugModal.classList.contains("hidden")));
 
     handleToggleDebugKey_(e, isModalOpen, viewContext);
@@ -309,7 +309,7 @@ function handleDebugKeyboardShortcuts(e) {
 }
 
 function setupDrawerOverlayAndToggles_() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.drawerOverlay.addEventListener("click", () => {
         if (viewContext.settingsDrawer.classList.contains("open")) {
             CommandManager.execute(new ToggleDrawerCommand("settings", false));
@@ -335,8 +335,8 @@ function setupDrawerOverlayAndToggles_() {
 }
 
 function setupPageNavigationOverlays_() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
 
     viewContext.pageNavLeft.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -387,7 +387,7 @@ function setupSettingSelectorGroups_() {
 }
 
 function setupStorageResetButtons_() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (viewContext.btnClearBookmarks) {
         viewContext.btnClearBookmarks.addEventListener("click", () => {
             CommandManager.execute(new ClearStorageCommand("bookmarks"));
@@ -411,7 +411,7 @@ function setupStorageResetButtons_() {
 }
 
 function setupDebugModalOpenClose_() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (viewContext.btnCloseDebug) {
         viewContext.btnCloseDebug.addEventListener("click", () => {
             CommandManager.execute(new ToggleDebugModalCommand(false));
@@ -430,7 +430,7 @@ function setupDebugModalOpenClose_() {
 }
 
 function setupDebugModalHistoryAndTabs_() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
 
     if (viewContext.btnDiagnoseLayout) {
         viewContext.btnDiagnoseLayout.addEventListener("click", runLayoutDiagnosis);
@@ -474,7 +474,7 @@ function setupDebugModalHistoryAndTabs_() {
 }
 
 function setupTabSelectors_() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (viewContext.tabBtnMonitor && viewContext.tabBtnDiagnose) {
         viewContext.tabBtnMonitor.addEventListener("click", () => {
             viewContext.tabBtnMonitor.classList.add("active");
@@ -516,15 +516,15 @@ function setupButtonGroup(selector, configKey, callback) {
 }
 
 function saveSettings() {
-    window.locator.resolve(ConfigModel).save();
+    Yuzora.locator.resolve(ConfigModel).save();
 }
 
 function loadSettings() {
-    window.locator.resolve(ConfigModel).load();
+    Yuzora.locator.resolve(ConfigModel).load();
 }
 
 function applySettings() {
-    window.locator.resolve(ConfigModel).apply();
+    Yuzora.locator.resolve(ConfigModel).apply();
 }
 
 function syncButtonState(selector, attrName, value) {
@@ -539,27 +539,27 @@ function syncButtonState(selector, attrName, value) {
 }
 
 function openSettings() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.settingsDrawer.classList.add("open");
     viewContext.drawerOverlay.classList.add("open");
 }
 
 function closeSettings() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.settingsDrawer.classList.remove("open");
     viewContext.drawerOverlay.classList.remove("open");
     triggerHeaderShow();
 }
 
 function openTOC() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.tocDrawer.classList.add("open");
     viewContext.drawerOverlay.classList.add("open");
     buildTOCList();
 }
 
 function closeTOC() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.tocDrawer.classList.remove("open");
     viewContext.drawerOverlay.classList.remove("open");
     triggerHeaderShow();
@@ -568,8 +568,8 @@ function closeTOC() {
 var activeTOCAnimationId = null;
 
 function buildTOCList() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     if (activeTOCAnimationId) {
         cancelAnimationFrame(activeTOCAnimationId);
         activeTOCAnimationId = null;
@@ -627,8 +627,8 @@ var visibleHeadingIds = new Set();
 var jumpLockUntil = 0;
 
 function setupTOCObserver() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     visibleHeadingIds.clear();
     if (viewContext.tocObserver) {
         viewContext.tocObserver.disconnect();
@@ -671,7 +671,7 @@ function setupTOCObserver() {
 }
 
 function updateActiveTOCItemUI() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const items = viewContext.tocList.querySelectorAll(".toc-item");
     items.forEach(item => {
         const headingId = item.getAttribute("data-heading-id");
@@ -684,8 +684,8 @@ function updateActiveTOCItemUI() {
 }
 
 function jumpToHeading(headingId) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     const targetElement = document.getElementById(headingId);
     if (!targetElement) return;
 
@@ -723,7 +723,7 @@ function jumpToHeading(headingId) {
 }
 
 function hideControls() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (!viewContext.settingsDrawer.classList.contains("open") && !viewContext.tocDrawer.classList.contains("open")) {
         viewContext.readerHeader.classList.add("hidden");
         if (viewContext.readerFooter) {
@@ -733,7 +733,7 @@ function hideControls() {
 }
 
 function triggerHeaderShow() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.readerHeader.classList.remove("hidden");
     if (viewContext.readerFooter) {
         viewContext.readerFooter.classList.remove("hidden");
@@ -746,7 +746,7 @@ function triggerHeaderShow() {
 }
 
 function toggleControls(e) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     // Prevent toggle if clicking interactive elements inside reader viewport
     if (e && e.type === "click" && (e.target.closest("a") || e.target.closest("ruby") || e.target.closest("button"))) {
         return;
@@ -756,187 +756,4 @@ function toggleControls(e) {
     CommandManager.execute(new ToggleControlsCommand(nextVisible));
 }
 
-/**
- * @implements {YuzoraInterface}
- */
-class Yuzora {
-    constructor() {
-        /**
-         * @public
-         * @type {!LocatorInterface}
-         */
-        this.locator = window.locator;
-    }
 
-    /** @override */
-    boot() {
-        initializeDOMElements();
-
-        const viewContext = /** @type {!ViewContextInterface} */ (this.locator.resolve(ViewContext));
-
-        // Setup predefined books grids on start welcome screen
-        if (viewContext.developerBooksGrid) {
-            viewContext.developerBooksGrid.innerHTML = "";
-            PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
-                const card = document.createElement("div");
-                card.className = "book-card";
-                card.setAttribute("data-book-id", book.id);
-                card.innerHTML = `
-                    <div class="book-card-title">${book.shortTitle}</div>
-                    <div class="book-card-author">${book.author}</div>
-                `;
-                card.addEventListener("click", () => {
-                    loadPredefinedBook(book.id);
-                });
-                viewContext.developerBooksGrid.appendChild(card);
-            });
-        }
-
-        if (viewContext.readerBooksGrid) {
-            viewContext.readerBooksGrid.innerHTML = "";
-            PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
-                const card = document.createElement("div");
-                card.className = "book-card";
-                card.setAttribute("data-book-id", book.id);
-                card.innerHTML = `
-                    <div class="book-card-title">${book.shortTitle}</div>
-                    <div class="book-card-author">${book.author}</div>
-                `;
-                card.addEventListener("click", () => {
-                    loadPredefinedBook(book.id);
-                });
-                viewContext.readerBooksGrid.appendChild(card);
-            });
-        }
-
-        // Load Settings
-        loadSettings();
-        applySettings();
-
-        // Bind Event Listeners
-        setupEventListeners();
-        setupDrawerControls();
-
-        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (this.locator.resolve(YuzoraEventTarget));
-
-        // Listen to book rendered event to update UI controls and TOC observers
-        eventBus.addEventListener(YuzoraEventType.BOOK_RENDERED, () => {
-            triggerHeaderShow();
-            setupTOCObserver();
-        });
-
-        // Listen to debug modal toggles
-        eventBus.addEventListener(YuzoraEventType.TOGGLE_DEBUG_MODAL, (e) => {
-            const detail = /** @type {{open: boolean}} */ (e.detail);
-            if (detail.open) {
-                openDebugModal();
-            } else {
-                closeDebugModal();
-            }
-        });
-
-        // Listen to command history updates
-        eventBus.addEventListener(YuzoraEventType.HISTORY_UPDATED, (e) => {
-            const detail = /** @type {{history: !Array<!Object>}} */ (e.detail);
-            if (viewContext.debugHistoryJSON) {
-                viewContext.debugHistoryJSON.value = JSON.stringify(detail.history, null, 2);
-            }
-        });
-
-        // Check last session for auto-restore
-        const lastName = localStorage.getItem("last_read_file_name");
-        const lastContent = localStorage.getItem("last_read_file_content");
-        const lastType = localStorage.getItem("last_read_file_type");
-
-        if (lastName && lastContent) {
-            const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));
-            bookModel.title = lastName;
-            bookModel.content = lastContent;
-            bookModel.type = lastType || "txt";
-            eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.BOOK_LOADED, {
-                fileName: lastName,
-                fileContent: lastContent
-            }));
-        }
-    }
-
-    /**
-     * @override
-     * @param {string} text
-     * @return {{title: string, body: string}}
-     */
-    parseAozoraText(text) {
-        return parseAozoraText(text);
-    }
-
-    /**
-     * @override
-     * @param {string} html
-     * @return {{title: string, body: string}}
-     */
-    parseAozoraHTML(html) {
-        return parseAozoraHTML(html);
-    }
-
-    /**
-     * @override
-     * @param {string} markup
-     * @return {string}
-     */
-    formatAozoraMarkup(markup) {
-        return formatAozoraMarkup(markup);
-    }
-
-    /**
-     * @override
-     * @return {string}
-     */
-    runLayoutDiagnosis() {
-        return runLayoutDiagnosis();
-    }
-
-    /**
-     * @override
-     * @return {!Array}
-     */
-    getCurrentTOC() {
-        return this.locator.resolve(BookModel).toc;
-    }
-
-    /** @override */
-    get config() {
-        return this.locator.resolve(ConfigModel);
-    }
-
-    /** @override */
-    get CommandManager() {
-        return this.locator.resolve(CommandHistory);
-    }
-
-    /** @override */
-    get LoadBookCommand() {
-        return LoadBookCommand;
-    }
-
-    /** @override */
-    get NavigatePageCommand() {
-        return NavigatePageCommand;
-    }
-
-    /** @override */
-    get UpdateConfigCommand() {
-        return UpdateConfigCommand;
-    }
-
-    /** @override */
-    get SyncBookmarkCommand() {
-        return SyncBookmarkCommand;
-    }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    const yuzora = new Yuzora();
-    window.locator.register(Yuzora, yuzora);
-    yuzora.boot();
-    window['Yuzora'] = yuzora;
-});

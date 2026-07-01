@@ -17,10 +17,10 @@ function getCurrentPageAndCount(viewport) {
 }
 
 function diagnoseEnvironmentInfo(currentPage, pageCount) {
-    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
 
     let report = `### 📖 ゆうぞら レイアウト診断レポート\n`;
     report += `- **日時**: ${new Date().toLocaleString()}\n`;
@@ -62,7 +62,7 @@ function diagnoseColumnsInfo(cStyle) {
 
 // eslint-disable-next-line complexity
 function diagnoseColumnWidthCheck(cStyle) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const colWidthStr = cStyle.columnWidth || 'auto';
     const marginLeftStr = cStyle.marginLeft || '0px';
     const marginRightStr = cStyle.marginRight || '0px';
@@ -88,7 +88,7 @@ function diagnoseColumnWidthCheck(cStyle) {
 }
 
 function diagnoseVerticalLayoutInfo(viewportRect, cStyle) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     let report = `### 📐 縦方向レイアウト配置\n`;
     const header = document.querySelector('.reader-header');
     const footer = document.querySelector('.reader-footer');
@@ -149,8 +149,8 @@ function diagnoseParagraphCoordinateInfo(viewportRect, childNodes) {
 }
 
 function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const expectedScrollMultiplier = currentPage - 1;
     const idealScrollLeft = configModel.direction === 'rtl' 
         ? -(expectedScrollMultiplier * viewContext.readerViewport.clientWidth)
@@ -246,7 +246,7 @@ function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
 }
 
 function runLayoutDiagnosis() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (!viewContext.readerViewport || !viewContext.readerContent) {
         return "エラー: ビューアーが初期化されていません。";
     }

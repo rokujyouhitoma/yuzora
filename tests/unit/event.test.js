@@ -183,4 +183,15 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
         // Cleanup
         publisher.unsubscribe('topic-b', callback);
     });
+
+    test('should expose Yuzora class and yuzora instance on window', () => {
+        const { yuzora, locator } = window;
+        assert.ok(yuzora);
+        const YuzoraClass = yuzora.constructor;
+        assert.ok(YuzoraClass);
+        assert.ok(yuzora instanceof YuzoraClass);
+        assert.strictEqual(yuzora.locator, YuzoraClass.locator);
+        assert.strictEqual(YuzoraClass.locator, locator);
+        assert.ok(yuzora.publisher);
+    });
 });

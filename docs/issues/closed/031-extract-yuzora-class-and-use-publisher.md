@@ -2,7 +2,7 @@
 ID: 031
 種別: Refactor
 優先度: Medium
-ステータス: Open (New)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] Yuzoraクラスのファイル分割とPublisher連携 (ID: 031)
@@ -22,14 +22,14 @@ ID: 031
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [yuzora.js](file:///workspace/yuzora/yuzora/src/js/modules/yuzora.js) (Yuzoraクラスの定義および初期化)
-- [ ] [ui.js](file:///workspace/yuzora/yuzora/src/js/modules/ui.js) (Yuzoraクラスの削除、およびイベント処理のPublisher移行)
-- [ ] [viewer.js](file:///workspace/yuzora/yuzora/src/js/modules/viewer.js) (イベント処理のPublisher移行)
-- [ ] [commands.js](file:///workspace/yuzora/yuzora/src/js/modules/commands.js) (イベント処理のPublisher移行)
-- [ ] [externs.js](file:///workspace/yuzora/yuzora/src/externs.js) (Yuzoraクラスのプロパティおよび新規ファイルの外部定義の追加)
-- [ ] [Makefile](file:///workspace/yuzora/yuzora/Makefile) (yuzora.js のコンパイル設定の追加)
-- [ ] [index.html](file:///workspace/yuzora/yuzora/index.html) (yuzora.js スクリプトタグの追加)
-- [ ] [event.test.js](file:///workspace/yuzora/yuzora/tests/unit/event.test.js) (イベントテストのPublisher経由へのリファクタリング)
+- [x] [yuzora.js](file:///workspace/yuzora/yuzora/src/js/modules/yuzora.js) (Yuzoraクラスの定義および初期化)
+- [x] [ui.js](file:///workspace/yuzora/yuzora/src/js/modules/ui.js) (Yuzoraクラスの削除、およびイベント処理のPublisher移行)
+- [x] [viewer.js](file:///workspace/yuzora/yuzora/src/js/modules/viewer.js) (イベント処理のPublisher移行)
+- [x] [commands.js](file:///workspace/yuzora/yuzora/src/js/modules/commands.js) (イベント処理のPublisher移行)
+- [x] [externs.js](file:///workspace/yuzora/yuzora/src/externs.js) (Yuzoraクラスのプロパティおよび新規ファイルの外部定義の追加)
+- [x] [Makefile](file:///workspace/yuzora/yuzora/Makefile) (yuzora.js のコンパイル設定の追加)
+- [x] [index.html](file:///workspace/yuzora/yuzora/index.html) (yuzora.js スクリプトタグの追加)
+- [x] [event.test.js](file:///workspace/yuzora/yuzora/tests/unit/event.test.js) (イベントテストのPublisher経由へのリファクタリング)
 
 ---
 
@@ -51,6 +51,6 @@ Target Branch: `refactor/031-extract-yuzora-class-and-use-publisher`
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] `npm run lint` を実行し、すべての静的検証（サイクロマティック複雑度 10 以下を含む）をパスすること。
-- [ ] `make clean && make` で Closure Compiler ビルドがエラー・警告なしで完了すること。
-- [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] `npm run lint` を実行し、すべての静的検証（サイクロマティック複雑度 10 以下を含む）をパスすること。
+- [x] `make clean && make` で Closure Compiler ビルドがエラー・警告なしで完了すること。
+- [x] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。

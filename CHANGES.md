@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `Yuzora` アプリケーション起動クラスを `ui.js` から独立した `yuzora.js` ファイルへ分割・抽出し、`publisher` 属性バインドと immediate ブート方式を導入して DOMContentLoaded でのレースコンディションを解消 (ID: 031)。
+- Changed 各モジュールにおけるイベントハンドラの登録・発火を `yuzora.publisher` 経由に統一し、依存関係の解決を `Yuzora.locator` 経由で行うようにグローバルプレフィックス（`window.locator`）をクリーンアップ (ID: 031)。
+- Changed `externs.js` に `YuzoraInterface.prototype.publisher` および `Function.prototype.locator` の定義を追加し、アドバンスドコンパイルでのプロパティ名破損および collapsing を防止 (ID: 031)。
+
 - Added 状態更新やデータ同期の疎結合な通知配信フローを実現するため、`YuzoraEventTarget` を内包した `Publisher` クラスによる Publish/Subscribe パターンを導入 (ID: 030)。
 - Changed `Makefile` および `index.html` に `src/js/modules/publisher.js` を追加し、ビルド定義および開発用スクリプト読み込みへの統合を完了 (ID: 030)。
 - Added `tests/unit/event.test.js` に `Publisher` の購読、配信、二重登録防止、および同一リスナーの複数トピック独立動作を検証する単体テストを追加 (ID: 030)。

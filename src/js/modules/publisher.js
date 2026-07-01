@@ -74,7 +74,7 @@ class Publisher {
     /**
      * Publish data to all subscribers of a topic.
      * @param {string} topic The topic to publish.
-     * @param {*} data The data payload.
+     * @param {*=} data The data payload.
      * @override
      */
     publish(topic, data) {
@@ -83,8 +83,8 @@ class Publisher {
 }
 
 // Register Publisher singleton in Locator using resolved YuzoraEventTarget
-window.locator.register(Publisher, new Publisher(
-    /** @type {!YuzoraEventTarget} */ (window.locator.resolve(YuzoraEventTarget))
+locator.register(Publisher, new Publisher(
+    /** @type {!YuzoraEventTarget} */ (locator.resolve(YuzoraEventTarget))
 ));
 
 // Expose on window for test accessibility and property preservation

@@ -2,7 +2,7 @@
 ID: 030
 種別: Refactor
 優先度: Medium
-ステータス: In Progress
+ステータス: Completed
 ---
 
 # [REFACTOR] Yuzoraクラスのファイル分割とPublisher連携 (ID: 030)
@@ -44,6 +44,6 @@ ID: 030
 ---
 
 ## 4. 完了条件 / Success Criteria (DoD)
-- [ ] `npm run lint` を実行し、すべての静的検証（サイクロマティック複雑度 10 以下を含む）をパスすること。
-- [ ] `make clean && make` で Closure Compiler ビルドがエラー・警告なしで完了すること。
-- [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] `npm run lint` を実行し、すべての静的検証（サイクロマティック複雑度 10 以下を含む）をパスすること。
+- [x] `make clean && make` で Closure Compiler ビルドがエラー・警告なしで完了すること。
+- [x] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。

@@ -7,7 +7,8 @@ JS_SRCS = src/js/modules/locator.js \
           src/js/modules/parser.js \
           src/js/modules/diagnostics.js \
           src/js/modules/viewer.js \
-          src/js/modules/ui.js
+          src/js/modules/ui.js \
+          src/js/modules/yuzora.js
 JS_OUT = main-min.js
 
 CSS_SRCS = src/css/modules/base.css \

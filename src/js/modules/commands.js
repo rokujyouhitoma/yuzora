@@ -34,16 +34,15 @@ class LoadBookCommand extends Command {
     }
     /** @override */
     execute() {
-        const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+        const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
         bookModel.title = this.fileName;
         bookModel.type = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
         bookModel.content = this.fileContent;
         
-        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.BOOK_LOADED, {
+        yuzora.publisher.publish(YuzoraEventType.BOOK_LOADED, {
             fileName: this.fileName,
             fileContent: this.fileContent
-        }));
+        });
     }
     /** @override */
     toJSON() {
@@ -64,12 +63,11 @@ class NavigatePageCommand extends Command {
     }
     /** @override */
     execute() {
-        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         if (viewContext.readerViewport) {
-            const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-            eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.NAVIGATE_PAGE, {
+            yuzora.publisher.publish(YuzoraEventType.NAVIGATE_PAGE, {
                 targetPage: this.targetPage
-            }));
+            });
         }
     }
     /** @override */
@@ -91,9 +89,9 @@ class UpdateConfigCommand extends Command {
     }
     /** @override */
     execute() {
-        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-        const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
-        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+        const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
         
         configModel[this.configKey] = this.configValue;
         updateSettingsUI(this.configKey, this.configValue);
@@ -130,7 +128,7 @@ class SyncBookmarkCommand extends Command {
     }
     /** @override */
     execute() {
-        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
         bookmarkModel.bookmarkProgress = this.progress;
     }
     /** @override */
@@ -154,7 +152,7 @@ class ToggleControlsCommand extends Command {
         if (this.visible) {
             triggerHeaderShow();
         } else {
-            const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+            const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
             if (viewContext.headerTimeout) clearTimeout(viewContext.headerTimeout);
             hideControls();
         }
@@ -178,7 +176,7 @@ class ToggleDrawerCommand extends Command {
     }
     /** @override */
     execute() {
-        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         const drawer = this.drawerId === "settings" ? viewContext.settingsDrawer : viewContext.tocDrawer;
         if (!drawer) return;
 
@@ -217,8 +215,8 @@ class ExitReaderCommand extends Command {
     }
     /** @override */
     execute() {
-        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-        const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
+        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+        const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
         viewContext.welcomeScreen.classList.remove("hidden");
         viewContext.readerScreen.classList.add("hidden");
         localStorage.removeItem("last_read_file_name");
@@ -242,7 +240,7 @@ class ClearStorageCommand extends Command {
     }
     /** @override */
     execute() {
-        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
         if (this.clearType === "bookmarks") {
             const keys = [];
             for (let i = 0; i < localStorage.length; i++) {
@@ -284,10 +282,9 @@ class ToggleDebugModalCommand extends Command {
     }
     /** @override */
     execute() {
-        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.TOGGLE_DEBUG_MODAL, {
+        yuzora.publisher.publish(YuzoraEventType.TOGGLE_DEBUG_MODAL, {
             open: this.open
-        }));
+        });
     }
     /** @override */
     toJSON() {
@@ -433,7 +430,7 @@ class CommandHistory {
         this.commandIndex = 0;
         
         // Mask UI to prevent user interactions during auto replay
-        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         if (viewContext.app) viewContext.app.classList.add('replaying');
 
         try {
@@ -458,17 +455,16 @@ class CommandHistory {
      * @private
      */
     notifyHistoryUpdated_() {
-        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.HISTORY_UPDATED, {
+        yuzora.publisher.publish(YuzoraEventType.HISTORY_UPDATED, {
             history: this.commandHistory.map(cmd => cmd.toJSON()),
             canUndo: false,
             canRedo: false
-        }));
+        });
     }
 
     /** @override */
     updateDebugMonitor() {
-        const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         if (viewContext.debugMonitor) {
             viewContext.debugMonitor.textContent = `History: ${this.commandHistory.length} operations.`;
         }
@@ -480,10 +476,10 @@ const CommandManagerClass = CommandHistory;
 
 // Register CommandHistory in Locator
 const globalCommandHistory = new CommandHistory();
-window.locator.register(CommandHistory, globalCommandHistory);
-window.locator.register(CommandManagerClass, globalCommandHistory); // For backwards compatibility
+locator.register(CommandHistory, globalCommandHistory);
+locator.register(CommandManagerClass, globalCommandHistory); // For backwards compatibility
 
 // Compatibility global variable
 /** @type {!CommandManagerInterface} */
-var CommandManager = /** @type {!CommandManagerInterface} */ (window.locator.resolve(CommandHistory));
+var CommandManager = /** @type {!CommandManagerInterface} */ (locator.resolve(CommandHistory));
 

@@ -70,4 +70,5 @@ class Locator {
 }
 
 // Global locator singleton instance
-window.locator = new Locator();
+const locator = new Locator();
+window['locator'] = locator;

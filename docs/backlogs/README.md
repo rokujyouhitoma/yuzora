@@ -37,7 +37,7 @@
 | **027** | Enhancement | Medium | Closed | Closure Compilerのコンパイルオプション厳格化 | [027-strict-closure-compiler-options.md](closed/027-strict-closure-compiler-options.md) |
 | **028** | Enhancement | Medium | Closed | Closure CompilerのADVANCED_OPTIMIZATIONS適用と警告の全面エラー化 | [028-advanced-closure-compiler-options.md](closed/028-advanced-closure-compiler-options.md) |
 | **029** | Refactor | Medium | Closed | クラス設計の統合とすべての状態・プロパティのカプセル化 | [029-consolidate-class-design-belonging-properties.md](closed/029-consolidate-class-design-belonging-properties.md) |
-| **030** | Refactor | Medium | Promoted | Yuzoraクラスのファイル分割とPublisher連携 | [030-extract-yuzora-class-and-use-publisher.md](030-extract-yuzora-class-and-use-publisher.md) |
+| **030** | Refactor | Medium | Closed | Yuzoraクラスのファイル分割とPublisher連携 | [030-extract-yuzora-class-and-use-publisher.md](closed/030-extract-yuzora-class-and-use-publisher.md) |
 
 ---
 

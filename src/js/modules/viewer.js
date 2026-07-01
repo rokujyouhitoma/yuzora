@@ -72,9 +72,9 @@ function loadPredefinedBook(book) {
 }
 
 function displayBook() {
-    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
 
     let parsedHTML = '';
     let title = bookModel.title;
@@ -123,8 +123,7 @@ function displayBook() {
         restoreScrollPosition();
         updateProgress();
         
-        const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-        eventBus.dispatchEvent(new YuzoraEvent(YuzoraEventType.BOOK_RENDERED));
+        yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
         setTimeout(() => {
             viewContext.isReflowing = false;
         }, 50);
@@ -132,14 +131,14 @@ function displayBook() {
 }
 
 function handleScroll() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (viewContext.isReflowing) return;
     updateProgress();
 }
 
 function updateProgress() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     if (!viewContext.readerViewport) return;
 
     const scrollLeft = Math.abs(viewContext.readerViewport.scrollLeft);
@@ -165,9 +164,9 @@ function updateProgress() {
 }
 
 function restoreScrollPosition() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
     if (configModel.direction === 'rtl') {
         // In vertical-rl, scrolling forward is in the negative direction.
@@ -179,24 +178,24 @@ function restoreScrollPosition() {
 }
 
 function restoreScrollPositionSmooth() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
     const targetScroll = configModel.direction === 'rtl' ? -(bookmarkModel.bookmarkProgress * maxScroll) : (bookmarkModel.bookmarkProgress * maxScroll);
     viewContext.readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
 }
 
 function saveBookmark() {
-    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     if (bookModel.title) {
         bookmarkModel.save(bookModel.title, bookmarkModel.bookmarkProgress);
     }
 }
 
 function nextPage() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const clientWidth = viewContext.readerViewport.clientWidth;
     const currentScroll = Math.abs(viewContext.readerViewport.scrollLeft);
     const pageCount = Math.round(viewContext.readerViewport.scrollWidth / clientWidth);
@@ -208,7 +207,7 @@ function nextPage() {
 }
 
 function prevPage() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const clientWidth = viewContext.readerViewport.clientWidth;
     const currentScroll = Math.abs(viewContext.readerViewport.scrollLeft);
     const currentPage = Math.round(currentScroll / clientWidth) + 1;
@@ -219,9 +218,9 @@ function prevPage() {
 }
 
 function scrollToPage(pageNumber) {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const clientWidth = viewContext.readerViewport.clientWidth;
     const targetScrollLeft = (pageNumber - 1) * clientWidth;
     
@@ -242,9 +241,9 @@ function scrollToPage(pageNumber) {
 }
 
 function handleResize() {
-    const viewContext = /** @type {!ViewContextInterface} */ (window.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (window.locator.resolve(ConfigModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     // Avoid double reflow trigger cycles
     if (viewContext.isReflowing) return;
     
@@ -276,8 +275,8 @@ function handleResize() {
 }
 
 function checkLastSession() {
-    const bookModel = /** @type {!BookModelInterface} */ (window.locator.resolve(BookModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (window.locator.resolve(BookmarkModel));
+    const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
+    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const lastProgress = localStorage.getItem(`bookmark_${bookModel.title}`);
     if (lastProgress) {
         bookmarkModel.bookmarkProgress = parseFloat(lastProgress);
@@ -289,16 +288,14 @@ function checkLastSession() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const eventBus = /** @type {!YuzoraEventTargetInterface} */ (window.locator.resolve(YuzoraEventTarget));
-
     // Listen to book loading requests
-    eventBus.addEventListener(YuzoraEventType.BOOK_LOADED, (e) => {
+    yuzora.publisher.subscribe(YuzoraEventType.BOOK_LOADED, () => {
         displayBook();
     });
 
     // Listen to page navigation requests
-    eventBus.addEventListener(YuzoraEventType.NAVIGATE_PAGE, (e) => {
-        const detail = /** @type {{targetPage: number}} */ (e.detail);
-        scrollToPage(detail.targetPage);
+    yuzora.publisher.subscribe(YuzoraEventType.NAVIGATE_PAGE, (detail) => {
+        const pageDetail = /** @type {{targetPage: number}} */ (detail);
+        scrollToPage(pageDetail.targetPage);
     });
 });

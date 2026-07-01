@@ -232,7 +232,7 @@ class ConfigModel {
     apply() {
         document.body.className = `theme-${this.theme}`;
 
-        const viewContext = /** @type {!ViewContext} */ (window.locator.resolve(ViewContext));
+        const viewContext = /** @type {!ViewContext} */ (Yuzora.locator.resolve(ViewContext));
         if (!viewContext.readerContent || !viewContext.readerViewport) return;
 
         viewContext.readerViewport.style.direction = this.direction;
@@ -342,12 +342,12 @@ var PREDEFINED_BOOKS = [
 
 // Compatibility wrapper function
 function initializeDOMElements() {
-    window.locator.resolve(ViewContext).initializeDOMElements();
+    Yuzora.locator.resolve(ViewContext).initializeDOMElements();
 }
 
 // Register ViewContext and new Models in the global locator
 const globalViewContext = new ViewContext();
-window.locator.register(ViewContext, globalViewContext);
-window.locator.register(BookModel, new BookModel());
-window.locator.register(ConfigModel, new ConfigModel());
-window.locator.register(BookmarkModel, new BookmarkModel());
+locator.register(ViewContext, globalViewContext);
+locator.register(BookModel, new BookModel());
+locator.register(ConfigModel, new ConfigModel());
+locator.register(BookmarkModel, new BookmarkModel());

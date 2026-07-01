@@ -11,14 +11,19 @@ var localStorage;
 /** @type {!LocatorInterface} */
 Window.prototype.locator;
 
-/** @type {!YuzoraInterface} */
+/** @type {function(new:YuzoraInterface)} */
 Window.prototype.Yuzora;
+/** @type {!YuzoraInterface} */
+Window.prototype.yuzora;
 /** @type {Object} */
 Window.prototype.YuzoraEvent;
 /** @type {Object} */
 Window.prototype.YuzoraEventTarget;
 /** @type {Object} */
 Window.prototype.Publisher;
+
+/** @type {!YuzoraInterface} */
+var yuzora;
 
 // CSSStyleDeclaration prototype extensions
 /** @type {string} */
@@ -405,6 +410,12 @@ var fileContent;
 function YuzoraInterface() {}
 /** @type {!LocatorInterface} */
 YuzoraInterface.prototype.locator;
+/** @type {!PublisherInterface} */
+YuzoraInterface.prototype.publisher;
+/** @type {function(new:YuzoraInterface)} */
+YuzoraInterface.prototype.constructor;
+/** @type {!LocatorInterface} */
+YuzoraInterface.prototype.constructor.locator;
 /** @type {function():void} */
 YuzoraInterface.prototype.boot = function() {};
 /** @type {function(string):{title: string, body: string}} */
@@ -480,7 +491,7 @@ PublisherInterface.prototype.subscribe = function(topic, callback) {};
 PublisherInterface.prototype.unsubscribe = function(topic, callback) {};
 /**
  * @param {string} topic
- * @param {*} data
+ * @param {*=} data
  */
 PublisherInterface.prototype.publish = function(topic, data) {};
 
