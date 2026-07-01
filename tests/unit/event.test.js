@@ -110,4 +110,77 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
         eventBus.dispatchEvent(new YuzoraEvent('remove-test'));
         assert.strictEqual(count, 1); // Should remain 1
     });
+
+    test('should resolve Publisher in locator and support subscribe/publish', () => {
+        const { locator, Publisher } = window;
+        assert.ok(Publisher);
+        const publisher = locator.resolve(Publisher);
+        assert.ok(publisher instanceof Publisher);
+
+        let receivedData = null;
+        const callback = (data) => {
+            receivedData = data;
+        };
+
+        publisher.subscribe('pubsub-test', callback);
+        publisher.publish('pubsub-test', { val: 456 });
+        assert.deepStrictEqual(receivedData, { val: 456 });
+
+        // Cleanup
+        publisher.unsubscribe('pubsub-test', callback);
+    });
+
+    test('should stop notifying subscriber after unsubscribe is called', () => {
+        const { locator, Publisher } = window;
+        const publisher = locator.resolve(Publisher);
+
+        let count = 0;
+        const callback = () => {
+            count++;
+        };
+
+        publisher.subscribe('unsubscribe-test', callback);
+        publisher.publish('unsubscribe-test');
+        assert.strictEqual(count, 1);
+
+        publisher.unsubscribe('unsubscribe-test', callback);
+        publisher.publish('unsubscribe-test');
+        assert.strictEqual(count, 1); // Should remain 1
+    });
+
+    test('should support same callback registered on multiple topics independently', () => {
+        const { locator, Publisher } = window;
+        const publisher = locator.resolve(Publisher);
+
+        let lastTopic = null;
+        let count = 0;
+        const callback = (data) => {
+            count++;
+            lastTopic = data;
+        };
+
+        publisher.subscribe('topic-a', callback);
+        publisher.subscribe('topic-b', callback);
+
+        publisher.publish('topic-a', 'A');
+        assert.strictEqual(count, 1);
+        assert.strictEqual(lastTopic, 'A');
+
+        publisher.publish('topic-b', 'B');
+        assert.strictEqual(count, 2);
+        assert.strictEqual(lastTopic, 'B');
+
+        // Unsubscribe one topic
+        publisher.unsubscribe('topic-a', callback);
+
+        publisher.publish('topic-a', 'A');
+        assert.strictEqual(count, 2); // No change
+
+        publisher.publish('topic-b', 'B2');
+        assert.strictEqual(count, 3); // Incremented
+        assert.strictEqual(lastTopic, 'B2');
+
+        // Cleanup
+        publisher.unsubscribe('topic-b', callback);
+    });
 });

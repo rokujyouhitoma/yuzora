@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added 状態更新やデータ同期の疎結合な通知配信フローを実現するため、`YuzoraEventTarget` を内包した `Publisher` クラスによる Publish/Subscribe パターンを導入 (ID: 030)。
+- Changed `Makefile` および `index.html` に `src/js/modules/publisher.js` を追加し、ビルド定義および開発用スクリプト読み込みへの統合を完了 (ID: 030)。
+- Added `tests/unit/event.test.js` に `Publisher` の購読、配信、二重登録防止、および同一リスナーの複数トピック独立動作を検証する単体テストを追加 (ID: 030)。
+
 - Fixed ESLint循環的複雑度（Cyclomatic Complexity）の制限値超過を解消するため、`ConfigModel.load`、`handleDebugKeyboardShortcuts`、および `setupDrawerControls` を複数のヘルパーメソッド・関数にリファクタリング・分割 (ID: 029)。
 - Added ビルド前に静的検証が必ず実行されるよう、`Makefile` に `lint` ターゲットを追加し、`all` ターゲットの依存関係に設定 (ID: 029)。
 

@@ -17,6 +17,8 @@ Window.prototype.Yuzora;
 Window.prototype.YuzoraEvent;
 /** @type {Object} */
 Window.prototype.YuzoraEventTarget;
+/** @type {Object} */
+Window.prototype.Publisher;
 
 // CSSStyleDeclaration prototype extensions
 /** @type {string} */
@@ -460,5 +462,26 @@ YuzoraEventTargetInterface.prototype.removeEventListener = function(type, listen
  * @param {!YuzoraEventInterface} event
  */
 YuzoraEventTargetInterface.prototype.dispatchEvent = function(event) {};
+
+// Publisher Interface definition
+/**
+ * @interface
+ */
+function PublisherInterface() {}
+/**
+ * @param {string} topic
+ * @param {function(*):void} callback
+ */
+PublisherInterface.prototype.subscribe = function(topic, callback) {};
+/**
+ * @param {string} topic
+ * @param {function(*):void} callback
+ */
+PublisherInterface.prototype.unsubscribe = function(topic, callback) {};
+/**
+ * @param {string} topic
+ * @param {*} data
+ */
+PublisherInterface.prototype.publish = function(topic, data) {};
 
 
