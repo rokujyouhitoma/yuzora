@@ -217,11 +217,10 @@ class ExitReaderCommand extends Command {
     execute() {
         const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
+        const sessionRepo = /** @type {!SessionRepositoryInterface} */ (Yuzora.locator.resolve(SessionRepository));
         viewContext.welcomeScreen.classList.remove("hidden");
         viewContext.readerScreen.classList.add("hidden");
-        localStorage.removeItem("last_read_file_name");
-        localStorage.removeItem("last_read_file_content");
-        localStorage.removeItem("last_read_file_type");
+        sessionRepo.clear();
         bookModel.clear();
     }
     /** @override */
@@ -241,24 +240,22 @@ class ClearStorageCommand extends Command {
     /** @override */
     execute() {
         const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
+        const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
+        const settingsRepo = /** @type {!SettingsRepositoryInterface} */ (Yuzora.locator.resolve(SettingsRepository));
+        const sessionRepo = /** @type {!SessionRepositoryInterface} */ (Yuzora.locator.resolve(SessionRepository));
         if (this.clearType === "bookmarks") {
-            const keys = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith("bookmark_")) {
-                    keys.push(key);
-                }
-            }
-            keys.forEach(k => localStorage.removeItem(k));
+            bookmarkRepo.clearAll();
             bookmarkModel.bookmarkProgress = 0;
             checkLastSession();
         } else if (this.clearType === "config") {
-            localStorage.removeItem("yuzora_config");
+            settingsRepo.clear();
             if (!CommandManager.isReplaying) {
                 window.location.reload();
             }
         } else if (this.clearType === "all") {
-            localStorage.clear();
+            bookmarkRepo.clearAll();
+            settingsRepo.clear();
+            sessionRepo.clear();
             if (!CommandManager.isReplaying) {
                 window.location.reload();
             }

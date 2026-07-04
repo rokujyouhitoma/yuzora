@@ -4,7 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- Added `Yuzora` アプリケーション起動クラスを `ui.js` から独立した `yuzora.js` ファイルへ分割・抽出し、`publisher` 属性バインドと immediate ブート方式を導入して DOMContentLoaded でのレースコンディションを解消 (ID: 031)。
+- Added `src/js/modules/repository.js` を新規作成し、ストレージ抽象化のための Repository パターンを導入。`Repository` 抽象基底クラス、`LocalStorageRepository`（`localStorage` バックエンド）、`InMemoryRepository`（テスト・モック用 `Map` バックエンド）を実装 (ID: 032)。
+- Added ドメインリポジトリとして `SettingsRepository`（`yuzora_config` キーを管理）、`BookmarkRepository`（`bookmark_` プレフィックスキーを管理）、`SessionRepository`（`last_read_file_*` キーを管理）を実装し、ストレージキーのマジックストリングをカプセル化 (ID: 032)。
+- Changed `config.js` の `ConfigModel.load()`, `ConfigModel.save()`, `BookmarkModel.load()`, `BookmarkModel.save()` を `SettingsRepository` / `BookmarkRepository` 経由に移行し、`localStorage` への直接参照を排除 (ID: 032)。
+- Changed `viewer.js` の `displayBook()`, `checkLastSession()` を `BookmarkRepository` 経由に移行し、`localStorage` への直接参照を排除 (ID: 032)。
+- Changed `commands.js` の `ExitReaderCommand`, `ClearStorageCommand` を `SessionRepository`, `BookmarkRepository`, `SettingsRepository` 経由に移行し、`localStorage` への直接参照を排除 (ID: 032)。
+- Changed `yuzora.js` の `boot()` 内のセッション復元処理を `SessionRepository` 経由に移行し、`localStorage` への直接参照を排除 (ID: 032)。
+- Added `src/externs.js` に `RepositoryInterface`, `SettingsRepositoryInterface`, `BookmarkRepositoryInterface`, `SessionRepositoryInterface` のインターフェース定義および `Object.prototype` プロパティ保護定義を追加し、ADVANCED_OPTIMIZATIONS でのリネームを防止 (ID: 032)。
+- Added `tests/unit/repository.test.js` を新規作成し、`InMemoryRepository`、`SettingsRepository`、`BookmarkRepository`、`SessionRepository` の CRUD、境界値、エラーハンドリング、差し替え可能性を検証する26件のユニットテストを追加 (ID: 032)。
+- Changed `Makefile` のビルドチェーンに `repository.js` を追加（`locator.js` の直後）(ID: 032)。
+- Changed `package.json` の `test:unit` スクリプトに `repository.test.js` を追加 (ID: 032)。
+
 - Changed 各モジュールにおけるイベントハンドラの登録・発火を `yuzora.publisher` 経由に統一し、依存関係の解決を `Yuzora.locator` 経由で行うようにグローバルプレフィックス（`window.locator`）をクリーンアップ (ID: 031)。
 - Changed `externs.js` に `YuzoraInterface.prototype.publisher` および `Function.prototype.locator` の定義を追加し、アドバンスドコンパイルでのプロパティ名破損および collapsing を防止 (ID: 031)。
 

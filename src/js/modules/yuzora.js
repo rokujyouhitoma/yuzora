@@ -95,9 +95,11 @@ class Yuzora {
         });
 
         // Check last session for auto-restore
-        const lastName = localStorage.getItem("last_read_file_name");
-        const lastContent = localStorage.getItem("last_read_file_content");
-        const lastType = localStorage.getItem("last_read_file_type");
+        const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
+        const lastSession = sessionRepo.load();
+        const lastName = lastSession.name;
+        const lastContent = lastSession.content;
+        const lastType = lastSession.type;
 
         if (lastName && lastContent) {
             const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));

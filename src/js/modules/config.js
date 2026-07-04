@@ -185,16 +185,10 @@ class ConfigModel {
 
     /** @override */
     load() {
-        try {
-            const saved = localStorage.getItem('yuzora_config');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                if (parsed && typeof parsed === "object") {
-                    this.applyParsed_(/** @type {!Object<string, string>} */ (parsed));
-                }
-            }
-        } catch (e) {
-            console.warn("Failed to load configuration settings from localStorage:", e);
+        const settingsRepo = /** @type {!SettingsRepositoryInterface} */ (Yuzora.locator.resolve(SettingsRepository));
+        const parsed = settingsRepo.load();
+        if (parsed && typeof parsed === "object" && Object.keys(parsed).length > 0) {
+            this.applyParsed_(/** @type {!Object<string, string>} */ (parsed));
         }
     }
 
@@ -213,19 +207,15 @@ class ConfigModel {
 
     /** @override */
     save() {
-        try {
-            const data = {
-                'theme': this.theme,
-                'font': this.font,
-                'direction': this.direction,
-                'size': this.size,
-                'lh': this.lh,
-                'spacing': this.spacing
-            };
-            localStorage.setItem('yuzora_config', JSON.stringify(data));
-        } catch (e) {
-            console.warn("Failed to save configuration settings to localStorage:", e);
-        }
+        const settingsRepo = /** @type {!SettingsRepositoryInterface} */ (Yuzora.locator.resolve(SettingsRepository));
+        settingsRepo.save({
+            'theme': this.theme,
+            'font': this.font,
+            'direction': this.direction,
+            'size': this.size,
+            'lh': this.lh,
+            'spacing': this.spacing
+        });
     }
 
     /** @override */
@@ -287,11 +277,8 @@ class BookmarkModel {
     save(fileName, progress) {
         if (fileName) {
             this.bookmarkProgress = progress;
-            try {
-                localStorage.setItem(`bookmark_${fileName}`, progress.toString());
-            } catch (e) {
-                console.warn("Failed to save bookmark position to localStorage:", e);
-            }
+            const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
+            bookmarkRepo.save(fileName, progress);
         }
     }
 
@@ -305,17 +292,8 @@ class BookmarkModel {
             this.bookmarkProgress = 0;
             return 0;
         }
-        try {
-            const savedProgress = localStorage.getItem(`bookmark_${fileName}`);
-            if (savedProgress) {
-                this.bookmarkProgress = parseFloat(savedProgress);
-            } else {
-                this.bookmarkProgress = 0;
-            }
-        } catch (e) {
-            console.warn("Failed to load bookmark position from localStorage:", e);
-            this.bookmarkProgress = 0;
-        }
+        const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
+        this.bookmarkProgress = bookmarkRepo.load(fileName);
         return this.bookmarkProgress;
     }
 

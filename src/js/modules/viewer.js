@@ -110,12 +110,8 @@ function displayBook() {
     viewContext.readerScreen.classList.remove('hidden');
 
     // Check if there is a saved bookmark for this file
-    const savedProgress = localStorage.getItem(`bookmark_${bookModel.title}`);
-    if (savedProgress) {
-        bookmarkModel.bookmarkProgress = parseFloat(savedProgress);
-    } else {
-        bookmarkModel.bookmarkProgress = 0;
-    }
+    const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
+    bookmarkModel.bookmarkProgress = bookmarkRepo.load(bookModel.title);
 
     // Wait a tick for rendering to complete before restoring scroll position
     viewContext.isReflowing = true;
@@ -277,12 +273,8 @@ function handleResize() {
 function checkLastSession() {
     const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
-    const lastProgress = localStorage.getItem(`bookmark_${bookModel.title}`);
-    if (lastProgress) {
-        bookmarkModel.bookmarkProgress = parseFloat(lastProgress);
-    } else {
-        bookmarkModel.bookmarkProgress = 0;
-    }
+    const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
+    bookmarkModel.bookmarkProgress = bookmarkRepo.load(bookModel.title);
     restoreScrollPosition();
     updateProgress();
 }

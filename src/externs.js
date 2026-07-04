@@ -7,6 +7,81 @@
 var localStorageKeys;
 var localStorage;
 
+// Repository Interface definition in externs
+/**
+ * @interface
+ */
+function RepositoryInterface() {}
+/**
+ * @param {string} key
+ * @return {?string}
+ */
+RepositoryInterface.prototype.get = function(key) {};
+/**
+ * @param {string} key
+ * @param {string} value
+ */
+RepositoryInterface.prototype.save = function(key, value) {};
+/**
+ * @param {string} key
+ */
+RepositoryInterface.prototype.delete = function(key) {};
+/**
+ * @return {!Array<string>}
+ */
+RepositoryInterface.prototype.keys = function() {};
+RepositoryInterface.prototype.clear = function() {};
+
+// SettingsRepository Interface definition in externs
+/**
+ * @interface
+ */
+function SettingsRepositoryInterface() {}
+/**
+ * @return {!Object<string, string>}
+ */
+SettingsRepositoryInterface.prototype.load = function() {};
+/**
+ * @param {!Object<string, string>} configObject
+ */
+SettingsRepositoryInterface.prototype.save = function(configObject) {};
+SettingsRepositoryInterface.prototype.clear = function() {};
+
+// BookmarkRepository Interface definition in externs
+/**
+ * @interface
+ */
+function BookmarkRepositoryInterface() {}
+/**
+ * @param {string} fileName
+ * @return {number}
+ */
+BookmarkRepositoryInterface.prototype.load = function(fileName) {};
+/**
+ * @param {string} fileName
+ * @param {number} progress
+ */
+BookmarkRepositoryInterface.prototype.save = function(fileName, progress) {};
+BookmarkRepositoryInterface.prototype.clearAll = function() {};
+
+// SessionRepository Interface definition in externs
+/**
+ * @interface
+ */
+function SessionRepositoryInterface() {}
+/**
+ * @return {{name: ?string, content: ?string, type: ?string}}
+ */
+SessionRepositoryInterface.prototype.load = function() {};
+/**
+ * @param {string} name
+ * @param {string} content
+ * @param {string} type
+ */
+SessionRepositoryInterface.prototype.save = function(name, content, type) {};
+SessionRepositoryInterface.prototype.clear = function() {};
+
+
 // Window prototype expansions
 /** @type {!LocatorInterface} */
 Window.prototype.locator;
@@ -394,6 +469,21 @@ Object.prototype.tabContentMonitor;
 Object.prototype.tabContentDiagnose;
 /** @type {?} */
 Object.prototype.localStorageKeys;
+/** @type {?} */
+Object.prototype.storage;
+/** @type {?} */
+Object.prototype.store;
+/** @type {?} */
+Object.prototype._KEY;
+/** @type {?} */
+Object.prototype._PREFIX;
+/** @type {?} */
+Object.prototype._KEY_NAME;
+/** @type {?} */
+Object.prototype._KEY_CONTENT;
+/** @type {?} */
+Object.prototype._KEY_TYPE;
+
 
 // Command subclasses parameter property protection
 var targetPage;
