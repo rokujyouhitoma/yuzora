@@ -2,7 +2,7 @@
 ID: 025
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 (ID: 025)
