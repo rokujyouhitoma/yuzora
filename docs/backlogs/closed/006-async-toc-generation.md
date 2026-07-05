@@ -2,7 +2,7 @@
 ID: 006
 種別: Enhancement
 優先度: Low
-ステータス: Promoted
+ステータス: Closed
 ---
 
 # [ENH] 非同期処理による目次抽出および描画の高速化 (ID: 006)

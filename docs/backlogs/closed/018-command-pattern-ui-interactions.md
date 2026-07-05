@@ -2,7 +2,7 @@
 ID: 018
 種別: Feature
 優先度: Medium
-ステータス: Promoted
+ステータス: Closed
 ---
 
 # [FEAT] CommandパターンによるUI表示操作（ボタン・ドロワー・メニュー表示状態）の記録と再現 (ID: 018)

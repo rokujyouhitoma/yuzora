@@ -2,7 +2,7 @@
 ID: 014
 種別: Enhancement
 優先度: Medium
-ステータス: Promoted
+ステータス: Closed
 ---
 
 # [ENH] デバッグ画面の拡大表示（大部分をカバーする広幅ウィンドウ化） (ID: 014)

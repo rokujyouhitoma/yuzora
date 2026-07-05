@@ -2,7 +2,7 @@
 ID: 021
 種別: Refactor
 優先度: Medium
-ステータス: Promoted
+ステータス: Closed
 ---
 
 # [REFACTOR] Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 (ID: 021)
