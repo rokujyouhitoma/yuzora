@@ -2,7 +2,7 @@
 ID: 036
 種別: Feature
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT] Routerの実装とURLによる状態ディスパッチ機能 (ID: 036)
