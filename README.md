@@ -37,7 +37,9 @@
 11. **ドメインモデル分離、Yuzora クラス抽出と Service Locator によるクリーン設計**
     * アプリケーションのビジネスデータや設定、永続化ロジック等を専用 of ドメインモデルクラス（`BookModel`, `ConfigModel`, `BookmarkModel`）とUIコンテキスト管理クラス（`ViewContext`）に明確に分離。また、コアとなる `Yuzora` クラスを独立したモジュールへ分割。これらは Service Locator（`Locator`）にインスタンス登録（`Yuzora.locator` 経由）されて解決されるため、隠れたグローバル変数や `window` プロキシ依存が完全に排除され、コンパイラの厳格モード（strict）による高度な型チェックと完璧な圧縮・難読化を支えています。
 12. **画面遷移（シーン遷移）状態管理フレームワークによる一元管理**
-    * アプリケーション全体の画面状態（ウェルカム画面 `#welcome-screen` ⇔ 読書画面 `#reader-screen`）の切り替えを、ライフサイクルメソッド（`enter`、`exit`）を持つ `Scene` クラスと `SceneDirector` クラスにより抽象化。遷移状態を一元制御し、遷移中の二重処理防止（`isTransitioning` ガード）を保証するとともに、将来的なイベントリスナーデタッチなどのクリーンアップ処理の拡張ポイントを標準化しました。
+    * アプリケーション全体の画面状態（ウェルカム画面 `#welcome-screen` ⇔ 読書画面 `#reader-screen`）の切り替えを、ライフサイクルメソッド（`enter`、`exit`）を持つ `Scene` クラスと `SceneDirector` クラスにより抽象化。遷移状態を一元制御し、遷移中の二重処理防止（`isTransitioning` ガード）を保証。さらに、画面の切り替えに連動してUIイベントリスナー（welcomeListeners / readerListeners）の動的登録および `removeEventListener` による漏れなき削除を完全自動化し、メモリリークと多重登録バグを恒久対策しました。
+13. **URLハッシュベースの Router による履歴と状態のディスパッチ**
+    * `location.hash` の値（`#/welcome`、`#/reader?book=xxx`、`#/reader?local=xxx`）を監視して画面状態や書籍ロードをディスパッチする `Router` を導入。これにより推奨書籍へのディープリンク（直リンク）や、ブラウザの「戻る」「進む」キーによる履歴操作、リロード時の自動復元といった標準的なWeb SPAとしての挙動を完全に実現しています。
 
 ---
 

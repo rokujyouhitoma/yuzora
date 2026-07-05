@@ -28,13 +28,17 @@ graph TD
         subgraph Controller["Controller (制御層)"]
             subgraph JSModules["JS modules/*"]
                 JS_Locator["locator.js"]
+                JS_Scene["scene.js"]
+                JS_Router["router.js"]
                 JS_Event["event.js"]
+                JS_Publisher["publisher.js"]
                 JS_Config["config.js"]
                 JS_Cmds["commands.js"]
                 JS_Parser["parser.js"]
                 JS_Diag["diagnostics.js"]
                 JS_Viewer["viewer.js"]
                 JS_UI["ui.js"]
+                JS_Yuzora["yuzora.js"]
             end
             JS_Bundle["main-min.js (makeで難読化)"]
         end
@@ -84,6 +88,18 @@ graph TD
 3. **設定ドロワー (Settings Drawer)**
    - 読書画面で「表示設定」ボタンを押した際に表示されるサイドメニュー。
    - テーマ、フォント、文字サイズ、行間、文字間などのリアルタイム変更を制御。
+
+### 2.2 ハッシュルーティングによる状態遷移管理 (Hash Routing & Scene State Management)
+
+Yuzoraは、画面の遷移状態（ウェルカム画面 ⇔ 読書画面）および読み込むべき書籍のディスパッチを、ブラウザのURLハッシュ値を利用して一元管理します（ハッシュルーティング）。
+
+- **ハッシュ設計**:
+  - `#/welcome` : 初期表示 / ウェルカム画面
+  - `#/reader?book={bookId}` : 指定した推奨書籍（マスターデータ）の直接ロードと読書画面表示
+  - `#/reader?local={fileName}` : 最後にインポートされたローカル書籍のしおり自動復元と読書画面表示（復元不可能な場合は `#/welcome` へフォールバック）
+- **遷移制御一方向フロー**:
+  ユーザー操作（オススメ本クリック等） ➔ `location.hash` の変更 ➔ `hashchange` イベント検知 ➔ `Router` がパスとクエリをパース ➔ `SceneDirector.transitionTo()` による画面ライフサイクル（`enter` / `exit`）の切り替え。これにより、ブラウザの「進む」「戻る」履歴遷移が完全に保証されます。
+
 
 ### 2.2 システムデータフローダイアグラム (Data Flow Diagram: DFD)
 

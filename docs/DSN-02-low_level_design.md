@@ -90,8 +90,20 @@
 - **メソッド**:
   - `transitionTo(sceneName, data)`: `currentScene.exit()` -> `nextScene.enter(data)` の順序でライフサイクルメソッドを実行し、遷移を完了させます。
 
+#### 1.2.7 `Router` (ハッシュルーティングマネージャー)
+URLハッシュ（ハッシュルーティング）を用いた画面遷移および状態の解決を担当します。
+- **プロパティ**:
+  - `routes` (`Array<{pattern: !RegExp, callback: !Function}>`): 登録されているルートパターンのリスト。
+  - `currentHash` (`string | null`): 現在アクティブなURLハッシュ値。初期値は `null`。
+- **メソッド**:
+  - `register(pattern, callback)`: ルートパスパターンを登録します（正規表現に内部変換）。
+  - `resolve(hash)`: ハッシュ値を解析し、合致するルートコールバックを実行します（`currentHash` 重複防止ガード付き）。
+  - `listen()`: `hashchange` イベントの監視および初期ロード時のハッシュパースを開始します。
+  - `navigate(hash)`: アプリ内部からハッシュ値を強制更新して画面遷移をトリガーします。
+
 ### 1.3 依存注入・サービスロケーターへの登録クラス
-起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector` が Locator に登録されます。
+起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector` および `Router` が Locator に登録されます。
+
 
 
 ### 1.4 イベント駆動アーキテクチャ (Event Driven Architecture)
@@ -162,15 +174,43 @@ sequenceDiagram
     Note over SD: isTransitioning = false (ガード解除)
 ```
 
-#### 1.5.2 具体的なシーン定義
+#### 1.5.2 具体的なシーン定義とUIイベントライフサイクル
 
 1. **`WelcomeScene`** (ウェルカム画面)
-   - `enter(data)`: `#welcome-screen` の `.hidden` クラスを削除し、`#reader-screen` に `.hidden` クラスを追加します。
-   - `exit()`: `#welcome-screen` に `.hidden` クラスを追加します。
+   - `enter(data)`: `#welcome-screen` の `.hidden` クラスを削除し、`#reader-screen` に `.hidden` クラスを追加します。また、`setupWelcomeEvents()` を呼び出して以下のイベント登録と初期描画を行います：
+     - ドラッグ＆ドロップゾーン（`#drop-zone`）のドラッグイベント。
+     - ファイル選択要素（`#file-input`）のファイル選択変更（`change`）イベント。
+     - オススメ書籍（宮本武蔵等）のカードグリッドの動的構築と各カードのクリックイベント（ハッシュ書き換え）。
+   - `exit()`: `#welcome-screen` に `.hidden` クラスを追加し、`cleanupWelcomeEvents()` を呼び出して、ウェルカム画面内で登録されていたすべてのイベントリスナー参照（`welcomeListeners` 配列管理）をデタッチします。
 
 2. **`ReaderScene`** (読書画面)
-   - `enter(data)`: `#reader-screen` の `.hidden` クラスを削除し、`#welcome-screen` に `.hidden` クラスを追加します。
-   - `exit()`: `#reader-screen` に `.hidden` クラスを追加します。将来的な読書中のスクロール監視等のイベントリスナー解除（メモリリーク防止）をここで行います。
+   - `enter(data)`: `#reader-screen` の `.hidden` クラスを削除し、`#welcome-screen` に `.hidden` クラスを追加します。また、`setupReaderEvents()` を呼び出して以下のイベント登録を行います：
+     - 読書ビューアー操作（`#reader-viewport`）のスクロールイベント。
+     - ヘッダー・フッターの表示トグル・キーボードショートカットイベント。
+     - 各種設定ドロワー・TOCドロワーの開閉および項目選択イベント。
+     - 画面リサイズ監視（リフロー用オブザーバー）の設定。
+   - `exit()`: `#reader-screen` に `.hidden` クラスを追加し、`cleanupReaderEvents()` を呼び出して、読書画面に関連するすべてのイベントハンドラー、キーボードリスナー、およびオブザーバー（`readerListeners` 配列管理）を漏れなくデタッチし、メモリ解放と状態クリーンアップを行います。
+
+#### 1.5.3 ルーティングとシーン遷移の連携シーケンス (URL Hash & Scene Transition Flow)
+
+```mermaid
+sequenceDiagram
+    actor User as ユーザー
+    participant Window as ブラウザ (window)
+    participant R as Router
+    participant SD as SceneDirector
+    participant NS as 遷移先 Scene
+    participant View as 表示層 (DOM)
+
+    User->>View: オススメ本カードをクリック
+    View->>Window: location.hash = "#/reader?book=kokoro"
+    Window->>R: hashchange イベント発火 (resolve)
+    Note over R: currentHash と一致するか検証 (重複ガード)
+    R->>SD: route コールバック実行 (Scene遷移指示)
+    SD->>SD: transitionTo("reader") (多重ガード)
+    SD->>NS: enter()
+    NS->>View: 画面表示切替 & イベントセットアップ
+```
 
 ---
 
