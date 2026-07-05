@@ -43,6 +43,7 @@
 | **032** | Refactor | Medium | Closed | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | AI Agent | [032-implement-repository.md](closed/032-implement-repository.md) |
 | **002** | Bug | High | Closed | E2Eテスト「RTLモードでのスワイプジェスチャー」が失敗する | AI Agent | [002-e2e-swipe-gesture-test-failure-rtl.md](closed/002-e2e-swipe-gesture-test-failure-rtl.md) |
 | **033** | Bug | High | Closed | GitHub Actions デプロイワークフローで `eslint: not found` エラーが発生する | AI Agent | [033-ci-deploy-npm-install-missing.md](closed/033-ci-deploy-npm-install-missing.md) |
+| **034** | Refactor | Medium | In Progress | Scene遷移フレームワーク（SceneDirector）の実装によるモジュール分離 | AI Agent | [034-implement-scene-director.md](034-implement-scene-director.md) |
 
 
 
