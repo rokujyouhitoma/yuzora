@@ -8,6 +8,11 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
     let window;
     let document;
 
+    let welcomeSetupCalled = 0;
+    let welcomeCleanupCalled = 0;
+    let readerSetupCalled = 0;
+    let readerCleanupCalled = 0;
+
     test.before(() => {
         // Setup JSDOM
         const dom = new JSDOM('<!DOCTYPE html><html><body><div id="welcome-screen"></div><div id="reader-screen" class="hidden"></div></body></html>', {
@@ -19,6 +24,17 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
 
         global.window = window;
         global.document = document;
+
+        // Mock event setup/cleanup calls
+        welcomeSetupCalled = 0;
+        welcomeCleanupCalled = 0;
+        readerSetupCalled = 0;
+        readerCleanupCalled = 0;
+
+        global.setupWelcomeEvents = () => { welcomeSetupCalled++; };
+        global.cleanupWelcomeEvents = () => { welcomeCleanupCalled++; };
+        global.setupReaderEvents = () => { readerSetupCalled++; };
+        global.cleanupReaderEvents = () => { readerCleanupCalled++; };
 
         // Mock locator and Yuzora objects
         // Scene.js uses Yuzora.locator.resolve(...)
@@ -85,6 +101,10 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
         delete global.InitializeScene;
         delete global.WelcomeScene;
         delete global.ReaderScene;
+        delete global.setupWelcomeEvents;
+        delete global.cleanupWelcomeEvents;
+        delete global.setupReaderEvents;
+        delete global.cleanupReaderEvents;
     });
 
     test('should transition to initialize, welcome, and reader scenes and only manipulate their own elements', () => {
@@ -97,11 +117,22 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
 
         const director = new SceneDirector();
 
+        // Reset spy counts
+        welcomeSetupCalled = 0;
+        welcomeCleanupCalled = 0;
+        readerSetupCalled = 0;
+        readerCleanupCalled = 0;
+
         // 1. Transition to initialize
         director.transitionTo("initialize");
         assert.strictEqual(welcomeScreen.classList.contains("hidden"), true, "welcomeScreen should be hidden on initialize");
         assert.strictEqual(readerScreen.classList.contains("hidden"), true, "readerScreen should be hidden on initialize");
         assert.strictEqual(director.currentSceneName, "initialize");
+
+        assert.strictEqual(welcomeSetupCalled, 0);
+        assert.strictEqual(welcomeCleanupCalled, 0);
+        assert.strictEqual(readerSetupCalled, 0);
+        assert.strictEqual(readerCleanupCalled, 0);
 
         // 2. Transition to welcome
         director.transitionTo("welcome");
@@ -109,11 +140,21 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
         assert.strictEqual(readerScreen.classList.contains("hidden"), true, "readerScreen should remain hidden on welcome");
         assert.strictEqual(director.currentSceneName, "welcome");
 
+        assert.strictEqual(welcomeSetupCalled, 1, "welcomeSetupCalled should be 1 after welcome enter");
+        assert.strictEqual(welcomeCleanupCalled, 0);
+        assert.strictEqual(readerSetupCalled, 0);
+        assert.strictEqual(readerCleanupCalled, 0);
+
         // 3. Transition to reader
         director.transitionTo("reader");
         assert.strictEqual(welcomeScreen.classList.contains("hidden"), true, "welcomeScreen should be hidden on reader");
         assert.strictEqual(readerScreen.classList.contains("hidden"), false, "readerScreen should be shown on reader");
         assert.strictEqual(director.currentSceneName, "reader");
+
+        assert.strictEqual(welcomeSetupCalled, 1);
+        assert.strictEqual(welcomeCleanupCalled, 1, "welcomeCleanupCalled should be 1 after welcome exit");
+        assert.strictEqual(readerSetupCalled, 1, "readerSetupCalled should be 1 after reader enter");
+        assert.strictEqual(readerCleanupCalled, 0);
     });
 
     test('should prevent double transition during transitionTo execution (isTransitioning guard)', () => {

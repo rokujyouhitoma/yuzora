@@ -67,6 +67,7 @@ class WelcomeScene extends Scene {
         if (viewContext.welcomeScreen) {
             viewContext.welcomeScreen.classList.remove("hidden");
         }
+        setupWelcomeEvents();
     }
 
     /**
@@ -77,6 +78,7 @@ class WelcomeScene extends Scene {
         if (viewContext.welcomeScreen) {
             viewContext.welcomeScreen.classList.add("hidden");
         }
+        cleanupWelcomeEvents();
     }
 }
 
@@ -94,6 +96,7 @@ class ReaderScene extends Scene {
         if (viewContext.readerScreen) {
             viewContext.readerScreen.classList.remove("hidden");
         }
+        setupReaderEvents();
     }
 
     /**
@@ -104,6 +107,7 @@ class ReaderScene extends Scene {
         if (viewContext.readerScreen) {
             viewContext.readerScreen.classList.add("hidden");
         }
+        cleanupReaderEvents();
     }
 }
 

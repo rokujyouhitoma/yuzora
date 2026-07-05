@@ -36,48 +36,9 @@ class Yuzora {
         // Transition to initial welcome scene
         sceneDirector.transitionTo("welcome");
 
-        // Setup predefined books grids on start welcome screen
-        if (viewContext.developerBooksGrid) {
-            viewContext.developerBooksGrid.innerHTML = "";
-            PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
-                const card = document.createElement("div");
-                card.className = "book-card";
-                card.setAttribute("data-book-id", book.id);
-                card.innerHTML = `
-                    <div class="book-card-title">${book.shortTitle}</div>
-                    <div class="book-card-author">${book.author}</div>
-                `;
-                card.addEventListener("click", () => {
-                    loadPredefinedBook(book.id);
-                });
-                viewContext.developerBooksGrid.appendChild(card);
-            });
-        }
-
-        if (viewContext.readerBooksGrid) {
-            viewContext.readerBooksGrid.innerHTML = "";
-            PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
-                const card = document.createElement("div");
-                card.className = "book-card";
-                card.setAttribute("data-book-id", book.id);
-                card.innerHTML = `
-                    <div class="book-card-title">${book.shortTitle}</div>
-                    <div class="book-card-author">${book.author}</div>
-                `;
-                card.addEventListener("click", () => {
-                    loadPredefinedBook(book.id);
-                });
-                viewContext.readerBooksGrid.appendChild(card);
-            });
-        }
-
         // Load Settings
         loadSettings();
         applySettings();
-
-        // Bind Event Listeners
-        setupEventListeners();
-        setupDrawerControls();
 
         // Listen to book rendered event to update UI controls and TOC observers
         this.publisher.subscribe(YuzoraEventType.BOOK_RENDERED, () => {

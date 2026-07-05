@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Refactored `ui.js` の `setupEventListeners` を解体し、ウェルカム画面用の `setupWelcomeEvents` / `cleanupWelcomeEvents` と読書画面用の `setupReaderEvents` / `cleanupReaderEvents` に分割。バインドしたイベントリスナー参照を管理用配列で保持し、デタッチ時に漏れなく解除できる仕組みを導入 (ID: 035)。
+- Changed `scene.js` の `WelcomeScene` および `ReaderScene` の `enter` / `exit` ライフサイクルで、画面表示切り替えに連動してそれぞれのイベントバインド・解除関数を呼び出すように変更。これにより、非アクティブ画面のイベントリスナーが完全に解除されるようになり、イベント多重登録の防止とメモリクリーンアップを標準化 (ID: 035)。
+- Changed `yuzora.js` の `boot()` から起動時のオススメ書籍表示の直接DOM構築および静的な `setupEventListeners` などの呼び出しを削除し、シーンライフサイクル側に委譲 (ID: 035)。
+- Changed `tests/unit/scene.test.js` に `WelcomeScene` / `ReaderScene` のライフサイクル移行時にイベントバインド・解除が正常に実行されるかを検証するユニットテストのアサーションを追加 (ID: 035)。
+
 - Added `src/js/modules/scene.js` を新規作成し、画面状態遷移をカプセル化する Scene 遷移フレームワーク（`Scene` 基底クラス、`InitializeScene`、`WelcomeScene`、`ReaderScene`、`SceneDirector`）を実装。遷移時の二重割り込み防止のため `isTransitioning` ガードフラグを導入 (ID: 034)。
 - Refactored `WelcomeScene` および `ReaderScene` が自分以外のDOM要素を操作しないよう責務を分離。起動時に画面全体のDOM要素表示状態を一括リセットする `InitializeScene` を導入 (ID: 034)。
 - Changed `yuzora.js` の `boot()` で `SceneDirector` インスタンスを Locator に登録し、初期化時 `initialize` に遷移後、`welcome` に遷移するよう変更 (ID: 034)。

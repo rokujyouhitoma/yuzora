@@ -612,5 +612,3 @@ SceneDirectorInterface.prototype.currentSceneName;
 /** @type {boolean} */
 SceneDirectorInterface.prototype.isTransitioning;
 
-
-
