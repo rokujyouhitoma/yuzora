@@ -27,7 +27,7 @@
 | **017** | Feature | High | Closed | GitHub Actions CI パイプラインと GitHub Pages デプロイ自動化の導入 | [017-github-actions-ci-and-pages-deploy.md](closed/017-github-actions-ci-and-pages-deploy.md) |
 | **018** | Feature | Medium | Promoted | CommandパターンによるUI表示操作の記録と再現 | [018-command-pattern-ui-interactions.md](closed/018-command-pattern-ui-interactions.md) |
 | **019** | Refactor | Medium | Closed | Locatorパターンによるグローバル変数の削減と依存関係の明確化 | [019-implement-locator-pattern.md](closed/019-implement-locator-pattern.md) |
-| **020** | Feature | Medium | Approved | Routerの実装とURLによる状態ディスパッチ機能 | [020-implement-router.md](020-implement-router.md) |
+| **020** | Feature | Medium | Promoted | Routerの実装とURLによる状態ディスパッチ機能 | [020-implement-router.md](closed/020-implement-router.md) |
 | **021** | Refactor | Medium | Promoted | Eventクラスの実装とイベントディスパッチャーによるモジュール疎結合化 | [021-implement-event-emitter.md](closed/021-implement-event-emitter.md) |
 | **022** | Refactor | Medium | Promoted | ビジネスロジック固有のイベント定義 | [022-define-domain-events.md](closed/022-define-domain-events.md) |
 | **023** | Refactor | Medium | Closed | Publish/Subscribe パターンによるイベント通知モデルの実装 | [023-implement-pubsub.md](closed/023-implement-pubsub.md) |
