@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `src/js/modules/router.js` を新規作成し、URLハッシュ（ハッシュルーティング）を用いて状態管理を行う `Router` クラスを実装。パラメータ（`:book` / `:local`）やクエリパラメータの抽出に対応 (ID: 036)。
+- Changed `yuzora.js` の `boot()` にて `Router` インスタンスを Locator に登録。`#/welcome` および `#/reader` ルートを登録し、`router.listen()` によるハッシュ監視を開始。リロード時の自動復元セッション検出時は `#/reader?local={name}` へリダイレクトするように変更 (ID: 036)。
+- Changed `ui.js` の推奨書籍カードのクリック動作を直接の書籍ロードから `window.location.hash` の書き換えに移行 (ID: 036)。
+- Changed `viewer.js` の `displayBook()` 完了時に、読み込んだ書籍の種類（推奨書籍 or ローカルファイル）に合わせて URL ハッシュを自動同期（循環防止のため `router.currentHash` を事前に設定）する処理を追加 (ID: 036)。
+- Changed `commands.js` の `ExitReaderCommand` の実行ロジックを直接の SceneDirector 呼び出しから `router.navigate('/welcome')` に移行 (ID: 036)。
+- Added `tests/unit/router.test.js` を新規作成し、ルート登録、パラメータ抽出（クエリパラメータ）、重複遷移防止ガード、`hashchange` イベント検知を検証する単体テストを追加し、`package.json` に登録 (ID: 036)。
+- Changed `src/externs.js` に `RouterInterface` 定義を追加し、Closure Compiler ADVANCED_OPTIMIZATIONS による名前解決破壊を防止 (ID: 036)。
+- Changed `Makefile` のビルドソース `JS_SRCS` および `index.html` に `router.js` を追加 (ID: 036)。
+
 - Refactored `ui.js` の `setupEventListeners` を解体し、ウェルカム画面用の `setupWelcomeEvents` / `cleanupWelcomeEvents` と読書画面用の `setupReaderEvents` / `cleanupReaderEvents` に分割。バインドしたイベントリスナー参照を管理用配列で保持し、デタッチ時に漏れなく解除できる仕組みを導入 (ID: 035)。
 - Changed `scene.js` の `WelcomeScene` および `ReaderScene` の `enter` / `exit` ライフサイクルで、画面表示切り替えに連動してそれぞれのイベントバインド・解除関数を呼び出すように変更。これにより、非アクティブ画面のイベントリスナーが完全に解除されるようになり、イベント多重登録の防止とメモリクリーンアップを標準化 (ID: 035)。
 - Changed `yuzora.js` の `boot()` から起動時のオススメ書籍表示の直接DOM構築および静的な `setupEventListeners` などの呼び出しを削除し、シーンライフサイクル側に委譲 (ID: 035)。

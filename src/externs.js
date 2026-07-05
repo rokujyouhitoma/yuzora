@@ -612,3 +612,25 @@ SceneDirectorInterface.prototype.currentSceneName;
 /** @type {boolean} */
 SceneDirectorInterface.prototype.isTransitioning;
 
+// Router Interface definition
+/**
+ * @interface
+ */
+function RouterInterface() {}
+/**
+ * @param {string} pattern
+ * @param {!Function} callback
+ */
+RouterInterface.prototype.register = function(pattern, callback) {};
+/**
+ * @param {string} hash
+ * @return {boolean}
+ */
+RouterInterface.prototype.resolve = function(hash) {};
+RouterInterface.prototype.listen = function() {};
+/**
+ * @param {string} hash
+ */
+RouterInterface.prototype.navigate = function(hash) {};
+/** @type {?string} */
+RouterInterface.prototype.currentHash;

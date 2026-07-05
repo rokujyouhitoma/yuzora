@@ -26,19 +26,60 @@ class Yuzora {
         const sceneDirector = new SceneDirector();
         this.locator.register(SceneDirector, sceneDirector);
 
+        const router = new Router();
+        this.locator.register(Router, router);
+
         initializeDOMElements();
 
         const viewContext = /** @type {!ViewContextInterface} */ (this.locator.resolve(ViewContext));
 
+        // 1. Register Routes
+        router.register("/welcome", () => {
+            sceneDirector.transitionTo("welcome");
+        });
+
+        router.register("/reader", (params) => {
+            if (params["book"]) {
+                loadPredefinedBook(params["book"]);
+            } else if (params["local"]) {
+                const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
+                const lastSession = sessionRepo.load();
+                if (lastSession && lastSession.name === params["local"]) {
+                    const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));
+                    bookModel.title = lastSession.name || "";
+                    bookModel.content = lastSession.content || "";
+                    bookModel.type = lastSession.type || "txt";
+                    this.publisher.publish(YuzoraEventType.BOOK_LOADED, {
+                        fileName: lastSession.name || "",
+                        fileContent: lastSession.content || ""
+                    });
+                } else {
+                    alert("ローカルファイルは再ロードが必要です。");
+                    router.navigate("/welcome");
+                }
+            } else {
+                router.navigate("/welcome");
+            }
+        });
+
         // Reset screen state with initialize scene
         sceneDirector.transitionTo("initialize");
-
-        // Transition to initial welcome scene
-        sceneDirector.transitionTo("welcome");
 
         // Load Settings
         loadSettings();
         applySettings();
+
+        // Check last session for auto-restore (Only if no hash is explicitly requested)
+        const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
+        const lastSession = sessionRepo.load();
+        const currentHash = window.location.hash;
+
+        if (lastSession && lastSession.name && lastSession.content && (!currentHash || currentHash === "#" || currentHash === "#/welcome")) {
+            window.location.hash = "#/reader?local=" + encodeURIComponent(lastSession.name);
+        }
+
+        // Start routing
+        router.listen();
 
         // Listen to book rendered event to update UI controls and TOC observers
         this.publisher.subscribe(YuzoraEventType.BOOK_RENDERED, () => {
@@ -63,24 +104,6 @@ class Yuzora {
                 viewContext.debugHistoryJSON.value = JSON.stringify(historyDetail.history, null, 2);
             }
         });
-
-        // Check last session for auto-restore
-        const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
-        const lastSession = sessionRepo.load();
-        const lastName = lastSession.name;
-        const lastContent = lastSession.content;
-        const lastType = lastSession.type;
-
-        if (lastName && lastContent) {
-            const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));
-            bookModel.title = lastName;
-            bookModel.content = lastContent;
-            bookModel.type = lastType || "txt";
-            this.publisher.publish(YuzoraEventType.BOOK_LOADED, {
-                fileName: lastName,
-                fileContent: lastContent
-            });
-        }
     }
 
     /**

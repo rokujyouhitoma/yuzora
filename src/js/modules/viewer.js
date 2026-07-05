@@ -92,7 +92,7 @@ function displayBook() {
     }
 
     // Override with predefined book title if matched
-    const predefinedBook = PREDEFINED_BOOKS.find(b => bookModel.title.includes(b.cardId.toString()));
+    const predefinedBook = PREDEFINED_BOOKS.find(b => b.title === bookModel.title || bookModel.title.includes(b.cardId.toString()));
     if (predefinedBook) {
         title = predefinedBook.title;
     }
@@ -108,6 +108,18 @@ function displayBook() {
     // Transition to reader scene via SceneDirector
     const sceneDirector = /** @type {!SceneDirectorInterface} */ (Yuzora.locator.resolve(SceneDirector));
     sceneDirector.transitionTo('reader');
+
+    // Sync URL hash and update router.currentHash to avoid loop
+    const router = /** @type {!RouterInterface} */ (Yuzora.locator.resolve(Router));
+    if (predefinedBook) {
+        const nextHash = "#/reader?book=" + predefinedBook.id;
+        router.currentHash = nextHash;
+        window.location.hash = nextHash;
+    } else {
+        const nextHash = "#/reader?local=" + encodeURIComponent(bookModel.title);
+        router.currentHash = nextHash;
+        window.location.hash = nextHash;
+    }
 
     // Check if there is a saved bookmark for this file
     const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));

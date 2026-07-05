@@ -217,8 +217,8 @@ class ExitReaderCommand extends Command {
     execute() {
         const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
         const sessionRepo = /** @type {!SessionRepositoryInterface} */ (Yuzora.locator.resolve(SessionRepository));
-        const sceneDirector = /** @type {!SceneDirectorInterface} */ (Yuzora.locator.resolve(SceneDirector));
-        sceneDirector.transitionTo('welcome');
+        const router = /** @type {!RouterInterface} */ (Yuzora.locator.resolve(Router));
+        router.navigate("/welcome");
         sessionRepo.clear();
         bookModel.clear();
     }

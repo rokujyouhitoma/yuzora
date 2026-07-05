@@ -104,7 +104,7 @@ function setupPredefinedBooksGrids() {
                 <div class="book-card-author">${book.author}</div>
             `;
             const onClick = () => {
-                loadPredefinedBook(book.id);
+                window.location.hash = "#/reader?book=" + book.id;
             };
             bindWelcomeEvent_(card, "click", onClick);
             viewContext.developerBooksGrid.appendChild(card);
@@ -122,7 +122,7 @@ function setupPredefinedBooksGrids() {
                 <div class="book-card-author">${book.author}</div>
             `;
             const onClick = () => {
-                loadPredefinedBook(book.id);
+                window.location.hash = "#/reader?book=" + book.id;
             };
             bindWelcomeEvent_(card, "click", onClick);
             viewContext.readerBooksGrid.appendChild(card);
