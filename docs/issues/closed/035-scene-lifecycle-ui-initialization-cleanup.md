@@ -2,7 +2,7 @@
 ID: 035
 種別: Refactor
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [REFACTOR] SceneライフサイクルによるUI初期化・クリーンアップ処理の定義 (ID: 035)

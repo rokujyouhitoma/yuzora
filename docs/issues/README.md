@@ -44,7 +44,7 @@
 | **002** | Bug | High | Closed | E2Eテスト「RTLモードでのスワイプジェスチャー」が失敗する | AI Agent | [002-e2e-swipe-gesture-test-failure-rtl.md](closed/002-e2e-swipe-gesture-test-failure-rtl.md) |
 | **033** | Bug | High | Closed | GitHub Actions デプロイワークフローで `eslint: not found` エラーが発生する | AI Agent | [033-ci-deploy-npm-install-missing.md](closed/033-ci-deploy-npm-install-missing.md) |
 | **034** | Refactor | Medium | Closed | Scene遷移フレームワーク（SceneDirector）の実装によるモジュール分離 | AI Agent | [034-implement-scene-director.md](closed/034-implement-scene-director.md) |
-| **035** | Refactor | Medium | In Progress | SceneライフサイクルによるUI初期化・クリーンアップ処理の定義 | AI Agent | [035-scene-lifecycle-ui-initialization-cleanup.md](035-scene-lifecycle-ui-initialization-cleanup.md) |
+| **035** | Refactor | Medium | Closed | SceneライフサイクルによるUI初期化・クリーンアップ処理の定義 | AI Agent | [035-scene-lifecycle-ui-initialization-cleanup.md](closed/035-scene-lifecycle-ui-initialization-cleanup.md) |
 
 
 ## 2. 状態（ステータス）定義
