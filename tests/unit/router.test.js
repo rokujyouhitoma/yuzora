@@ -21,7 +21,7 @@ test.describe('Yuzora Hash Router Unit Tests', () => {
         global.document = document;
 
         // Load router.js
-        const routerJsPath = path.resolve(__dirname, '../../src/js/modules/router.js');
+        const routerJsPath = path.resolve(__dirname, '../../src/js/frameworks/router.js');
         const routerJsCode = fs.readFileSync(routerJsPath, 'utf8');
         
         const container = {};

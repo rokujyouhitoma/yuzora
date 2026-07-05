@@ -78,7 +78,8 @@ yuzora/
 │   │   ├── modules/              # 機能別分割スタイルシートファイル群
 │   │   └── style.css             # 結合・生成されたアプリケーション共通スタイル
 │   └── js/
-│       └── modules/              # 機能別分割JavaScriptファイル群（locator.js, event.js, config.js等）
+│       ├── frameworks/           # アプリ非依存の汎用フレームワーク定義（locator.js, event.js, publisher.js, scene.js, router.js）
+│       └── modules/              # Yuzoraドメインモジュールファイル群（config.js, viewer.js, ui.js, commands.js等）
 ├── tools/                        # ビルド用外部ツール（Closure Compiler 実行jar等）
 ├── Makefile                      # ビルドコマンド定義 (make main-min.js)
 ├── index.html                    # メイン HTML (SPA エントリポイント - 開発用)

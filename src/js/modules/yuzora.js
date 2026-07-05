@@ -24,9 +24,12 @@ class Yuzora {
     /** @override */
     boot() {
         const sceneDirector = new SceneDirector();
+        sceneDirector.register("initialize", new InitializeScene());
+        sceneDirector.register("welcome", new WelcomeScene());
+        sceneDirector.register("reader", new ReaderScene());
         this.locator.register(SceneDirector, sceneDirector);
 
-        const router = new Router();
+        const router = new Router("welcome");
         this.locator.register(Router, router);
 
         initializeDOMElements();

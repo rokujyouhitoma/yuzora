@@ -604,6 +604,11 @@ SceneInterface.prototype.exit = function() {};
 function SceneDirectorInterface() {}
 /**
  * @param {string} sceneName
+ * @param {!SceneInterface} sceneInstance
+ */
+SceneDirectorInterface.prototype.register = function(sceneName, sceneInstance) {};
+/**
+ * @param {string} sceneName
  * @param {*=} data
  */
 SceneDirectorInterface.prototype.transitionTo = function(sceneName, data) {};

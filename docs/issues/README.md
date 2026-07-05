@@ -46,6 +46,7 @@
 | **034** | Refactor | Medium | Closed | Scene遷移フレームワーク（SceneDirector）の実装によるモジュール分離 | AI Agent | [034-implement-scene-director.md](closed/034-implement-scene-director.md) |
 | **035** | Refactor | Medium | Closed | SceneライフサイクルによるUI初期化・クリーンアップ処理の定義 | AI Agent | [035-scene-lifecycle-ui-initialization-cleanup.md](closed/035-scene-lifecycle-ui-initialization-cleanup.md) |
 | **036** | Feature | Medium | Closed | Routerの実装とURLによる状態ディスパッチ機能 | AI Agent | [036-implement-router.md](closed/036-implement-router.md) |
+| **037** | Refactor | Medium | Closed | JavaScriptモジュールの汎用化・フレームワーク抽出とディレクトリ分離 | AI Agent | [037-generalize-and-extract-frameworks.md](closed/037-generalize-and-extract-frameworks.md) |
 
 
 ## 2. 状態（ステータス）定義

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added Generic Framework Core files (`src/js/frameworks/locator.js`, `event.js`, `publisher.js`, `scene.js`, `router.js`) to extract non-domain reusable architecture classes, and updated high-level design DSN-01 and low-level design DSN-02 (ID: 037).
+- Changed Application Module files (`src/js/modules/locator.js`, `event.js`, `publisher.js`, `scene.js`, `yuzora.js`) to inherit or delegate to the frameworks classes, register concrete domain scenes, and configure default routes dynamically (ID: 037).
+- Deleted duplicate/dead file `src/js/modules/router.js` from the codebase (ID: 037).
+- Changed `index.html` and `Makefile` to load/compile frameworks files in dependencies order before modules files (ID: 037).
+- Changed `tests/unit/scene.test.js` and `router.test.js` to align with frameworks loading and dynamic registration (ID: 037).
+- Changed `src/externs.js` to declare and protect new class aliases and interfaces from Closure Compiler advanced optimizations (ID: 037).
+
 - Added `src/js/modules/router.js` を新規作成し、URLハッシュ（ハッシュルーティング）を用いて状態管理を行う `Router` クラスを実装。パラメータ（`:book` / `:local`）やクエリパラメータの抽出に対応 (ID: 036)。
 - Changed `yuzora.js` の `boot()` にて `Router` インスタンスを Locator に登録。`#/welcome` および `#/reader` ルートを登録し、`router.listen()` によるハッシュ監視を開始。リロード時の自動復元セッション検出時は `#/reader?local={name}` へリダイレクトするように変更 (ID: 036)。
 - Changed `ui.js` の推奨書籍カードのクリック動作を直接の書籍ロードから `window.location.hash` の書き換えに移行 (ID: 036)。

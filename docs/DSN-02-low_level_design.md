@@ -82,22 +82,24 @@
   - `exit()`: シーン脱出時（DOM非表示化やリスナーのデタッチ等）の処理を行います。
 
 #### 1.2.6 `SceneDirector` (画面遷移ディレクター)
-アプリケーションの画面状態（Welcome画面とReader画面）の遷移を一元管理します。
+共通フレームワーク（`src/js/frameworks/scene.js`）に定義され、アプリケーションの画面状態（シーン）遷移を一元管理します。
 - **プロパティ**:
-  - `scenes` (`Object<string, !Scene>`): 登録されている `Scene` インスタンスのマップ。
+  - `scenes` (`Object<string, !Scene>`): 登録されている `Scene` インスタンスのマップ（初期値は空）。
   - `currentSceneName` (`string | null`): 現在アクティブなシーンの名前。
   - `isTransitioning` (`boolean`): シーン遷移中の多重呼び出しを防止するガードフラグ。
 - **メソッド**:
+  - `register(sceneName, sceneInstance)`: 動的に具象シーンインスタンスを登録します。
   - `transitionTo(sceneName, data)`: `currentScene.exit()` -> `nextScene.enter(data)` の順序でライフサイクルメソッドを実行し、遷移を完了させます。
 
 #### 1.2.7 `Router` (ハッシュルーティングマネージャー)
-URLハッシュ（ハッシュルーティング）を用いた画面遷移および状態の解決を担当します。
+共通フレームワーク（`src/js/frameworks/router.js`）に定義され、URLハッシュ（ハッシュルーティング）を用いた画面遷移および状態の解決を担当します。
 - **プロパティ**:
+  - `defaultRoute` (`string`): ハッシュパスが空の場合のフォールバック先ルートパス（例: `"welcome"`）。
   - `routes` (`Array<{pattern: !RegExp, callback: !Function}>`): 登録されているルートパターンのリスト。
   - `currentHash` (`string | null`): 現在アクティブなURLハッシュ値。初期値は `null`。
 - **メソッド**:
   - `register(pattern, callback)`: ルートパスパターンを登録します（正規表現に内部変換）。
-  - `resolve(hash)`: ハッシュ値を解析し、合致するルートコールバックを実行します（`currentHash` 重複防止ガード付き）。
+  - `resolve(hash)`: ハッシュ値を解析し、合致するルートコールバックを実行します（`currentHash` 重複防止ガードおよび空値時の `defaultRoute` フォールバック付き）。
   - `listen()`: `hashchange` イベントの監視および初期ロード時のハッシュパースを開始します。
   - `navigate(hash)`: アプリ内部からハッシュ値を強制更新して画面遷移をトリガーします。
 

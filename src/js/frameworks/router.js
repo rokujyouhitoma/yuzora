@@ -1,5 +1,5 @@
 /**
- * Yuzora - Hash Routing Framework
+ * Generic Hash Routing Framework
  */
 "use strict";
 
@@ -8,7 +8,16 @@
  * @implements {RouterInterface}
  */
 class Router {
-    constructor() {
+    /**
+     * @param {string=} defaultRoute The fallback route when no hash path is present.
+     */
+    constructor(defaultRoute = "welcome") {
+        /**
+         * @private
+         * @type {string}
+         */
+        this.defaultRoute = defaultRoute;
+
         /**
          * Registered Routes
          * @private
@@ -59,7 +68,7 @@ class Router {
             path = path.slice(1);
         }
         if (!path) {
-            path = "welcome";
+            path = this.defaultRoute;
         }
 
         for (let i = 0; i < this.routes.length; i++) {

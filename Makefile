@@ -1,7 +1,11 @@
 COMPILER = tools/closure-compiler/closure-compiler-v20240317.jar
-JS_SRCS = src/js/modules/locator.js \
+JS_SRCS = src/js/frameworks/locator.js \
+          src/js/frameworks/event.js \
+          src/js/frameworks/publisher.js \
+          src/js/frameworks/scene.js \
+          src/js/frameworks/router.js \
+          src/js/modules/locator.js \
           src/js/modules/scene.js \
-          src/js/modules/router.js \
           src/js/modules/repository.js \
           src/js/modules/event.js \
           src/js/modules/publisher.js \

@@ -70,25 +70,32 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
         global.ViewContext = class ViewContext {};
         global.SceneDirector = class SceneDirector {};
 
+        // Load frameworks/scene.js first
+        const frameworkSceneJsPath = path.resolve(__dirname, '../../src/js/frameworks/scene.js');
+        const frameworkSceneJsCode = fs.readFileSync(frameworkSceneJsPath, 'utf8');
+        const frameworkContainer = {};
+        eval(frameworkSceneJsCode + `
+            frameworkContainer.Scene = Scene;
+            frameworkContainer.SceneDirector = SceneDirector;
+        `);
+        global.Scene = frameworkContainer.Scene;
+        global.SceneDirector = frameworkContainer.SceneDirector;
+
         // Load scene.js code
         const sceneJsPath = path.resolve(__dirname, '../../src/js/modules/scene.js');
         const sceneJsCode = fs.readFileSync(sceneJsPath, 'utf8');
         
         const sceneContainer = {};
         const evalCode = sceneJsCode + `
-            sceneContainer.Scene = Scene;
             sceneContainer.InitializeScene = InitializeScene;
             sceneContainer.WelcomeScene = WelcomeScene;
             sceneContainer.ReaderScene = ReaderScene;
-            sceneContainer.SceneDirector = SceneDirector;
         `;
         eval(evalCode);
         
-        global.Scene = sceneContainer.Scene;
         global.InitializeScene = sceneContainer.InitializeScene;
         global.WelcomeScene = sceneContainer.WelcomeScene;
         global.ReaderScene = sceneContainer.ReaderScene;
-        global.SceneDirector = sceneContainer.SceneDirector;
     });
 
     test.after(() => {
@@ -116,6 +123,9 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
         readerScreen.className = "";
 
         const director = new SceneDirector();
+        director.register("initialize", new InitializeScene());
+        director.register("welcome", new WelcomeScene());
+        director.register("reader", new ReaderScene());
 
         // Reset spy counts
         welcomeSetupCalled = 0;
@@ -159,6 +169,9 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
 
     test('should prevent double transition during transitionTo execution (isTransitioning guard)', () => {
         const director = new SceneDirector();
+        director.register("initialize", new InitializeScene());
+        director.register("welcome", new WelcomeScene());
+        director.register("reader", new ReaderScene());
         
         // We will mock one scene's enter method to call transitionTo again
         // to verify that it blocks nested calls.
