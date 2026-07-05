@@ -308,7 +308,21 @@ test.describe('Yuzora E2E Reader Tests', () => {
         await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);
     });
 
-    test('should navigate forward and backward using touch swipe gestures in RTL mode', async ({ page }) => {
+    test('should navigate forward and backward using touch swipe gestures in RTL mode', async ({ browser }) => {
+        // CDP-level touch simulation requires a hasTouch:true browser context.
+        // page.dispatchEvent() serializes touch points as plain objects, so
+        // TouchEvent.touches[0].clientX is undefined in ui.js. Using
+        // Input.dispatchTouchEvent sends real TouchEvents via the CDP protocol.
+        const context = await browser.newContext({ hasTouch: true });
+        const page = await context.newPage();
+
+        // Block web fonts to prevent network delays
+        await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
+        await page.route('https://fonts.googleapis.com/**', route => route.abort());
+        await page.route('https://fonts.gstatic.com/**', route => route.abort());
+
+        await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
+
         // 1. Open a book (Kokoro by default is RTL)
         await page.locator('#developer-books-grid .book-card').first().click();
         await page.waitForSelector('#reader-content p');
@@ -316,24 +330,34 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const readingIndex = page.locator('#reading-index');
         await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);
 
+        // Use CDP Input.dispatchTouchEvent for correct TouchEvent simulation.
+        // This correctly populates changedTouches[0].clientX that ui.js reads.
+        const cdpSession = await context.newCDPSession(page);
+
         // In RTL, Right Swipe (finger moves left to right: startX=200 to endX=400) goes to Next page (Page 2)
-        await page.dispatchEvent('#reader-viewport', 'touchstart', {
-            touches: [{ identifier: 0, clientX: 200, clientY: 300 }]
+        await cdpSession.send('Input.dispatchTouchEvent', {
+            type: 'touchStart',
+            touchPoints: [{ x: 200, y: 300, id: 0 }],
         });
-        await page.dispatchEvent('#reader-viewport', 'touchend', {
-            changedTouches: [{ identifier: 0, clientX: 400, clientY: 300 }]
+        await cdpSession.send('Input.dispatchTouchEvent', {
+            type: 'touchEnd',
+            touchPoints: [{ x: 400, y: 300, id: 0 }],
         });
-        await page.waitForTimeout(600); // Wait for transition
+        await page.waitForTimeout(600); // Wait for scroll transition
         await expect(readingIndex).toHaveText(/2 \/ \d+ ページ/);
 
         // In RTL, Left Swipe (finger moves right to left: startX=400 to endX=200) goes to Previous page (Page 1)
-        await page.dispatchEvent('#reader-viewport', 'touchstart', {
-            touches: [{ identifier: 0, clientX: 400, clientY: 300 }]
+        await cdpSession.send('Input.dispatchTouchEvent', {
+            type: 'touchStart',
+            touchPoints: [{ x: 400, y: 300, id: 0 }],
         });
-        await page.dispatchEvent('#reader-viewport', 'touchend', {
-            changedTouches: [{ identifier: 0, clientX: 200, clientY: 300 }]
+        await cdpSession.send('Input.dispatchTouchEvent', {
+            type: 'touchEnd',
+            touchPoints: [{ x: 200, y: 300, id: 0 }],
         });
-        await page.waitForTimeout(600); // Wait for transition
+        await page.waitForTimeout(600); // Wait for scroll transition
         await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);
+
+        await context.close();
     });
 });

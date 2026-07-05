@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Fixed E2Eテスト `should navigate forward and backward using touch swipe gestures in RTL mode` が `page.dispatchEvent()` による Touch イベントシミュレーションの限界でページ遷移を検出できなかった問題を修正。`hasTouch: true` ブラウザコンテキストと CDP `Input.dispatchTouchEvent` を使用することで、正確なタッチイベントをシミュレートし、テストを安定化した (ID: 002)。
+- Fixed `index.html` の開発用スクリプト読み込みに `repository.js` が欠落していた問題を修正 (ID: 002)。
+
 - Added `src/js/modules/repository.js` を新規作成し、ストレージ抽象化のための Repository パターンを導入。`Repository` 抽象基底クラス、`LocalStorageRepository`（`localStorage` バックエンド）、`InMemoryRepository`（テスト・モック用 `Map` バックエンド）を実装 (ID: 032)。
 - Added ドメインリポジトリとして `SettingsRepository`（`yuzora_config` キーを管理）、`BookmarkRepository`（`bookmark_` プレフィックスキーを管理）、`SessionRepository`（`last_read_file_*` キーを管理）を実装し、ストレージキーのマジックストリングをカプセル化 (ID: 032)。
 - Changed `config.js` の `ConfigModel.load()`, `ConfigModel.save()`, `BookmarkModel.load()`, `BookmarkModel.save()` を `SettingsRepository` / `BookmarkRepository` 経由に移行し、`localStorage` への直接参照を排除 (ID: 032)。

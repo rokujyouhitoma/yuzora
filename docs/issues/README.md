@@ -41,6 +41,7 @@
 | **030** | Refactor | Medium | Closed | Publish/Subscribe パターンによるイベント通知モデルの実装 | AI Agent | [030-implement-pubsub.md](closed/030-implement-pubsub.md) |
 | **031** | Refactor | Medium | Closed | Yuzoraクラスのファイル分割とPublisher連携 | AI Agent | [031-extract-yuzora-class-and-use-publisher.md](closed/031-extract-yuzora-class-and-use-publisher.md) |
 | **032** | Refactor | Medium | Closed | Repositoryパターンの導入による永続化・ストレージ処理の隠蔽化 | AI Agent | [032-implement-repository.md](closed/032-implement-repository.md) |
+| **002** | Bug | High | Closed | E2Eテスト「RTLモードでのスワイプジェスチャー」が失敗する | AI Agent | [002-e2e-swipe-gesture-test-failure-rtl.md](closed/002-e2e-swipe-gesture-test-failure-rtl.md) |
 
 
 
