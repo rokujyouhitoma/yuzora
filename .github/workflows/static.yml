@@ -38,8 +38,8 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build main-min.js
-        run: make
+      - name: Build static assets
+        run: make main-min.js src/css/style.css
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
