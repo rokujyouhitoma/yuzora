@@ -586,3 +586,31 @@ PublisherInterface.prototype.unsubscribe = function(topic, callback) {};
 PublisherInterface.prototype.publish = function(topic, data) {};
 
 
+// Scene Interface definition
+/**
+ * @interface
+ */
+function SceneInterface() {}
+/**
+ * @param {*=} data
+ */
+SceneInterface.prototype.enter = function(data) {};
+SceneInterface.prototype.exit = function() {};
+
+// SceneDirector Interface definition
+/**
+ * @interface
+ */
+function SceneDirectorInterface() {}
+/**
+ * @param {string} sceneName
+ * @param {*=} data
+ */
+SceneDirectorInterface.prototype.transitionTo = function(sceneName, data) {};
+/** @type {?string} */
+SceneDirectorInterface.prototype.currentSceneName;
+/** @type {boolean} */
+SceneDirectorInterface.prototype.isTransitioning;
+
+
+

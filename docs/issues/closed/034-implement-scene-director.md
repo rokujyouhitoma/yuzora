@@ -2,7 +2,7 @@
 ID: 034
 種別: Refactor
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [REFACTOR] Scene遷移フレームワーク（SceneDirector）の実装によるモジュール分離 (ID: 034)
@@ -106,6 +106,9 @@ class SceneDirector { transitionTo(sceneName, data) { ... } }
 
 ### ステップ 8: `package.json` の `test:unit` スクリプトに `scene.test.js` を追加
 
+### ステップ 9: 設計ドキュメントの更新
+- `docs/DSN-02-low_level_design.md` に `Scene` 基底クラス、`WelcomeScene`、`ReaderScene`、`SceneDirector` の設計および遷移シーケンス、ライフサイクル仕様を追加する。
+
 ---
 
 ## 4. 完了条件 / Success Criteria (DoD)
@@ -114,4 +117,7 @@ class SceneDirector { transitionTo(sceneName, data) { ... } }
 - [ ] `viewer.js` / `commands.js` の直接 `classList` 操作（hidden）が `SceneDirector.transitionTo()` に置き換わること。
 - [ ] `npm run test:unit` が全件パスすること。
 - [ ] `npm run test:e2e` が全件パスすること（書籍ロード、ホーム遷移等）。
-- [ ] DSN-01・DSN-02 設計ドキュメントへの影響なし（アーキテクチャ内部の変更のみ）。
+- [ ] 開発ビルド・本番ビルド（Closure Compiler ADVANCED_OPTIMIZATIONS）が警告・エラーなしで成功すること。
+- [ ] 本実装が `docs/DSN-01-high_level_design.md` および `docs/DSN-02-low_level_design.md` の設計仕様と完全に一致していること（ドキュメントの陳腐化がないこと）。
+- [ ] イシュー完了時に `CHANGES.md` が更新され、コミットされること。
+

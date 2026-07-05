@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `src/js/modules/scene.js` を新規作成し、画面状態遷移をカプセル化する Scene 遷移フレームワーク（`Scene` 基底クラス、`InitializeScene`、`WelcomeScene`、`ReaderScene`、`SceneDirector`）を実装。遷移時の二重割り込み防止のため `isTransitioning` ガードフラグを導入 (ID: 034)。
+- Refactored `WelcomeScene` および `ReaderScene` が自分以外のDOM要素を操作しないよう責務を分離。起動時に画面全体のDOM要素表示状態を一括リセットする `InitializeScene` を導入 (ID: 034)。
+- Changed `yuzora.js` の `boot()` で `SceneDirector` インスタンスを Locator に登録し、初期化時 `initialize` に遷移後、`welcome` に遷移するよう変更 (ID: 034)。
+- Changed `viewer.js` の `displayBook()` において直接 `classList` を操作していた画面遷移ロジックを `SceneDirector.transitionTo('reader')` に移行 (ID: 034)。
+- Changed `commands.js` の `ExitReaderCommand` において直接 `classList` を操作していた画面遷移ロジックを `SceneDirector.transitionTo('welcome')` に移行 (ID: 034)。
+- Added `tests/unit/scene.test.js` を新規作成し、`SceneDirector` の `initialize` -> `welcome` -> `reader` 遷移ライフサイクル順序、および多重遷移防止ガードの動作を検証するユニットテストを追加 (ID: 034)。
+- Changed `src/externs.js` に `SceneInterface` および `SceneDirectorInterface` 定義を追加し、Closure Compiler ADVANCED_OPTIMIZATIONS による名前解決 of 破壊を防止 (ID: 034)。
+- Changed `Makefile` のビルドソース `JS_SRCS` および `index.html` に `scene.js` を追加 (ID: 034)。
+- Changed `package.json` の `test:unit` スクリプトの実行対象ファイルに `scene.test.js` を追加 (ID: 034)。
+- Documentation `docs/DSN-02-low_level_design.md` を更新し、`Scene`、`InitializeScene` および `SceneDirector` クラスの設計仕様と、画面遷移ライフサイクルシーケンスを追加 (ID: 034)。
+
 - Fixed E2Eテスト `should navigate forward and backward using touch swipe gestures in RTL mode` が `page.dispatchEvent()` による Touch イベントシミュレーションの限界でページ遷移を検出できなかった問題を修正。`hasTouch: true` ブラウザコンテキストと CDP `Input.dispatchTouchEvent` を使用することで、正確なタッチイベントをシミュレートし、テストを安定化した (ID: 002)。
 - Fixed `index.html` の開発用スクリプト読み込みに `repository.js` が欠落していた問題を修正 (ID: 002)。
 - Added ページナビゲーション動作（`scrollLeft`、`reading-index`、`overflowX`）を診断するためのデバッグ用E2Eテスト `tests/e2e/db6.spec.js` を追加 (ID: 002)。

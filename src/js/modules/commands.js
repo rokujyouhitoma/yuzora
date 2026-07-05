@@ -215,11 +215,10 @@ class ExitReaderCommand extends Command {
     }
     /** @override */
     execute() {
-        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
         const sessionRepo = /** @type {!SessionRepositoryInterface} */ (Yuzora.locator.resolve(SessionRepository));
-        viewContext.welcomeScreen.classList.remove("hidden");
-        viewContext.readerScreen.classList.add("hidden");
+        const sceneDirector = /** @type {!SceneDirectorInterface} */ (Yuzora.locator.resolve(SceneDirector));
+        sceneDirector.transitionTo('welcome');
         sessionRepo.clear();
         bookModel.clear();
     }

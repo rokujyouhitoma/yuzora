@@ -75,6 +75,25 @@
   - `load(fileName)`: 指定した書籍の進捗を復元して返します。
   - `clear()`: 保存されたしおりデータをすべて削除します。
 
+#### 1.2.5 `Scene` (画面シーン基底クラス)
+画面状態の進入・脱出におけるライフサイクルイベントをカプセル化する抽象基底クラスです。
+- **メソッド**:
+  - `enter(data)`: シーン進入時（DOM表示化やリスナーのアタッチ等）の処理を行います。
+  - `exit()`: シーン脱出時（DOM非表示化やリスナーのデタッチ等）の処理を行います。
+
+#### 1.2.6 `SceneDirector` (画面遷移ディレクター)
+アプリケーションの画面状態（Welcome画面とReader画面）の遷移を一元管理します。
+- **プロパティ**:
+  - `scenes` (`Object<string, !Scene>`): 登録されている `Scene` インスタンスのマップ。
+  - `currentSceneName` (`string | null`): 現在アクティブなシーンの名前。
+  - `isTransitioning` (`boolean`): シーン遷移中の多重呼び出しを防止するガードフラグ。
+- **メソッド**:
+  - `transitionTo(sceneName, data)`: `currentScene.exit()` -> `nextScene.enter(data)` の順序でライフサイクルメソッドを実行し、遷移を完了させます。
+
+### 1.3 依存注入・サービスロケーターへの登録クラス
+起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector` が Locator に登録されます。
+
+
 ### 1.4 イベント駆動アーキテクチャ (Event Driven Architecture)
 モジュール間の密結合を防ぎ、ビューアー制御（`viewer.js`）、UI制御（`ui.js`）、およびコマンド実行（`commands.js`）を疎結合に保つため、専用のカスタムイベントディスパッチャ（イベントバス）を導入しています。
 
@@ -117,6 +136,41 @@ DOM Level 2 の `EventTarget` に準拠したカスタムイベントリスナ�
 | `HISTORY_UPDATED` | `'history-updated'` | `{ history, canUndo, canRedo }` | コマンド履歴スタック更新時 |
 | `DIAGNOSE_RUN` | `'diagnose-run'` | `{ timestamp }` | レイアウト座標診断実行要求時 |
 | `DIAGNOSE_COMPLETED`| `'diagnose-completed'` | `{ report, issuesCount }` | 座標診断レポート生成完了時 |
+
+### 1.5 画面遷移状態管理フレームワーク (Scene Transition Framework)
+
+アプリケーション全体の画面遷移（ウェルカム画面 `#welcome-screen` と読書ビューアー画面 `#reader-screen`）の切り替え処理を `Scene` / `SceneDirector` によって一元制御し、疎結合かつ安全な遷移を実現します。
+
+#### 1.5.1 画面遷移のライフサイクルシーケンス
+
+```mermaid
+sequenceDiagram
+    participant App as アプリケーション / コマンド
+    participant SD as SceneDirector
+    participant CS as 遷移元 Scene (currentScene)
+    participant NS as 遷移先 Scene (nextScene)
+
+    App->>SD: transitionTo(sceneName, data)
+    Note over SD: isTransitioning = true (ガード有効)
+    alt currentScene が存在する場合
+        SD->>CS: exit()
+        Note over CS: 画面要素の非表示化<br/>(classList.add('hidden'))
+    end
+    SD->>NS: enter(data)
+    Note over NS: 画面要素の表示化<br/>(classList.remove('hidden'))
+    Note over SD: currentSceneName = sceneName
+    Note over SD: isTransitioning = false (ガード解除)
+```
+
+#### 1.5.2 具体的なシーン定義
+
+1. **`WelcomeScene`** (ウェルカム画面)
+   - `enter(data)`: `#welcome-screen` の `.hidden` クラスを削除し、`#reader-screen` に `.hidden` クラスを追加します。
+   - `exit()`: `#welcome-screen` に `.hidden` クラスを追加します。
+
+2. **`ReaderScene`** (読書画面)
+   - `enter(data)`: `#reader-screen` の `.hidden` クラスを削除し、`#welcome-screen` に `.hidden` クラスを追加します。
+   - `exit()`: `#reader-screen` に `.hidden` クラスを追加します。将来的な読書中のスクロール監視等のイベントリスナー解除（メモリリーク防止）をここで行います。
 
 ---
 

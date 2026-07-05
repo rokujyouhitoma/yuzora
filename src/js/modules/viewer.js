@@ -105,9 +105,9 @@ function displayBook() {
     // Set default activeHeadingId to the first TOC item if available
     viewContext.activeHeadingId = (bookModel.toc && bookModel.toc.length > 0) ? bookModel.toc[0].id : null;
 
-    // Display Reader, Hide Welcome Screen
-    viewContext.welcomeScreen.classList.add('hidden');
-    viewContext.readerScreen.classList.remove('hidden');
+    // Transition to reader scene via SceneDirector
+    const sceneDirector = /** @type {!SceneDirectorInterface} */ (Yuzora.locator.resolve(SceneDirector));
+    sceneDirector.transitionTo('reader');
 
     // Check if there is a saved bookmark for this file
     const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));

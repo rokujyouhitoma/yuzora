@@ -23,9 +23,18 @@ class Yuzora {
 
     /** @override */
     boot() {
+        const sceneDirector = new SceneDirector();
+        this.locator.register(SceneDirector, sceneDirector);
+
         initializeDOMElements();
 
         const viewContext = /** @type {!ViewContextInterface} */ (this.locator.resolve(ViewContext));
+
+        // Reset screen state with initialize scene
+        sceneDirector.transitionTo("initialize");
+
+        // Transition to initial welcome scene
+        sceneDirector.transitionTo("welcome");
 
         // Setup predefined books grids on start welcome screen
         if (viewContext.developerBooksGrid) {
