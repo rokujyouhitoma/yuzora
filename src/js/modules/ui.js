@@ -192,6 +192,9 @@ function setupReaderEvents() {
     };
     bindReaderEvent_(viewContext.readerViewport, "scroll", onViewportScroll);
 
+    // Tap/Click to toggle Controls (header/footer)
+    bindReaderEvent_(viewContext.readerViewport, "click", toggleControls);
+
     // Window Resize Events
     readerResizeHandler = handleResize;
     window.addEventListener("resize", readerResizeHandler);

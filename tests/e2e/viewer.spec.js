@@ -174,6 +174,37 @@ test.describe('Yuzora E2E Reader Tests', () => {
         }
     });
 
+    test('should toggle reader header/footer visibility by tapping/clicking the viewport', async ({ page }) => {
+        // Open a book
+        const bookCard = page.locator('#developer-books-grid .book-card').first();
+        await bookCard.click();
+        await page.waitForSelector('#reader-content p');
+
+        const readerHeader = page.locator('.reader-header');
+        const readerViewport = page.locator('#reader-viewport');
+
+        const initialClass = await readerHeader.getAttribute('class');
+        const initiallyHidden = initialClass.includes('hidden');
+
+        // Click reader viewport (body area)
+        await readerViewport.click({ position: { x: 200, y: 200 } });
+
+        if (initiallyHidden) {
+            await expect(readerHeader).not.toHaveClass(/hidden/);
+        } else {
+            await expect(readerHeader).toHaveClass(/hidden/);
+        }
+
+        // Click again
+        await readerViewport.click({ position: { x: 200, y: 200 } });
+
+        if (initiallyHidden) {
+            await expect(readerHeader).toHaveClass(/hidden/);
+        } else {
+            await expect(readerHeader).not.toHaveClass(/hidden/);
+        }
+    });
+
     test('should record and replay UI operation commands', async ({ page }) => {
         // 1. Open a book
         const bookCard = page.locator('#developer-books-grid .book-card').first();

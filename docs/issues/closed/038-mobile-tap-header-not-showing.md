@@ -2,7 +2,7 @@
 ID: 038
 種別: Bug
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [BUG/SEC] スマートフォン（Android, Chrome）で本文をタップしてもヘッダーが表示されない (ID: 038)

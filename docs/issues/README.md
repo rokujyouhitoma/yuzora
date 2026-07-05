@@ -47,7 +47,7 @@
 | **035** | Refactor | Medium | Closed | SceneライフサイクルによるUI初期化・クリーンアップ処理の定義 | AI Agent | [035-scene-lifecycle-ui-initialization-cleanup.md](closed/035-scene-lifecycle-ui-initialization-cleanup.md) |
 | **036** | Feature | Medium | Closed | Routerの実装とURLによる状態ディスパッチ機能 | AI Agent | [036-implement-router.md](closed/036-implement-router.md) |
 | **037** | Refactor | Medium | Closed | JavaScriptモジュールの汎用化・フレームワーク抽出とディレクトリ分離 | AI Agent | [037-generalize-and-extract-frameworks.md](closed/037-generalize-and-extract-frameworks.md) |
-| **038** | Bug | High | In Progress | スマートフォン（Android, Chrome）で本文をタップしてもヘッダーが表示されない | AI Agent | [038-mobile-tap-header-not-showing.md](038-mobile-tap-header-not-showing.md) |
+| **038** | Bug | High | Closed | スマートフォン（Android, Chrome）で本文をタップしてもヘッダーが表示されない | AI Agent | [038-mobile-tap-header-not-showing.md](closed/038-mobile-tap-header-not-showing.md) |
 
 
 ## 2. 状態（ステータス）定義

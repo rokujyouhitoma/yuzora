@@ -391,7 +391,7 @@ Shift_JIS または UTF-8 から文字列へとデコードされたプレーン
 * **キーボード矢印キーおよびショートカット操作**:
   - **RTL設定時**: `ArrowLeft` で `nextPage()`、`ArrowRight` で `prevPage()`。
   - **LTR設定時**: `ArrowRight` で `nextPage()`、`ArrowLeft` で `prevPage()`。
-  - **メニュー表示切替**: `ArrowUp` または `ArrowDown` 押下で `toggleControls()` を呼び出してヘッダー/フッター表示の On/Off を切り替え、キーイベントのデフォルト動作（ブラウザスクロール）を `preventDefault()` で無効化します。
+  - **メニュー表示切替**: `ArrowUp` または `ArrowDown` 押下で `toggleControls()` を呼び出してヘッダー/フッター表示の On/Off を切り替え、キーイベントのデフォルト動作（ブラウザスクロール）を `preventDefault()` で無効化します。また、読書画面（`reader-viewport`）の本文タップ（クリック）操作時も `toggleControls()` を呼び出してトグル制御します（ただし、インタラクティブなリンク `a`、ルビ `ruby`、ボタン `button` クリック時は除外されます）。
   - **デバッグ機能操作 (PCのみ、テキスト入力中を除く)**:
     - **デバッグ画面開閉**: `d` または `D` でデバッグ画面の表示／非表示をトグル制御。
     - **デバッグ画面を閉じる**: `Escape` でデバッグ画面を非表示化。

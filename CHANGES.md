@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed `src/js/modules/ui.js` to bind the click event of the reader viewport to `toggleControls` to support tapping/clicking to show/hide control bars on mobile (ID: 038).
+- Added an E2E test to `tests/e2e/viewer.spec.js` to verify tap-to-toggle header/footer controls on the reader viewport (ID: 038).
+- Updated low-level design document `docs/DSN-02-low_level_design.md` to reflect viewport tap controls toggle logic (ID: 038).
+
 - Added Generic Framework Core files (`src/js/frameworks/locator.js`, `event.js`, `publisher.js`, `scene.js`, `router.js`) to extract non-domain reusable architecture classes, and updated high-level design DSN-01 and low-level design DSN-02 (ID: 037).
 - Changed Application Module files (`src/js/modules/locator.js`, `event.js`, `publisher.js`, `scene.js`, `yuzora.js`) to inherit or delegate to the frameworks classes, register concrete domain scenes, and configure default routes dynamically (ID: 037).
 - Deleted duplicate/dead file `src/js/modules/router.js` from the codebase (ID: 037).
