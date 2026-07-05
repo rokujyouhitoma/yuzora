@@ -2,7 +2,7 @@
 ID: 031
 種別: Refactor
 優先度: Medium
-ステータス: Promoted
+ステータス: Closed
 ---
 
 # [REFACTOR] SceneライフサイクルによるUI初期化・クリーンアップ処理の定義 (ID: 031)
