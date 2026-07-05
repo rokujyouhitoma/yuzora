@@ -2,7 +2,7 @@
 ID: 024
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] Scene遷移（画面遷移）フレームワークの実装によるモジュール分離 (ID: 024)
