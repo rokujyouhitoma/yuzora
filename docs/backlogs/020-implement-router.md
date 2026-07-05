@@ -8,9 +8,10 @@ ID: 020
 # [FEAT] Routerの実装とURLによる状態ディスパッチ機能 (ID: 020)
 
 ## 1. 概要 / Summary
-読書状態や表示画面（ウェルカム画面、読書画面）をブラウザの URL ハッシュ（ハッシュルーティング）または History API を用いてディスパッチする Router 機構を導入します。
 
-これにより、ユーザーが特定の書籍への直リンクによる遷移、ブラウザの「進む」「戻る」キーによる履歴遷移、リロード時の状態維持（しおり位置の復元や直前ページの保持）などが標準のWebアプリケーションの振る舞いとしてシームレスに機能するように設計します。
+読書状態や表示画面（ウェルカム画面、読書画面）をブラウザの URL ハッシュ（ハッシュルーティング）を用いてディスパッチする Router 機構を導入します。
+
+これにより、ユーザーが特定の書籍への直リンクによる遷移、ブラウザの「進む」「戻る」ボタンによる履歴遷移、リロード時の読書状態の維持（しおり位置の復元や直前ページの保持）などが標準のWebアプリケーションの振る舞いとしてシームレスに機能するように設計します。
 
 ### 参考 URL
 - https://github.com/rokujyouhitoma/horse-racing-game-js/blob/master/src/js/lib/router.js
@@ -18,25 +19,52 @@ ID: 020
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [NEW] [router.js](../../src/js/modules/router.js) (Routerの新規追加)
-- [ui.js](../../src/js/modules/ui.js) (Router呼び出しへの置換)
-- [viewer.js](../../src/js/modules/viewer.js) (URLパラメータ連携・書籍ロード起動の移行)
+
+- [NEW] [`router.js`](../../src/js/modules/router.js) — `Router` クラスの新規実装
+- [MODIFY] [`scene.js`](../../src/js/modules/scene.js) — シーン遷移の開始・終了処理とURLハッシュ更新処理の統合（URL変更 ➔ `hashchange` ➔ `Router` ➔ `SceneDirector` の一方向遷移フローの確立）
+- [MODIFY] [`yuzora.js`](../../src/js/modules/yuzora.js) — `boot()` 内で `Router` インスタンスを生成・登録し、URLハッシュ監視を開始
+- [MODIFY] [`viewer.js`](../../src/js/modules/viewer.js) — 直リンク書籍ロードおよびしおり位置の復元処理を Router 契機へ移行
+- [MODIFY] [`commands.js`](../../src/js/modules/commands.js) — `ExitReaderCommand` 等での遷移ロジックを直接の Scene 呼び出しから URL ハッシュ変更（`location.hash = 'welcome'`）へ移行
+- [NEW] [`router.test.js`](../../tests/unit/router.test.js) — パスパース、パラメータ抽出、ルート登録コールバック呼び出しのユニットテスト追加
+- [MODIFY] [`src/externs.js`](../../src/externs.js) — `RouterInterface` の追加（ADVANCED_OPTIMIZATIONS 適用時のリネーム防止）
+- [MODIFY] [`Makefile`](../../Makefile) & [`index.html`](../../index.html) — ビルド・読み込みソースに `router.js` を追加
 
 ---
 
 ## 3. 要件と技術的アプローチ / Requirements & Technical Approach
-1. **ハッシュベースのルーティングの実装**:
-   - `window.addEventListener('hashchange')` を監視し、ハッシュパスに対応するコールバックを実行します。
-   - `router.register('/welcome', () => { ... })` や `router.register('/book/:id', (params) => { ... })` のようなパラメータ付与のパスパースに対応します。
-2. **直リンク書籍ロード機能**:
-   - 起動時にハッシュ（例：`#book=kokoro` または `#book/773`）が存在する場合、自動的に対応する推奨書籍または過去にインポートした書籍データを特定し、読書画面をダイレクト起動します。
-3. **ブラウザ履歴との同期**:
-   - 「ホームに戻る」ボタンや「書籍のロード」に伴い URL ハッシュを更新（遷移）させ、ブラウザの「戻る」ボタン押下によって期待通り前の画面へ遷移することを可能にします。
+
+### 3-1. URLハッシュ設計 (URL Hash Schema)
+
+ブラウザの履歴同期およびパラメータ受け渡しのため、以下のURLハッシュスキームを定義します：
+
+1. **ウェルカム（ホーム）画面**: `#welcome` または空ハッシュ `#`
+2. **読書画面（推奨書籍）**: `#reader?book={bookId}` (例: `#reader?book=kokoro`)
+3. **読書画面（ローカルファイル）**: `#reader?local={fileName}`  
+   - ※ ローカルファイルはブラウザのセキュリティ制限上、URL直リンクからの直接ロードは不可能です。リロード時は `SessionRepository` もしくは `localStorage` にファイル内容が一時キャッシュされているか、またはセッションから復元可能な場合のみ復元し、不可能な場合はウェルカム画面 (`#welcome`) へ安全にフォールバックさせます。
+
+### 3-2. 状態遷移フロー（単一方向コントロール）
+
+ブラウザの「戻る」「進む」キーに正しく応答するため、状態遷移のトリガーをハッシュ変更に統一します：
+
+```
+[User Action] ➔ [location.hash の更新] ➔ [hashchange イベント発火] ➔ [Router が解決] ➔ [SceneDirector.transitionTo()] ➔ [画面の切り替え]
+```
+
+- 直接 `SceneDirector.transitionTo()` を呼ぶ代わりに、`location.hash` を書き換えることで遷移を行います。
+- `hashchange` 内で `SceneDirector.transitionTo()` を呼び出す際、現在のアクティブシーンとハッシュ状態が既に一致している場合は無限ループ防止のため早期リターンします。
+
+### 3-3. Routerクラスの仕様
+- **`register(pattern, callback)`**: ルート登録。パラメータ抽出（例：`:bookId` や `?book=xxx` などのクエリパラメータ）に対応。
+- **`listen()`**: `hashchange` イベントの監視を開始。初回起動時のハッシュ解決も行う。
+- **`navigate(hash)`**: 指定したハッシュへのプログラム的な遷移。
 
 ---
 
 ## 4. 完了条件 / Success Criteria (DoD)
-- [ ] 登録したパスとパラメータのパースが正確に行われる Router 単体のユニットテストがパスすること。
-- [ ] ハッシュ値の切り替えにより、ウェルカム画面と読書画面の表示・非表示がリロードなく同期的に切り替わること。
-- [ ] URLハッシュに特定の書籍IDを含めてリロードした際、ウェルカム画面をスキップして直接その書籍がローディング・表示されること。
+
+- [ ] パス登録、パラメータ抽出（クエリパラメータ・ワイルドカード）、およびコールバック実行を検証する `Router` のユニットテストがパスすること。
+- [ ] ブラウザのURLハッシュを `#welcome` から `#reader?book=kokoro` に書き換えた際、画面が自動的に読書画面に切り替わり「こころ」がロードされること。
+- [ ] 読書画面から「戻る」ボタンを押した際、ブラウザの履歴が1つ戻り、URLが `#welcome` となってホーム画面へ正常に戻ること。
+- [ ] `#reader?book=kokoro` の直リンクURLでページをリロードした際、ウェルカム画面を表示することなく直接「こころ」の読書画面が表示されること。
+- [ ] Closure Compiler (ADVANCED_OPTIMIZATIONS) による難読化ビルドが警告・エラーなしで完了すること。
 - [ ] すべてのE2Eテストがパスすること。
