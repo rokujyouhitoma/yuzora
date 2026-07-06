@@ -42,6 +42,7 @@
 | **032** | Refactor | Medium | Closed | JavaScriptモジュールの汎用化・フレームワーク抽出とディレクトリ分離 | [032-generalize-and-extract-frameworks.md](closed/032-generalize-and-extract-frameworks.md) |
 | **033** | Refactor | Medium | Draft | AssetクラスとResourceDirectorの導入によるリソース管理の抽象化 | [033-introduce-asset-and-resource-director.md](033-introduce-asset-and-resource-director.md) |
 | **034** | Enhancement | Medium | Draft | ウェルカム画面オススメ本グリッドのローディングプレースホルダーの導入 | [034-welcome-books-loading-placeholder.md](034-welcome-books-loading-placeholder.md) |
+| **035** | Enhancement | Medium | Draft | 起動時のデフォルトルート自動リダイレクト機能 | [035-auto-redirect-to-welcome-route.md](035-auto-redirect-to-welcome-route.md) |
 
 ---
 
