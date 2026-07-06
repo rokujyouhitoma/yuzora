@@ -12,8 +12,8 @@ ID: 035
 ユーザーの表示している画面とブラウザのアドレスバーの整合性を保ち、正しい画面遷移（ルーティング）を実現するため、起動時にハッシュが存在しない場合、あるいは空の場合に自動的にデフォルトのルートである `/#/welcome` へリダイレクト（ハッシュを補完）する機能を実装します。
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [src/js/frameworks/router.js](file:///workspace/yuzora/yuzora/src/js/frameworks/router.js) (Routerの初期化/listen処理)
-- [tests/unit/router.test.js](file:///workspace/yuzora/yuzora/tests/unit/router.test.js) (Routerのユニットテスト)
+- [src/js/frameworks/router.js](../../../src/js/frameworks/router.js) (Routerの初期化/listen処理)
+- [tests/unit/router.test.js](../../../tests/unit/router.test.js) (Routerのユニットテスト)
 
 ## 3. 要件と技術的詳細 / Technical Specifications
 - `Router.prototype.listen()` において、初期化時の `window.location.hash` が空（`""`, `"#"` または `"#/"`）の場合、`this.navigate("#/" + this.defaultRoute)` を実行する。
