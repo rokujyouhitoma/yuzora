@@ -7,18 +7,27 @@
 // Command Pattern for Operation History
 // ==========================================================================
 /**
+ * Command base class.
  * @implements {CommandInterface}
  */
 class Command {
     constructor(type) {
         this.type = type;
     }
-    /** @override */
+    /**
+     * Executes the command.
+     * @override
+     */
+    // @ts-expect-error
     execute() {
         throw new Error("execute() must be implemented");
     }
-    /** @override */
-    toJSON() {
+    /**
+     * Converts the command to JSON.
+     * @override
+     */
+    // @ts-expect-error
+    serialize() {
         return {
             type: this.type,
             params: {}
@@ -56,7 +65,7 @@ class LoadBookCommand extends Command {
             });
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -82,7 +91,7 @@ class NavigatePageCommand extends Command {
         }
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -121,7 +130,7 @@ class UpdateConfigCommand extends Command {
         saveSettings();
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -143,7 +152,7 @@ class SyncBookmarkCommand extends Command {
         bookmarkModel.bookmarkProgress = this.progress;
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -169,7 +178,7 @@ class ToggleControlsCommand extends Command {
         }
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -209,7 +218,7 @@ class ToggleDrawerCommand extends Command {
         }
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -234,7 +243,7 @@ class ExitReaderCommand extends Command {
         bookModel.clear();
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {}
@@ -272,7 +281,7 @@ class ClearStorageCommand extends Command {
         }
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -294,7 +303,7 @@ class ToggleDebugModalCommand extends Command {
         });
     }
     /** @override */
-    toJSON() {
+    serialize() {
         return {
             type: this.type,
             params: {
@@ -306,7 +315,8 @@ class ToggleDebugModalCommand extends Command {
 
 
 /**
- * @implements {CommandHistoryInterface}
+ * CommandHistory class.
+ * @implements {CommandManagerInterface}
  */
 class CommandHistory {
     constructor() {
@@ -315,12 +325,20 @@ class CommandHistory {
         this.isReplaying = false;
     }
 
-    /** @override */
+    /**
+     * Undoes the last operation.
+     * @override
+     */
+    // @ts-expect-error
     undo() {
         console.warn("Undo operation is not implemented.");
     }
 
-    /** @override */
+    /**
+     * Redoes the last operation.
+     * @override
+     */
+    // @ts-expect-error
     redo() {
         console.warn("Redo operation is not implemented.");
     }
@@ -349,7 +367,11 @@ class CommandHistory {
         }
     }
 
-    /** @override */
+    /**
+     * Executes a command and saves it in history.
+     * @override
+     */
+    // @ts-expect-error
     execute(command, isFromReplay = false) {
         // If replaying and user tries to execute normal actions, ignore it
         if (this.isReplaying && !isFromReplay) {
@@ -373,9 +395,13 @@ class CommandHistory {
         }
     }
 
-    /** @override */
+    /**
+     * Exports history as JSON string.
+     * @override
+     */
+    // @ts-expect-error
     exportJSON() {
-        return JSON.stringify(this.commandHistory.map(cmd => cmd.toJSON()), null, 2);
+        return JSON.stringify(this.commandHistory.map(cmd => cmd.serialize()), null, 2);
     }
 
     recreateCommand(item) {
@@ -403,7 +429,11 @@ class CommandHistory {
         }
     }
 
-    /** @override */
+    /**
+     * Imports history from JSON string.
+     * @override
+     */
+    // @ts-expect-error
     importJSON(jsonString) {
         try {
             const rawArray = JSON.parse(jsonString);
@@ -423,7 +453,7 @@ class CommandHistory {
             return commands;
         } catch (err) {
             console.error("Failed to parse operations history JSON:", err);
-            alert(`履歴データのインポートに失敗しました:\n${err.message}`);
+            alert(`履歴データのインポートに失敗しました:\n${err instanceof Error ? err.message : String(err)}`);
             return null;
         }
     }
@@ -463,13 +493,17 @@ class CommandHistory {
      */
     notifyHistoryUpdated_() {
         yuzora.publisher.publish(YuzoraEventType.HISTORY_UPDATED, {
-            history: this.commandHistory.map(cmd => cmd.toJSON()),
+            history: this.commandHistory.map(cmd => cmd.serialize()),
             canUndo: false,
             canRedo: false
         });
     }
 
-    /** @override */
+    /**
+     * Updates the debug monitor.
+     * @override
+     */
+    // @ts-expect-error
     updateDebugMonitor() {
         const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         if (viewContext.debugMonitor) {

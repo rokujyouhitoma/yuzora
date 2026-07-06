@@ -49,7 +49,7 @@
 | **039** | Feature | Medium | Draft | セキュリティ・バイ・デザインに基づくセキュアレンダラーパターンの強制 | [039-secure-dom-renderer.md](039-secure-dom-renderer.md) |
 | **040** | Feature | Medium | Draft | オフライン自律稼働とPWA（Progressive Web App）化の導入 | [040-pwa-offline-support.md](040-pwa-offline-support.md) |
 | **041** | Refactor | Medium | Draft | CSS変数の完全活用による「CSSテーマエンジン」の導入 | [041-css-theme-engine.md](041-css-theme-engine.md) |
-| **042** | Refactor | Medium | Draft | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](042-jsdoc-tsc-type-check.md) |
+| **042** | Refactor | Medium | Promoted | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](042-jsdoc-tsc-type-check.md) |
 
 ---
 

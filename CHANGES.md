@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added static type checking using TypeScript Compiler (`tsc --noEmit`) via `npm run test:types` to enforce JSDoc type correctness and integrate it into the CI pipeline (ID: 042).
+- Added `src/js/types.d.ts` [NEW] declaring Yuzora system interfaces and global window variables for type resolution (ID: 042).
+- Changed JSDoc annotations in frameworks and modules (`src/js/frameworks/` and `src/js/modules/`) to restore `@implements` and `@override` comments while suppressing tsc native method override error TS4121 using `// @ts-expect-error` comments (ID: 042).
+- Changed `tsconfig.json` to include `src/js/types.d.ts` and exclude `src/externs.js` (ID: 042).
+- Changed `src/externs.js` to declare missing model constructors and align with nullable config property of YuzoraInterface (ID: 042).
+
 - Added Loading Placeholder / Skeleton Screen to predefined recommended books grid in the welcome screen to prevent layout shifts before JavaScript initialization (ID: 034).
 - Changed `src/js/modules/ui.js` to render skeleton cards initially and asynchronously replace them with predefined cards via smooth fade-in transitions (ID: 034).
 - Added a unit test suite to `tests/unit/placeholder.test.js` [NEW] to verify placeholder structure rendering and asynchronous replacement logic, and updated `package.json` to execute it (ID: 034).

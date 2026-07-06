@@ -8,7 +8,7 @@
 
 // Register Publisher singleton in Locator using resolved YuzoraEventTarget
 locator.register(Publisher, new Publisher(
-    /** @type {!YuzoraEventTarget} */ (locator.resolve(YuzoraEventTarget))
+    /** @type {!YuzoraEventTargetInterface} */ (locator.resolve(YuzoraEventTarget))
 ));
 
 // Expose on window for test accessibility and property preservation

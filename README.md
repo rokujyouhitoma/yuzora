@@ -121,6 +121,33 @@ yuzora/
 
 ---
 
+## 🧪 テスト & 静的解析 (Testing & Static Analysis)
+
+本プロジェクトでは品質担保のために、静的検証（Lint、型チェック）および動的テスト（ユニットテスト、E2Eテスト）を実施しています。
+
+* **型チェック (Static Type Checking)**
+  ```bash
+  npm run test:types
+  ```
+* **コードスタイル検証 (Linting)**
+  ```bash
+  npm run lint
+  ```
+* **単体テスト (Unit Tests)**
+  ```bash
+  npm run test:unit
+  ```
+* **E2Eテスト (End-to-End Tests)**
+  ```bash
+  npm run test:e2e
+  ```
+* **一括テスト実行 (All Quality Gates)**
+  ```bash
+  npm run test
+  ```
+
+---
+
 ## ⚖️ ライセンス (License)
 
 本ソフトウェアは [Apache License 2.0](./LICENSE) のもとで公開されています。

@@ -2,7 +2,7 @@
 ID: 042
 種別: Refactor
 優先度: Medium
-ステータス: Draft
+ステータス: Promoted
 ---
 
 # [REFACTOR] JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 (ID: 042)

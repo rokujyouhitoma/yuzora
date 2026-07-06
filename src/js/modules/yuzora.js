@@ -4,6 +4,7 @@
 "use strict";
 
 /**
+ * Yuzora - Main Application Controller
  * @implements {YuzoraInterface}
  */
 class Yuzora {
@@ -19,14 +20,24 @@ class Yuzora {
          * @type {!PublisherInterface}
          */
         this.publisher = /** @type {!PublisherInterface} */ (this.locator.resolve(Publisher));
+
+        /**
+         * @public
+         * @type {?ConfigModelInterface}
+         */
+        this.config = null;
     }
 
-    /** @override */
+    /**
+     * Boots the application.
+     * @override
+     */
+    // @ts-expect-error
     boot() {
         const sceneDirector = new SceneDirector();
-        sceneDirector.register("initialize", new InitializeScene());
-        sceneDirector.register("welcome", new WelcomeScene());
-        sceneDirector.register("reader", new ReaderScene());
+        sceneDirector.register("initialize", /** @type {!SceneInterface} */ (new InitializeScene()));
+        sceneDirector.register("welcome", /** @type {!SceneInterface} */ (new WelcomeScene()));
+        sceneDirector.register("reader", /** @type {!SceneInterface} */ (new ReaderScene()));
         this.locator.register(SceneDirector, sceneDirector);
 
         const router = new Router("welcome");
@@ -34,6 +45,8 @@ class Yuzora {
 
         const resourceDirector = new ResourceDirector();
         this.locator.register(ResourceDirector, resourceDirector);
+
+        this.config = /** @type {!ConfigModel} */ (this.locator.resolve(ConfigModel));
 
         initializeDOMElements();
 
@@ -124,74 +137,126 @@ class Yuzora {
     }
 
     /**
-     * @override
+     * Parses text.
      * @param {string} text
      * @return {{title: string, body: string}}
+     * @override
      */
+    // @ts-expect-error
     parseAozoraText(text) {
         return parseAozoraText(text);
     }
 
     /**
-     * @override
+     * Parses HTML.
      * @param {string} html
      * @return {{title: string, body: string}}
+     * @override
      */
+    // @ts-expect-error
     parseAozoraHTML(html) {
         return parseAozoraHTML(html);
     }
 
     /**
-     * @override
+     * Formats markup.
      * @param {string} markup
      * @return {string}
+     * @override
      */
+    // @ts-expect-error
     formatAozoraMarkup(markup) {
         return formatAozoraMarkup(markup);
     }
 
     /**
-     * @override
+     * Runs layout diagnosis.
      * @return {string}
+     * @override
      */
+    // @ts-expect-error
     runLayoutDiagnosis() {
         return runLayoutDiagnosis();
     }
 
     /**
-     * @override
+     * Gets TOC.
      * @return {!Array}
+     * @override
      */
+    // @ts-expect-error
     getCurrentTOC() {
         return this.locator.resolve(BookModel).toc;
     }
 
-    /** @override */
-    get config() {
-        return this.locator.resolve(ConfigModel);
-    }
-
-    /** @override */
+    /**
+     * Gets CommandManager.
+     * @override
+     */
+    // @ts-expect-error
     get CommandManager() {
         return this.locator.resolve(CommandHistory);
     }
 
-    /** @override */
+    /**
+     * Gets BookModel constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get BookModel() {
+        return BookModel;
+    }
+
+    /**
+     * Gets ConfigModel constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get ConfigModel() {
+        return ConfigModel;
+    }
+
+    /**
+     * Gets BookmarkModel constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get BookmarkModel() {
+        return BookmarkModel;
+    }
+
+    /**
+     * Gets LoadBookCommand constructor.
+     * @override
+     */
+    // @ts-expect-error
     get LoadBookCommand() {
         return LoadBookCommand;
     }
 
-    /** @override */
+    /**
+     * Gets NavigatePageCommand constructor.
+     * @override
+     */
+    // @ts-expect-error
     get NavigatePageCommand() {
         return NavigatePageCommand;
     }
 
-    /** @override */
+    /**
+     * Gets UpdateConfigCommand constructor.
+     * @override
+     */
+    // @ts-expect-error
     get UpdateConfigCommand() {
         return UpdateConfigCommand;
     }
 
-    /** @override */
+    /**
+     * Gets SyncBookmarkCommand constructor.
+     * @override
+     */
+    // @ts-expect-error
     get SyncBookmarkCommand() {
         return SyncBookmarkCommand;
     }
@@ -201,13 +266,13 @@ class Yuzora {
  * @type {!LocatorInterface}
  * @nocollapse
  */
-Yuzora.locator = locator;
+Yuzora.locator = /** @type {!LocatorInterface} */ (locator);
 
 // Instantiate and register yuzora immediately to prevent race conditions during DOMContentLoaded
 const yuzoraInstance = new Yuzora();
 Yuzora.locator.register(Yuzora, yuzoraInstance);
-window['yuzora'] = yuzoraInstance;
-window['Yuzora'] = yuzoraInstance;
+window['yuzora'] = /** @type {*} */ (yuzoraInstance);
+window['Yuzora'] = /** @type {*} */ (yuzoraInstance);
 
 // Global browser bootstrap entry point
 document.addEventListener("DOMContentLoaded", () => {

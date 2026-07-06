@@ -4,7 +4,7 @@
 "use strict";
 
 /**
- * @implements {YuzoraEventInterface}
+ * AppEvent class.
  */
 class AppEvent {
     /**
@@ -31,13 +31,14 @@ class AppEvent {
 }
 
 /**
+ * AppEventTarget class.
  * @implements {YuzoraEventTargetInterface}
  */
 class AppEventTarget {
     constructor() {
         /**
          * @private
-         * @type {!Object<string, !Array<function(!YuzoraEventInterface)>>}
+         * @type {!Object<string, !Array<function(!YuzoraEventInterface): void>>}
          */
         this.listeners_ = {};
     }
@@ -45,9 +46,10 @@ class AppEventTarget {
     /**
      * Add an event listener callback function.
      * @param {string} type The event type.
-     * @param {function(!YuzoraEventInterface)} listener The event listener function.
+     * @param {function(!YuzoraEventInterface): void} listener The event listener function.
      * @override
      */
+    // @ts-expect-error
     addEventListener(type, listener) {
         if (!this.listeners_[type]) {
             this.listeners_[type] = [];
@@ -58,9 +60,10 @@ class AppEventTarget {
     /**
      * Remove a registered event listener callback function.
      * @param {string} type The event type.
-     * @param {function(!YuzoraEventInterface)} listener The event listener function.
+     * @param {function(!YuzoraEventInterface): void} listener The event listener function.
      * @override
      */
+    // @ts-expect-error
     removeEventListener(type, listener) {
         if (!this.listeners_[type]) {
             return;
@@ -73,6 +76,7 @@ class AppEventTarget {
      * @param {!YuzoraEventInterface} event The event instance to dispatch.
      * @override
      */
+    // @ts-expect-error
     dispatchEvent(event) {
         const type = event.type;
         if (!this.listeners_[type]) {

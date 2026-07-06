@@ -54,9 +54,9 @@ let welcomeListeners = [];
 /** @type {!Array<{element: (!Element|!Window|!Document), type: string, handler: !Function, options: (AddEventListenerOptions|boolean|undefined)}>} */
 let readerListeners = [];
 
-/** @type {?Function} */
+/** @type {?EventListener} */
 let readerResizeHandler = null;
-/** @type {?Function} */
+/** @type {?EventListener} */
 let readerKeydownHandler = null;
 
 /**
@@ -70,7 +70,7 @@ let readerKeydownHandler = null;
 function bindWelcomeEvent_(element, type, handler, options) {
     if (element) {
         const opt = (options === undefined) ? undefined : (options || undefined);
-        element.addEventListener(type, handler, opt);
+        element.addEventListener(type, /** @type {!EventListener} */ (handler), opt);
         welcomeListeners.push({ element: /** @type {!Element|!Window|!Document} */ (element), type, handler, options: opt });
     }
 }
@@ -86,7 +86,7 @@ function bindWelcomeEvent_(element, type, handler, options) {
 function bindReaderEvent_(element, type, handler, options) {
     if (element) {
         const opt = (options === undefined) ? undefined : (options || undefined);
-        element.addEventListener(type, handler, opt);
+        element.addEventListener(type, /** @type {!EventListener} */ (handler), opt);
         readerListeners.push({ element: /** @type {!Element|!Window|!Document} */ (element), type, handler, options: opt });
     }
 }
@@ -195,7 +195,7 @@ function setupWelcomeEvents() {
 function cleanupWelcomeEvents() {
     welcomeListeners.forEach(({ element, type, handler, options }) => {
         const opt = (options === undefined) ? undefined : (options || undefined);
-        element.removeEventListener(type, handler, opt);
+        element.removeEventListener(type, /** @type {!EventListener} */ (handler), opt);
     });
     welcomeListeners = [];
 }
@@ -223,12 +223,12 @@ function setupReaderEvents() {
     bindReaderEvent_(viewContext.readerViewport, "click", toggleControls);
 
     // Window Resize Events
-    readerResizeHandler = handleResize;
+    readerResizeHandler = /** @type {!EventListener} */ (handleResize);
     window.addEventListener("resize", readerResizeHandler);
 
     // Keyboard Shortcuts
     // eslint-disable-next-line complexity
-    readerKeydownHandler = (e) => {
+    readerKeydownHandler = /** @type {!EventListener} */ ((e) => {
         const keyEvent = /** @type {!KeyboardEvent} */ (e);
         if (viewContext.readerScreen.classList.contains("hidden")) return;
         
@@ -262,7 +262,7 @@ function setupReaderEvents() {
                 keyEvent.preventDefault();
             }
         }
-    };
+    });
     document.addEventListener("keydown", readerKeydownHandler);
 
     // Touch Navigation / Swipe Gestures on viewport
@@ -361,7 +361,7 @@ function setupReaderEvents() {
 function cleanupReaderEvents() {
     readerListeners.forEach(({ element, type, handler, options }) => {
         const opt = (options === undefined) ? undefined : (options || undefined);
-        element.removeEventListener(type, handler, opt);
+        element.removeEventListener(type, /** @type {!EventListener} */ (handler), opt);
     });
     readerListeners = [];
 
@@ -417,12 +417,12 @@ function handleDebugTabKeys(e) {
 
     if (e.shiftKey) {
         if (document.activeElement === firstFocusable) {
-            lastFocusable.focus();
+            /** @type {!HTMLElement} */ (lastFocusable).focus();
             e.preventDefault();
         }
     } else {
         if (document.activeElement === lastFocusable) {
-            firstFocusable.focus();
+            /** @type {!HTMLElement} */ (firstFocusable).focus();
             e.preventDefault();
         }
     }

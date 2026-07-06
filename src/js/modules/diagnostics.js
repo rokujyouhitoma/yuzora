@@ -274,7 +274,7 @@ function runLayoutDiagnosis() {
 
 function findCharAtBoundary(element, boundaryX) {
     const textNodes = [];
-    const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+    const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
     let node;
     while (node = walk.nextNode()) {
         textNodes.push(node);

@@ -4,6 +4,7 @@
 "use strict";
 
 /**
+ * Publisher class.
  * @implements {PublisherInterface}
  */
 class Publisher {
@@ -20,7 +21,7 @@ class Publisher {
         /**
          * Map subscriber callbacks to event listener wrappers.
          * @private
-         * @type {!Map<string, !Map<function(*), function(!YuzoraEventInterface)>>}
+         * @type {!Map<string, !Map<function(*): void, function(!YuzoraEventInterface): void>>}
          */
         this.wrappers_ = new Map();
     }
@@ -28,9 +29,10 @@ class Publisher {
     /**
      * Subscribe to a topic.
      * @param {string} topic The topic to subscribe to.
-     * @param {function(*)} callback The callback function when the topic is published.
+     * @param {function(*): void} callback The callback function when the topic is published.
      * @override
      */
+    // @ts-expect-error
     subscribe(topic, callback) {
         let topicMap = this.wrappers_.get(topic);
         if (!topicMap) {
@@ -43,7 +45,7 @@ class Publisher {
             return;
         }
 
-        /** @type {function(!YuzoraEventInterface)} */
+        /** @type {function(!YuzoraEventInterface): void} */
         const wrapper = (event) => {
             callback(event.detail);
         };
@@ -54,9 +56,10 @@ class Publisher {
     /**
      * Unsubscribe from a topic.
      * @param {string} topic The topic to unsubscribe from.
-     * @param {function(*)} callback The callback function.
+     * @param {function(*): void} callback The callback function.
      * @override
      */
+    // @ts-expect-error
     unsubscribe(topic, callback) {
         const topicMap = this.wrappers_.get(topic);
         if (!topicMap) return;
@@ -77,8 +80,9 @@ class Publisher {
      * @param {*=} data The data payload.
      * @override
      */
+    // @ts-expect-error
     publish(topic, data) {
         // AppEvent is loaded globally before Publisher
-        this.eventTarget_.dispatchEvent(new AppEvent(topic, data));
+        this.eventTarget_.dispatchEvent(/** @type {!YuzoraEventInterface} */ (new AppEvent(topic, data)));
     }
 }

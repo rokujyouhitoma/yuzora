@@ -367,3 +367,9 @@ graph TD
 - **外部アセット（Webフォント）**:
   - `Noto Serif JP` (読書用明朝体フォント)
   - `Outfit`, `Inter` (UI・システムコントロール用フォント)
+- **静的検証・テスト**:
+  - **ESLint**: JavaScript の静的コード解析
+  - **TypeScript Compiler (tsc)**: JSDoc アノテーションに基づく静的型チェック
+  - **Google Closure Compiler**: ADVANCED_OPTIMIZATIONS による難読化・検証
+  - **Playwright**: E2Eブラウザテスト
+  - **Node.js Test Runner**: ユニットテスト

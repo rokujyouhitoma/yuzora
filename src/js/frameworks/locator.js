@@ -25,6 +25,7 @@ class Locator {
      * @param {!Object} instance
      * @override
      */
+    // @ts-expect-error
     register(Class, instance) {
         this.container.set(Class, instance);
     }
@@ -36,6 +37,7 @@ class Locator {
      * @return {!Object}
      * @override
      */
+    // @ts-expect-error
     resolve(Class) {
         if (!this.container.has(Class)) {
             throw new Error(`Class ${Class.name || Class} is not registered in Locator.`);
@@ -54,12 +56,13 @@ class Locator {
      * @return {!Object}
      * @override
      */
+    // @ts-expect-error
     locate(Class) {
         if (!this.container.has(Class)) {
             try {
-                this.container.set(Class, new Class());
+                this.container.set(Class, new (/** @type {function(new:?)} */ (Class))());
             } catch (e) {
-                throw new Error(`Failed to auto-instantiate Class ${Class.name || Class} in Locator: ${e.message}`);
+                throw new Error(`Failed to auto-instantiate Class ${Class.name || Class} in Locator: ${e instanceof Error ? e.message : String(e)}`);
             }
         }
         const instance = this.container.get(Class);

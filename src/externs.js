@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * @fileoverview Externs for Yuzora legacy global proxy variables and ADVANCED_OPTIMIZATIONS protection
  * @externs
@@ -144,7 +145,7 @@ function CommandInterface() {}
 /** @type {Function} */
 CommandInterface.prototype.execute = function() {};
 /** @type {Function} */
-CommandInterface.prototype.toJSON = function() {};
+CommandInterface.prototype.serialize = function() {};
 
 // CommandManager Interface
 /**
@@ -185,104 +186,104 @@ ViewContextInterface.prototype.settingsDrawerOpen;
 /** @type {boolean} */
 ViewContextInterface.prototype.tocDrawerOpen;
 
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.app;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.welcomeScreen;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readerScreen;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.dropZone;
 /** @type {?HTMLInputElement} */
 ViewContextInterface.prototype.fileInput;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readerViewport;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readerContent;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.bookTitle;
 
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnBack;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnSettings;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnTOC;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnFirstPage;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnCloseSettings;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnCloseTOC;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.settingsDrawer;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.tocDrawer;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.tocList;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.drawerOverlay;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.pageNavLeft;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.pageNavRight;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readerHeader;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readerFooter;
 
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.progressBarContainer;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.progressBar;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readingPercentage;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readingIndex;
 
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.developerBooksGrid;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.readerBooksGrid;
 
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnOpenDebug;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.debugModal;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnCloseDebug;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.debugModalOverlay;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.debugMonitor;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnClearBookmarks;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnClearConfig;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnClearAll;
 
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnDiagnoseLayout;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnCopyDebugReport;
 /** @type {?HTMLTextAreaElement} */
 ViewContextInterface.prototype.diagnoseReportOutput;
 
 /** @type {?HTMLTextAreaElement} */
 ViewContextInterface.prototype.debugHistoryJSON;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnExportHistory;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.btnImportHistory;
 
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.tabBtnMonitor;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.tabBtnDiagnose;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.tabContentMonitor;
-/** @type {?Element} */
+/** @type {?HTMLElement} */
 ViewContextInterface.prototype.tabContentDiagnose;
 
 /**
@@ -518,8 +519,14 @@ YuzoraInterface.prototype.formatAozoraMarkup = function(markup) {};
 YuzoraInterface.prototype.runLayoutDiagnosis = function() {};
 /** @type {function():!Array} */
 YuzoraInterface.prototype.getCurrentTOC = function() {};
-/** @type {!ConfigModelInterface} */
+/** @type {?ConfigModelInterface} */
 YuzoraInterface.prototype.config;
+/** @type {Function} */
+YuzoraInterface.prototype.BookModel;
+/** @type {Function} */
+YuzoraInterface.prototype.ConfigModel;
+/** @type {Function} */
+YuzoraInterface.prototype.BookmarkModel;
 /** @type {!CommandHistoryInterface} */
 YuzoraInterface.prototype.CommandManager;
 /** @type {Function} */

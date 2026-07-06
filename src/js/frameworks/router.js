@@ -29,7 +29,6 @@ class Router {
          * Current Active Hash Value
          * @public
          * @type {?string}
-         * @override
          */
         this.currentHash = null;
     }
@@ -41,6 +40,7 @@ class Router {
      * @param {!Function} callback
      * @override
      */
+    // @ts-expect-error
     register(pattern, callback) {
         // Convert the pattern into a RegExp matching starting hash path.
         // Optional leading '/' is allowed.
@@ -55,6 +55,7 @@ class Router {
      * @return {boolean} True if matched and executed.
      * @override
      */
+    // @ts-expect-error
     resolve(hash) {
         if (this.currentHash !== null && hash === this.currentHash) {
             return false;
@@ -112,6 +113,7 @@ class Router {
      * Start listening to hashchange events.
      * @override
      */
+    // @ts-expect-error
     listen() {
         window.addEventListener("hashchange", () => {
             this.resolve(window.location.hash);
@@ -130,6 +132,7 @@ class Router {
      * @param {string} hash
      * @override
      */
+    // @ts-expect-error
     navigate(hash) {
         window.location.hash = hash;
     }

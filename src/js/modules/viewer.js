@@ -12,7 +12,7 @@ function handleFile(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = function(e) {
-                const buffer = e.target.result;
+                const buffer = /** @type {!ArrayBuffer} */ (e.target.result);
                 const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
                 try {
                     resolve(utf8Decoder.decode(buffer));

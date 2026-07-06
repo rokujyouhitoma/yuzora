@@ -57,7 +57,7 @@ function buildLineHTML(line, jisageClass, isHeading, headingLevel, headingText, 
             .replace(/[｜|]/g, '')
             .replace(/《[^》]+》/g, '')
             .trim();
-        window.locator.resolve(BookModel).toc.push({ id: headingId, text: cleanText, level: headingLevel });
+        Yuzora.locator.resolve(BookModel).toc.push({ id: headingId, text: cleanText, level: headingLevel });
         return {
             html: `<h${headingLevel} id="${headingId}"${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</h${headingLevel}>`,
             headingIndex: headingIndex + 1
@@ -76,7 +76,7 @@ function parseAozoraText(text) {
                .replace(/</g, '&lt;')
                .replace(/>/g, '&gt;');
 
-    window.locator.resolve(BookModel).toc = [];
+    Yuzora.locator.resolve(BookModel).toc = [];
     let headingIndex = 0;
 
     let lines = text.split(/\r?\n/);

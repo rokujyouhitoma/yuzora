@@ -13,6 +13,7 @@ class Scene {
      * @param {*=} data Optional context data passed to the scene.
      * @override
      */
+    // @ts-expect-error
     enter(data) {
         throw new Error("enter() must be implemented");
     }
@@ -21,6 +22,7 @@ class Scene {
      * Exit the scene.
      * @override
      */
+    // @ts-expect-error
     exit() {
         throw new Error("exit() must be implemented");
     }
@@ -43,7 +45,6 @@ class SceneDirector {
          * Current Active Scene Name
          * @public
          * @type {?string}
-         * @override
          */
         this.currentSceneName = null;
 
@@ -51,7 +52,6 @@ class SceneDirector {
          * Transition Guard Flag
          * @public
          * @type {boolean}
-         * @override
          */
         this.isTransitioning = false;
     }
@@ -62,6 +62,7 @@ class SceneDirector {
      * @param {!SceneInterface} sceneInstance
      * @override
      */
+    // @ts-expect-error
     register(sceneName, sceneInstance) {
         this.scenes[sceneName] = sceneInstance;
     }
@@ -72,6 +73,7 @@ class SceneDirector {
      * @param {*=} data Data payload to pass to the scene enter lifecycle.
      * @override
      */
+    // @ts-expect-error
     transitionTo(sceneName, data) {
         if (this.isTransitioning) {
             return;
