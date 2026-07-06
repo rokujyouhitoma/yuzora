@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added Loading Placeholder / Skeleton Screen to predefined recommended books grid in the welcome screen to prevent layout shifts before JavaScript initialization (ID: 034).
+- Changed `src/js/modules/ui.js` to render skeleton cards initially and asynchronously replace them with predefined cards via smooth fade-in transitions (ID: 034).
+- Added a unit test suite to `tests/unit/placeholder.test.js` [NEW] to verify placeholder structure rendering and asynchronous replacement logic, and updated `package.json` to execute it (ID: 034).
+- Updated HLD document `docs/DSN-01-high_level_design.md` to document the skeleton card placeholders component details (ID: 034).
+
 - Added `src/js/modules/asset.js` [NEW] defining `Asset` and `BookAsset` structures to encapsulate resource status and immutable data (ID: 040).
 - Added `src/js/modules/resource-director.js` [NEW] to manage the loading, caching, and unloading lifecycle of assets, incorporating Same-Origin validation (T-S2) and 2MB safety limit validation (T-D2) (ID: 040).
 - Changed `src/js/modules/viewer.js` and session restore routing in `src/js/modules/yuzora.js` to route all book data loading operations through `ResourceDirector` (ID: 040).

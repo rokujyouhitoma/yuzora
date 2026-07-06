@@ -27,6 +27,7 @@
     --ruby-color: #8c7667;
     --scrollbar-track: rgba(112, 95, 85, 0.05);
     --scrollbar-thumb: rgba(112, 95, 85, 0.2);
+    --skeleton-glow: 255, 255, 255;
 }
 
 /* Theme: Light (明) */
@@ -45,6 +46,7 @@
     --ruby-color: #555555;
     --scrollbar-track: rgba(0, 0, 0, 0.03);
     --scrollbar-thumb: rgba(0, 0, 0, 0.15);
+    --skeleton-glow: 255, 255, 255;
 }
 
 /* Theme: Dark (暗) */
@@ -63,6 +65,7 @@
     --ruby-color: #b0b0b8;
     --scrollbar-track: rgba(255, 255, 255, 0.03);
     --scrollbar-thumb: rgba(255, 255, 255, 0.15);
+    --skeleton-glow: 120, 120, 120;
 }
 
 /* Theme: Black (漆黒) */
@@ -81,6 +84,7 @@
     --ruby-color: #8a8a8a;
     --scrollbar-track: rgba(255, 255, 255, 0.02);
     --scrollbar-thumb: rgba(255, 255, 255, 0.1);
+    --skeleton-glow: 60, 60, 60;
 }
 
 /* ==========================================================================

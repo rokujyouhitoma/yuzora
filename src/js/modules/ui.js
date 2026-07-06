@@ -93,41 +93,68 @@ function bindReaderEvent_(element, type, handler, options) {
 
 function setupPredefinedBooksGrids() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    if (viewContext.developerBooksGrid) {
-        viewContext.developerBooksGrid.innerHTML = "";
-        PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
-            const card = document.createElement("div");
-            card.className = "book-card";
-            card.setAttribute("data-book-id", book.id);
-            card.innerHTML = `
-                <div class="book-card-title">${book.shortTitle}</div>
-                <div class="book-card-author">${book.author}</div>
-            `;
-            const onClick = () => {
-                window.location.hash = "#/reader?book=" + book.id;
-            };
-            bindWelcomeEvent_(card, "click", onClick);
-            viewContext.developerBooksGrid.appendChild(card);
-        });
-    }
+    const sceneDirector = /** @type {!SceneDirectorInterface} */ (Yuzora.locator.resolve(SceneDirector));
 
-    if (viewContext.readerBooksGrid) {
-        viewContext.readerBooksGrid.innerHTML = "";
-        PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
-            const card = document.createElement("div");
-            card.className = "book-card";
-            card.setAttribute("data-book-id", book.id);
-            card.innerHTML = `
-                <div class="book-card-title">${book.shortTitle}</div>
-                <div class="book-card-author">${book.author}</div>
+    // Helper to generate skeleton cards
+    const createSkeletons = (container) => {
+        if (!container) return;
+        container.innerHTML = "";
+        for (let i = 0; i < 3; i++) {
+            const skeleton = document.createElement("div");
+            skeleton.className = "book-card-skeleton";
+            skeleton.innerHTML = `
+                <div class="skeleton-title-vertical"></div>
+                <div class="skeleton-meta-horizontal"></div>
             `;
-            const onClick = () => {
-                window.location.hash = "#/reader?book=" + book.id;
-            };
-            bindWelcomeEvent_(card, "click", onClick);
-            viewContext.readerBooksGrid.appendChild(card);
-        });
-    }
+            container.appendChild(skeleton);
+        }
+    };
+
+    // Render skeleton loaders initially
+    createSkeletons(viewContext.developerBooksGrid);
+    createSkeletons(viewContext.readerBooksGrid);
+
+    // Asynchronously replace skeletons with actual book cards after 600ms delay
+    setTimeout(() => {
+        // Safety guard: only render if we are still on the welcome screen
+        if (sceneDirector.currentSceneName !== "welcome") return;
+
+        if (viewContext.developerBooksGrid) {
+            viewContext.developerBooksGrid.innerHTML = "";
+            PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
+                const card = document.createElement("div");
+                card.className = "book-card fade-in";
+                card.setAttribute("data-book-id", book.id);
+                card.innerHTML = `
+                    <div class="book-card-title">${book.shortTitle}</div>
+                    <div class="book-card-author">${book.author}</div>
+                `;
+                const onClick = () => {
+                    window.location.hash = "#/reader?book=" + book.id;
+                };
+                bindWelcomeEvent_(card, "click", onClick);
+                viewContext.developerBooksGrid.appendChild(card);
+            });
+        }
+
+        if (viewContext.readerBooksGrid) {
+            viewContext.readerBooksGrid.innerHTML = "";
+            PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
+                const card = document.createElement("div");
+                card.className = "book-card fade-in";
+                card.setAttribute("data-book-id", book.id);
+                card.innerHTML = `
+                    <div class="book-card-title">${book.shortTitle}</div>
+                    <div class="book-card-author">${book.author}</div>
+                `;
+                const onClick = () => {
+                    window.location.hash = "#/reader?book=" + book.id;
+                };
+                bindWelcomeEvent_(card, "click", onClick);
+                viewContext.readerBooksGrid.appendChild(card);
+            });
+        }
+    }, 600);
 }
 
 function setupWelcomeEvents() {
