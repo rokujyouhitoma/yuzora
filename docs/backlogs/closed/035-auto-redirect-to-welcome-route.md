@@ -2,7 +2,7 @@
 ID: 035
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENH] 起動時のデフォルトルート自動リダイレクト機能 (ID: 035)
