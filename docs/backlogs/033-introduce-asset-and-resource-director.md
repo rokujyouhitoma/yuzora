@@ -2,7 +2,7 @@
 ID: 033
 種別: Refactor
 優先度: Medium
-ステータス: Draft
+ステータス: Approved
 ---
 
 # [REFACTOR] AssetクラスとResourceDirectorの導入によるリソース管理の抽象化 (ID: 033)
