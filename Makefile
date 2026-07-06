@@ -10,6 +10,8 @@ JS_SRCS = src/js/frameworks/locator.js \
           src/js/modules/event.js \
           src/js/modules/publisher.js \
           src/js/modules/config.js \
+          src/js/modules/asset.js \
+          src/js/modules/resource-director.js \
           src/js/modules/commands.js \
           src/js/modules/parser.js \
           src/js/modules/diagnostics.js \

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `src/js/modules/asset.js` [NEW] defining `Asset` and `BookAsset` structures to encapsulate resource status and immutable data (ID: 040).
+- Added `src/js/modules/resource-director.js` [NEW] to manage the loading, caching, and unloading lifecycle of assets, incorporating Same-Origin validation (T-S2) and 2MB safety limit validation (T-D2) (ID: 040).
+- Changed `src/js/modules/viewer.js` and session restore routing in `src/js/modules/yuzora.js` to route all book data loading operations through `ResourceDirector` (ID: 040).
+- Changed `src/js/modules/commands.js` to modify `LoadBookCommand` execution to load books via `ResourceDirector` while maintaining serializability for command history (ID: 040).
+- Added a unit test suite to `tests/unit/resource.test.js` [NEW] to verify caching mechanism and security validations (Spoofing & DoS limits), and updated `package.json` to execute it (ID: 040).
+- Updated compile configuration in `Makefile`, script imports in `index.html`, and symbols preservation rules in `src/externs.js` for new asset modules (ID: 040).
+- Updated architecture diagrams and class specifications in `docs/DSN-01-high_level_design.md` and `docs/DSN-02-low_level_design.md` (ID: 040).
+
 - Changed `src/js/frameworks/router.js` to automatically redirect the URL path to the default route (e.g. `#/welcome`) when the application is loaded with an empty hash URI (ID: 039).
 - Added a unit test to `tests/unit/router.test.js` and an assertion to `tests/e2e/viewer.spec.js` to verify URL redirection to the default welcome route (ID: 039).
 - Updated low-level design document `docs/DSN-02-low_level_design.md` to document the automatic URL redirection behavior of Router (ID: 039).

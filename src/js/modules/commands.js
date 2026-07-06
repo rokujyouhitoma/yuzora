@@ -35,14 +35,25 @@ class LoadBookCommand extends Command {
     /** @override */
     execute() {
         const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
-        bookModel.title = this.fileName;
-        bookModel.type = this.fileName.endsWith('.html') || this.fileName.endsWith('.xhtml') ? 'html' : 'txt';
-        bookModel.content = this.fileContent;
-        
-        yuzora.publisher.publish(YuzoraEventType.BOOK_LOADED, {
-            fileName: this.fileName,
-            fileContent: this.fileContent
-        });
+        const resourceDirector = /** @type {!ResourceDirectorInterface} */ (Yuzora.locator.resolve(ResourceDirector));
+        const self = this;
+        const loaderFn = function() {
+            return Promise.resolve(self.fileContent);
+        };
+        resourceDirector.loadBook(this.fileName, this.fileName, loaderFn)
+            .then(function(bookAsset) {
+                bookModel.title = bookAsset.id;
+                bookModel.type = bookAsset.id.endsWith('.html') || bookAsset.id.endsWith('.xhtml') ? 'html' : 'txt';
+                bookModel.content = bookAsset.content;
+                
+                yuzora.publisher.publish(YuzoraEventType.BOOK_LOADED, {
+                    fileName: self.fileName,
+                    fileContent: self.fileContent
+                });
+            })
+            .catch(function(err) {
+                console.error("LoadBookCommand execution failed:", err);
+            });
     }
     /** @override */
     toJSON() {

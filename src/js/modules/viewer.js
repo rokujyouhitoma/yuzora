@@ -6,68 +6,66 @@
 function handleFile(file) {
     if (!file) return;
 
-    const reader = new FileReader();
+    const resourceDirector = /** @type {!ResourceDirectorInterface} */ (Yuzora.locator.resolve(ResourceDirector));
 
-    if (file.name.endsWith(".txt")) {
-        reader.onload = function(e) {
-            // Text files (Aozora Shift_JIS/UTF-8 format)
-            const buffer = e.target.result;
-            
-            // Auto detect utf-8 vs shift-jis
-            const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
-            try {
-                const text = utf8Decoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, text));
-            } catch (err) {
-                // Fallback to Shift_JIS on UTF-8 decode failure for user uploaded files
-                const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
-                const text = sjisDecoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, text));
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    } else if (file.name.endsWith(".html") || file.name.endsWith(".htm")) {
-        reader.onload = function(e) {
-            const buffer = e.target.result;
-            // Decode HTML with utf-8 first, fallback to shift-jis
-            const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
-            try {
-                const htmlText = utf8Decoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, htmlText));
-            } catch (err) {
-                const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
-                const htmlText = sjisDecoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(file.name, htmlText));
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    } else {
-        alert("サポートされていないファイル形式です。青空文庫の .txt または .html ファイルを選択してください。");
-    }
+    const loaderFn = function() {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const buffer = e.target.result;
+                const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
+                try {
+                    resolve(utf8Decoder.decode(buffer));
+                } catch (err) {
+                    const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
+                    resolve(sjisDecoder.decode(buffer));
+                }
+            };
+            reader.onerror = function() {
+                reject(new Error("File reading failed."));
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    };
+
+    resourceDirector.loadBook(file.name, file.name, loaderFn)
+        .then(bookAsset => {
+            CommandManager.execute(new LoadBookCommand(bookAsset.id, bookAsset.content));
+        })
+        .catch(error => {
+            console.error("Failed to load dropped file:", error);
+            alert("ファイルの読み込みに失敗しました: " + (/** @type {!Error} */ (error)).message);
+        });
 }
 
 function loadPredefinedBook(book) {
     const bookData = PREDEFINED_BOOKS.find(b => b.id === book);
     if (!bookData) return;
 
-    fetch(bookData.path)
-        .then(response => response.arrayBuffer())
-        .then(buffer => {
-            // For predefined recommended books, try UTF-8 decoding first as they are UTF-8 encoded in this repository
-            const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
-            try {
-                const text = utf8Decoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(bookData.title, text));
-            } catch (err) {
-                console.warn("Shift_JIS decode failed (fatal=true), falling back to UTF-8 for predefined book", err);
-                const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
-                const text = sjisDecoder.decode(buffer);
-                CommandManager.execute(new LoadBookCommand(bookData.title, text));
-            }
+    const resourceDirector = /** @type {!ResourceDirectorInterface} */ (Yuzora.locator.resolve(ResourceDirector));
+
+    const loaderFn = function() {
+        return fetch(bookData.path)
+            .then(response => response.arrayBuffer())
+            .then(buffer => {
+                const utf8Decoder = new TextDecoder("utf-8", { fatal: true });
+                try {
+                    return utf8Decoder.decode(buffer);
+                } catch (err) {
+                    console.warn("Shift_JIS decode failed (fatal=true), falling back to UTF-8 for predefined book", err);
+                    const sjisDecoder = new TextDecoder("shift-jis", { fatal: false });
+                    return sjisDecoder.decode(buffer);
+                }
+            });
+    };
+
+    resourceDirector.loadBook(bookData.title, bookData.path, loaderFn)
+        .then(bookAsset => {
+            CommandManager.execute(new LoadBookCommand(bookAsset.id, bookAsset.content));
         })
         .catch(error => {
             console.error("Failed to load predefined book:", error);
-            alert("推奨書籍の読み込みに失敗しました。");
+            alert("推奨書籍の読み込みに失敗しました: " + (/** @type {!Error} */ (error)).message);
         });
 }
 

@@ -2,7 +2,7 @@
 ID: 040
 種別: Feature
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] AssetクラスとResourceDirectorの導入によるリソース管理の抽象化 (ID: 040)
@@ -62,8 +62,8 @@ Target Branch: `feat/040-introduce-asset-and-resource-director`
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] `Asset` クラスおよび `ResourceDirector` クラスが独立したモジュールとして実装され、Locatorに登録されていること。
-- [ ] 既存の書籍読み込み処理（ドラッグ＆ドロップおよびオススメ本選択）が `ResourceDirector` を経由して動作すること。
-- [ ] 2MBを超える巨大ファイルがドロップされた場合、ロードが直ちに拒否され、エラーハンドリングが行われること（DoS対策）。
-- [ ] 設計書（[DSN-01](../docs/DSN-01-high_level_design.md), [DSN-02](../docs/DSN-02-low_level_design.md)）の内容と実装が完全に一致していること（デッドドキュメントの防止）。
-- [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] `Asset` クラスおよび `ResourceDirector` クラスが独立したモジュールとして実装され、Locatorに登録されていること。
+- [x] 既存の書籍読み込み処理（ドラッグ＆ドロップおよびオススメ本選択）が `ResourceDirector` を経由して動作すること。
+- [x] 2MBを超える巨大ファイルがドロップされた場合、ロードが直ちに拒否され、エラーハンドリングが行われること（DoS対策）。
+- [x] 設計書（[DSN-01](../docs/DSN-01-high_level_design.md), [DSN-02](../docs/DSN-02-low_level_design.md)）の内容と実装が完全に一致していること（デッドドキュメントの防止）。
+- [x] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。

@@ -32,6 +32,9 @@ class Yuzora {
         const router = new Router("welcome");
         this.locator.register(Router, router);
 
+        const resourceDirector = new ResourceDirector();
+        this.locator.register(ResourceDirector, resourceDirector);
+
         initializeDOMElements();
 
         const viewContext = /** @type {!ViewContextInterface} */ (this.locator.resolve(ViewContext));
@@ -48,14 +51,25 @@ class Yuzora {
                 const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
                 const lastSession = sessionRepo.load();
                 if (lastSession && lastSession.name === params["local"]) {
-                    const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));
-                    bookModel.title = lastSession.name || "";
-                    bookModel.content = lastSession.content || "";
-                    bookModel.type = lastSession.type || "txt";
-                    this.publisher.publish(YuzoraEventType.BOOK_LOADED, {
-                        fileName: lastSession.name || "",
-                        fileContent: lastSession.content || ""
-                    });
+                    const resourceDirector = /** @type {!ResourceDirectorInterface} */ (this.locator.resolve(ResourceDirector));
+                    const loaderFn = function() {
+                        return Promise.resolve(lastSession.content || "");
+                    };
+                    resourceDirector.loadBook(lastSession.name || "", lastSession.name || "", loaderFn)
+                        .then(bookAsset => {
+                            const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));
+                            bookModel.title = bookAsset.id;
+                            bookModel.content = bookAsset.content;
+                            bookModel.type = bookAsset.id.endsWith('.html') || bookAsset.id.endsWith('.xhtml') ? 'html' : 'txt';
+                            this.publisher.publish(YuzoraEventType.BOOK_LOADED, {
+                                fileName: bookAsset.id,
+                                fileContent: bookAsset.content
+                            });
+                        })
+                        .catch(err => {
+                            console.error("Failed to restore session via ResourceDirector:", err);
+                            router.navigate("/welcome");
+                        });
                 } else {
                     alert("ローカルファイルは再ロードが必要です。");
                     router.navigate("/welcome");

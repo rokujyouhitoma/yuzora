@@ -39,6 +39,8 @@ graph TD
                 JS_Publisher["publisher.js"]
                 JS_Scene["scene.js"]
                 JS_Config["config.js"]
+                JS_Asset["asset.js"]
+                JS_Resource["resource-director.js"]
                 JS_Cmds["commands.js"]
                 JS_Parser["parser.js"]
                 JS_Diag["diagnostics.js"]
@@ -66,7 +68,7 @@ graph TD
 | レイヤー / コンポーネント | 技術・ファイル名 | 役割と責務 |
 | :--- | :--- | :--- |
 | **表示レイヤー (View)** | [index.html](/index.html) (開発用)<br>[compiled.html](/compiled.html) (デプロイ用)<br>[src/css/modules/](/src/css/modules/) (開発用CSS)<br>[src/css/style.css](/src/css/style.css) (統合CSS) | ユーザーインターフェースの構造定義およびスタイリング。開発時には機能・画面単位に細分化された CSS モジュールを使用し、本番デプロイ時（`compiled.html`）には `make` にて統合された `style.css` を読み込む。 |
-| **制御レイヤー (Controller)** | [src/js/frameworks/](/src/js/frameworks/) (汎用JS)<br>[src/js/modules/](/src/js/modules/) (ドメインJS)<br>`main-min.js` (ビルド成果物) | アプリケーションロジックを構成するモジュール群。非依存の汎用構造ロジックは `frameworks/` に分離され、Yuzoraドメインに依存する制御コードは `modules/` に配置される。開発時には各ファイルを個別に読み込み、本番ビルド（`make`）時には Closure Compiler で最適化・カプセル化された `main-min.js` を生成する。 |
+| **制御レイヤー (Controller)** | [src/js/frameworks/](/src/js/frameworks/) (汎用JS)<br>[src/js/modules/](/src/js/modules/) (ドメインJS)<br>`main-min.js` (ビルド成果物) | アプリケーションロジックを構成するモジュール群。非依存の汎用構造ロジックは `frameworks/` に分離され、Yuzoraドメインに依存する制御コードは `modules/` に配置される。新たにアセットおよびリソース管理を抽象化する `asset.js` や `resource-director.js` が含まれる。開発時には各ファイルを個別に読み込み、本番ビルド（`make`）時には Closure Compiler で最適化・カプセル化された `main-min.js` を生成する。 |
 | **永続化レイヤー (Storage)** | `localStorage` | セッションを跨いだユーザー設定およびしおり情報（読了進捗率、最後に読んだファイルの内容・メタデータ）の永続化。 |
 
 ### 1.3 アーキテクチャドメインとADR（意思決定記録）の位置づけ

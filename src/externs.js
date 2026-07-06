@@ -639,3 +639,51 @@ RouterInterface.prototype.listen = function() {};
 RouterInterface.prototype.navigate = function(hash) {};
 /** @type {?string} */
 RouterInterface.prototype.currentHash;
+
+// Asset Interface definition
+/**
+ * @interface
+ */
+function AssetInterface() {}
+/** @type {string} */
+AssetInterface.prototype.id;
+/** @type {string} */
+AssetInterface.prototype.type;
+/** @type {string} */
+AssetInterface.prototype.status;
+/** @type {?Error} */
+AssetInterface.prototype.error;
+AssetInterface.prototype.dispose = function() {};
+
+// BookAsset Interface definition
+/**
+ * @interface
+ * @extends {AssetInterface}
+ */
+function BookAssetInterface() {}
+/** @type {string} */
+BookAssetInterface.prototype.title;
+/** @type {string} */
+BookAssetInterface.prototype.content;
+/** @type {!Array} */
+BookAssetInterface.prototype.toc;
+
+// ResourceDirector Interface definition
+/**
+ * @interface
+ */
+function ResourceDirectorInterface() {}
+/** @type {!Map<string, !Asset>} */
+ResourceDirectorInterface.prototype.assets;
+/**
+ * @param {string} id
+ * @param {string} source
+ * @param {function(): !Promise<string>} loaderFn
+ * @return {!Promise<!BookAsset>}
+ */
+ResourceDirectorInterface.prototype.loadBook = function(id, source, loaderFn) {};
+/**
+ * @param {string} id
+ */
+ResourceDirectorInterface.prototype.unload = function(id) {};
+ResourceDirectorInterface.prototype.clear = function() {};
