@@ -12,6 +12,9 @@ test.describe('Yuzora E2E Reader Tests', () => {
     });
 
     test('should load welcome screen and show recommendation cards', async ({ page }) => {
+        // Assert URL redirects to the default route (ID: 039)
+        await expect(page).toHaveURL(/#\/welcome/);
+
         // Assert welcome screen is visible
         const welcomeScreen = page.locator('#welcome-screen');
         await expect(welcomeScreen).toBeVisible();

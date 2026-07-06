@@ -103,4 +103,16 @@ test.describe('Yuzora Hash Router Unit Tests', () => {
         // Trigger hash change
         window.location.hash = "#/reader?book=sanshiro";
     });
+
+    test('should redirect to default route when listen() starts on empty hash', (t, done) => {
+        const router = new RouterClass("welcome");
+        window.location.hash = "";
+
+        router.register("/welcome", () => {
+            assert.strictEqual(window.location.hash, "#/welcome");
+            done();
+        });
+
+        router.listen();
+    });
 });

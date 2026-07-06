@@ -116,8 +116,13 @@ class Router {
         window.addEventListener("hashchange", () => {
             this.resolve(window.location.hash);
         });
-        // Resolve initial hash route
-        this.resolve(window.location.hash);
+        // Resolve initial hash route or redirect to default
+        const initialHash = window.location.hash;
+        if (!initialHash || initialHash === "#" || initialHash === "#/") {
+            this.navigate("#/" + this.defaultRoute);
+        } else {
+            this.resolve(initialHash);
+        }
     }
 
     /**

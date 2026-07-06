@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Changed `src/js/frameworks/router.js` to automatically redirect the URL path to the default route (e.g. `#/welcome`) when the application is loaded with an empty hash URI (ID: 039).
+- Added a unit test to `tests/unit/router.test.js` and an assertion to `tests/e2e/viewer.spec.js` to verify URL redirection to the default welcome route (ID: 039).
+- Updated low-level design document `docs/DSN-02-low_level_design.md` to document the automatic URL redirection behavior of Router (ID: 039).
+
 - Changed `src/js/modules/ui.js` to bind the click event of the reader viewport to `toggleControls` to support tapping/clicking to show/hide control bars on mobile (ID: 038).
 - Added an E2E test to `tests/e2e/viewer.spec.js` to verify tap-to-toggle header/footer controls on the reader viewport (ID: 038).
 - Updated low-level design document `docs/DSN-02-low_level_design.md` to reflect viewport tap controls toggle logic (ID: 038).
