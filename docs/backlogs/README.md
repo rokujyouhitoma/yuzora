@@ -40,6 +40,7 @@
 | **030** | Refactor | Medium | Closed | Yuzoraクラスのファイル分割とPublisher連携 | [030-extract-yuzora-class-and-use-publisher.md](closed/030-extract-yuzora-class-and-use-publisher.md) |
 | **031** | Refactor | Medium | Closed | SceneライフサイクルによるUI初期化・クリーンアップ処理の定義 | [031-scene-lifecycle-ui-initialization-cleanup.md](closed/031-scene-lifecycle-ui-initialization-cleanup.md) |
 | **032** | Refactor | Medium | Closed | JavaScriptモジュールの汎用化・フレームワーク抽出とディレクトリ分離 | [032-generalize-and-extract-frameworks.md](closed/032-generalize-and-extract-frameworks.md) |
+| **033** | Refactor | Medium | Draft | AssetクラスとResourceDirectorの導入によるリソース管理の抽象化 | [033-introduce-asset-and-resource-director.md](033-introduce-asset-and-resource-director.md) |
 
 ---
 
