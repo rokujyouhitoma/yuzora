@@ -15,21 +15,21 @@ locator.register(YuzoraEventTarget, new YuzoraEventTarget());
  * @enum {string}
  */
 const YuzoraEventType = {
-    BOOK_LOAD_START: 'book-load-start',
-    BOOK_LOADED: 'book-loaded',
-    BOOK_RENDERED: 'book-rendered',
-    BOOK_LOAD_FAILED: 'book-load-failed',
-    NAVIGATE_PAGE: 'navigate-page',
-    PAGE_CHANGED: 'page-changed',
-    CONFIG_CHANGED: 'config-changed',
-    TOC_GENERATED: 'toc-generated',
-    TOC_ACTIVE_CHANGED: 'toc-active-changed',
-    TOGGLE_DEBUG_MODAL: 'toggle-debug-modal',
-    TOGGLE_CONTROLS: 'toggle-controls',
-    TOGGLE_DRAWER: 'toggle-drawer',
-    HISTORY_UPDATED: 'history-updated',
-    DIAGNOSE_RUN: 'diagnose-run',
-    DIAGNOSE_COMPLETED: 'diagnose-completed'
+    BOOK_LOAD_START: 'document:load-start',
+    BOOK_LOADED: 'document:loaded',
+    BOOK_RENDERED: 'document:rendered',
+    BOOK_LOAD_FAILED: 'document:load-failed',
+    NAVIGATE_PAGE: 'ui:navigate-page',
+    PAGE_CHANGED: 'ui:page-changed',
+    CONFIG_CHANGED: 'ui:config-changed',
+    TOC_GENERATED: 'ui:toc-generated',
+    TOC_ACTIVE_CHANGED: 'ui:toc-active-changed',
+    TOGGLE_DEBUG_MODAL: 'ui:toggle-debug-modal',
+    TOGGLE_CONTROLS: 'ui:toggle-controls',
+    TOGGLE_DRAWER: 'ui:toggle-drawer',
+    HISTORY_UPDATED: 'system:history-updated',
+    DIAGNOSE_RUN: 'system:diagnose-run',
+    DIAGNOSE_COMPLETED: 'system:diagnose-completed'
 };
 
 // Expose classes on window for test accessibility and property preservation

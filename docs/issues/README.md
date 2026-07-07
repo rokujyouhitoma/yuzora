@@ -56,6 +56,7 @@
 | **044** | Feature | Medium | Closed | レンダラー（Renderer）クラスの導入による描画ロジックの分離 | AI Agent | [044-introduce-renderer-class.md](closed/044-introduce-renderer-class.md) |
 | **045** | Feature | Medium | Closed | セキュリティ・バイ・デザインに基づくセキュアレンダラーパターンの強制 | AI Agent | [045-secure-dom-renderer.md](closed/045-secure-dom-renderer.md) |
 | **046** | Refactor | Medium | Closed | CSS変数の完全活用による「CSSテーマエンジン」の導入 | AI Agent | [046-css-theme-engine.md](closed/046-css-theme-engine.md) |
+| **047** | Refactor | Medium | Closed | イベント駆動（EDA）の名前空間化とスコープ分離 | AI Agent | [047-scoped-event-namespaces.md](closed/047-scoped-event-namespaces.md) |
 
 
 ## 2. 状態（ステータス）定義

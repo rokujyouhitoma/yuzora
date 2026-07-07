@@ -8,6 +8,7 @@ interface YuzoraEventTargetInterface {
     addEventListener(type: string, listener: (event: YuzoraEventInterface) => void): void;
     removeEventListener(type: string, listener: (event: YuzoraEventInterface) => void): void;
     dispatchEvent(event: YuzoraEventInterface): void;
+    scoped(scopePrefix: string): YuzoraEventTargetInterface;
 }
 
 interface LocatorInterface {

@@ -194,4 +194,74 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
         assert.strictEqual(YuzoraClass.locator, locator);
         assert.ok(yuzora.publisher);
     });
+
+    test('should support ScopedEventTarget and verify event scope routing', () => {
+        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const eventBus = locator.resolve(YuzoraEventTarget);
+
+        const uiBus = eventBus.scoped('ui');
+        assert.ok(uiBus);
+
+        let receivedDetail = null;
+        let count = 0;
+        const listener = (e) => {
+            count++;
+            receivedDetail = e.detail;
+        };
+
+        uiBus.addEventListener('test-event', listener);
+
+        // Dispatch via scoped target
+        uiBus.dispatchEvent(new YuzoraEvent('test-event', 'data-1'));
+        assert.strictEqual(count, 1);
+        assert.strictEqual(receivedDetail, 'data-1');
+
+        // Dispatch via parent target with explicit namespace
+        eventBus.dispatchEvent(new YuzoraEvent('ui:test-event', 'data-2'));
+        assert.strictEqual(count, 2);
+        assert.strictEqual(receivedDetail, 'data-2');
+
+        // Remove listener
+        uiBus.removeEventListener('test-event', listener);
+        uiBus.dispatchEvent(new YuzoraEvent('test-event', 'data-3'));
+        assert.strictEqual(count, 2); // No increment
+    });
+
+    test('should support nested ScopedEventTarget routing', () => {
+        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const eventBus = locator.resolve(YuzoraEventTarget);
+
+        const nestedBus = eventBus.scoped('parent').scoped('child');
+        let count = 0;
+        const listener = () => { count++; };
+
+        nestedBus.addEventListener('nested-event', listener);
+        
+        // Should dispatch and route as parent:child:nested-event
+        eventBus.dispatchEvent(new YuzoraEvent('parent:child:nested-event'));
+        assert.strictEqual(count, 1);
+
+        nestedBus.removeEventListener('nested-event', listener);
+    });
+
+    test('should audit dispatching events when __DEBUG_EVENT__ is active', () => {
+        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const eventBus = locator.resolve(YuzoraEventTarget);
+
+        let logOutput = '';
+        const originalLog = console.log;
+        console.log = (msg) => {
+            logOutput = msg;
+        };
+
+        window['__DEBUG_EVENT__'] = true;
+        eventBus.dispatchEvent(new YuzoraEvent('test:debug-event', { val: 42 }));
+        window['__DEBUG_EVENT__'] = false;
+
+        console.log = originalLog;
+
+        assert.ok(logOutput.includes('[Event Audit]'));
+        assert.ok(logOutput.includes('test:debug-event'));
+        assert.ok(logOutput.includes('{"val":42}'));
+    });
 });

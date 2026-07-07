@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `ScopedEventTarget` and `AppEventTarget.prototype.scoped` to support scoped namespace isolation of event transmission (ID: 047).
+- Added Domain namespace prefixes (`document:`, `ui:`, `system:`) to `YuzoraEventType` to categorize event architecture logically (ID: 047).
+- Added Event Audit Logging support in `dispatchEvent` when `window.__DEBUG_EVENT__` flag is active (ID: 047).
+- Updated JSDoc type configurations, Closure Compiler externs, and unit tests to verify Scoped Event Target routing and logger output (ID: 047).
+
 - Added CSS Variables based "CSS Theme Engine" utilizing `data-theme` attribute instead of dynamic body class names toggling to improve render reflow performance (ID: 046).
 - Changed `ConfigModel.prototype.apply()` to set `data-theme` attribute on body element instead of toggling class names (ID: 046).
 - Changed CSS modular stylesheets (`base.css`, `reader.css`, `debug.css`) to select color variables using attribute selectors (`body[data-theme="..."]`) (ID: 046).

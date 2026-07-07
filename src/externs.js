@@ -96,7 +96,13 @@ Window.prototype.YuzoraEvent;
 /** @type {Object} */
 Window.prototype.YuzoraEventTarget;
 /** @type {Object} */
+Window.prototype.ScopedEventTarget;
+/** @type {Object} */
+Window.prototype.YuzoraEventType;
+/** @type {Object} */
 Window.prototype.Publisher;
+/** @type {boolean} */
+Window.prototype.__DEBUG_EVENT__;
 
 /** @type {!YuzoraInterface} */
 var yuzora;
@@ -577,6 +583,11 @@ YuzoraEventTargetInterface.prototype.removeEventListener = function(type, listen
  * @param {!YuzoraEventInterface} event
  */
 YuzoraEventTargetInterface.prototype.dispatchEvent = function(event) {};
+/**
+ * @param {string} scopePrefix
+ * @return {!YuzoraEventTargetInterface}
+ */
+YuzoraEventTargetInterface.prototype.scoped = function(scopePrefix) {};
 
 // Publisher Interface definition
 /**
