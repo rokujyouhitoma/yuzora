@@ -129,8 +129,19 @@
   - `unload(id)`: 指定IDのアセットをアンロードし、`dispose()` を呼び出してキャッシュから削除します。
   - `clear()`: すべてのアセットをアンロードします。
 
+#### 1.2.11 `RendererInterface` （レンダラーインターフェース）
+ビューポートへのコンテンツ描画およびレイアウトの操作を行う表示層の共通インターフェースです。
+- **メソッド**:
+  - `render(htmlContent)`: パースされたコンテンツをDOMに描画します。
+  - `restoreScrollPosition(progress, smooth)`: 読書進捗率に応じてビューポートのスクロール座標を設定します。
+  - `scrollToPage(pageNumber)`: 指定ページへスムーズスクロールします（完了時に解決するPromiseを返します）。
+  - `handleResize(progress)`: リサイズ時にレイアウト幅を調整してスクロール座標を再計算します（完了時に解決するPromiseを返します）。
+
+#### 1.2.12 `VerticalRenderer` （縦書き用レンダラークラス）
+`RendererInterface` を実装し、縦書き表示およびマルチカラムレイアウトの描画・座標制御をカプセル化する具象クラスです。
+
 ### 1.3 依存注入・サービスロケーターへの登録クラス
-起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector`、`Router` および `ResourceDirector` が Locator に登録されます。
+起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector`、`Router`、`ResourceDirector` および `VerticalRenderer` が Locator に登録されます。
 
 
 

@@ -73,6 +73,7 @@ function displayBook() {
     const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+    const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
 
     let parsedHTML = '';
     let title = bookModel.title;
@@ -98,7 +99,7 @@ function displayBook() {
     // Apply to viewer
     viewContext.bookTitle.textContent = title;
     document.title = `${title} - ゆうぞら`;
-    viewContext.readerContent.innerHTML = parsedHTML;
+    renderer.render(parsedHTML);
 
     // Set default activeHeadingId to the first TOC item if available
     viewContext.activeHeadingId = (bookModel.toc && bookModel.toc.length > 0) ? bookModel.toc[0].id : null;
@@ -170,26 +171,15 @@ function updateProgress() {
 }
 
 function restoreScrollPosition() {
-    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
-    const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
-    if (configModel.direction === 'rtl') {
-        // In vertical-rl, scrolling forward is in the negative direction.
-        viewContext.readerViewport.scrollLeft = -(bookmarkModel.bookmarkProgress * maxScroll);
-    } else {
-        // In vertical-lr, scrolling forward is in the positive direction.
-        viewContext.readerViewport.scrollLeft = bookmarkModel.bookmarkProgress * maxScroll;
-    }
+    const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
+    renderer.restoreScrollPosition(bookmarkModel.bookmarkProgress, false);
 }
 
 function restoreScrollPositionSmooth() {
-    const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
-    const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
-    const targetScroll = configModel.direction === 'rtl' ? -(bookmarkModel.bookmarkProgress * maxScroll) : (bookmarkModel.bookmarkProgress * maxScroll);
-    viewContext.readerViewport.scrollTo({ left: targetScroll, behavior: 'smooth' });
+    const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
+    renderer.restoreScrollPosition(bookmarkModel.bookmarkProgress, true);
 }
 
 function saveBookmark() {
@@ -225,59 +215,41 @@ function prevPage() {
 
 function scrollToPage(pageNumber) {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
+    const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
     const clientWidth = viewContext.readerViewport.clientWidth;
     const targetScrollLeft = (pageNumber - 1) * clientWidth;
     
     viewContext.isReflowing = true;
-    viewContext.readerViewport.scrollTo({
-        left: configModel.direction === 'rtl' ? -targetScrollLeft : targetScrollLeft,
-        behavior: 'smooth'
-    });
-    
-    setTimeout(() => {
+    renderer.scrollToPage(pageNumber).then(() => {
         viewContext.isReflowing = false;
         // Keep progress and bar updated in real-time
         const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
         bookmarkModel.bookmarkProgress = maxScroll > 0 ? targetScrollLeft / maxScroll : 0;
         updateProgress();
         saveBookmark();
-    }, 400); // Wait for transition animation to complete
+    });
 }
 
 function handleResize() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
+    const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
+    
     // Avoid double reflow trigger cycles
     if (viewContext.isReflowing) return;
     
     viewContext.isReflowing = true;
     const oldProgress = bookmarkModel.bookmarkProgress;
     
-    // Temporarily reset columns layout width before recalculations to get accurate sizing
-    viewContext.readerContent.style.width = 'auto';
-    
-    setTimeout(() => {
-        // Enforce column content size width constraints
-        viewContext.readerContent.style.width = 'max-content';
-        
-        // Restore progress coordinates on new dimensions
-        const maxScroll = Math.abs(viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth);
-        if (configModel.direction === 'rtl') {
-            viewContext.readerViewport.scrollLeft = -(oldProgress * maxScroll);
-        } else {
-            viewContext.readerViewport.scrollLeft = oldProgress * maxScroll;
-        }
-        
+    renderer.handleResize(oldProgress).then(() => {
         bookmarkModel.bookmarkProgress = oldProgress;
         updateProgress();
         
         setTimeout(() => {
             viewContext.isReflowing = false;
         }, 50);
-    }, 100);
+    });
 }
 
 function checkLastSession() {

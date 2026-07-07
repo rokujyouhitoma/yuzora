@@ -219,5 +219,12 @@ interface Window {
     YuzoraEventType: any;
     initializeDOMElements(): void;
 }
+interface RendererInterface {
+    render(htmlContent: string): void;
+    restoreScrollPosition(progress: number, smooth?: boolean): void;
+    scrollToPage(pageNumber: number): Promise<void>;
+    handleResize(progress: number): Promise<void>;
+}
 
 declare var yuzora: YuzoraInterface;
+

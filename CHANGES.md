@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `RendererInterface` [NEW] defining common viewport rendering and layout operation methods, and updated DSN-02 (ID: 044).
+- Added `VerticalRenderer` class [NEW] in `src/js/modules/renderer.js` to encapsulate vertical multi-column layout, page scroll, page navigation, and window resizing calculations (ID: 044).
+- Changed `src/js/modules/viewer.js` to delegate HTML rendering, scroll position restoration, page scrolling, and resize handling to `VerticalRenderer` (ID: 044).
+- Changed `src/js/modules/yuzora.js` to register `VerticalRenderer` in Locator during app initialization boot (ID: 044).
+- Changed `index.html` to load `renderer.js` before `viewer.js` (ID: 044).
 - Added whitelist-based parameter validation for operation command history JSON imports to prevent script injection (XSS) and Prototype Pollution (T-T3) (ID: 043).
 - Added Object.prototype protection rules in `src/externs.js` for `params`, `drawerId`, and `clearType` properties to prevent advanced optimization renaming issues (ID: 043).
 - Added unit tests in `tests/unit/app.test.js` to verify prototype pollution prevention and invalid parameter filtering of imported histories (ID: 043).

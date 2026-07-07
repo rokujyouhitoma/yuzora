@@ -46,6 +46,9 @@ class Yuzora {
         const resourceDirector = new ResourceDirector();
         this.locator.register(ResourceDirector, resourceDirector);
 
+        const renderer = new VerticalRenderer();
+        this.locator.register(VerticalRenderer, renderer);
+
         this.config = /** @type {!ConfigModel} */ (this.locator.resolve(ConfigModel));
 
         initializeDOMElements();

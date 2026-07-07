@@ -53,6 +53,7 @@
 | **041** | Enhancement | Medium | Closed | ウェルカム画面オススメ本グリッドのローディングプレースホルダーの導入 | AI Agent | [041-welcome-books-loading-placeholder.md](closed/041-welcome-books-loading-placeholder.md) |
 | **042** | Refactor | Medium | Closed | JSDocとtscによる静的型チェックの導入 | AI Agent | [042-jsdoc-tsc-type-check.md](closed/042-jsdoc-tsc-type-check.md) |
 | **043** | Feature | High | Closed | コマンド履歴デシリアライズ入力検証とCSPの導入 | AI Agent | [043-command-history-validation-and-csp.md](closed/043-command-history-validation-and-csp.md) |
+| **044** | Feature | Medium | Closed | レンダラー（Renderer）クラスの導入による描画ロジックの分離 | AI Agent | [044-introduce-renderer-class.md](closed/044-introduce-renderer-class.md) |
 
 
 ## 2. 状態（ステータス）定義
