@@ -43,14 +43,14 @@
 | **033** | Refactor | Medium | Closed | AssetクラスとResourceDirectorの導入によるリソース管理の抽象化 | [033-introduce-asset-and-resource-director.md](closed/033-introduce-asset-and-resource-director.md) |
 | **034** | Enhancement | Medium | Closed | ウェルカム画面オススメ本グリッドのローディングプレースホルダーの導入 | [034-welcome-books-loading-placeholder.md](closed/034-welcome-books-loading-placeholder.md) |
 | **035** | Enhancement | Medium | Closed | 起動時のデフォルトルート自動リダイレクト機能 | [035-auto-redirect-to-welcome-route.md](closed/035-auto-redirect-to-welcome-route.md) |
-| **036** | Refactor | Medium | Approved | レンダラー（Renderer）クラスの導入による描画ロジック of 分離 | [036-introduce-renderer-class.md](036-introduce-renderer-class.md) |
+| **036** | Refactor | Medium | Closed | レンダラー（Renderer）クラスの導入による描画ロジック of 分離 | [036-introduce-renderer-class.md](closed/036-introduce-renderer-class.md) |
 | **037** | Refactor | Medium | Draft | 永続化層（Repository）の完全非同期対応と抽象化 | [037-async-repository-abstraction.md](037-async-repository-abstraction.md) |
 | **038** | Refactor | Medium | Draft | イベント駆動（EDA）の名前空間化とスコープ分離 | [038-scoped-event-namespaces.md](038-scoped-event-namespaces.md) |
-| **039** | Feature | Medium | Draft | セキュリティ・バイ・デザインに基づくセキュアレンダラーパターンの強制 | [039-secure-dom-renderer.md](039-secure-dom-renderer.md) |
+| **039** | Feature | Medium | Closed | セキュリティ・バイ・デザインに基づくセキュアレンダラーパターンの強制 | [039-secure-dom-renderer.md](closed/039-secure-dom-renderer.md) |
 | **040** | Feature | Medium | Draft | オフライン自律稼働とPWA（Progressive Web App）化の導入 | [040-pwa-offline-support.md](040-pwa-offline-support.md) |
 | **041** | Refactor | Medium | Draft | CSS変数の完全活用による「CSSテーマエンジン」の導入 | [041-css-theme-engine.md](041-css-theme-engine.md) |
-| **042** | Refactor | Medium | Promoted | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](042-jsdoc-tsc-type-check.md) |
-| **043** | Feature | High | Promoted | コマンド履歴入力検証とCSPの導入 | [043-command-history-validation-and-csp.md](043-command-history-validation-and-csp.md) |
+| **042** | Refactor | Medium | Closed | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](closed/042-jsdoc-tsc-type-check.md) |
+| **043** | Feature | High | Closed | コマンド履歴入力検証とCSPの導入 | [043-command-history-validation-and-csp.md](closed/043-command-history-validation-and-csp.md) |
 
 ---
 
