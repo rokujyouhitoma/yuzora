@@ -50,7 +50,7 @@
 | **040** | Feature | Medium | Draft | オフライン自律稼働とPWA（Progressive Web App）化の導入 | [040-pwa-offline-support.md](040-pwa-offline-support.md) |
 | **041** | Refactor | Medium | Draft | CSS変数の完全活用による「CSSテーマエンジン」の導入 | [041-css-theme-engine.md](041-css-theme-engine.md) |
 | **042** | Refactor | Medium | Promoted | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](042-jsdoc-tsc-type-check.md) |
-| **043** | Feature | High | Draft | コマンド履歴入力検証とCSPの導入 | [043-command-history-validation-and-csp.md](043-command-history-validation-and-csp.md) |
+| **043** | Feature | High | Promoted | コマンド履歴入力検証とCSPの導入 | [043-command-history-validation-and-csp.md](043-command-history-validation-and-csp.md) |
 
 ---
 
