@@ -207,6 +207,7 @@ interface YuzoraInterface {
     NavigatePageCommand: any;
     UpdateConfigCommand: any;
     SyncBookmarkCommand: any;
+    VerticalRenderer: any;
 }
 
 interface Window {

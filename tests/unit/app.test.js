@@ -131,6 +131,35 @@ test.describe('Yuzora Parser Unit Tests', () => {
         assert.ok(result.body.includes('<div>スタイルとカスタム属性</div>'));
     });
 
+    test('should sanitize layout content inside VerticalRenderer to prevent XSS (Double Defense)', () => {
+        const { locator } = window.yuzora;
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = locator.resolve(VerticalRendererClass);
+
+        const dirtyHTML = `
+            <p>通常のテキスト。<a href="javascript:alert('XSS')">リンク</a></p>
+            <script>alert('XSS script')</script>
+            <img src="x" onerror="alert('XSS onerror')">
+            <iframe src="javascript:alert('XSS iframe')"></iframe>
+        `;
+
+        renderer.render(dirtyHTML);
+
+        const readerContent = window.document.getElementById('reader-content');
+        const renderedContent = readerContent.innerHTML;
+
+        // script, iframe, onerror, javascript: が除去されていること
+        assert.ok(!renderedContent.includes('<script>'));
+        assert.ok(!renderedContent.includes('alert('));
+        assert.ok(!renderedContent.includes('<iframe>'));
+        assert.ok(!renderedContent.includes('onerror='));
+        assert.ok(!renderedContent.includes('href="javascript:'));
+
+        // 許可されているタグと安全な属性は維持されること
+        assert.ok(renderedContent.includes('通常のテキスト'));
+        assert.ok(renderedContent.includes('<a>リンク</a>'));
+        assert.ok(renderedContent.includes('src="x"'));
+    });
 
     test('should parse page break marker', () => {
         const result = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文第一段\n［＃改ページ］\n本文第二段');

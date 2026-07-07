@@ -543,6 +543,7 @@ YuzoraInterface.prototype.NavigatePageCommand;
 YuzoraInterface.prototype.UpdateConfigCommand;
 /** @type {Function} */
 YuzoraInterface.prototype.SyncBookmarkCommand;
+YuzoraInterface.prototype.VerticalRenderer;
 
 
 // YuzoraEvent Interface definition
@@ -700,3 +701,28 @@ ResourceDirectorInterface.prototype.loadBook = function(id, source, loaderFn) {}
  */
 ResourceDirectorInterface.prototype.unload = function(id) {};
 ResourceDirectorInterface.prototype.clear = function() {};
+
+// Renderer Interface definition
+/**
+ * @interface
+ */
+function RendererInterface() {}
+/**
+ * @param {string} htmlContent
+ */
+RendererInterface.prototype.render = function(htmlContent) {};
+/**
+ * @param {number} progress
+ * @param {boolean=} smooth
+ */
+RendererInterface.prototype.restoreScrollPosition = function(progress, smooth) {};
+/**
+ * @param {number} pageNumber
+ * @return {!Promise<void>}
+ */
+RendererInterface.prototype.scrollToPage = function(pageNumber) {};
+/**
+ * @param {number} progress
+ * @return {!Promise<void>}
+ */
+RendererInterface.prototype.handleResize = function(progress) {};

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added `VerticalRenderer.render` secure DOM sanitization logic [NEW] utilizing `DOMParser` and whitelist-based tag/attribute stripping (Double Defense / Defense in Depth against XSS) (ID: 045).
+- Changed `VerticalRenderer.render` to securely migrate DOM elements via `appendChild` loop instead of `innerHTML` assignment to prevent script execution on browser re-evaluation (ID: 045).
+- Changed `src/js/modules/yuzora.js`, `src/js/types.d.ts`, and `src/externs.js` to expose `VerticalRenderer` constructor safely for testing and Closure Compiler ADVANCED_OPTIMIZATIONS compatibility (ID: 045).
+- Changed `Makefile` to include `src/js/modules/renderer.js` in `JS_SRCS` compiler bundle list (ID: 045).
+- Added unit tests in `tests/unit/app.test.js` to verify XSS payload sanitization of VerticalRenderer (ID: 045).
+- Updated `docs/DSN-02-low_level_design.md` and `docs/threat-modeling/comprehensive-threat-modeling.md` to reflect secure DOM renderer architecture and threat mitigation updates (ID: 045).
 - Added `RendererInterface` [NEW] defining common viewport rendering and layout operation methods, and updated DSN-02 (ID: 044).
 - Added `VerticalRenderer` class [NEW] in `src/js/modules/renderer.js` to encapsulate vertical multi-column layout, page scroll, page navigation, and window resizing calculations (ID: 044).
 - Changed `src/js/modules/viewer.js` to delegate HTML rendering, scroll position restoration, page scrolling, and resize handling to `VerticalRenderer` (ID: 044).

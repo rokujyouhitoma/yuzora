@@ -15,6 +15,7 @@ JS_SRCS = src/js/frameworks/locator.js \
           src/js/modules/commands.js \
           src/js/modules/parser.js \
           src/js/modules/diagnostics.js \
+          src/js/modules/renderer.js \
           src/js/modules/viewer.js \
           src/js/modules/ui.js \
           src/js/modules/yuzora.js

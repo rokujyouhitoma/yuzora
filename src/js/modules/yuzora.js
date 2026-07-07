@@ -263,6 +263,15 @@ class Yuzora {
     get SyncBookmarkCommand() {
         return SyncBookmarkCommand;
     }
+
+    /**
+     * Gets VerticalRenderer constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get VerticalRenderer() {
+        return VerticalRenderer;
+    }
 }
 
 /**

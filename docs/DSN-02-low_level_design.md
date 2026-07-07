@@ -139,6 +139,9 @@
 
 #### 1.2.12 `VerticalRenderer` （縦書き用レンダラークラス）
 `RendererInterface` を実装し、縦書き表示およびマルチカラムレイアウトの描画・座標制御をカプセル化する具象クラスです。
+- **セキュリティ要件 (Defense in Depth)**:
+  - `render(htmlContent)` 実行時に、`DOMParser` を介して HTML をパースした上で、ホワイトリスト（タグ・属性制限）に基づくサニタイズ（`sanitizeDOM`）を強制します。
+  - サニタイズ後、`innerHTML` による再評価を避けるため、DOMノードを直接移行（`appendChild`）して描画を完了させます。
 
 ### 1.3 依存注入・サービスロケーターへの登録クラス
 起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector`、`Router`、`ResourceDirector` および `VerticalRenderer` が Locator に登録されます。
