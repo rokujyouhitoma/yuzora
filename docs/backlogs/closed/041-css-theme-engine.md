@@ -2,7 +2,7 @@
 ID: 041
 種別: Refactor
 優先度: Medium
-ステータス: Draft
+ステータス: Closed
 ---
 
 # [REFACTOR] CSS変数の完全活用による「CSSテーマエンジン」の導入 (ID: 041)
