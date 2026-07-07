@@ -2,7 +2,7 @@
 ID: 043
 種別: Feature
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] コマンド履歴デシリアライズ入力検証とコンテンツセキュリティポリシー（CSP）の導入 (ID: 043)

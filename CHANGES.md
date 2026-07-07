@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added whitelist-based parameter validation for operation command history JSON imports to prevent script injection (XSS) and Prototype Pollution (T-T3) (ID: 043).
+- Added Object.prototype protection rules in `src/externs.js` for `params`, `drawerId`, and `clearType` properties to prevent advanced optimization renaming issues (ID: 043).
+- Added unit tests in `tests/unit/app.test.js` to verify prototype pollution prevention and invalid parameter filtering of imported histories (ID: 043).
+- Updated `docs/DSN-02-low_level_design.md` to specify detailed validation policies for command history imports (ID: 043).
+- Updated `docs/threat-modeling/comprehensive-threat-modeling.md` to document threat scenario T-T3 and its mitigations (ID: 043).
+
 - Added static type checking using TypeScript Compiler (`tsc --noEmit`) via `npm run test:types` to enforce JSDoc type correctness and integrate it into the CI pipeline (ID: 042).
 - Added `src/js/types.d.ts` [NEW] declaring Yuzora system interfaces and global window variables for type resolution (ID: 042).
 - Changed JSDoc annotations in frameworks and modules (`src/js/frameworks/` and `src/js/modules/`) to restore `@implements` and `@override` comments while suppressing tsc native method override error TS4121 using `// @ts-expect-error` comments (ID: 042).
