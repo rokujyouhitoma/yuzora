@@ -52,7 +52,7 @@
 | **040** | Feature | Medium | Closed | AssetクラスとResourceDirectorの導入によるリソース管理の抽象化 | AI Agent | [040-introduce-asset-and-resource-director.md](closed/040-introduce-asset-and-resource-director.md) |
 | **041** | Enhancement | Medium | Closed | ウェルカム画面オススメ本グリッドのローディングプレースホルダーの導入 | AI Agent | [041-welcome-books-loading-placeholder.md](closed/041-welcome-books-loading-placeholder.md) |
 | **042** | Refactor | Medium | Closed | JSDocとtscによる静的型チェックの導入 | AI Agent | [042-jsdoc-tsc-type-check.md](closed/042-jsdoc-tsc-type-check.md) |
-| **043** | Feature | High | New | コマンド履歴デシリアライズ入力検証とCSPの導入 | AI Agent | [043-command-history-validation-and-csp.md](043-command-history-validation-and-csp.md) |
+| **043** | Feature | High | In Progress | コマンド履歴デシリアライズ入力検証とCSPの導入 | AI Agent | [043-command-history-validation-and-csp.md](043-command-history-validation-and-csp.md) |
 
 
 ## 2. 状態（ステータス）定義
