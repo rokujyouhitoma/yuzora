@@ -430,6 +430,132 @@ class CommandHistory {
     }
 
     /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateConfigParam_(params) {
+        if (!params || typeof params['configKey'] !== "string" || typeof params['configValue'] !== "string") return false;
+        const validValues = {
+            theme: ["sepia", "light", "dark", "black"],
+            font: ["font-mincho", "font-gothic"],
+            direction: ["rtl", "ltr"],
+            size: ["size-sm", "size-md", "size-lg"],
+            lh: ["line-height-sm", "line-height-normal", "line-height-lg"],
+            spacing: ["spacing-sm", "spacing-normal", "spacing-lg"]
+        };
+        if (!Object.prototype.hasOwnProperty.call(validValues, params['configKey'])) return false;
+        const list = validValues[params['configKey']];
+        return !!list && list.includes(params['configValue']);
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateLoadBook_(params) {
+        return !!params && typeof params['fileName'] === "string" && typeof params['fileContent'] === "string";
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateNavigatePage_(params) {
+        return !!params && typeof params['targetPage'] === "number" && !isNaN(params['targetPage']) && params['targetPage'] >= 1;
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateSyncBookmark_(params) {
+        return !!params && typeof params['progress'] === "number" && !isNaN(params['progress']) && params['progress'] >= 0.0 && params['progress'] <= 1.0;
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateToggleControls_(params) {
+        return !!params && typeof params['visible'] === "boolean";
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateToggleDrawer_(params) {
+        return !!params && (params['drawerId'] === "settings" || params['drawerId'] === "toc") && typeof params['open'] === "boolean";
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateClearStorage_(params) {
+        return !!params && ["bookmarks", "config", "all"].includes(params['clearType']);
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateToggleDebugModal_(params) {
+        return !!params && typeof params['open'] === "boolean";
+    }
+
+    /**
+     * @private
+     * @param {string} type
+     * @param {*} params
+     * @return {boolean}
+     */
+    validateParamsByType_(type, params) {
+        const validators = {
+            "LoadBook": this.validateLoadBook_,
+            "NavigatePage": this.validateNavigatePage_,
+            "UpdateConfig": this.validateConfigParam_,
+            "SyncBookmark": this.validateSyncBookmark_,
+            "ToggleControls": this.validateToggleControls_,
+            "ToggleDrawer": this.validateToggleDrawer_,
+            "ExitReader": () => true,
+            "ClearStorage": this.validateClearStorage_,
+            "ToggleDebugModal": this.validateToggleDebugModal_
+        };
+        const fn = validators[type];
+        return fn ? fn.call(this, params) : false;
+    }
+
+    /**
+     * @private
+     * @param {*} item
+     * @return {boolean}
+     */
+    validateCommandItem_(item) {
+        if (!item || typeof item !== "object") return false;
+        if (typeof item['type'] !== "string") return false;
+        if (!item['params'] || typeof item['params'] !== "object") return false;
+
+        const params = /** @type {!Object} */ (item['params']);
+        // Block prototype pollution keys
+        for (const key of Object.keys(params)) {
+            if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+                return false;
+            }
+        }
+
+        return this.validateParamsByType_(item['type'], params);
+    }
+
+    /**
      * Imports history from JSON string.
      * @override
      */
@@ -442,12 +568,13 @@ class CommandHistory {
             }
             const commands = [];
             for (const item of rawArray) {
-                if (!item.type || !item.params) {
-                    throw new Error("Invalid command format in history array");
-                }
-                const cmd = this.recreateCommand(item);
-                if (cmd) {
-                    commands.push(cmd);
+                if (this.validateCommandItem_(item)) {
+                    const cmd = this.recreateCommand(item);
+                    if (cmd) {
+                        commands.push(cmd);
+                    }
+                } else {
+                    console.warn("Skipping invalid/unsafe command item:", item);
                 }
             }
             return commands;

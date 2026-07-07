@@ -790,7 +790,7 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
     ```
 - **シリアライズとエラーハンドリング (`exportJSON()` / `importJSON(jsonString)`)**:
   - `exportJSON()`: `JSON.stringify(commandHistory)` により、JSON文字列としてエクスポートします。
-  - `importJSON(jsonString)`: `JSON.parse` を用いてオブジェクト配列へ復元。`type` と `params` から対応する具象 `Command` インスタンスを再構築します。パース時およびインスタンス生成時のすべての例外を `try-catch` で囲み、エラー検知時には警告アラートをデバッグUIへ出力して安全にフォールバックします。
+  - `importJSON(jsonString)`: `JSON.parse` を用いてオブジェクト配列へ復元。セキュリティ強化（XSS防止およびプロトタイプ汚染防止）のため、デシリアライズ前に各コマンドの `type` および `params` に対して厳格なホワイトリストベースの構造検証（`validateCommandItem_`）を適用します。`__proto__`, `constructor`, `prototype` キーを含むパラメータオブジェクトや、規定外の型・値をもつパラメータは即座に破棄（スキップ）されます。パース時およびインスタンス生成時のすべての例外を `try-catch` で囲み、エラー検知時には警告アラートをデバッグUIへ出力して安全にフォールバックします。
 - **自動リプレイ処理 (`replay(commands)`)**:
   - `isReplaying = true` に設定し、リプレイ中はユーザーによる新規コマンド実行やスクロール操作等のインタラクションをガード（無視）します。
   - 各コマンドを **`300ms`** のインターバルをあけて順次（非同期シーケンス）実行し、スクロール等のレンダリングや同期の遅延を吸収します。すべてのコマンド実行が完了したのち `isReplaying = false` に戻します。

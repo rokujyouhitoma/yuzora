@@ -229,6 +229,74 @@ test.describe('Yuzora Parser Unit Tests', () => {
             const result = CommandManager.importJSON(invalidJson);
             assert.equal(result, null);
         });
+
+        test('should filter out and skip prototype pollution payloads', () => {
+            const { CommandManager } = window.Yuzora;
+            const maliciousJson = JSON.stringify([
+                {
+                    type: "UpdateConfig",
+                    params: {
+                        configKey: "__proto__",
+                        configValue: "polluted"
+                    }
+                },
+                {
+                    type: "UpdateConfig",
+                    params: {
+                        configKey: "constructor",
+                        configValue: "polluted"
+                    }
+                },
+                {
+                    type: "UpdateConfig",
+                    params: {
+                        configKey: "theme",
+                        configValue: "dark"
+                    }
+                }
+            ]);
+            const restored = CommandManager.importJSON(maliciousJson);
+            assert.equal(restored.length, 1);
+            assert.equal(restored[0].type, "UpdateConfig");
+            assert.equal(restored[0].configKey, "theme");
+            assert.equal(restored[0].configValue, "dark");
+            assert.equal(Object.prototype["theme"], undefined);
+        });
+
+        test('should filter out and skip invalid command properties or unknown types', () => {
+            const { CommandManager } = window.Yuzora;
+            const invalidCommandsJson = JSON.stringify([
+                {
+                    type: "UpdateConfig",
+                    params: {
+                        configKey: "theme",
+                        configValue: "malicious-theme-hack"
+                    }
+                },
+                {
+                    type: "NavigatePage",
+                    params: {
+                        targetPage: -5
+                    }
+                },
+                {
+                    type: "FakeCommandType",
+                    params: {
+                        open: true
+                    }
+                },
+                {
+                    type: "SyncBookmark",
+                    params: {
+                        progress: 0.5
+                    }
+                }
+            ]);
+            const restored = CommandManager.importJSON(invalidCommandsJson);
+            assert.equal(restored.length, 1);
+            assert.equal(restored[0].type, "SyncBookmark");
+            assert.equal(restored[0].progress, 0.5);
+        });
     });
 
     test.describe('Locator Pattern', () => {

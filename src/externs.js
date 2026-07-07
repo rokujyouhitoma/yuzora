@@ -484,6 +484,12 @@ Object.prototype._KEY_NAME;
 Object.prototype._KEY_CONTENT;
 /** @type {?} */
 Object.prototype._KEY_TYPE;
+/** @type {?} */
+Object.prototype.params;
+/** @type {?} */
+Object.prototype.drawerId;
+/** @type {?} */
+Object.prototype.clearType;
 
 
 // Command subclasses parameter property protection
