@@ -61,9 +61,9 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const darkThemeBtn = page.locator('.theme-btn[data-theme="dark"]');
         await darkThemeBtn.click();
 
-        // Assert body has theme class "theme-dark"
+        // Assert body has theme attribute "dark"
         const body = page.locator('body');
-        await expect(body).toHaveClass(/theme-dark/);
+        await expect(body).toHaveAttribute('data-theme', 'dark');
     });
 
     test('should maintain safety margin for the last line of the last page to prevent clipping', async ({ page }) => {

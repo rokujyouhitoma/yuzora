@@ -244,7 +244,7 @@ class ConfigModel {
      */
     // @ts-expect-error
     apply() {
-        document.body.className = `theme-${this.theme}`;
+        document.body.setAttribute('data-theme', this.theme);
 
         const viewContext = /** @type {!ViewContext} */ (Yuzora.locator.resolve(ViewContext));
         if (!viewContext.readerContent || !viewContext.readerViewport) return;

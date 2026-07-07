@@ -55,6 +55,7 @@
 | **043** | Feature | High | Closed | コマンド履歴デシリアライズ入力検証とCSPの導入 | AI Agent | [043-command-history-validation-and-csp.md](closed/043-command-history-validation-and-csp.md) |
 | **044** | Feature | Medium | Closed | レンダラー（Renderer）クラスの導入による描画ロジックの分離 | AI Agent | [044-introduce-renderer-class.md](closed/044-introduce-renderer-class.md) |
 | **045** | Feature | Medium | Closed | セキュリティ・バイ・デザインに基づくセキュアレンダラーパターンの強制 | AI Agent | [045-secure-dom-renderer.md](closed/045-secure-dom-renderer.md) |
+| **046** | Refactor | Medium | Closed | CSS変数の完全活用による「CSSテーマエンジン」の導入 | AI Agent | [046-css-theme-engine.md](closed/046-css-theme-engine.md) |
 
 
 ## 2. 状態（ステータス）定義

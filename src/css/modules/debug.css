@@ -118,8 +118,8 @@
     overflow-y: auto;
     color: var(--text-main);
 }
-.theme-dark .debug-monitor-container,
-.theme-black .debug-monitor-container {
+[data-theme="dark"] .debug-monitor-container,
+[data-theme="black"] .debug-monitor-container {
     background: rgba(255, 255, 255, 0.04);
 }
 .debug-monitor-container pre {
@@ -146,8 +146,8 @@
     margin-bottom: 10px;
     box-sizing: border-box;
 }
-.theme-dark .debug-history-textarea,
-.theme-black .debug-history-textarea {
+[data-theme="dark"] .debug-history-textarea,
+[data-theme="black"] .debug-history-textarea {
     background: rgba(255, 255, 255, 0.04);
 }
 .debug-buttons button {
@@ -192,8 +192,8 @@
     border-bottom: 1px solid var(--border-color);
     background: rgba(0, 0, 0, 0.02);
 }
-.theme-dark .debug-tabs,
-.theme-black .debug-tabs {
+[data-theme="dark"] .debug-tabs,
+[data-theme="black"] .debug-tabs {
     background: rgba(255, 255, 255, 0.02);
 }
 .debug-tab-btn {
@@ -216,8 +216,8 @@
 .debug-tab-btn:hover {
     background: rgba(0, 0, 0, 0.02);
 }
-.theme-dark .debug-tab-btn:hover,
-.theme-black .debug-tab-btn:hover {
+[data-theme="dark"] .debug-tab-btn:hover,
+[data-theme="black"] .debug-tab-btn:hover {
     background: rgba(255, 255, 255, 0.02);
 }
 .debug-tab-content.hidden {

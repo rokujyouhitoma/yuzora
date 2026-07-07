@@ -281,9 +281,8 @@
     right: 0;
 }
 
-/* Adjust gradients for dark theme */
-.theme-dark .page-nav:hover,
-.theme-black .page-nav:hover {
+[data-theme="dark"] .page-nav:hover,
+[data-theme="black"] .page-nav:hover {
     background: linear-gradient(to right, rgba(255,255,255,0.01), rgba(255,255,255,0));
 }
 

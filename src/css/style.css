@@ -31,7 +31,7 @@
 }
 
 /* Theme: Light (明) */
-.theme-light {
+body[data-theme="light"] {
     --bg-app: #f8f9fa;
     --bg-card: #ffffff;
     --bg-ui: rgba(255, 255, 255, 0.85);
@@ -50,7 +50,7 @@
 }
 
 /* Theme: Dark (暗) */
-.theme-dark {
+body[data-theme="dark"] {
     --bg-app: #18181a;
     --bg-card: #222225;
     --bg-ui: rgba(34, 34, 37, 0.85);
@@ -69,7 +69,7 @@
 }
 
 /* Theme: Black (漆黒) */
-.theme-black {
+body[data-theme="black"] {
     --bg-app: #000000;
     --bg-card: #121212;
     --bg-ui: rgba(18, 18, 18, 0.85);
@@ -85,6 +85,25 @@
     --scrollbar-track: rgba(255, 255, 255, 0.02);
     --scrollbar-thumb: rgba(255, 255, 255, 0.1);
     --skeleton-glow: 60, 60, 60;
+}
+
+/* Theme: Sepia (和紙) - Explicit Override */
+body[data-theme="sepia"] {
+    --bg-app: #f5eedc;
+    --bg-card: #fdfaf2;
+    --bg-ui: rgba(253, 250, 242, 0.85);
+    --text-main: #2c221e;
+    --text-muted: #705f55;
+    --border-color: rgba(112, 95, 85, 0.15);
+    --accent-color: #a67c52;
+    --accent-hover: #8e623b;
+    --shadow-sm: 0 2px 8px rgba(44, 34, 30, 0.04);
+    --shadow-md: 0 8px 30px rgba(44, 34, 30, 0.08);
+    --shadow-lg: 0 16px 40px rgba(44, 34, 30, 0.12);
+    --ruby-color: #8c7667;
+    --scrollbar-track: rgba(112, 95, 85, 0.05);
+    --scrollbar-thumb: rgba(112, 95, 85, 0.2);
+    --skeleton-glow: 255, 255, 255;
 }
 
 /* ==========================================================================
@@ -765,9 +784,8 @@ a:hover {
     right: 0;
 }
 
-/* Adjust gradients for dark theme */
-.theme-dark .page-nav:hover,
-.theme-black .page-nav:hover {
+[data-theme="dark"] .page-nav:hover,
+[data-theme="black"] .page-nav:hover {
     background: linear-gradient(to right, rgba(255,255,255,0.01), rgba(255,255,255,0));
 }
 
@@ -1235,8 +1253,8 @@ body.layout-direction-ltr .progress-thumb {
     overflow-y: auto;
     color: var(--text-main);
 }
-.theme-dark .debug-monitor-container,
-.theme-black .debug-monitor-container {
+[data-theme="dark"] .debug-monitor-container,
+[data-theme="black"] .debug-monitor-container {
     background: rgba(255, 255, 255, 0.04);
 }
 .debug-monitor-container pre {
@@ -1263,8 +1281,8 @@ body.layout-direction-ltr .progress-thumb {
     margin-bottom: 10px;
     box-sizing: border-box;
 }
-.theme-dark .debug-history-textarea,
-.theme-black .debug-history-textarea {
+[data-theme="dark"] .debug-history-textarea,
+[data-theme="black"] .debug-history-textarea {
     background: rgba(255, 255, 255, 0.04);
 }
 .debug-buttons button {
@@ -1309,8 +1327,8 @@ body.layout-direction-ltr .progress-thumb {
     border-bottom: 1px solid var(--border-color);
     background: rgba(0, 0, 0, 0.02);
 }
-.theme-dark .debug-tabs,
-.theme-black .debug-tabs {
+[data-theme="dark"] .debug-tabs,
+[data-theme="black"] .debug-tabs {
     background: rgba(255, 255, 255, 0.02);
 }
 .debug-tab-btn {
@@ -1333,8 +1351,8 @@ body.layout-direction-ltr .progress-thumb {
 .debug-tab-btn:hover {
     background: rgba(0, 0, 0, 0.02);
 }
-.theme-dark .debug-tab-btn:hover,
-.theme-black .debug-tab-btn:hover {
+[data-theme="dark"] .debug-tab-btn:hover,
+[data-theme="black"] .debug-tab-btn:hover {
     background: rgba(255, 255, 255, 0.02);
 }
 .debug-tab-content.hidden {

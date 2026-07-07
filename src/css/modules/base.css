@@ -31,7 +31,7 @@
 }
 
 /* Theme: Light (明) */
-.theme-light {
+body[data-theme="light"] {
     --bg-app: #f8f9fa;
     --bg-card: #ffffff;
     --bg-ui: rgba(255, 255, 255, 0.85);
@@ -50,7 +50,7 @@
 }
 
 /* Theme: Dark (暗) */
-.theme-dark {
+body[data-theme="dark"] {
     --bg-app: #18181a;
     --bg-card: #222225;
     --bg-ui: rgba(34, 34, 37, 0.85);
@@ -69,7 +69,7 @@
 }
 
 /* Theme: Black (漆黒) */
-.theme-black {
+body[data-theme="black"] {
     --bg-app: #000000;
     --bg-card: #121212;
     --bg-ui: rgba(18, 18, 18, 0.85);
@@ -85,6 +85,25 @@
     --scrollbar-track: rgba(255, 255, 255, 0.02);
     --scrollbar-thumb: rgba(255, 255, 255, 0.1);
     --skeleton-glow: 60, 60, 60;
+}
+
+/* Theme: Sepia (和紙) - Explicit Override */
+body[data-theme="sepia"] {
+    --bg-app: #f5eedc;
+    --bg-card: #fdfaf2;
+    --bg-ui: rgba(253, 250, 242, 0.85);
+    --text-main: #2c221e;
+    --text-muted: #705f55;
+    --border-color: rgba(112, 95, 85, 0.15);
+    --accent-color: #a67c52;
+    --accent-hover: #8e623b;
+    --shadow-sm: 0 2px 8px rgba(44, 34, 30, 0.04);
+    --shadow-md: 0 8px 30px rgba(44, 34, 30, 0.08);
+    --shadow-lg: 0 16px 40px rgba(44, 34, 30, 0.12);
+    --ruby-color: #8c7667;
+    --scrollbar-track: rgba(112, 95, 85, 0.05);
+    --scrollbar-thumb: rgba(112, 95, 85, 0.2);
+    --skeleton-glow: 255, 255, 255;
 }
 
 /* ==========================================================================

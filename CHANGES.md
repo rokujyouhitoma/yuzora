@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added CSS Variables based "CSS Theme Engine" utilizing `data-theme` attribute instead of dynamic body class names toggling to improve render reflow performance (ID: 046).
+- Changed `ConfigModel.prototype.apply()` to set `data-theme` attribute on body element instead of toggling class names (ID: 046).
+- Changed CSS modular stylesheets (`base.css`, `reader.css`, `debug.css`) to select color variables using attribute selectors (`body[data-theme="..."]`) (ID: 046).
+- Changed E2E tests in `tests/e2e/viewer.spec.js` to assert `data-theme` attribute on theme change tests (ID: 046).
+
 - Added `VerticalRenderer.render` secure DOM sanitization logic [NEW] utilizing `DOMParser` and whitelist-based tag/attribute stripping (Double Defense / Defense in Depth against XSS) (ID: 045).
 - Changed `VerticalRenderer.render` to securely migrate DOM elements via `appendChild` loop instead of `innerHTML` assignment to prevent script execution on browser re-evaluation (ID: 045).
 - Changed `src/js/modules/yuzora.js`, `src/js/types.d.ts`, and `src/externs.js` to expose `VerticalRenderer` constructor safely for testing and Closure Compiler ADVANCED_OPTIMIZATIONS compatibility (ID: 045).
