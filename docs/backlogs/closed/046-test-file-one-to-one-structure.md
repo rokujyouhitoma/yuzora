@@ -2,7 +2,7 @@
 ID: 046
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACT] テキストモジュールとテストファイルの1対1対応リファクタリング (ID: 046)
