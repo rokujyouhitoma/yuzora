@@ -66,6 +66,7 @@
 | **054** | Feature | Low | Closed | CSSリセット（初期化CSS）の導入 | AI Agent | [054-introduce-css-reset.md](closed/054-introduce-css-reset.md) |
 | **055** | Feature | High | Closed | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | AI Agent | [055-strict-boundary-diagnostics-and-e2e-loop.md](closed/055-strict-boundary-diagnostics-and-e2e-loop.md) |
 | **056** | Feature | High | Closed | 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 | AI Agent | [056-self-correcting-page-breaks.md](closed/056-self-correcting-page-breaks.md) |
+| **057** | Enhancement | Medium | In Progress | レイアウト自己修復の観測機能と視覚的デバッグ補助の導入 | AI Agent | [057-layout-repair-observability-and-debugging.md](057-layout-repair-observability-and-debugging.md) |
 
 
 
