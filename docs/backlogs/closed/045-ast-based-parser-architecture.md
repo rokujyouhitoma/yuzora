@@ -2,7 +2,7 @@
 ID: 045
 種別: Refactor
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACT] 抽象構文木 (AST) ベースのパーサーおよび評価器への移行 (ID: 045)

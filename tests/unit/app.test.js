@@ -105,6 +105,13 @@ test.describe('Yuzora Parser Unit Tests', () => {
         assert.ok(result.body.includes('<strong class="aozora-bold">'));
     });
 
+    test('should parse nested markups correctly (ruby inside bold and italic)', () => {
+        const text = "タイトル\n著者\n-------------------------------------------------------\n［＃ここから太字］重要｜漢字《かんじ》箇所［＃ここで太字終わり］と［＃ここから斜体］強調［＃傍点］表記［＃傍点終わり］斜体［＃ここで斜体終わり］";
+        const result = window.Yuzora.parseAozoraText(text);
+        assert.ok(result.body.includes('<strong class="aozora-bold">重要<ruby>漢字<rt>かんじ</rt></ruby>箇所</strong>'));
+        assert.ok(result.body.includes('<em class="aozora-italic">強調<span class="em-sesame">表記</span>斜体</em>'));
+    });
+
     test('should escape HTML syntax to prevent XSS', () => {
         const result = window.Yuzora.parseAozoraText('<script>alert("title")</script>\n<script>alert("author")</script>\n-------------------------------------------------------\n<script>alert("body")</script>');
         assert.ok(result.title.includes('&lt;script&gt;'));

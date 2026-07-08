@@ -52,7 +52,7 @@
 | **042** | Refactor | Medium | Closed | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](closed/042-jsdoc-tsc-type-check.md) |
 | **043** | Feature | High | Closed | コマンド履歴入力検証とCSPの導入 | [043-command-history-validation-and-csp.md](closed/043-command-history-validation-and-csp.md) |
 | **044** | Enhancement | Medium | Closed | 青空文庫「地付き」「地寄せ」「地から○字上げ」レイアウトおよび装飾対応 | [044-aozora-chitsuki-jitsage-decorations.md](closed/044-aozora-chitsuki-jitsage-decorations.md) |
-| **045** | Refactor | High | Approved | 抽象構文木（AST）ベースのパーサーおよび評価器への移行 | [045-ast-based-parser-architecture.md](045-ast-based-parser-architecture.md) |
+| **045** | Refactor | High | Closed | 抽象構文木（AST）ベースのパーサーおよび評価器への移行 | [045-ast-based-parser-architecture.md](closed/045-ast-based-parser-architecture.md) |
 
 ---
 

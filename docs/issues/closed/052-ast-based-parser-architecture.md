@@ -2,7 +2,7 @@
 ID: 052
 種別: Refactor
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [REFACT] 抽象構文木 (AST) ベースのパーサーおよび評価器への移行 (ID: 052)

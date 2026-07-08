@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Migrated the Aozora Bunko text parser (`parser.js`) from regex-based direct string replacement to a compiler-type pipeline containing a tokenizer (`tokenizeInline`), AST parser (`parseTokensToAST`), and DFS generator (`evaluateAST`) (ID: 052).
+- Resolved tag nesting issues (e.g. ruby inside bold tags) by building structural node trees and enhanced XSS mitigation by performing HTML escaping strictly inside the text leaf nodes of the evaluator, while keeping TypeScript typings and Closure Compiler checks robustly typed (ID: 052).
+
 - Supported Aozora Bunko layout alignment rules ("chitsuki", "chiyose", and "chitage-n" alignments) in the parsing layer (`parser.js`) and implemented physical CSS styles for vertical scroll writing modes (ID: 051).
 - Implemented text decorations (bold and italic inline tags) with robust XSS mitigation order (escaping before parsing tags), updated `DSN-02` design documentation, and expanded test suites for Aozora manual spec verification (ID: 051).
 

@@ -95,13 +95,203 @@ function buildLineHTML(line, jisageClass, alignmentClass, isHeading, headingLeve
     return { html: `<p${classAttr}>${line}</p>`, headingIndex };
 }
 
+/**
+ * @param {string} str
+ * @return {string}
+ */
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;');
+}
+
+/**
+ * @typedef {{
+ *   type: string,
+ *   value: (string|undefined),
+ *   rt: (string|undefined),
+ *   children: (!Array<!Object>|undefined)
+ * }}
+ */
+let ASTNode;
+
+/**
+ * @param {string} text
+ * @return {!Array<!ASTNode>}
+ */
+// eslint-disable-next-line complexity
+function tokenizeInline(text) {
+    const tokens = [];
+    let i = 0;
+    
+    while (i < text.length) {
+        if (text[i] === '｜' || text[i] === '|') {
+            const rubyEndIdx = text.indexOf('《', i);
+            if (rubyEndIdx !== -1) {
+                const rtEndIdx = text.indexOf('》', rubyEndIdx);
+                if (rtEndIdx !== -1) {
+                    const kanji = text.substring(i + 1, rubyEndIdx);
+                    const rt = text.substring(rubyEndIdx + 1, rtEndIdx);
+                    tokens.push({ type: 'RUBY', value: kanji, rt: rt, children: undefined });
+                    i = rtEndIdx + 1;
+                    continue;
+                }
+            }
+        }
+        
+        const kanjiMatch = text.substring(i).match(/^([一-龠々〆ヶ]+)《([^》]+)》/);
+        if (kanjiMatch) {
+            tokens.push({ type: 'RUBY', value: kanjiMatch[1], rt: kanjiMatch[2], children: undefined });
+            i += kanjiMatch[0].length;
+            continue;
+        }
+        
+        if (text.startsWith('［＃ここから太字］', i)) {
+            tokens.push({ type: 'BOLD_START', value: undefined, rt: undefined, children: undefined });
+            i += 9;
+            continue;
+        }
+        if (text.startsWith('［＃ここで太字終わり］', i)) {
+            tokens.push({ type: 'BOLD_END', value: undefined, rt: undefined, children: undefined });
+            i += 11;
+            continue;
+        }
+        if (text.startsWith('［＃ここから斜体］', i)) {
+            tokens.push({ type: 'ITALIC_START', value: undefined, rt: undefined, children: undefined });
+            i += 9;
+            continue;
+        }
+        if (text.startsWith('［＃ここで斜体終わり］', i)) {
+            tokens.push({ type: 'ITALIC_END', value: undefined, rt: undefined, children: undefined });
+            i += 11;
+            continue;
+        }
+        if (text.startsWith('［＃傍点］', i)) {
+            tokens.push({ type: 'BOUTEN_START', value: undefined, rt: undefined, children: undefined });
+            i += 5;
+            continue;
+        }
+        if (text.startsWith('［＃傍点終わり］', i)) {
+            tokens.push({ type: 'BOUTEN_END', value: undefined, rt: undefined, children: undefined });
+            i += 8;
+            continue;
+        }
+        if (text.startsWith('［＃', i)) {
+            const endIdx = text.indexOf('］', i);
+            if (endIdx !== -1) {
+                i = endIdx + 1;
+                continue;
+            }
+        }
+        
+        let nextSpecial = text.length;
+        const specials = ['｜', '|', '［＃', '《'];
+        for (let j = 0; j < specials.length; j++) {
+            const idx = text.indexOf(specials[j], i);
+            if (idx !== -1 && idx < nextSpecial) {
+                nextSpecial = idx;
+            }
+        }
+        
+        const textChunk = text.substring(i, nextSpecial);
+        const nestedKanjiMatch = textChunk.match(/[一-龠々〆ヶ]+《/);
+        if (nestedKanjiMatch) {
+            nextSpecial = i + nestedKanjiMatch.index;
+        }
+        
+        if (nextSpecial === i) {
+            tokens.push({ type: 'TEXT', value: text[i], rt: undefined, children: undefined });
+            i++;
+        } else {
+            tokens.push({ type: 'TEXT', value: text.substring(i, nextSpecial), rt: undefined, children: undefined });
+            i = nextSpecial;
+        }
+    }
+    
+    return tokens;
+}
+
+/**
+ * @param {!Array<!ASTNode>} tokens
+ * @return {!ASTNode}
+ */
+// eslint-disable-next-line complexity
+function parseTokensToAST(tokens) {
+    const root = { type: 'Root', value: undefined, rt: undefined, children: [] };
+    const stack = [root];
+    
+    for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        const current = stack[stack.length - 1];
+        
+        if (token.type === 'TEXT') {
+            current.children.push({ type: 'Text', value: token.value, rt: undefined, children: undefined });
+        } else if (token.type === 'RUBY') {
+            current.children.push({
+                type: 'Ruby',
+                value: token.value,
+                rt: token.rt,
+                children: undefined
+            });
+        } else if (token.type === 'BOLD_START') {
+            const node = { type: 'Bold', value: undefined, rt: undefined, children: [] };
+            current.children.push(node);
+            stack.push(node);
+        } else if (token.type === 'BOLD_END') {
+            if (stack.length > 1 && stack[stack.length - 1].type === 'Bold') {
+                stack.pop();
+            }
+        } else if (token.type === 'ITALIC_START') {
+            const node = { type: 'Italic', value: undefined, rt: undefined, children: [] };
+            current.children.push(node);
+            stack.push(node);
+        } else if (token.type === 'ITALIC_END') {
+            if (stack.length > 1 && stack[stack.length - 1].type === 'Italic') {
+                stack.pop();
+            }
+        } else if (token.type === 'BOUTEN_START') {
+            const node = { type: 'Bouten', value: undefined, rt: undefined, children: [] };
+            current.children.push(node);
+            stack.push(node);
+        } else if (token.type === 'BOUTEN_END') {
+            if (stack.length > 1 && stack[stack.length - 1].type === 'Bouten') {
+                stack.pop();
+            }
+        }
+    }
+    
+    return root;
+}
+
+/**
+ * @param {!ASTNode} node
+ * @return {string}
+ */
+// eslint-disable-next-line complexity
+function evaluateAST(node) {
+    if (node.type === 'Root') {
+        return (node.children || []).map(evaluateAST).join('');
+    }
+    if (node.type === 'Text') {
+        return escapeHTML(node.value || '');
+    }
+    if (node.type === 'Ruby') {
+        return `<ruby>${escapeHTML(node.value || '')}<rt>${escapeHTML(node.rt || '')}</rt></ruby>`;
+    }
+    if (node.type === 'Bold') {
+        return `<strong class="aozora-bold">${(node.children || []).map(evaluateAST).join('')}</strong>`;
+    }
+    if (node.type === 'Italic') {
+        return `<em class="aozora-italic">${(node.children || []).map(evaluateAST).join('')}</em>`;
+    }
+    if (node.type === 'Bouten') {
+        return `<span class="em-sesame">${(node.children || []).map(evaluateAST).join('')}</span>`;
+    }
+    return '';
+}
+
 // eslint-disable-next-line complexity
 function parseAozoraText(text) {
-    // XSS対策 (T-E1): 文字列処理の最優先ステップとして特殊文字を一括エスケープ
-    text = text.replace(/&/g, '&amp;')
-               .replace(/</g, '&lt;')
-               .replace(/>/g, '&gt;');
-
     Yuzora.locator.resolve(BookModel).toc = [];
     let headingIndex = 0;
 
@@ -112,8 +302,8 @@ function parseAozoraText(text) {
     let inHeader = true;
     
     if (lines.length > 2) {
-        title = lines[0].trim();
-        author = lines[1].trim();
+        title = escapeHTML(lines[0].trim());
+        author = escapeHTML(lines[1].trim());
     }
 
     for (let i = 0; i < lines.length; i++) {
@@ -172,28 +362,14 @@ function parseAozoraText(text) {
     };
 }
 
+/**
+ * @param {string} line
+ * @return {string}
+ */
 function formatAozoraMarkup(line) {
-    // 1. Ruby with explicit delimiter: ｜漢字《かんじ》 or |漢字《かんじ》
-    // Match both full-width ｜ and half-width |
-    line = line.replace(/[｜|]([^《\r\n]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
-
-    // 2. Ruby without explicit delimiter: 漢字《かんじ》
-    // Match Chinese characters (Kanji, including iteration marks like 々)
-    line = line.replace(/([一-龠々〆ヶ]+)《([^》]+)》/g, '<ruby>$1<rt>$2</rt></ruby>');
-
-    // 3. Emphasis dots: ［＃傍点］漢［＃傍点終わり］ -> <span class="em-sesame">漢</span>
-    line = line.replace(/［＃傍点］(.+?)［＃傍点終わり］/g, '<span class="em-sesame">$1</span>');
-
-    // 3.1 Bold style: ［＃ここから太字］漢［＃ここで太字終わり］ -> <strong class="aozora-bold">$1</strong>
-    line = line.replace(/［＃ここから太字］(.+?)［＃ここで太字終わり］/g, '<strong class="aozora-bold">$1</strong>');
-
-    // 3.2 Italic style: ［＃ここから斜体］漢［＃ここで斜体終わり］ -> <em class="aozora-italic">$1</em>
-    line = line.replace(/［＃ここから斜体］(.+?)［＃ここで斜体終わり］/g, '<em class="aozora-italic">$1</em>');
-
-    // 4. Keep other tags stripped or safe
-    line = line.replace(/［＃.+?］/g, "");
-
-    return line;
+    const tokens = tokenizeInline(line);
+    const ast = parseTokensToAST(tokens);
+    return evaluateAST(ast);
 }
 
 function parseAozoraHTML(htmlString) {
