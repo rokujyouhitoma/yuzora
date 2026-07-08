@@ -2,7 +2,7 @@
 ID: 047
 種別: Enhancement
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENH] 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 (ID: 047)

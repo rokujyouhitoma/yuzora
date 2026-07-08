@@ -64,7 +64,7 @@
 | **052** | Refactor | High | Closed | 抽象構文木（AST）ベースのパーサーおよび評価器への移行 | AI Agent | [052-ast-based-parser-architecture.md](closed/052-ast-based-parser-architecture.md) |
 | **053** | Refactor | Medium | Closed | テキストモジュールとテストファイルの1対1対応リファクタリング | AI Agent | [053-test-file-one-to-one-structure.md](closed/053-test-file-one-to-one-structure.md) |
 | **054** | Feature | Low | Closed | CSSリセット（初期化CSS）の導入 | AI Agent | [054-introduce-css-reset.md](closed/054-introduce-css-reset.md) |
-| **055** | Feature | High | In Progress | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | AI Agent | [055-strict-boundary-diagnostics-and-e2e-loop.md](055-strict-boundary-diagnostics-and-e2e-loop.md) |
+| **055** | Feature | High | Closed | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | AI Agent | [055-strict-boundary-diagnostics-and-e2e-loop.md](closed/055-strict-boundary-diagnostics-and-e2e-loop.md) |
 
 
 

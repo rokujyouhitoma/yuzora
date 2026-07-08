@@ -244,42 +244,38 @@ async function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage, on
             verticalBoundaryOverlapCount++;
         }
 
-        const intersectsLeft = rect.left < boundaryLeft && rect.right > boundaryLeft;
-        const intersectsRight = rect.left < boundaryRight && rect.right > boundaryRight;
         const childStyle = window.getComputedStyle(child);
         const fontInfo = `[font-size: ${childStyle.fontSize}, line-height: ${childStyle.lineHeight}, font-family: ${childStyle.fontFamily}]`;
 
+        const intersectsLeft = rect.left < boundaryLeft && rect.right > boundaryLeft;
         if (intersectsLeft) {
-            leftBoundaryOverlapCount++;
             const boundaryCharInfo = findCharAtBoundary(child, boundaryLeft);
-            overlapDetails += `- **左境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が左ページ境界 (X: ${boundaryLeft.toFixed(1)}px) をまたいでいます。 ${fontInfo}\n`;
-            if (boundaryCharInfo && boundaryCharInfo.char) {
+            if (boundaryCharInfo) {
+                leftBoundaryOverlapCount++;
                 const ctx = boundaryCharInfo.context;
                 const charL = boundaryCharInfo.rect.left - viewportRect.left;
                 const charR = boundaryCharInfo.rect.right - viewportRect.left;
                 const overrun = viewportRect.left - boundaryCharInfo.rect.left;
+                overlapDetails += `- **左境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が左ページ境界 (X: ${boundaryLeft.toFixed(1)}px) をまたいでいます。 ${fontInfo}\n`;
                 overlapDetails += `  - 境界上の文字: 「${ctx.before}**[${boundaryCharInfo.char}]**${ctx.after}」\n`;
                 overlapDetails += `  - 文字座標 (viewport基準): left: ${charL.toFixed(1)}px, right: ${charR.toFixed(1)}px (幅: ${boundaryCharInfo.rect.width.toFixed(1)}px)\n`;
                 overlapDetails += `  - 左境界はみ出し量 (overrun): **${overrun.toFixed(1)}px**\n`;
-            } else {
-                overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
             }
         }
 
+        const intersectsRight = rect.left < boundaryRight && rect.right > boundaryRight;
         if (intersectsRight) {
-            rightBoundaryOverlapCount++;
             const boundaryCharInfo = findCharAtBoundary(child, boundaryRight);
-            overlapDetails += `- **右境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が右ページ境界 (X: ${boundaryRight.toFixed(1)}px) をまたいでいます。 ${fontInfo}\n`;
-            if (boundaryCharInfo && boundaryCharInfo.char) {
+            if (boundaryCharInfo) {
+                rightBoundaryOverlapCount++;
                 const ctx = boundaryCharInfo.context;
                 const charL = boundaryCharInfo.rect.left - viewportRect.left;
                 const charR = boundaryCharInfo.rect.right - viewportRect.left;
                 const overrun = boundaryCharInfo.rect.right - viewportRect.right;
+                overlapDetails += `- **右境界線との交差**: 段落 ${index + 1} (${child.tagName.toLowerCase()}) が右ページ境界 (X: ${boundaryRight.toFixed(1)}px) をまたいでいます。 ${fontInfo}\n`;
                 overlapDetails += `  - 境界上の文字: 「${ctx.before}**[${boundaryCharInfo.char}]**${ctx.after}」\n`;
                 overlapDetails += `  - 文字座標 (viewport基準): left: ${charL.toFixed(1)}px, right: ${charR.toFixed(1)}px (幅: ${boundaryCharInfo.rect.width.toFixed(1)}px)\n`;
                 overlapDetails += `  - 右境界はみ出し量 (overrun): **${overrun.toFixed(1)}px**\n`;
-            } else {
-                overlapDetails += `  - テキスト抜粋: 「${child.textContent.substring(0, 30)}...」\n`;
             }
         }
     });
@@ -339,9 +335,6 @@ function findCharAtBoundary(element, boundaryX) {
         textNodes.push(node);
     }
 
-    let closestMatch = null;
-    let minDiff = Infinity;
-
     for (const node of textNodes) {
         const text = node.textContent;
         for (let i = 0; i < text.length; i++) {
@@ -354,7 +347,7 @@ function findCharAtBoundary(element, boundaryX) {
             }
             const rect = range.getBoundingClientRect();
             
-            if (rect.left <= boundaryX && rect.right >= boundaryX) {
+            if (rect.left < boundaryX - 0.5 && rect.right > boundaryX + 0.5) {
                 const before = text.substring(Math.max(0, i - 10), i);
                 const after = text.substring(i + 1, Math.min(text.length, i + 11));
                 return {
@@ -363,30 +356,7 @@ function findCharAtBoundary(element, boundaryX) {
                     context: { before, after }
                 };
             }
-
-            const diff = Math.min(Math.abs(rect.left - boundaryX), Math.abs(rect.right - boundaryX));
-            if (diff < minDiff) {
-                minDiff = diff;
-                closestMatch = {
-                    char: text[i],
-                    rect: rect,
-                    node: node,
-                    index: i
-                };
-            }
         }
-    }
-
-    if (closestMatch) {
-        const text = closestMatch.node.textContent;
-        const i = closestMatch.index;
-        const before = text.substring(Math.max(0, i - 10), i);
-        const after = text.substring(i + 1, Math.min(text.length, i + 11));
-        return {
-            char: closestMatch.char,
-            rect: closestMatch.rect,
-            context: { before, after }
-        };
     }
 
     return null;

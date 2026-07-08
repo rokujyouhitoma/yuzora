@@ -54,7 +54,7 @@
 | **044** | Enhancement | Medium | Closed | 青空文庫「地付き」「地寄せ」「地から○字上げ」レイアウトおよび装飾対応 | [044-aozora-chitsuki-jitsage-decorations.md](closed/044-aozora-chitsuki-jitsage-decorations.md) |
 | **045** | Refactor | High | Closed | 抽象構文木（AST）ベースのパーサーおよび評価器への移行 | [045-ast-based-parser-architecture.md](closed/045-ast-based-parser-architecture.md) |
 | **046** | Refactor | Medium | Closed | テキストモジュールとテストファイルの1対1対応リファクタリング | [046-test-file-one-to-one-structure.md](closed/046-test-file-one-to-one-structure.md) |
-| **047** | Enhancement | High | Approved | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | [047-strict-boundary-diagnostics-and-e2e-loop.md](047-strict-boundary-diagnostics-and-e2e-loop.md) |
+| **047** | Enhancement | High | Closed | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | [047-strict-boundary-diagnostics-and-e2e-loop.md](closed/047-strict-boundary-diagnostics-and-e2e-loop.md) |
 | **048** | Feature | High | Approved | 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 | [048-self-correcting-page-breaks.md](048-self-correcting-page-breaks.md) |
 | **049** | Refactor | Low | Closed | CSSリセット（初期化CSS）の導入検討 | [049-introduce-css-reset.md](closed/049-introduce-css-reset.md) |
 

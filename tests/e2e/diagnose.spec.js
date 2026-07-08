@@ -39,3 +39,32 @@ test('Capture screenshots of reader pages', async ({ page }) => {
     await page.screenshot({ path: artifactPath2 });
     console.log(`Page 2 screenshot saved to ${artifactPath2}`);
 });
+
+test('Verify layout boundaries have zero overruns', async ({ page }) => {
+    // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
+    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
+    await page.route('https://fonts.googleapis.com/**', route => route.abort());
+    await page.route('https://fonts.gstatic.com/**', route => route.abort());
+
+    await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
+
+    // Open first book
+    const bookCard = page.locator('#developer-books-grid .book-card').first();
+    await bookCard.click();
+    await page.waitForSelector('#reader-content p');
+
+    // Wait for layout to settle
+    await page.waitForTimeout(1000);
+
+    // Run layout diagnosis
+    const report = await page.evaluate(async () => {
+        return await window.Yuzora.runLayoutDiagnosis();
+    });
+
+    console.log('--- E2E LAYOUT DIAGNOSIS REPORT ---');
+    console.log(report);
+    console.log('-----------------------------------');
+
+    // Assert that the report indicates 0 boundary overlaps
+    expect(report).toContain('境界線上の見切れやはみ出しは検出されませんでした。');
+});

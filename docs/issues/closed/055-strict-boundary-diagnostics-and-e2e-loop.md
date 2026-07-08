@@ -2,7 +2,7 @@
 ID: 055
 種別: Feature
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 (ID: 055)
