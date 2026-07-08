@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Supported Aozora Bunko layout alignment rules ("chitsuki", "chiyose", and "chitage-n" alignments) in the parsing layer (`parser.js`) and implemented physical CSS styles for vertical scroll writing modes (ID: 051).
+- Implemented text decorations (bold and italic inline tags) with robust XSS mitigation order (escaping before parsing tags), updated `DSN-02` design documentation, and expanded test suites for Aozora manual spec verification (ID: 051).
+
 - Asynchronized and time-sliced the layout diagnosis process (`runLayoutDiagnosis`) using requestAnimationFrame to prevent browser tab freeze during bulk DOM dimension scans on large documents (ID: 050).
 - Implemented time-sliced batch loop iteration helper (`timeSliceEach`), added intermediate progress rendering in the diagnostics textarea, and synchronized TypeScript typings and JSDoc extern annotations to Promise targets (ID: 050).
 

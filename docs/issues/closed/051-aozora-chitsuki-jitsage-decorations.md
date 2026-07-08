@@ -2,7 +2,7 @@
 ID: 051
 種別: Enhancement
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [ENH] 青空文庫「地付き」「地寄せ」「地から○字上げ」レイアウトおよび装飾対応 (ID: 051)

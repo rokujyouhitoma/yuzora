@@ -83,6 +83,28 @@ test.describe('Yuzora Parser Unit Tests', () => {
         assert.strictEqual(result, '<ruby>漢字<rt>かんじ</rt></ruby>');
     });
 
+    test('should parse alignment markups correctly (chitsuki, chiyose, chitage)', () => {
+        const text = "タイトル\n著者\n-------------------------------------------------------\n［＃地付き］下寄せの署名\n［＃地寄せ］右寄せの日付\n［＃地から３字上げ］下から浮かせるテキスト";
+        const result = window.Yuzora.parseAozoraText(text);
+        assert.ok(result.body.includes('<p class="chitsuki">下寄せの署名</p>'));
+        assert.ok(result.body.includes('<p class="chiyose">右寄せの日付</p>'));
+        assert.ok(result.body.includes('<p class="chitage-3">下から浮かせるテキスト</p>'));
+    });
+
+    test('should parse inline decorations correctly (bold, italic)', () => {
+        const text = "タイトル\n著者\n-------------------------------------------------------\n［＃ここから太字］重要箇所［＃ここで太字終わり］と［＃ここから斜体］強調表記［＃ここで斜体終わり］";
+        const result = window.Yuzora.parseAozoraText(text);
+        assert.ok(result.body.includes('<strong class="aozora-bold">重要箇所</strong>'));
+        assert.ok(result.body.includes('<em class="aozora-italic">強調表記</em>'));
+    });
+
+    test('should safely sanitize bold and italic tags containing malicious payload (XSS mitigation)', () => {
+        const text = "タイトル\n著者\n-------------------------------------------------------\n［＃ここから太字］<script>alert(\'XSS\')</script>［＃ここで太字終わり］";
+        const result = window.Yuzora.parseAozoraText(text);
+        assert.ok(result.body.includes('&lt;script&gt;alert(\'XSS\')&lt;/script&gt;'));
+        assert.ok(result.body.includes('<strong class="aozora-bold">'));
+    });
+
     test('should escape HTML syntax to prevent XSS', () => {
         const result = window.Yuzora.parseAozoraText('<script>alert("title")</script>\n<script>alert("author")</script>\n-------------------------------------------------------\n<script>alert("body")</script>');
         assert.ok(result.title.includes('&lt;script&gt;'));

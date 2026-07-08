@@ -728,6 +728,33 @@ a:hover {
 .reader-content .jisage9 { margin-top: 9em !important; }
 .reader-content .jisage10 { margin-top: 10em !important; }
 
+/* Alignments & Decorations */
+.reader-content .chitsuki {
+    text-align: end;
+    text-indent: 0;
+}
+.reader-content .chiyose {
+    text-align: end;
+    text-indent: 0;
+}
+.reader-content .chitage-1 { margin-top: 1em !important; }
+.reader-content .chitage-2 { margin-top: 2em !important; }
+.reader-content .chitage-3 { margin-top: 3em !important; }
+.reader-content .chitage-4 { margin-top: 4em !important; }
+.reader-content .chitage-5 { margin-top: 5em !important; }
+.reader-content .chitage-6 { margin-top: 6em !important; }
+.reader-content .chitage-7 { margin-top: 7em !important; }
+.reader-content .chitage-8 { margin-top: 8em !important; }
+.reader-content .chitage-9 { margin-top: 9em !important; }
+.reader-content .chitage-10 { margin-top: 10em !important; }
+
+.reader-content .aozora-bold {
+    font-weight: 700;
+}
+.reader-content .aozora-italic {
+    font-style: italic;
+}
+
 
 /* Typography styles */
 .font-mincho {

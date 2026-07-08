@@ -29,6 +29,27 @@ function parseJisage(line) {
     return { jisageClass, line };
 }
 
+function parseAlignment(line) {
+    let alignmentClass = '';
+    if (line.includes('［＃地付き］')) {
+        alignmentClass = 'chitsuki';
+        line = line.replace(/［＃地付き］/g, '');
+    } else if (line.includes('［＃地寄せ］')) {
+        alignmentClass = 'chiyose';
+        line = line.replace(/［＃地寄せ］/g, '');
+    } else {
+        const chitageMatch = line.match(/［＃地から([０-９0-9]+)字上げ］/);
+        if (chitageMatch) {
+            const rawNum = chitageMatch[1];
+            const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+            const n = parseInt(cleanNum, 10);
+            alignmentClass = `chitage-${n}`;
+            line = line.replace(/［＃地から[０-９0-9]+字上げ］/g, '');
+        }
+    }
+    return { alignmentClass, line };
+}
+
 function parseHeading(line) {
     let isHeading = false;
     let headingLevel = 2; // Default to h2 for large heading
@@ -47,10 +68,15 @@ function parseHeading(line) {
     return { isHeading, headingLevel, headingText, line };
 }
 
-function buildLineHTML(line, jisageClass, isHeading, headingLevel, headingText, headingIndex) {
+function buildLineHTML(line, jisageClass, alignmentClass, isHeading, headingLevel, headingText, headingIndex) {
     if (line.trim().length === 0) {
         return { html: '<p class="empty-line">&nbsp;</p>', headingIndex };
     }
+    let classes = [];
+    if (jisageClass) classes.push(jisageClass);
+    if (alignmentClass) classes.push(alignmentClass);
+    const classAttr = classes.length > 0 ? ` class="${classes.join(' ')}"` : '';
+
     if (isHeading) {
         const headingId = `toc-heading-${headingIndex}`;
         const cleanText = headingText
@@ -59,14 +85,14 @@ function buildLineHTML(line, jisageClass, isHeading, headingLevel, headingText, 
             .trim();
         Yuzora.locator.resolve(BookModel).toc.push({ id: headingId, text: cleanText, level: headingLevel });
         return {
-            html: `<h${headingLevel} id="${headingId}"${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</h${headingLevel}>`,
+            html: `<h${headingLevel} id="${headingId}"${classAttr}>${line}</h${headingLevel}>`,
             headingIndex: headingIndex + 1
         };
     }
     if (line.startsWith('<h2>') || line.startsWith('<h3>')) {
         return { html: line, headingIndex };
     }
-    return { html: `<p${jisageClass ? ` class="${jisageClass}"` : ''}>${line}</p>`, headingIndex };
+    return { html: `<p${classAttr}>${line}</p>`, headingIndex };
 }
 
 // eslint-disable-next-line complexity
@@ -117,12 +143,15 @@ function parseAozoraText(text) {
         let { jisageClass, line: lineAfterJisage } = parseJisage(line);
         line = lineAfterJisage;
 
+        let { alignmentClass, line: lineAfterAlignment } = parseAlignment(line);
+        line = lineAfterAlignment;
+
         let { isHeading, headingLevel, headingText, line: lineAfterHeading } = parseHeading(line);
         line = lineAfterHeading;
 
         line = formatAozoraMarkup(line);
 
-        const result = buildLineHTML(line, jisageClass, isHeading, headingLevel, headingText, headingIndex);
+        const result = buildLineHTML(line, jisageClass, alignmentClass, isHeading, headingLevel, headingText, headingIndex);
         parsedLines.push(result.html);
         headingIndex = result.headingIndex;
     }
@@ -154,6 +183,12 @@ function formatAozoraMarkup(line) {
 
     // 3. Emphasis dots: ［＃傍点］漢［＃傍点終わり］ -> <span class="em-sesame">漢</span>
     line = line.replace(/［＃傍点］(.+?)［＃傍点終わり］/g, '<span class="em-sesame">$1</span>');
+
+    // 3.1 Bold style: ［＃ここから太字］漢［＃ここで太字終わり］ -> <strong class="aozora-bold">$1</strong>
+    line = line.replace(/［＃ここから太字］(.+?)［＃ここで太字終わり］/g, '<strong class="aozora-bold">$1</strong>');
+
+    // 3.2 Italic style: ［＃ここから斜体］漢［＃ここで斜体終わり］ -> <em class="aozora-italic">$1</em>
+    line = line.replace(/［＃ここから斜体］(.+?)［＃ここで斜体終わり］/g, '<em class="aozora-italic">$1</em>');
 
     // 4. Keep other tags stripped or safe
     line = line.replace(/［＃.+?］/g, "");
