@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Asynchronized and time-sliced the layout diagnosis process (`runLayoutDiagnosis`) using requestAnimationFrame to prevent browser tab freeze during bulk DOM dimension scans on large documents (ID: 050).
+- Implemented time-sliced batch loop iteration helper (`timeSliceEach`), added intermediate progress rendering in the diagnostics textarea, and synchronized TypeScript typings and JSDoc extern annotations to Promise targets (ID: 050).
+
 - Asynchronized and deferred the welcome screen's recommended book grid rendering using requestAnimationFrame and setTimeout to prevent initial page-load thread blocking (ID: 049).
 - Enhanced safety guards during lazy rendering to check if the current active scene is still "welcome" before mutating DOM elements, and updated tests to align with async initialization (ID: 049).
 

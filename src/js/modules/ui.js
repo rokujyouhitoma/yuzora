@@ -609,7 +609,9 @@ function setupDebugModalHistoryAndTabs_() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
 
     if (viewContext.btnDiagnoseLayout) {
-        bindReaderEvent_(viewContext.btnDiagnoseLayout, "click", runLayoutDiagnosis);
+        bindReaderEvent_(viewContext.btnDiagnoseLayout, "click", async () => {
+            await runLayoutDiagnosis();
+        });
     }
 
     if (viewContext.btnCopyDebugReport) {
@@ -659,12 +661,12 @@ function setupTabSelectors_() {
             viewContext.tabContentDiagnose.classList.add("hidden");
         });
 
-        bindReaderEvent_(viewContext.tabBtnDiagnose, "click", () => {
+        bindReaderEvent_(viewContext.tabBtnDiagnose, "click", async () => {
             viewContext.tabBtnDiagnose.classList.add("active");
             viewContext.tabBtnMonitor.classList.remove("active");
             viewContext.tabContentDiagnose.classList.remove("hidden");
             viewContext.tabContentMonitor.classList.add("hidden");
-            runLayoutDiagnosis();
+            await runLayoutDiagnosis();
         });
     }
 }

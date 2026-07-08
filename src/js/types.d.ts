@@ -198,7 +198,7 @@ interface YuzoraInterface {
     parseAozoraText(text: string): { title: string; body: string };
     parseAozoraHTML(html: string): { title: string; body: string };
     formatAozoraMarkup(markup: string): string;
-    runLayoutDiagnosis(): string;
+    runLayoutDiagnosis(): Promise<string>;
     getCurrentTOC(): any[];
     CommandManager: any;
     BookModel: any;

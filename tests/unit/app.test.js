@@ -190,9 +190,9 @@ test.describe('Yuzora Parser Unit Tests', () => {
         assert.equal(tocWithRuby[0].level, 2);
     });
 
-    test('should expose runLayoutDiagnosis on Yuzora and run it successfully', () => {
+    test('should expose runLayoutDiagnosis on Yuzora and run it successfully', async () => {
         assert.ok(window.Yuzora.runLayoutDiagnosis);
-        const report = window.Yuzora.runLayoutDiagnosis();
+        const report = await window.Yuzora.runLayoutDiagnosis();
         assert.ok(report.includes('レイアウト診断レポート'));
         assert.ok(report.includes('アライメント検証'));
     });

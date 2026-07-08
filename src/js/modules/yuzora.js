@@ -175,12 +175,12 @@ class Yuzora {
 
     /**
      * Runs layout diagnosis.
-     * @return {string}
+     * @return {!Promise<string>}
      * @override
      */
     // @ts-expect-error
-    runLayoutDiagnosis() {
-        return runLayoutDiagnosis();
+    async runLayoutDiagnosis() {
+        return await runLayoutDiagnosis();
     }
 
     /**

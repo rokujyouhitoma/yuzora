@@ -114,11 +114,50 @@ function diagnoseVerticalLayoutInfo(viewportRect, cStyle) {
     return report;
 }
 
-function diagnoseParagraphCoordinateInfo(viewportRect, childNodes) {
+/**
+ * Time-slice array iteration helper to prevent main thread blocking.
+ * @template T
+ * @param {!Array<T>} array
+ * @param {number} batchSize
+ * @param {function(number):void} onProgress Called with percentage (0 to 100).
+ * @param {function(T, number):void} callback
+ * @return {!Promise<void>}
+ */
+async function timeSliceEach(array, batchSize, onProgress, callback) {
+    for (let i = 0; i < array.length; i += batchSize) {
+        const chunk = array.slice(i, i + batchSize);
+        chunk.forEach((item, j) => {
+            callback(item, i + j);
+        });
+        
+        const progress = Math.round(((i + chunk.length) / array.length) * 100);
+        onProgress(progress);
+        
+        await new Promise(resolve => {
+            if (typeof requestAnimationFrame === 'function') {
+                requestAnimationFrame(() => {
+                    setTimeout(resolve, 0);
+                });
+            } else {
+                setTimeout(resolve, 0);
+            }
+        });
+    }
+}
+
+/**
+ * @param {!ClientRect|!DOMRect} viewportRect
+ * @param {!Array<!Element>} childNodes
+ * @param {function(string):void} onProgressText Called to update intermediate progress text.
+ * @return {!Promise<string>}
+ */
+async function diagnoseParagraphCoordinateInfo(viewportRect, childNodes, onProgressText) {
     let report = `### 📏 可視要素の境界座標分布 (Y: ${viewportRect.top.toFixed(1)}px)\n`;
     let visibleParagraphsCount = 0;
     
-    childNodes.forEach((child, index) => {
+    await timeSliceEach(childNodes, 20, (pct) => {
+        onProgressText(`レイアウト座標診断中... ${pct}%`);
+    }, (child, index) => {
         if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
             return;
         }
@@ -148,7 +187,14 @@ function diagnoseParagraphCoordinateInfo(viewportRect, childNodes) {
     return report;
 }
 
-function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
+/**
+ * @param {!ClientRect|!DOMRect} viewportRect
+ * @param {!Array<!Element>} childNodes
+ * @param {number} currentPage
+ * @param {function(string):void} onProgressText Called to update intermediate progress text.
+ * @return {!Promise<string>}
+ */
+async function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage, onProgressText) {
     const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const expectedScrollMultiplier = currentPage - 1;
@@ -177,8 +223,10 @@ function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
     let verticalBoundaryOverlapCount = 0;
     let overlapDetails = '';
 
-    // eslint-disable-next-line complexity
-    childNodes.forEach((child, index) => {
+    await timeSliceEach(childNodes, 20, (pct) => {
+        onProgressText(`境界見切れ診断中... ${pct}%`);
+    }, // eslint-disable-next-line complexity
+    (child, index) => {
         if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
             return;
         }
@@ -245,11 +293,22 @@ function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage) {
     return report;
 }
 
-function runLayoutDiagnosis() {
+/**
+ * @return {!Promise<string>}
+ */
+async function runLayoutDiagnosis() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (!viewContext.readerViewport || !viewContext.readerContent) {
-        return "エラー: ビューアーが初期化されていません。";
+        return Promise.resolve("エラー: ビューアーが初期化されていません。");
     }
+
+    const updateProgressText = (text) => {
+        if (viewContext.diagnoseReportOutput) {
+            viewContext.diagnoseReportOutput.textContent = text;
+        }
+    };
+
+    updateProgressText("診断中... 環境情報を取得しています。");
 
     const { currentPage, pageCount } = getCurrentPageAndCount(viewContext.readerViewport);
     const cStyle = window.getComputedStyle(viewContext.readerContent);
@@ -261,13 +320,13 @@ function runLayoutDiagnosis() {
     report += diagnoseColumnsInfo(cStyle);
     report += diagnoseColumnWidthCheck(cStyle);
     report += diagnoseVerticalLayoutInfo(viewportRect, cStyle);
-    report += diagnoseParagraphCoordinateInfo(viewportRect, childNodes);
-    report += diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage);
 
-    // Render diagnostic report to debug diagnostics tab textarea
-    if (viewContext.diagnoseReportOutput) {
-        viewContext.diagnoseReportOutput.textContent = report;
-    }
+    // Asynchronous diagnosis sections with time-slicing
+    report += await diagnoseParagraphCoordinateInfo(viewportRect, childNodes, updateProgressText);
+    report += await diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage, updateProgressText);
+
+    // Render final diagnostic report
+    updateProgressText(report);
 
     return report;
 }

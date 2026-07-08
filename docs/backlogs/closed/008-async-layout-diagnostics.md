@@ -2,7 +2,7 @@
 ID: 008
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENH] レイアウト診断レポート生成の非同期・タイムスライス化 (ID: 008)

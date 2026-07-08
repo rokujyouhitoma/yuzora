@@ -544,7 +544,7 @@ YuzoraInterface.prototype.parseAozoraText = function(text) {};
 YuzoraInterface.prototype.parseAozoraHTML = function(html) {};
 /** @type {function(string):string} */
 YuzoraInterface.prototype.formatAozoraMarkup = function(markup) {};
-/** @type {function():string} */
+/** @type {function():!Promise<string>} */
 YuzoraInterface.prototype.runLayoutDiagnosis = function() {};
 /** @type {function():!Array} */
 YuzoraInterface.prototype.getCurrentTOC = function() {};
