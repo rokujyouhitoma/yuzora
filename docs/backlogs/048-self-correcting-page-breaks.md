@@ -17,14 +17,23 @@ ID: 048
 
 ---
 
-## 2. 影響範囲と関連ファイル / Scope and Affected Files
+## 2. ライフサイクルとページ移動時の挙動 / Lifecycle & Page Navigation Behavior
+- **ページ移動時 (scrollLeft 変化時)**:
+  - ページ移動はビューポートの `scrollLeft` の水平スクロール量の変化（表示位置の切り替え）にすぎないため、**DOMの再レンダリングや改ページ挿入処理の再計算は行いません**。そのため、スクロールするたびに改ページが連続・重複して挿入される懸念はありません。
+- **リフロー時 (書籍ロード、設定変更、リサイズ時)**:
+  - `adjustPageBreaksForOverrun()` の処理の冒頭で、既存の動的改ページ要素（`.dynamic-page-break`）を `querySelectorAll` で全検索して**DOMから完全に一括削除（クリア）**します。
+  - そのため、計算結果がクリーンな状態から毎回1回だけ再計算され、古い改ページが蓄積・重複することはありません。
+
+---
+
+## 3. 影響範囲と関連ファイル / Scope and Affected Files
 - [ ] [renderer.js](../../src/js/modules/renderer.js) (`adjustPageBreaksForOverrun()` メソッドの実装および `handleResize()` 呼び出しフック)
 - [ ] [viewer.js](../../src/js/modules/viewer.js) (本ロード時の自己修復フック呼び出し)
 - [ ] [ui.js](../../src/js/modules/ui.js) (設定変更時の自己修復フック呼び出し)
 
 ---
 
-## 3. 実装方針 / Implementation Plan
+## 4. 実装方針 / Implementation Plan
 1. **`adjustPageBreaksForOverrun()` の実装**:
    - `VerticalRenderer` 内にメソッドとして追加します。
    - ループ実行（最大30回まで）:
@@ -40,7 +49,7 @@ ID: 048
 
 ---
 
-## 4. 完了条件 (DoD) / Acceptance Criteria
+## 5. 完了条件 (DoD) / Acceptance Criteria
 - [ ] 境界をまたぐ文字を検出した段落の直前に動的な改ページ要素が自動挿入され、見切れる文字が次のカラムへ正常に送り出されること。
 - [ ] レイアウト変更に伴うリフローの最大再試行上限（30回）によって無限ループに陥らないこと。
 - [ ] 分割したテスト環境において、自動改ページ挿入機能によって見切れ警告件数が自動で 0件 になり、E2EテストがGreenで通過すること。
