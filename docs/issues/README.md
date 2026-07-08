@@ -65,6 +65,7 @@
 | **053** | Refactor | Medium | Closed | テキストモジュールとテストファイルの1対1対応リファクタリング | AI Agent | [053-test-file-one-to-one-structure.md](closed/053-test-file-one-to-one-structure.md) |
 | **054** | Feature | Low | Closed | CSSリセット（初期化CSS）の導入 | AI Agent | [054-introduce-css-reset.md](closed/054-introduce-css-reset.md) |
 | **055** | Feature | High | Closed | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | AI Agent | [055-strict-boundary-diagnostics-and-e2e-loop.md](closed/055-strict-boundary-diagnostics-and-e2e-loop.md) |
+| **056** | Feature | High | In Progress | 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 | AI Agent | [056-self-correcting-page-breaks.md](056-self-correcting-page-breaks.md) |
 
 
 
