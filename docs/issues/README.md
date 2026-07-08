@@ -61,6 +61,7 @@
 | **049** | Enhancement | Low | Closed | 起動時オススメ書籍グリッドの遅延レンダリング | AI Agent | [049-lazy-loading-predefined-books.md](closed/049-lazy-loading-predefined-books.md) |
 | **050** | Enhancement | Medium | Closed | レイアウト診断レポート生成の非同期・タイムスライス化 | AI Agent | [050-async-layout-diagnostics.md](closed/050-async-layout-diagnostics.md) |
 | **051** | Enhancement | Medium | Closed | 青空文庫「地付き」「地寄せ」「地から○字上げ」レイアウトおよび装飾対応 | AI Agent | [051-aozora-chitsuki-jitsage-decorations.md](closed/051-aozora-chitsuki-jitsage-decorations.md) |
+| **052** | Refactor | High | New | 抽象構文木（AST）ベースのパーサーおよび評価器への移行 | AI Agent | [052-ast-based-parser-architecture.md](052-ast-based-parser-architecture.md) |
 
 
 ## 2. 状態（ステータス）定義
