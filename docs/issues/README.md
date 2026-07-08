@@ -60,7 +60,7 @@
 | **048** | Refactor | Medium | Closed | 永続化層（Repository）の完全非同期対応と抽象化 | AI Agent | [048-async-repository-abstraction.md](closed/048-async-repository-abstraction.md) |
 | **049** | Enhancement | Low | Closed | 起動時オススメ書籍グリッドの遅延レンダリング | AI Agent | [049-lazy-loading-predefined-books.md](closed/049-lazy-loading-predefined-books.md) |
 | **050** | Enhancement | Medium | Closed | レイアウト診断レポート生成の非同期・タイムスライス化 | AI Agent | [050-async-layout-diagnostics.md](closed/050-async-layout-diagnostics.md) |
-| **051** | Enhancement | Medium | New | 青空文庫「地付き」「地寄せ」「地から○字上げ」レイアウトおよび装飾対応 | AI Agent | [051-aozora-chitsuki-jitsage-decorations.md](051-aozora-chitsuki-jitsage-decorations.md) |
+| **051** | Enhancement | Medium | In Progress | 青空文庫「地付き」「地寄せ」「地から○字上げ」レイアウトおよび装飾対応 | AI Agent | [051-aozora-chitsuki-jitsage-decorations.md](051-aozora-chitsuki-jitsage-decorations.md) |
 
 
 ## 2. 状態（ステータス）定義
