@@ -55,7 +55,7 @@
 | **045** | Refactor | High | Closed | 抽象構文木（AST）ベースのパーサーおよび評価器への移行 | [045-ast-based-parser-architecture.md](closed/045-ast-based-parser-architecture.md) |
 | **046** | Refactor | Medium | Closed | テキストモジュールとテストファイルの1対1対応リファクタリング | [046-test-file-one-to-one-structure.md](closed/046-test-file-one-to-one-structure.md) |
 | **047** | Enhancement | High | Closed | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | [047-strict-boundary-diagnostics-and-e2e-loop.md](closed/047-strict-boundary-diagnostics-and-e2e-loop.md) |
-| **048** | Feature | High | Approved | 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 | [048-self-correcting-page-breaks.md](048-self-correcting-page-breaks.md) |
+| **048** | Feature | High | Closed | 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 | [048-self-correcting-page-breaks.md](closed/048-self-correcting-page-breaks.md) |
 | **049** | Refactor | Low | Closed | CSSリセット（初期化CSS）の導入検討 | [049-introduce-css-reset.md](closed/049-introduce-css-reset.md) |
 | **050** | Enhancement | Medium | Approved | レイアウト自己修復の観測機能と視覚的デバッグ補助の導入 | [050-layout-repair-observability-and-debugging.md](050-layout-repair-observability-and-debugging.md) |
 

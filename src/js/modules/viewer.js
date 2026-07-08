@@ -127,6 +127,7 @@ async function displayBook() {
     // Wait a tick for rendering to complete before restoring scroll position
     viewContext.isReflowing = true;
     setTimeout(() => {
+        renderer.adjustPageBreaksForOverrun();
         restoreScrollPosition();
         updateProgress();
         

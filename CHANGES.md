@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 - Removed redundant universal reset styling from `base.css` and updated `Makefile` to prepend `reset.css` to the compiled stylesheet bundle (ID: 054).
 - Improved layout boundary check logic (`findCharAtBoundary` and `runLayoutDiagnosis`) in `diagnostics.js` to strictly verify character slicing and eliminate false positive warnings on correct column breaks (ID: 055).
 - Integrated layout diagnostics assertions into Playwright E2E tests (`diagnose.spec.js`) to verify layout completeness automatically without human visual inspection (ID: 055).
+- Implemented `adjustPageBreaksForOverrun` self-repairing layout engine in `renderer.js` to automatically insert dynamic page breaks before paragraphs that overrun viewport/column boundaries (ID: 056).
+- Hooked layout self-correction into book display (`displayBook`) and resize/settings change (`handleResize`) lifecycles, ensuring a stable, overrun-free reading view (ID: 056).
 
 
 - Migrated the Aozora Bunko text parser (`parser.js`) from regex-based direct string replacement to a compiler-type pipeline containing a tokenizer (`tokenizeInline`), AST parser (`parseTokensToAST`), and DFS generator (`evaluateAST`) (ID: 052).

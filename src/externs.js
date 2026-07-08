@@ -754,3 +754,7 @@ RendererInterface.prototype.scrollToPage = function(pageNumber) {};
  * @return {!Promise<void>}
  */
 RendererInterface.prototype.handleResize = function(progress) {};
+/**
+ * @return {void}
+ */
+RendererInterface.prototype.adjustPageBreaksForOverrun = function() {};

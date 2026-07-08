@@ -170,6 +170,9 @@ class VerticalRenderer {
                 // Enforce column content size width constraints
                 this.viewContext.readerContent.style.width = 'max-content';
                 
+                // Adjust page breaks for overrun on the recalculated layout
+                this.adjustPageBreaksForOverrun();
+
                 // Restore progress coordinates on new dimensions
                 const maxScroll = Math.abs(this.viewContext.readerViewport.scrollWidth - this.viewContext.readerViewport.clientWidth);
                 if (this.configModel.direction === 'rtl') {
@@ -181,4 +184,144 @@ class VerticalRenderer {
             }, 100);
         });
     }
+
+    /**
+     * @override
+     */
+    // @ts-expect-error
+    adjustPageBreaksForOverrun() {
+        if (!this.viewContext.readerContent || !this.viewContext.readerViewport) return;
+
+        const readerContent = this.viewContext.readerContent;
+        const readerViewport = this.viewContext.readerViewport;
+
+        // 1. Remove all existing dynamic page break elements to start fresh
+        const existingBreaks = readerContent.querySelectorAll('.dynamic-page-break');
+        existingBreaks.forEach(el => el.remove());
+
+        const maxIterations = 30;
+        for (let iteration = 0; iteration < maxIterations; iteration++) {
+            if (!runOverrunCheckPass(readerContent, readerViewport)) {
+                break; // Convergence! No page breaks were inserted.
+            }
+        }
+    }
+}
+
+/**
+ * Runs a single pass of the overrun check and repairs the first detected overrun.
+ * @param {!Element} readerContent
+ * @param {!Element} readerViewport
+ * @return {boolean} True if a page break was inserted in this pass.
+ */
+function runOverrunCheckPass(readerContent, readerViewport) {
+    const clientWidth = readerViewport.clientWidth;
+    const scrollWidth = readerViewport.scrollWidth;
+    const pageCount = Math.round(scrollWidth / clientWidth) || 0;
+    if (pageCount <= 1) {
+        return false;
+    }
+
+    const childNodes = Array.from(readerContent.children).filter(node => {
+        const style = window.getComputedStyle(node);
+        return style.display !== 'none';
+    });
+
+    for (let k = 1; k < pageCount; k++) {
+        const boundaryX = k * clientWidth;
+
+        for (let i = 0; i < childNodes.length; i++) {
+            if (checkAndRepairParagraphOverrun(childNodes[i], boundaryX, readerViewport)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Helper to check a single paragraph for boundary overrun and repair it by inserting a page break.
+ * @param {!Element} child
+ * @param {number} boundaryX
+ * @param {!Element} readerViewport
+ * @return {boolean} True if a page break was inserted.
+ */
+function checkAndRepairParagraphOverrun(child, boundaryX, readerViewport) {
+    if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
+        return false;
+    }
+
+    const rect = child.getBoundingClientRect();
+    const absScroll = Math.abs(readerViewport.scrollLeft);
+    const docLeft = rect.left + absScroll;
+    const docRight = rect.right + absScroll;
+
+    // Check if paragraph bounding box spans the boundary
+    if (docLeft < boundaryX && docRight > boundaryX) {
+        // Check if the paragraph is already preceded by a page break to avoid infinite loop
+        const prev = child.previousElementSibling;
+        if (prev && prev.classList.contains('page-break')) {
+            return false;
+        }
+
+        // Check if there is a character crossing the boundary
+        const charInfo = findCharAtDocumentBoundary(child, boundaryX, readerViewport.scrollLeft);
+        if (charInfo) {
+            // Insert page break before this paragraph
+            const pageBreak = document.createElement('div');
+            pageBreak.className = 'page-break dynamic-page-break';
+            child.parentNode.insertBefore(pageBreak, child);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Pure helper function to walk text nodes of an element and find if any character slices
+ * a document-relative boundary coordinate.
+ * @param {!Element} element
+ * @param {number} boundaryX
+ * @param {number} currentScrollLeft
+ * @return {?Object}
+ */
+function findCharAtDocumentBoundary(element, boundaryX, currentScrollLeft) {
+    const textNodes = [];
+    const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+    let node;
+    while (node = walk.nextNode()) {
+        textNodes.push(node);
+    }
+
+    const absScroll = Math.abs(currentScrollLeft);
+
+    for (const node of textNodes) {
+        const text = node.textContent;
+        for (let i = 0; i < text.length; i++) {
+            const range = document.createRange();
+            try {
+                range.setStart(node, i);
+                range.setEnd(node, i + 1);
+            } catch (e) {
+                continue;
+            }
+            const rect = range.getBoundingClientRect();
+            const docLeft = rect.left + absScroll;
+            const docRight = rect.right + absScroll;
+            
+            if (docLeft < boundaryX - 0.5 && docRight > boundaryX + 0.5) {
+                const before = text.substring(Math.max(0, i - 10), i);
+                const after = text.substring(i + 1, Math.min(text.length, i + 11));
+                return {
+                    char: text[i],
+                    rect: rect,
+                    context: { before, after }
+                };
+            }
+        }
+    }
+
+    return null;
 }

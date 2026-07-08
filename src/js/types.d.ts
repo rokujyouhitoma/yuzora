@@ -226,6 +226,7 @@ interface RendererInterface {
     restoreScrollPosition(progress: number, smooth?: boolean): void;
     scrollToPage(pageNumber: number): Promise<void>;
     handleResize(progress: number): Promise<void>;
+    adjustPageBreaksForOverrun(): void;
 }
 
 declare var yuzora: YuzoraInterface;

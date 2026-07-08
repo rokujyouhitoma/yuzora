@@ -1,11 +1,11 @@
 ---
-ID: 056
+ID: 048
 種別: Feature
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
-# [FEAT/ENH] 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 (ID: 056)
+# [FEAT] 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 (ID: 048)
 
 ## 1. 概要 / Summary
 バウンディングボックスの制限やブラウザのフォントレンダリング端数誤差により、縦書きテキスト行が物理的にページの境界線上（カラムとギャップの境目）に乗り上げ、文字が見切れてしまう（半分にスライスされる）問題が発生します。
@@ -15,14 +15,14 @@ ID: 056
 2. 挿入後にレイアウト座標がリフローで変化するため、すべて見切れが解消されるかループ上限（最大30パス）に達するまで処理を繰り返すマルチパス自動補正ループを実装します。
 3. 本ロード時、設定変更時、ウィンドウリサイズ時のレイアウト確定ライフサイクルイベントに本自己修復処理を結合し、見切れ不具合を全自動で回避します。
 
-本Issueは、バックログ [048-self-correcting-page-breaks.md](../backlogs/048-self-correcting-page-breaks.md) をプロモートしたものです。
-
 ---
 
-## 2. トレーサビリティ / Traceability
-- 関連要求 (URD): なし
-- 関連要件 (SRD): なし
-- 関連バックログ: [048-self-correcting-page-breaks.md](../backlogs/048-self-correcting-page-breaks.md)
+## 2. ライフサイクルとページ移動時の挙動 / Lifecycle & Page Navigation Behavior
+- **ページ移動時 (scrollLeft 変化時)**:
+  - ページ移動はビューポートの `scrollLeft` の水平スクロール量の変化（表示位置の切り替え）にすぎないため、**DOMの再レンダリングや改ページ挿入処理の再計算は行いません**。そのため、スクロールするたびに改ページが連続・重複して挿入される懸念はありません。
+- **リフロー時 (書籍ロード、設定変更、リサイズ時)**:
+  - `adjustPageBreaksForOverrun()` の処理の冒頭で、既存の動的改ページ要素（`.dynamic-page-break`）を `querySelectorAll` で全検索して**DOMから完全に一括削除（クリア）**します。
+  - そのため、計算結果がクリーンな状態から毎回1回だけ再計算され、古い改ページが蓄積・重複することはありません。
 
 ---
 
@@ -34,10 +34,8 @@ ID: 056
 ---
 
 ## 4. 実装方針 / Implementation Plan
-Target Branch: `feat/056-self-correcting-page-breaks`
-
 1. **`adjustPageBreaksForOverrun()` の実装**:
-   - `VerticalRenderer` 内にメソッドとして追加する。
+   - `VerticalRenderer` 内にメソッドとして追加します。
    - ループ実行（最大30回まで）:
      - 最初にすべての `.dynamic-page-break` 要素を削除してレイアウトをリセット。
      - 各段落要素を走査し、境界線（$k \times W$）と交差する文字を `findCharAtBoundary` から取得。
@@ -51,8 +49,7 @@ Target Branch: `feat/056-self-correcting-page-breaks`
 
 ---
 
-## 5. 完了条件 / Success Criteria (DoD)
+## 5. 完了条件 (DoD) / Acceptance Criteria
 - [ ] 境界をまたぐ文字を検出した段落の直前に動的な改ページ要素が自動挿入され、見切れる文字が次のカラムへ正常に送り出されること。
 - [ ] レイアウト変更に伴うリフローの最大再試行上限（30回）によって無限ループに陥らないこと。
 - [ ] 自動改ページ挿入機能の実装により、E2Eテスト (`tests/e2e/diagnose.spec.js`) における文字見切れ件数が自動で 0件 に修正され、テストがGreenで通過すること。
-- [ ] 本実装の内容が [DSN-01](../DSN-01-high_level_design.md) および [DSN-02](../DSN-02-low_level_design.md) の設計仕様と完全に一致していること（デッドドキュメントがないこと）。

@@ -11,8 +11,10 @@ function updateSettingsUI(key, value) {
     } else if (key === "font") {
         viewContext.readerContent.className = "reader-content";
         viewContext.readerContent.classList.add(value, `direction-${configModel.direction}`, configModel.size, configModel.lh, configModel.spacing);
+        handleResize(); // Trigger bounds recalibration on font updates
     } else if (key === "direction") {
         applySettings(); // Changing writing directions changes multi columns configurations entirely
+        handleResize(); // Trigger bounds recalibration on writing direction updates
     } else if (key === "size" || key === "lh" || key === "spacing") {
         viewContext.readerContent.className = "reader-content";
         viewContext.readerContent.classList.add(configModel.font, `direction-${configModel.direction}`, configModel.size, configModel.lh, configModel.spacing);
