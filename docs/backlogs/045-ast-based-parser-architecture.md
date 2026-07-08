@@ -2,7 +2,7 @@
 ID: 045
 種別: Refactor
 優先度: High
-ステータス: Draft
+ステータス: Approved
 ---
 
 # [REFACT] 抽象構文木 (AST) ベースのパーサーおよび評価器への移行 (ID: 045)
@@ -13,7 +13,47 @@ ID: 045
 
 ---
 
-## 2. 期待される効果 / Expected Benefits
-- **堅牢なネスト処理**: ルビ、太字、斜体、傍点、字下げ、見出しなどの注記が複雑に入れ子になった場合でも、木構造として正しく優先順位を制御し、入れ子タグの崩れを防ぎます。
-- **構造的セキュリティ（XSS防止）**: AST から直接 DOM ノードを `createElement` で動的に構築、またはセキュアなコードジェネレーターを介して HTML に評価するため、文字列ベースの HTML インジェクションのリスクを根本から排除します。
-- **データ表現の汎用化**: 中間表現（AST）が存在することにより、縦書き表示用の HTML レンダリングだけでなく、検索用インデックスの抽出、音声読み上げ（TTS）用のルビ除去プレーンテキスト化、または将来的なエクスポート形式（EPUB/PDF等）への変換が容易になります。
+## 2. 影響範囲と関連ファイル / Scope and Affected Files
+- **[parser.js](src/js/modules/parser.js)** (MODIFY / REWRITE):
+  - トークナイザー（字句解析器）および構文解析器（Parser）を再設計し、テキストから AST を生成します。
+  - AST 階層モデルを巡回して安全な HTML 文字列または DOM ノードを出力する評価器（Evaluator / Code Generator）を追加します。
+- **[app.test.js](tests/unit/app.test.js)** (MODIFY / ADD):
+  - 複雑な入れ子マークアップ（例: 太字の中にさらにルビと傍点が存在するケース）や構文エラーに対するテストスイートを拡張します。
+
+---
+
+## 3. 実装方針 / Implementation Plan
+Target Branch: `refactor/045-ast-based-parser-architecture`
+
+### 3.1. AST ノードの基本モデル設計
+AST を構成するノードは、ノードタイプと子ノードの配列を保持するオブジェクトで表現します。
+```typescript
+interface ASTNode {
+    type: 'Root' | 'Paragraph' | 'Heading' | 'Text' | 'Ruby' | 'Bold' | 'Italic' | 'Bouten' | 'PageBreak';
+    value?: string;           // テキストノード等の文字列値
+    attributes?: {            // 配置や属性情報
+        level?: number;       // 見出しレベル (2: 大, 3: 中, 4: 小)
+        jisage?: number;      // 字下げ数
+        align?: 'chitsuki' | 'chiyose' | 'chitage';
+        alignValue?: number;  // 字上げの文字数
+    };
+    children?: ASTNode[];
+}
+```
+
+### 3.2. 構文解析プロセスのパイプライン化
+1. **字句解析 (Lexer / Tokenizer)**:
+   - プレーンテキストを行単位、または文字単位でスキャンし、通常の文字列トークンと青空マークアップの指示トークン（例: `RUBY_START`, `BOLD_START`）のストリームに分割します。
+2. **構文解析 (Parser)**:
+   - トークンストリームを巡回し、ネスト優先順位に基づいてノードを木構造（AST）に組み立てます（再帰降下型パーサーなど）。不整合な開始・終了マークアップは、パース時に自動で安全なテキストトークンとしてフォールバックし、壊れた HTML が生成されるのを防ぎます。
+3. **評価器 (Evaluator / Code Generator)**:
+   - 完成した AST のルートから深さ優先探索（DFS）で巡回し、ホワイトリストに適合する HTML タグ（`<ruby>`, `<strong>`, `<p class="...">` 等）へセキュアにマッピングします。
+   - テキストノードの出力時に自動で HTML 特殊文字をエスケープするため、XSS が構造レベルで完全に防止されます。
+
+---
+
+## 4. 完了条件 (DoD) / Acceptance Criteria
+- [ ] パース結果の中間表現として AST 階層が正しくメモリ上に生成され、任意の AST が安全な HTML に評価されること。
+- [ ] 入れ子マークアップ（例: `［＃ここから太字］漢字《かんじ》［＃ここで太字終わり］`）が正しいネスト木構造としてパースされ、`<strong><ruby>漢字<rt>かんじ</rt></ruby></strong>` のように描画されること。
+- [ ] エスケープ処理と置換処理が AST の木構造の評価時に一体化され、XSS 脆弱性が排除されていること。
+- [ ] 静的解析（`npm run lint`）、型チェック、および既存のユニット・E2Eテストがすべて正常にパスすること。
