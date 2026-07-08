@@ -2,7 +2,7 @@
 ID: 001
 種別: Bug
 優先度: High
-ステータス: Open (Analyzing)
+ステータス: Open (In Progress)
 ---
 
 # [BUG/SEC] ページの左右が見切れてしまう (ID: 001)
@@ -21,14 +21,14 @@ ID: 001
 
 ---
 
-## 3. 根本原因分析 (RCA) / Root Cause Analysis
+## 2. 根本原因分析 (RCA) / Root Cause Analysis
 1. **第1次調査（カラム幅の計算誤差）**: 当初、`column-width` の `%` 指定がブラウザによって `auto` に解決され、端数計算ズレが起きることが根本原因と推定。`vw` ベースの計算式に修正したが、見切れは依然として発生。
 2. **第2次調査（真の根本原因 - 長い段落のバウンディングボックスまたぎ）**:
    CSS Multi-column において、縦書きの `p` 要素が複数カラムに渡って流れるとき、`getBoundingClientRect()` はコンテンツ全体を囲む矩形を返すため、長い段落は現在表示ページの左右外側まで広がったバウンディングボックスを持つ。これが「見切れ」として診断レポート等で誤検出される一方、実際に段落の折り返し位置の文字（行矩形）が物理的にページ境界線と重なって見切れてしまう現象が混在している。
 
 ---
 
-## 4. 暫定対処と恒久対策 / Workaround & Permanent Fix
+## 3. 暫定対処と恒久対策 / Workaround & Permanent Fix
 * **暫定対処 (Workaround)**: なし（恒久対策のみ実施予定）。
 * **恒久対策 (Permanent Fix)**:
   1. `column-width` の `vw` ベースへの修正（適用済み）。
@@ -37,14 +37,17 @@ ID: 001
 
 ---
 
-## 2. 影響範囲と関連ファイル / Scope and Affected Files
-<!-- 影響を受ける機能や、調査・修正・作成が必要なファイルパスをリストアップします。 -->
-- [x] `src/css/style.css` (カラム幅の計算式を `vw` ベースに修正済み — ✅ column-width は正常化)
-- [ ] `src/js/app.js` (`runLayoutDiagnosis` の境界交差検出ロジック改善、およびページ送り強制挿入)
-- [ ] `docs/DSN-02-low_level_design.md` (詳細設計の更新)
+## 4. 影響範囲と関連ファイル / Scope and Affected Files
+- [x] [style.css](file:///workspace/yuzora/yuzora/src/css/style.css) (カラム幅の計算式を `vw` ベースに修正済み — ✅ column-width は正常化)
+- [ ] [diagnostics.js](file:///workspace/yuzora/yuzora/src/js/modules/diagnostics.js) (`runLayoutDiagnosis` の境界交差検出ロジック改善)
+- [ ] [renderer.js](file:///workspace/yuzora/yuzora/src/js/modules/renderer.js) (`adjustPageBreaksForOverrun()` の実装および `handleResize()` 呼び出し統合)
+- [ ] [viewer.js](file:///workspace/yuzora/yuzora/src/js/modules/viewer.js) (コンテンツロード時の自動改ページ挿入処理の呼び出し統合)
+- [ ] [ui.js](file:///workspace/yuzora/yuzora/src/js/modules/ui.js) (設定変更時の自動改ページ挿入処理の呼び出し統合)
+- [ ] [DSN-02-low_level_design.md](file:///workspace/yuzora/yuzora/docs/DSN-02-low_level_design.md) (詳細設計の更新)
+
+---
 
 ## 5. 実装方針 / Implementation Plan
-<!-- 調査結果、実装手順、設計上の決定事項、新規作成・変更予定のファイルを詳細に記述します。 -->
 Target Branch: `fix/001-page-left-right-overrun`
 
 ### 既実施（Step 1）
@@ -55,12 +58,12 @@ Target Branch: `fix/001-page-left-right-overrun`
 
 ### 未実施（Step 2）— 追加対策
 
-2. **`src/js/app.js` の診断ロジック改善 (`findCharAtBoundary` & `runLayoutDiagnosis`)**:
+2. **`src/js/modules/diagnostics.js` の診断ロジック改善 (`findCharAtBoundary` & `runLayoutDiagnosis`)**:
    - `findCharAtBoundary(element, boundaryX)` を改善し、文字の境界が実際に `boundaryX` をまたいでいる（`rect.left < boundaryX - 0.5 && rect.right > boundaryX + 0.5`）場合のみ文字情報を返すように修正します。交差する文字が存在しない場合は `null` を返すようにし、フォールバックとして `closestMatch` を返す処理を廃止します。
    - `runLayoutDiagnosis()` 内で、各要素全体の bounding box による境界判定 (`rect.left < boundaryLeft && rect.right > boundaryLeft`) を廃止し、`findCharAtBoundary` が `null` 以外の実データを返したかどうかに基づいて `intersectsLeft` / `intersectsRight` を判定するように変更します。これにより、複数カラムにまたがる長い段落による誤検知を排除します。
 
-3. **見切れ検出時の自動改ページ挿入処理の実装**:
-   - カラム境界（ページ境界）をまたぐ文字を検出し、その要素の直前に `<div class="page-break dynamic-page-break"></div>` を動的に挿入する `adjustPageBreaksForOverrun()` 関数を `src/js/app.js` に実装します。
+3. **見切れ検出時の自動改ページ挿入処理の実装 (`VerticalRenderer` への統合)**:
+   - カラム境界（ページ境界）をまたぐ文字を検出し、その要素の直前に `<div class="page-break dynamic-page-break"></div>` を動的に挿入する `adjustPageBreaksForOverrun()` メソッドを `VerticalRenderer`（`src/js/modules/renderer.js`）に実装します。
    - **`adjustPageBreaksForOverrun()` のアルゴリズム**:
      1. 以前に追加された動的改ページ要素 (`.dynamic-page-break`) をすべて削除します。
      2. ページの幅 `W` (`readerViewport.clientWidth`) および現在の送り方向（RTLかLTRか）を取得します。
@@ -70,14 +73,19 @@ Target Branch: `fix/001-page-left-right-overrun`
 
 4. **処理の呼び出しタイミングの統合**:
    - 以下のライフサイクルイベントで、レイアウトがレンダリングされて確定した直後に `adjustPageBreaksForOverrun()` を実行し、その後にスクロール位置の復元 (`restoreScrollPosition()`) およびプログレス更新を実行します。
-     - **コンテンツロード時**: `displayBook()` 内の `setTimeout` (100ms) 処理の最初。
-     - **設定変更時**: `setupDrawerControls()` 内の各設定の `applySettings()` 適用後の `setTimeout` (150ms) 処理の最初。
-     - **リサイズ時**: `handleResize()` 内の `restoreScrollPosition()` の直前。
+     - **コンテンツロード時**: `viewer.js` の `displayBook()` 内の `setTimeout` (100ms) 処理の最初。
+     - **設定変更時**: `ui.js` の設定変更時（テーマ、フォント、文字サイズ変更など）に適用後の `setTimeout` 処理の最初。
+     - **リサイズ時**: `renderer.js` の `handleResize()` 内の再計算・位置復元の直前。
+
+5. **設計ドキュメントの更新**:
+   - `docs/DSN-02-low_level_design.md` に自動改ページ挿入処理の物理設計およびアライメントアジャストアルゴリズムを追加します。
+
+---
 
 ## 6. 完了条件 / Success Criteria (DoD)
-<!-- 実装が完了したと判断するための具体的な確認項目、テスト方法をリストアップします。 -->
 - [ ] 診断レポートの境界交差検出が、`p` 要素の bounding box ではなく行・文字矩形レベルで正確に動作し、複数カラムにまたがる長い段落による誤検出が 0 件になること。
 - [ ] コンテンツロード時、設定変更時、ウィンドウリサイズ時に、境界をまたぐ長い `p` 要素の直前に `dynamic-page-break` が自動挿入され、見切れる文字が次のカラムへ正しく送られること。
 - [ ] 実装した `adjustPageBreaksForOverrun()` が無限ループなどの重大なバグを引き起こさないこと（最大ループ回数の制限が機能していること）。
-- [ ] 開発用のE2Eレイアウト診断テスト (`tests/e2e/diagnose.spec.js`) を実行した際、出力される診断レポートで境界交差の件数が 0 になっていること。
+- [ ] 開発用のE2Eレイアウト診断テスト (`tests/e2e/diagnose.spec.js` または該当テスト) を実行した際、出力される診断レポートで境界交差の件数が 0 になっていること。
 - [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [ ] 本実装の内容が [DSN-01](../docs/DSN-01-high_level_design.md) および [DSN-02](../docs/DSN-02-low_level_design.md) の設計仕様と完全に一致していること（デッドドキュメントがないこと）。
