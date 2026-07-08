@@ -19,52 +19,55 @@ class Repository {
     /**
      * Retrieve a value by key.
      * @param {string} key
-     * @return {?string}
+     * @return {!Promise<?string>}
      * @override
      */
     // @ts-expect-error
     get(key) {
-        throw new Error("get() must be implemented");
+        return Promise.reject(new Error("get() must be implemented"));
     }
 
     /**
      * Persist a value by key.
      * @param {string} key
      * @param {string} value
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
     save(key, value) {
-        throw new Error("save() must be implemented");
+        return Promise.reject(new Error("save() must be implemented"));
     }
 
     /**
      * Remove a value by key.
      * @param {string} key
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
     delete(key) {
-        throw new Error("delete() must be implemented");
+        return Promise.reject(new Error("delete() must be implemented"));
     }
 
     /**
      * Return all keys currently in storage.
-     * @return {!Array<string>}
+     * @return {!Promise<!Array<string>>}
      * @override
      */
     // @ts-expect-error
     keys() {
-        throw new Error("keys() must be implemented");
+        return Promise.reject(new Error("keys() must be implemented"));
     }
 
     /**
      * Clear all entries from storage.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
     clear() {
-        throw new Error("clear() must be implemented");
+        return Promise.reject(new Error("clear() must be implemented"));
     }
 }
 
@@ -80,14 +83,14 @@ class LocalStorageRepository extends Repository {
     /**
      * @override
      * @param {string} key
-     * @return {?string}
+     * @return {!Promise<?string>}
      */
     get(key) {
         try {
-            return localStorage.getItem(key);
+            return Promise.resolve(localStorage.getItem(key));
         } catch (e) {
             console.warn("LocalStorageRepository.get() failed:", e);
-            return null;
+            return Promise.resolve(null);
         }
     }
 
@@ -95,6 +98,7 @@ class LocalStorageRepository extends Repository {
      * @override
      * @param {string} key
      * @param {string} value
+     * @return {!Promise<void>}
      */
     save(key, value) {
         try {
@@ -102,11 +106,13 @@ class LocalStorageRepository extends Repository {
         } catch (e) {
             console.warn("LocalStorageRepository.save() failed:", e);
         }
+        return Promise.resolve();
     }
 
     /**
      * @override
      * @param {string} key
+     * @return {!Promise<void>}
      */
     delete(key) {
         try {
@@ -114,11 +120,12 @@ class LocalStorageRepository extends Repository {
         } catch (e) {
             console.warn("LocalStorageRepository.delete() failed:", e);
         }
+        return Promise.resolve();
     }
 
     /**
      * @override
-     * @return {!Array<string>}
+     * @return {!Promise<!Array<string>>}
      */
     keys() {
         const result = [];
@@ -132,11 +139,12 @@ class LocalStorageRepository extends Repository {
         } catch (e) {
             console.warn("LocalStorageRepository.keys() failed:", e);
         }
-        return result;
+        return Promise.resolve(result);
     }
 
     /**
      * @override
+     * @return {!Promise<void>}
      */
     clear() {
         try {
@@ -144,6 +152,7 @@ class LocalStorageRepository extends Repository {
         } catch (e) {
             console.warn("LocalStorageRepository.clear() failed:", e);
         }
+        return Promise.resolve();
     }
 }
 
@@ -168,42 +177,49 @@ class InMemoryRepository extends Repository {
     /**
      * @override
      * @param {string} key
-     * @return {?string}
+     * @return {!Promise<?string>}
      */
     get(key) {
-        return this.store.has(key) ? /** @type {string} */ (this.store.get(key)) : null;
+        const val = this.store.has(key) ? /** @type {string} */ (this.store.get(key)) : null;
+        return Promise.resolve(val);
     }
 
     /**
      * @override
      * @param {string} key
      * @param {string} value
+     * @return {!Promise<void>}
      */
     save(key, value) {
         this.store.set(key, value);
+        return Promise.resolve();
     }
 
     /**
      * @override
      * @param {string} key
+     * @return {!Promise<void>}
      */
     delete(key) {
         this.store.delete(key);
+        return Promise.resolve();
     }
 
     /**
      * @override
-     * @return {!Array<string>}
+     * @return {!Promise<!Array<string>>}
      */
     keys() {
-        return Array.from(this.store.keys());
+        return Promise.resolve(Array.from(this.store.keys()));
     }
 
     /**
      * @override
+     * @return {!Promise<void>}
      */
     clear() {
         this.store.clear();
+        return Promise.resolve();
     }
 }
 
@@ -237,13 +253,13 @@ class SettingsRepository {
     /**
      * Load the settings object from storage.
      * Returns an empty object if no settings are found or parsing fails.
-     * @return {!Object<string, string>}
+     * @return {!Promise<!Object<string, string>>}
      * @override
      */
     // @ts-expect-error
-    load() {
+    async load() {
         try {
-            const raw = this.storage.get(this._KEY);
+            const raw = await this.storage.get(this._KEY);
             if (raw) {
                 const parsed = JSON.parse(raw);
                 if (parsed && typeof parsed === "object") {
@@ -259,12 +275,13 @@ class SettingsRepository {
     /**
      * Persist the settings object to storage.
      * @param {!Object<string, string>} configObject
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    save(configObject) {
+    async save(configObject) {
         try {
-            this.storage.save(this._KEY, JSON.stringify(configObject));
+            await this.storage.save(this._KEY, JSON.stringify(configObject));
         } catch (e) {
             console.warn("SettingsRepository.save() failed to serialize JSON:", e);
         }
@@ -272,11 +289,12 @@ class SettingsRepository {
 
     /**
      * Remove settings from storage.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    clear() {
-        this.storage.delete(this._KEY);
+    async clear() {
+        await this.storage.delete(this._KEY);
     }
 }
 
@@ -311,14 +329,14 @@ class BookmarkRepository {
      * Load the bookmark progress for a given file.
      * Returns 0 if no bookmark is found or loading fails.
      * @param {string} fileName
-     * @return {number}
+     * @return {!Promise<number>}
      * @override
      */
     // @ts-expect-error
-    load(fileName) {
+    async load(fileName) {
         if (!fileName) return 0;
         try {
-            const raw = this.storage.get(this._PREFIX + fileName);
+            const raw = await this.storage.get(this._PREFIX + fileName);
             if (raw) {
                 const progress = parseFloat(raw);
                 return isNaN(progress) ? 0 : progress;
@@ -333,23 +351,25 @@ class BookmarkRepository {
      * Persist the bookmark progress for a given file.
      * @param {string} fileName
      * @param {number} progress
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    save(fileName, progress) {
+    async save(fileName, progress) {
         if (!fileName) return;
-        this.storage.save(this._PREFIX + fileName, progress.toString());
+        await this.storage.save(this._PREFIX + fileName, progress.toString());
     }
 
     /**
      * Remove all bookmark entries from storage.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    clearAll() {
-        const allKeys = this.storage.keys();
+    async clearAll() {
+        const allKeys = await this.storage.keys();
         const bookmarkKeys = allKeys.filter(k => k.startsWith(this._PREFIX));
-        bookmarkKeys.forEach(k => this.storage.delete(k));
+        await Promise.all(bookmarkKeys.map(k => this.storage.delete(k)));
     }
 }
 
@@ -395,16 +415,17 @@ class SessionRepository {
     /**
      * Load the last reading session from storage.
      * Returns an object with name, content, and type fields (may be null).
-     * @return {{name: ?string, content: ?string, type: ?string}}
+     * @return {!Promise<{name: ?string, content: ?string, type: ?string}>}
      * @override
      */
     // @ts-expect-error
-    load() {
-        return {
-            name: this.storage.get(this._KEY_NAME),
-            content: this.storage.get(this._KEY_CONTENT),
-            type: this.storage.get(this._KEY_TYPE)
-        };
+    async load() {
+        const [name, content, type] = await Promise.all([
+            this.storage.get(this._KEY_NAME),
+            this.storage.get(this._KEY_CONTENT),
+            this.storage.get(this._KEY_TYPE)
+        ]);
+        return { name, content, type };
     }
 
     /**
@@ -412,24 +433,30 @@ class SessionRepository {
      * @param {string} name
      * @param {string} content
      * @param {string} type
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    save(name, content, type) {
-        this.storage.save(this._KEY_NAME, name);
-        this.storage.save(this._KEY_CONTENT, content);
-        this.storage.save(this._KEY_TYPE, type);
+    async save(name, content, type) {
+        await Promise.all([
+            this.storage.save(this._KEY_NAME, name),
+            this.storage.save(this._KEY_CONTENT, content),
+            this.storage.save(this._KEY_TYPE, type)
+        ]);
     }
 
     /**
      * Remove all session entries from storage.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    clear() {
-        this.storage.delete(this._KEY_NAME);
-        this.storage.delete(this._KEY_CONTENT);
-        this.storage.delete(this._KEY_TYPE);
+    async clear() {
+        await Promise.all([
+            this.storage.delete(this._KEY_NAME),
+            this.storage.delete(this._KEY_CONTENT),
+            this.storage.delete(this._KEY_TYPE)
+        ]);
     }
 }
 

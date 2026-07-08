@@ -197,12 +197,13 @@ class ConfigModel {
 
     /**
      * Loads config.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    load() {
+    async load() {
         const settingsRepo = /** @type {!SettingsRepositoryInterface} */ (Yuzora.locator.resolve(SettingsRepository));
-        const parsed = settingsRepo.load();
+        const parsed = await settingsRepo.load();
         if (parsed && typeof parsed === "object" && Object.keys(parsed).length > 0) {
             this.applyParsed_(/** @type {!Object<string, string>} */ (parsed));
         }
@@ -223,12 +224,13 @@ class ConfigModel {
 
     /**
      * Saves config.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    save() {
+    async save() {
         const settingsRepo = /** @type {!SettingsRepositoryInterface} */ (Yuzora.locator.resolve(SettingsRepository));
-        settingsRepo.save({
+        await settingsRepo.save({
             'theme': this.theme,
             'font': this.font,
             'direction': this.direction,
@@ -298,31 +300,32 @@ class BookmarkModel {
      * Saves bookmark.
      * @param {string} fileName
      * @param {number} progress
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    save(fileName, progress) {
+    async save(fileName, progress) {
         if (fileName) {
             this.bookmarkProgress = progress;
             const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
-            bookmarkRepo.save(fileName, progress);
+            await bookmarkRepo.save(fileName, progress);
         }
     }
 
     /**
      * Loads bookmark.
      * @param {string} fileName
-     * @return {number}
+     * @return {!Promise<number>}
      * @override
      */
     // @ts-expect-error
-    load(fileName) {
+    async load(fileName) {
         if (!fileName) {
             this.bookmarkProgress = 0;
             return 0;
         }
         const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
-        this.bookmarkProgress = bookmarkRepo.load(fileName);
+        this.bookmarkProgress = await bookmarkRepo.load(fileName);
         return this.bookmarkProgress;
     }
 

@@ -682,12 +682,12 @@ function setupButtonGroup(selector, configKey, callback) {
     });
 }
 
-function saveSettings() {
-    Yuzora.locator.resolve(ConfigModel).save();
+async function saveSettings() {
+    await Yuzora.locator.resolve(ConfigModel).save();
 }
 
-function loadSettings() {
-    Yuzora.locator.resolve(ConfigModel).load();
+async function loadSettings() {
+    await Yuzora.locator.resolve(ConfigModel).load();
 }
 
 function applySettings() {

@@ -2,7 +2,7 @@
 ID: 037
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] 永続化層（Repository）の完全非同期対応と抽象化 (ID: 037)

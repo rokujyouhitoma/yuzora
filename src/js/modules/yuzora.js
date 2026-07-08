@@ -30,10 +30,11 @@ class Yuzora {
 
     /**
      * Boots the application.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    boot() {
+    async boot() {
         const sceneDirector = new SceneDirector();
         sceneDirector.register("initialize", /** @type {!SceneInterface} */ (new InitializeScene()));
         sceneDirector.register("welcome", /** @type {!SceneInterface} */ (new WelcomeScene()));
@@ -60,12 +61,12 @@ class Yuzora {
             sceneDirector.transitionTo("welcome");
         });
 
-        router.register("/reader", (params) => {
+        router.register("/reader", async (params) => {
             if (params["book"]) {
                 loadPredefinedBook(params["book"]);
             } else if (params["local"]) {
                 const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
-                const lastSession = sessionRepo.load();
+                const lastSession = await sessionRepo.load();
                 if (lastSession && lastSession.name === params["local"]) {
                     const resourceDirector = /** @type {!ResourceDirectorInterface} */ (this.locator.resolve(ResourceDirector));
                     const loaderFn = function() {
@@ -99,12 +100,12 @@ class Yuzora {
         sceneDirector.transitionTo("initialize");
 
         // Load Settings
-        loadSettings();
+        await loadSettings();
         applySettings();
 
         // Check last session for auto-restore (Only if no hash is explicitly requested)
         const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
-        const lastSession = sessionRepo.load();
+        const lastSession = await sessionRepo.load();
         const currentHash = window.location.hash;
 
         if (lastSession && lastSession.name && lastSession.content && (!currentHash || currentHash === "#" || currentHash === "#/welcome")) {

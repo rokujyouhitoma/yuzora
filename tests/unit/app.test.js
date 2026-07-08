@@ -198,7 +198,7 @@ test.describe('Yuzora Parser Unit Tests', () => {
     });
 
     test.describe('Command Pattern & History Manager', () => {
-        test('should execute commands and track history within 100 limit (with LoadBook protection)', () => {
+        test('should execute commands and track history within 100 limit (with LoadBook protection)', async () => {
             const { CommandManager, LoadBookCommand, NavigatePageCommand } = window.Yuzora;
             assert.ok(CommandManager);
 
@@ -207,13 +207,13 @@ test.describe('Yuzora Parser Unit Tests', () => {
 
             // 1. Initial LoadBookCommand
             const loadCmd = new LoadBookCommand("test.txt", "content");
-            CommandManager.execute(loadCmd);
+            await CommandManager.execute(loadCmd);
             assert.equal(CommandManager.commandHistory.length, 1);
             assert.equal(CommandManager.commandHistory[0].type, "LoadBook");
 
             // 2. Push 105 more commands to verify 100 limit FIFO behavior
             for (let i = 0; i < 105; i++) {
-                CommandManager.execute(new NavigatePageCommand(i + 2));
+                await CommandManager.execute(new NavigatePageCommand(i + 2));
             }
 
             // History length should clip to 100
@@ -227,13 +227,13 @@ test.describe('Yuzora Parser Unit Tests', () => {
             assert.equal(CommandManager.commandHistory[1].type, "NavigatePage");
         });
 
-        test('should serialize and deserialize command history to JSON', () => {
+        test('should serialize and deserialize command history to JSON', async () => {
             const { CommandManager, LoadBookCommand, NavigatePageCommand, UpdateConfigCommand } = window.Yuzora;
             
             CommandManager.commandHistory = [];
-            CommandManager.execute(new LoadBookCommand("novel.txt", "Once upon a time..."));
-            CommandManager.execute(new UpdateConfigCommand("theme", "dark"));
-            CommandManager.execute(new NavigatePageCommand(5));
+            await CommandManager.execute(new LoadBookCommand("novel.txt", "Once upon a time..."));
+            await CommandManager.execute(new UpdateConfigCommand("theme", "dark"));
+            await CommandManager.execute(new NavigatePageCommand(5));
 
             const json = CommandManager.exportJSON();
             assert.ok(json.includes("LoadBook"));

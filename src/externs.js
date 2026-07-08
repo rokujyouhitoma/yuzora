@@ -15,22 +15,27 @@ var localStorage;
 function RepositoryInterface() {}
 /**
  * @param {string} key
- * @return {?string}
+ * @return {!Promise<?string>}
  */
 RepositoryInterface.prototype.get = function(key) {};
 /**
  * @param {string} key
  * @param {string} value
+ * @return {!Promise<void>}
  */
 RepositoryInterface.prototype.save = function(key, value) {};
 /**
  * @param {string} key
+ * @return {!Promise<void>}
  */
 RepositoryInterface.prototype.delete = function(key) {};
 /**
- * @return {!Array<string>}
+ * @return {!Promise<!Array<string>>}
  */
 RepositoryInterface.prototype.keys = function() {};
+/**
+ * @return {!Promise<void>}
+ */
 RepositoryInterface.prototype.clear = function() {};
 
 // SettingsRepository Interface definition in externs
@@ -39,13 +44,17 @@ RepositoryInterface.prototype.clear = function() {};
  */
 function SettingsRepositoryInterface() {}
 /**
- * @return {!Object<string, string>}
+ * @return {!Promise<!Object<string, string>>}
  */
 SettingsRepositoryInterface.prototype.load = function() {};
 /**
  * @param {!Object<string, string>} configObject
+ * @return {!Promise<void>}
  */
 SettingsRepositoryInterface.prototype.save = function(configObject) {};
+/**
+ * @return {!Promise<void>}
+ */
 SettingsRepositoryInterface.prototype.clear = function() {};
 
 // BookmarkRepository Interface definition in externs
@@ -55,14 +64,18 @@ SettingsRepositoryInterface.prototype.clear = function() {};
 function BookmarkRepositoryInterface() {}
 /**
  * @param {string} fileName
- * @return {number}
+ * @return {!Promise<number>}
  */
 BookmarkRepositoryInterface.prototype.load = function(fileName) {};
 /**
  * @param {string} fileName
  * @param {number} progress
+ * @return {!Promise<void>}
  */
 BookmarkRepositoryInterface.prototype.save = function(fileName, progress) {};
+/**
+ * @return {!Promise<void>}
+ */
 BookmarkRepositoryInterface.prototype.clearAll = function() {};
 
 // SessionRepository Interface definition in externs
@@ -71,15 +84,19 @@ BookmarkRepositoryInterface.prototype.clearAll = function() {};
  */
 function SessionRepositoryInterface() {}
 /**
- * @return {{name: ?string, content: ?string, type: ?string}}
+ * @return {!Promise<{name: ?string, content: ?string, type: ?string}>}
  */
 SessionRepositoryInterface.prototype.load = function() {};
 /**
  * @param {string} name
  * @param {string} content
  * @param {string} type
+ * @return {!Promise<void>}
  */
 SessionRepositoryInterface.prototype.save = function(name, content, type) {};
+/**
+ * @return {!Promise<void>}
+ */
 SessionRepositoryInterface.prototype.clear = function() {};
 
 
@@ -329,9 +346,9 @@ ConfigModelInterface.prototype.size;
 ConfigModelInterface.prototype.lh;
 /** @type {string} */
 ConfigModelInterface.prototype.spacing;
-/** @type {function():void} */
+/** @type {function():!Promise<void>} */
 ConfigModelInterface.prototype.load = function() {};
-/** @type {function():void} */
+/** @type {function():!Promise<void>} */
 ConfigModelInterface.prototype.save = function() {};
 /** @type {function():void} */
 ConfigModelInterface.prototype.apply = function() {};
@@ -342,9 +359,9 @@ ConfigModelInterface.prototype.apply = function() {};
 function BookmarkModelInterface() {}
 /** @type {number} */
 BookmarkModelInterface.prototype.bookmarkProgress;
-/** @type {function(string, number):void} */
+/** @type {function(string, number):!Promise<void>} */
 BookmarkModelInterface.prototype.save = function(fileName, progress) {};
-/** @type {function(string):number} */
+/** @type {function(string):!Promise<number>} */
 BookmarkModelInterface.prototype.load = function(fileName) {};
 /** @type {function():void} */
 BookmarkModelInterface.prototype.clear = function() {};
@@ -519,7 +536,7 @@ YuzoraInterface.prototype.publisher;
 YuzoraInterface.prototype.constructor;
 /** @type {!LocatorInterface} */
 YuzoraInterface.prototype.constructor.locator;
-/** @type {function():void} */
+/** @type {function():!Promise<void>} */
 YuzoraInterface.prototype.boot = function() {};
 /** @type {function(string):{title: string, body: string}} */
 YuzoraInterface.prototype.parseAozoraText = function(text) {};

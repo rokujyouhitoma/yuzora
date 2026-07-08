@@ -114,29 +114,29 @@ interface CommandManagerInterface {
 }
 
 interface RepositoryInterface {
-    get(key: string): any;
-    save(key: string, value: any): void;
-    delete(key: string): void;
-    keys(): string[];
-    clear(): void;
+    get(key: string): Promise<string | null>;
+    save(key: string, value: string): Promise<void>;
+    delete(key: string): Promise<void>;
+    keys(): Promise<string[]>;
+    clear(): Promise<void>;
 }
 
 interface BookmarkRepositoryInterface {
-    load(fileName: string): number;
-    save(fileName: string, pageProgress: number): void;
-    clearAll(): void;
+    load(fileName: string): Promise<number>;
+    save(fileName: string, pageProgress: number): Promise<void>;
+    clearAll(): Promise<void>;
 }
 
 interface SettingsRepositoryInterface {
-    load(): any;
-    save(config: any): void;
-    clear(): void;
+    load(): Promise<any>;
+    save(config: any): Promise<void>;
+    clear(): Promise<void>;
 }
 
 interface SessionRepositoryInterface {
-    load(): any;
-    save(name: string, content: string, type: string): void;
-    clear(): void;
+    load(): Promise<any>;
+    save(name: string, content: string, type: string): Promise<void>;
+    clear(): Promise<void>;
 }
 
 interface BookModelInterface {
@@ -157,15 +157,15 @@ interface ConfigModelInterface {
     size: string;
     lh: string;
     spacing: string;
-    load(): void;
-    save(): void;
+    load(): Promise<void>;
+    save(): Promise<void>;
     apply(): void;
 }
 
 interface BookmarkModelInterface {
     bookmarkProgress: number;
-    save(fileName: string, progress: number): void;
-    load(fileName: string): number;
+    save(fileName: string, progress: number): Promise<void>;
+    load(fileName: string): Promise<number>;
     clear(): void;
 }
 
@@ -194,7 +194,7 @@ interface YuzoraInterface {
     locator: LocatorInterface;
     publisher: PublisherInterface;
     config: any;
-    boot(): void;
+    boot(): Promise<void>;
     parseAozoraText(text: string): { title: string; body: string };
     parseAozoraHTML(html: string): { title: string; body: string };
     formatAozoraMarkup(markup: string): string;

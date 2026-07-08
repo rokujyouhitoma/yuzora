@@ -108,7 +108,7 @@ class UpdateConfigCommand extends Command {
         this.configValue = configValue;
     }
     /** @override */
-    execute() {
+    async execute() {
         const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
         const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
@@ -127,7 +127,7 @@ class UpdateConfigCommand extends Command {
             }
             viewContext.isReflowing = false;
         }, 150);
-        saveSettings();
+        await saveSettings();
     }
     /** @override */
     serialize() {
@@ -257,24 +257,26 @@ class ClearStorageCommand extends Command {
         this.clearType = clearType;
     }
     /** @override */
-    execute() {
+    async execute() {
         const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
         const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
         const settingsRepo = /** @type {!SettingsRepositoryInterface} */ (Yuzora.locator.resolve(SettingsRepository));
         const sessionRepo = /** @type {!SessionRepositoryInterface} */ (Yuzora.locator.resolve(SessionRepository));
         if (this.clearType === "bookmarks") {
-            bookmarkRepo.clearAll();
+            await bookmarkRepo.clearAll();
             bookmarkModel.bookmarkProgress = 0;
             checkLastSession();
         } else if (this.clearType === "config") {
-            settingsRepo.clear();
+            await settingsRepo.clear();
             if (!CommandManager.isReplaying) {
                 window.location.reload();
             }
         } else if (this.clearType === "all") {
-            bookmarkRepo.clearAll();
-            settingsRepo.clear();
-            sessionRepo.clear();
+            await Promise.all([
+                bookmarkRepo.clearAll(),
+                settingsRepo.clear(),
+                sessionRepo.clear()
+            ]);
             if (!CommandManager.isReplaying) {
                 window.location.reload();
             }
@@ -369,17 +371,18 @@ class CommandHistory {
 
     /**
      * Executes a command and saves it in history.
+     * @return {!Promise<void>}
      * @override
      */
     // @ts-expect-error
-    execute(command, isFromReplay = false) {
+    async execute(command, isFromReplay = false) {
         // If replaying and user tries to execute normal actions, ignore it
         if (this.isReplaying && !isFromReplay) {
             return;
         }
 
         // Run command
-        command.execute();
+        await command.execute();
 
         // Record command in history if it is not from replay
         if (!isFromReplay) {
@@ -601,7 +604,7 @@ class CommandHistory {
             for (const cmd of commands) {
                 // Delay execution by 300ms to allow rendering / transition cycles
                 await new Promise(resolve => setTimeout(resolve, 300));
-                this.execute(cmd, true);
+                await this.execute(cmd, true);
                 // Re-populate commandHistory during replay for consistent session state afterward
                 this.commandHistory.push(cmd);
                 this.commandIndex = this.commandHistory.length;

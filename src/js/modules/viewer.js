@@ -69,7 +69,7 @@ function loadPredefinedBook(book) {
         });
 }
 
-function displayBook() {
+async function displayBook() {
     const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
@@ -122,7 +122,7 @@ function displayBook() {
 
     // Check if there is a saved bookmark for this file
     const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
-    bookmarkModel.bookmarkProgress = bookmarkRepo.load(bookModel.title);
+    bookmarkModel.bookmarkProgress = await bookmarkRepo.load(bookModel.title);
 
     // Wait a tick for rendering to complete before restoring scroll position
     viewContext.isReflowing = true;
@@ -182,11 +182,11 @@ function restoreScrollPositionSmooth() {
     renderer.restoreScrollPosition(bookmarkModel.bookmarkProgress, true);
 }
 
-function saveBookmark() {
+async function saveBookmark() {
     const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     if (bookModel.title) {
-        bookmarkModel.save(bookModel.title, bookmarkModel.bookmarkProgress);
+        await bookmarkModel.save(bookModel.title, bookmarkModel.bookmarkProgress);
     }
 }
 
@@ -252,11 +252,11 @@ function handleResize() {
     });
 }
 
-function checkLastSession() {
+async function checkLastSession() {
     const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
-    bookmarkModel.bookmarkProgress = bookmarkRepo.load(bookModel.title);
+    bookmarkModel.bookmarkProgress = await bookmarkRepo.load(bookModel.title);
     restoreScrollPosition();
     updateProgress();
 }

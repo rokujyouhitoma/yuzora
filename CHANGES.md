@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Asynchronized the persistence layer by converting all methods in `Repository`, `LocalStorageRepository`, `InMemoryRepository` and domain repositories to return Promises (ID: 048).
+- Updated `ConfigModel`, `BookmarkModel`, operation command classes, application startup sequence (`yuzora.boot`), and scene transitions to handle async I/O using `async-await` (ID: 048).
+- Synchronized type configurations in `types.d.ts`, Closure Compiler externs in `externs.js`, and adjusted test assertions to handle Promises in unit tests (ID: 048).
+
 - Added `ScopedEventTarget` and `AppEventTarget.prototype.scoped` to support scoped namespace isolation of event transmission (ID: 047).
 - Added Domain namespace prefixes (`document:`, `ui:`, `system:`) to `YuzoraEventType` to categorize event architecture logically (ID: 047).
 - Added Event Audit Logging support in `dispatchEvent` when `window.__DEBUG_EVENT__` flag is active (ID: 047).
