@@ -27,9 +27,11 @@ ID: 048
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [renderer.js](../../src/js/modules/renderer.js) (`adjustPageBreaksForOverrun()` メソッドの実装および `handleResize()` 呼び出しフック)
+- [ ] [renderer.js](../../src/js/modules/renderer.js) (`adjustPageBreaksForOverrun()` メソッドの実装、修復メトリクス保持、および `handleResize()` 呼び出しフック)
 - [ ] [viewer.js](../../src/js/modules/viewer.js) (本ロード時の自己修復フック呼び出し)
 - [ ] [ui.js](../../src/js/modules/ui.js) (設定変更時の自己修復フック呼び出し)
+- [ ] [diagnostics.js](../../src/js/modules/diagnostics.js) (レイアウト診断レポートへの修復統計の埋め込み)
+- [ ] [reader.css](../../src/css/modules/reader.css) (MODIFY: デバッグ補助線表示スタイルの追加)
 
 ---
 
@@ -46,6 +48,12 @@ ID: 048
    - 本ロード完了時: `viewer.js` の `displayBook()` 内の `setTimeout`（100ms）の最初。
    - 設定変更時: `ui.js` の各設定スライダーやドロップダウンの値適用（`apply()` 実行）直後の `setTimeout` 処理内。
    - ウィンドウリサイズ時: `VerticalRenderer.prototype.handleResize()` の実行フロー内（スクロール座標補正前）。
+3. **自己修復統計（テレメトリ）の収集とイベント発行**:
+   - 自己修復ループ完了時に `passesCount`（判定パス数）、`insertedCount`（挿入数）、`durationMs`（ミリ秒時間）を算出し、`yuzora.publisher.publish(YuzoraEventType.LAYOUT_REPAIRED, { ... })` 経由でシステムへ通知する。
+4. **レイアウト診断レポートの拡張**:
+   - `runLayoutDiagnosis()` 内で最新の自己修復統計を取得し、レポート末尾に自己修復結果（パス数、挿入改ページ数、実行時間）を出力する項目を追加。
+5. **デバッグ用「自動改ページ位置」の視覚的強調表示**:
+   - `reader.css` にて、ボディ要素にデバッグ属性がある場合（例: `#app` にデバッグ用のクラスが存在する等の状態）、`.dynamic-page-break` に赤い境界点線と「✂［自動改ページ位置］」というラベルがフローティング表示されるデバッグ用スタイルを実装する。
 
 ---
 
@@ -53,3 +61,5 @@ ID: 048
 - [ ] 境界をまたぐ文字を検出した段落の直前に動的な改ページ要素が自動挿入され、見切れる文字が次のカラムへ正常に送り出されること。
 - [ ] レイアウト変更に伴うリフローの最大再試行上限（30回）によって無限ループに陥らないこと。
 - [ ] 分割したテスト環境において、自動改ページ挿入機能によって見切れ警告件数が自動で 0件 になり、E2EテストがGreenで通過すること。
+- [ ] 自己修復処理終了時に、統計ペイロードを伴う `LAYOUT_REPAIRED` ドメインイベントが正しくパブリッシュされること。
+- [ ] デバッグ補助線表示をオンにした際、動的に挿入された自動改ページ要素の位置が赤い点線とハサミアイコンのツールチップで視覚的に強調表示されること。
