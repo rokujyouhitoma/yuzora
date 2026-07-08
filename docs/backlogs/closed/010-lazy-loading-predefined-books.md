@@ -2,7 +2,7 @@
 ID: 010
 種別: Enhancement
 優先度: Low
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENH] 起動時オススメ書籍グリッドの遅延レンダリング (ID: 010)

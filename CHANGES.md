@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Asynchronized and deferred the welcome screen's recommended book grid rendering using requestAnimationFrame and setTimeout to prevent initial page-load thread blocking (ID: 049).
+- Enhanced safety guards during lazy rendering to check if the current active scene is still "welcome" before mutating DOM elements, and updated tests to align with async initialization (ID: 049).
+
 - Asynchronized the persistence layer by converting all methods in `Repository`, `LocalStorageRepository`, `InMemoryRepository` and domain repositories to return Promises (ID: 048).
 - Updated `ConfigModel`, `BookmarkModel`, operation command classes, application startup sequence (`yuzora.boot`), and scene transitions to handle async I/O using `async-await` (ID: 048).
 - Synchronized type configurations in `types.d.ts`, Closure Compiler externs in `externs.js`, and adjusted test assertions to handle Promises in unit tests (ID: 048).

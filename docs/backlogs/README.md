@@ -17,7 +17,7 @@
 | **007** | Feature | High | Draft | 大容量テキストのインクリメンタルパースおよびレンダリング（Web Worker対応） | [007-incremental-text-parsing.md](007-incremental-text-parsing.md) |
 | **008** | Enhancement | Medium | Draft | レイアウト診断レポート生成の非同期・タイムスライス化 | [008-async-layout-diagnostics.md](008-async-layout-diagnostics.md) |
 | **009** | Refactor | Medium | Draft | しおり（進捗）書き込み処理の非同期アイドル実行化 | [009-async-bookmark-storage.md](009-async-bookmark-storage.md) |
-| **010** | Enhancement | Low | Approved | 起動時オススメ書籍グリッドの遅延レンダリング | [010-lazy-loading-predefined-books.md](010-lazy-loading-predefined-books.md) |
+| **010** | Enhancement | Low | Closed | 起動時オススメ書籍グリッドの遅延レンダリング | [010-lazy-loading-predefined-books.md](closed/010-lazy-loading-predefined-books.md) |
 | **011** | Refactor | Medium | Closed | 画面・機能ごとの開発用ファイル分割と最終生成物のバンドル統合化 | [011-modularize-src-by-screen-and-bundle.md](closed/011-modularize-src-by-screen-and-bundle.md) |
 | **012** | Feature | Medium | Closed | Commandパターンによるユーザー操作履歴の抽象化とデバッグ用シリアライズ対応 | [012-command-pattern-operation-history.md](closed/012-command-pattern-operation-history.md) |
 | **013** | Enhancement | Low | Draft | 目次ドロワーのキーボード・スクリーンリーダー向けアクセシビリティ向上 | [013-toc-accessibility-enhancement.md](013-toc-accessibility-enhancement.md) |

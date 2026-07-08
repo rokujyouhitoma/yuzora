@@ -82,6 +82,9 @@ test.describe('Welcome Loading Placeholders (Skeleton) Unit Tests', () => {
         // 1. Trigger grids setup
         global.setupPredefinedBooksGrids();
 
+        // Wait for deferred initialization (1 frame + timeout)
+        await new Promise(resolve => setTimeout(resolve, 50));
+
         // 2. Check initial state (should show skeletons)
         const devSkeletons = devGrid.querySelectorAll('.book-card-skeleton');
         const readerSkeletons = readerGrid.querySelectorAll('.book-card-skeleton');
@@ -91,8 +94,8 @@ test.describe('Welcome Loading Placeholders (Skeleton) Unit Tests', () => {
         const devCardsBefore = devGrid.querySelectorAll('.book-card');
         assert.strictEqual(devCardsBefore.length, 0);
 
-        // 3. Wait for timer delay (600ms + margin)
-        await new Promise(resolve => setTimeout(resolve, 650));
+        // 3. Wait for timer delay (600ms + margin, minus previous 50ms wait)
+        await new Promise(resolve => setTimeout(resolve, 600));
 
         // 4. Verify skeletons are replaced with actual card list
         const devSkeletonsAfter = devGrid.querySelectorAll('.book-card-skeleton');

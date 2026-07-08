@@ -110,51 +110,60 @@ function setupPredefinedBooksGrids() {
         }
     };
 
-    // Render skeleton loaders initially
-    createSkeletons(viewContext.developerBooksGrid);
-    createSkeletons(viewContext.readerBooksGrid);
+    // Defer grid initialization using requestAnimationFrame + setTimeout (Lazy render)
+    const defer = (typeof window !== 'undefined' && window.requestAnimationFrame) ? window.requestAnimationFrame : (/** @type {function():void} */ cb) => setTimeout(cb, 16);
+    defer(() => {
+        setTimeout(() => {
+            // Safety guard: only render if we are still on the welcome screen
+            if (sceneDirector.currentSceneName !== "welcome") return;
 
-    // Asynchronously replace skeletons with actual book cards after 600ms delay
-    setTimeout(() => {
-        // Safety guard: only render if we are still on the welcome screen
-        if (sceneDirector.currentSceneName !== "welcome") return;
+            // Render skeleton loaders initially
+            createSkeletons(viewContext.developerBooksGrid);
+            createSkeletons(viewContext.readerBooksGrid);
 
-        if (viewContext.developerBooksGrid) {
-            viewContext.developerBooksGrid.innerHTML = "";
-            PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
-                const card = document.createElement("div");
-                card.className = "book-card fade-in";
-                card.setAttribute("data-book-id", book.id);
-                card.innerHTML = `
-                    <div class="book-card-title">${book.shortTitle}</div>
-                    <div class="book-card-author">${book.author}</div>
-                `;
-                const onClick = () => {
-                    window.location.hash = "#/reader?book=" + book.id;
-                };
-                bindWelcomeEvent_(card, "click", onClick);
-                viewContext.developerBooksGrid.appendChild(card);
-            });
-        }
+            // Asynchronously replace skeletons with actual book cards after 600ms delay
+            setTimeout(() => {
+                // Safety guard: only render if we are still on the welcome screen
+                if (sceneDirector.currentSceneName !== "welcome") return;
 
-        if (viewContext.readerBooksGrid) {
-            viewContext.readerBooksGrid.innerHTML = "";
-            PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
-                const card = document.createElement("div");
-                card.className = "book-card fade-in";
-                card.setAttribute("data-book-id", book.id);
-                card.innerHTML = `
-                    <div class="book-card-title">${book.shortTitle}</div>
-                    <div class="book-card-author">${book.author}</div>
-                `;
-                const onClick = () => {
-                    window.location.hash = "#/reader?book=" + book.id;
-                };
-                bindWelcomeEvent_(card, "click", onClick);
-                viewContext.readerBooksGrid.appendChild(card);
-            });
-        }
-    }, 600);
+                if (viewContext.developerBooksGrid) {
+                    viewContext.developerBooksGrid.innerHTML = "";
+                    PREDEFINED_BOOKS.filter(b => b.category === "developer").forEach(book => {
+                        const card = document.createElement("div");
+                        card.className = "book-card fade-in";
+                        card.setAttribute("data-book-id", book.id);
+                        card.innerHTML = `
+                            <div class="book-card-title">${book.shortTitle}</div>
+                            <div class="book-card-author">${book.author}</div>
+                        `;
+                        const onClick = () => {
+                            window.location.hash = "#/reader?book=" + book.id;
+                        };
+                        bindWelcomeEvent_(card, "click", onClick);
+                        viewContext.developerBooksGrid.appendChild(card);
+                    });
+                }
+
+                if (viewContext.readerBooksGrid) {
+                    viewContext.readerBooksGrid.innerHTML = "";
+                    PREDEFINED_BOOKS.filter(b => b.category === "reader").forEach(book => {
+                        const card = document.createElement("div");
+                        card.className = "book-card fade-in";
+                        card.setAttribute("data-book-id", book.id);
+                        card.innerHTML = `
+                            <div class="book-card-title">${book.shortTitle}</div>
+                            <div class="book-card-author">${book.author}</div>
+                        `;
+                        const onClick = () => {
+                            window.location.hash = "#/reader?book=" + book.id;
+                        };
+                        bindWelcomeEvent_(card, "click", onClick);
+                        viewContext.readerBooksGrid.appendChild(card);
+                    });
+                }
+            }, 600);
+        }, 0);
+    });
 }
 
 function setupWelcomeEvents() {
