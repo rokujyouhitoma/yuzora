@@ -19,14 +19,14 @@ ID: 053
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [app.test.js](file:///workspace/yuzora/yuzora/tests/unit/app.test.js) (DELETE または RENAME)
-- [ ] [yuzora.test.js](file:///workspace/yuzora/yuzora/tests/unit/yuzora.test.js) (NEW/RENAME: yuzora.js の基本初期化テストのみ保持)
-- [ ] [parser.test.js](file:///workspace/yuzora/yuzora/tests/unit/parser.test.js) (NEW: パーサーのテスト（ルビ、傍点、太字、斜体、見出し、配置指定、XSSサニタイズ）)
-- [ ] [locator.test.js](file:///workspace/yuzora/yuzora/tests/unit/locator.test.js) (NEW: locator.js のテスト)
-- [ ] [commands.test.js](file:///workspace/yuzora/yuzora/tests/unit/commands.test.js) (NEW: コマンドパターンおよびコマンド履歴マネージャー関連のテスト)
-- [ ] [diagnostics.test.js](file:///workspace/yuzora/yuzora/tests/unit/diagnostics.test.js) (NEW: レイアウト診断関連のテスト)
-- [ ] [renderer.test.js](file:///workspace/yuzora/yuzora/tests/unit/renderer.test.js) (NEW: renderer.js のテスト)
-- [ ] [package.json](file:///workspace/yuzora/yuzora/package.json) (MODIFY: test:unit のテストスクリプト指定を更新)
+- [ ] [app.test.js](../../../tests/unit/app.test.js) (DELETE または RENAME)
+- [ ] [yuzora.test.js](../../../tests/unit/yuzora.test.js) (NEW/RENAME: yuzora.js の基本初期化テストのみ保持)
+- [ ] [parser.test.js](../../../tests/unit/parser.test.js) (NEW: パーサーのテスト（ルビ、傍点、太字、斜体、見出し、配置指定、XSSサニタイズ）)
+- [ ] [locator.test.js](../../../tests/unit/locator.test.js) (NEW: locator.js のテスト)
+- [ ] [commands.test.js](../../../tests/unit/commands.test.js) (NEW: コマンドパターンおよびコマンド履歴マネージャー関連のテスト)
+- [ ] [diagnostics.test.js](../../../tests/unit/diagnostics.test.js) (NEW: レイアウト診断関連のテスト)
+- [ ] [renderer.test.js](../../../tests/unit/renderer.test.js) (NEW: renderer.js のテスト)
+- [ ] [package.json](../../../package.json) (MODIFY: test:unit のテストスクリプト指定を更新)
 
 ---
 

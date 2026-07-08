@@ -38,12 +38,12 @@ ID: 001
 ---
 
 ## 4. 影響範囲と関連ファイル / Scope and Affected Files
-- [x] [style.css](file:///workspace/yuzora/yuzora/src/css/style.css) (カラム幅の計算式を `vw` ベースに修正済み — ✅ column-width は正常化)
-- [ ] [diagnostics.js](file:///workspace/yuzora/yuzora/src/js/modules/diagnostics.js) (`runLayoutDiagnosis` の境界交差検出ロジック改善)
-- [ ] [renderer.js](file:///workspace/yuzora/yuzora/src/js/modules/renderer.js) (`adjustPageBreaksForOverrun()` の実装および `handleResize()` 呼び出し統合)
-- [ ] [viewer.js](file:///workspace/yuzora/yuzora/src/js/modules/viewer.js) (コンテンツロード時の自動改ページ挿入処理の呼び出し統合)
-- [ ] [ui.js](file:///workspace/yuzora/yuzora/src/js/modules/ui.js) (設定変更時の自動改ページ挿入処理の呼び出し統合)
-- [ ] [DSN-02-low_level_design.md](file:///workspace/yuzora/yuzora/docs/DSN-02-low_level_design.md) (詳細設計の更新)
+- [x] [style.css](../../src/css/style.css) (カラム幅の計算式を `vw` ベースに修正済み — ✅ column-width は正常化)
+- [ ] [diagnostics.js](../../src/js/modules/diagnostics.js) (`runLayoutDiagnosis` の境界交差検出ロジック改善)
+- [ ] [renderer.js](../../src/js/modules/renderer.js) (`adjustPageBreaksForOverrun()` の実装および `handleResize()` 呼び出し統合)
+- [ ] [viewer.js](../../src/js/modules/viewer.js) (コンテンツロード時の自動改ページ挿入処理の呼び出し統合)
+- [ ] [ui.js](../../src/js/modules/ui.js) (設定変更時の自動改ページ挿入処理の呼び出し統合)
+- [ ] [DSN-02-low_level_design.md](../DSN-02-low_level_design.md) (詳細設計の更新)
 
 ---
 
