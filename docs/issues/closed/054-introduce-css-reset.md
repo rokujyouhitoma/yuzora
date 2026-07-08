@@ -2,7 +2,7 @@
 ID: 054
 種別: Feature
 優先度: Low
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] CSSリセット（初期化CSS）の導入 (ID: 054)

@@ -2,7 +2,7 @@
 ID: 049
 種別: Refactor
 優先度: Low
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACT] CSSリセット（初期化CSS）の導入検討 (ID: 049)

@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 - Reorganized the mixed unit test suite in `tests/unit/app.test.js` into separate modular test files (`yuzora.test.js`, `parser.test.js`, `locator.test.js`, `commands.test.js`, `diagnostics.test.js`, `renderer.test.js`) mapping 1-to-1 with JS source modules under `src/js/modules/` (ID: 053).
 - Updated the `test:unit` command in `package.json` to execute the new test files automatically and verified compatibility across the entire test suite (ID: 053).
+- Added CSS Reset stylesheet `reset.css` to normalize default margins, paddings, box-sizing, and font defaults across browsers (ID: 054).
+- Removed redundant universal reset styling from `base.css` and updated `Makefile` to prepend `reset.css` to the compiled stylesheet bundle (ID: 054).
 
 
 - Migrated the Aozora Bunko text parser (`parser.js`) from regex-based direct string replacement to a compiler-type pipeline containing a tokenizer (`tokenizeInline`), AST parser (`parseTokensToAST`), and DFS generator (`evaluateAST`) (ID: 052).

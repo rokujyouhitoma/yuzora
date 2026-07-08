@@ -56,7 +56,7 @@
 | **046** | Refactor | Medium | Closed | テキストモジュールとテストファイルの1対1対応リファクタリング | [046-test-file-one-to-one-structure.md](closed/046-test-file-one-to-one-structure.md) |
 | **047** | Enhancement | High | Approved | 厳密な文字レベル境界診断の導入と自動テスト検証ループの構築 | [047-strict-boundary-diagnostics-and-e2e-loop.md](047-strict-boundary-diagnostics-and-e2e-loop.md) |
 | **048** | Feature | High | Approved | 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 | [048-self-correcting-page-breaks.md](048-self-correcting-page-breaks.md) |
-| **049** | Refactor | Low | Approved | CSSリセット（初期化CSS）の導入検討 | [049-introduce-css-reset.md](049-introduce-css-reset.md) |
+| **049** | Refactor | Low | Closed | CSSリセット（初期化CSS）の導入検討 | [049-introduce-css-reset.md](closed/049-introduce-css-reset.md) |
 
 ---
 

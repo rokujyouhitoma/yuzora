@@ -21,7 +21,8 @@ JS_SRCS = src/js/frameworks/locator.js \
           src/js/modules/yuzora.js
 JS_OUT = main-min.js
 
-CSS_SRCS = src/css/modules/base.css \
+CSS_SRCS = src/css/modules/reset.css \
+           src/css/modules/base.css \
            src/css/modules/welcome.css \
            src/css/modules/reader.css \
            src/css/modules/drawers.css \
