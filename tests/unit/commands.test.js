@@ -1,0 +1,198 @@
+const test = require('node:test');
+const assert = require('node:assert');
+const { JSDOM } = require('jsdom');
+const fs = require('fs');
+const path = require('path');
+
+test.describe('commands.js Unit Tests', () => {
+    let window;
+    let activeIntervals = [];
+    let activeTimeouts = [];
+
+    test.before(() => {
+        // Setup JSDOM
+        const { VirtualConsole } = require('jsdom');
+        const virtualConsole = new VirtualConsole();
+        virtualConsole.sendTo(console);
+
+        const dom = new JSDOM('<!DOCTYPE html><html><body><div id="app"></div><div id="welcome-screen"></div><div id="reader-screen"></div><div id="drop-zone"></div><input id="file-input" type="file" /><div id="reader-viewport"></div><div id="reader-content"></div><div id="book-title"></div><button id="btn-back"></button><button id="btn-settings"></button><button id="btn-toc"></button><button id="btn-first-page"></button><button id="btn-close-settings"></button><button id="btn-close-toc"></button><div id="settings-drawer"></div><div id="toc-drawer"></div><div id="toc-list"></div><div id="drawer-overlay"></div><div id="page-nav-left"></div><div id="page-nav-right"></div><div class="reader-header"></div><div class="reader-footer"></div><div class="progress-bar-container"></div><div id="progress-bar"></div><div id="reading-percentage"></div><div id="reading-index"></div><div id="developer-books-grid"></div><div id="reader-books-grid"></div><button id="btn-open-debug"></button><div id="debug-modal"></div><button id="btnCloseDebug"></button><button id="btn-close-debug"></button><div id="debug-modal-overlay"></div><div id="debug-monitor"></div><button id="btn-clear-bookmarks"></button><button id="btn-clear-config"></button><button id="btn-clear-all"></button><button id="btn-diagnose-layout"></button><button id="btn-copy-debug-report"></button><pre id="diagnose-report-output"></pre><button id="tab-btn-monitor"></button><button id="tab-btn-diagnose"></button><div id="debug-tab-content-monitor"></div><div id="debug-tab-content-diagnose"></div><textarea id="debug-history-json"></textarea><button id="btn-export-history"></button><button id="btn-import-history"></button></body></html>', {
+            url: "http://localhost",
+            runScripts: "dangerously",
+            resources: "usable",
+            virtualConsole
+        });
+        window = dom.window;
+        global.document = window.document;
+        global.window = window;
+
+        // Mock setInterval to avoid hanging timers in Node process
+        const originalSetInterval = window.setInterval;
+        window.setInterval = (fn, delay) => {
+            const id = originalSetInterval(fn, delay);
+            activeIntervals.push(id);
+            return id;
+        };
+
+        // Mock setTimeout
+        const originalSetTimeout = window.setTimeout;
+        window.setTimeout = (fn, delay) => {
+            const id = originalSetTimeout(fn, delay);
+            activeTimeouts.push(id);
+            return id;
+        };
+
+        // Mock window.alert
+        window.alert = () => {};
+
+        // Mock Element.prototype.scrollTo for JSDOM
+        window.Element.prototype.scrollTo = () => {};
+
+        // Load main-min.js code
+        const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../main-min.js'), 'utf8');
+        const scriptEl = window.document.createElement('script');
+        scriptEl.textContent = appJsCode;
+        window.document.body.appendChild(scriptEl);
+
+        // Fire DOMContentLoaded
+        const event = new window.Event('DOMContentLoaded');
+        window.document.dispatchEvent(event);
+    });
+
+    test.after(() => {
+        if (window) {
+            // Clear all registered JSDOM timers to allow Node to exit cleanly
+            activeIntervals.forEach(id => window.clearInterval(id));
+            activeTimeouts.forEach(id => window.clearTimeout(id));
+            window.close();
+        }
+    });
+
+    test('should execute commands and track history within 100 limit (with LoadBook protection)', async () => {
+        const { CommandManager, LoadBookCommand, NavigatePageCommand } = window.Yuzora;
+        assert.ok(CommandManager);
+
+        // Reset history
+        CommandManager.commandHistory = [];
+
+        // 1. Initial LoadBookCommand
+        const loadCmd = new LoadBookCommand("test.txt", "content");
+        await CommandManager.execute(loadCmd);
+        assert.equal(CommandManager.commandHistory.length, 1);
+        assert.equal(CommandManager.commandHistory[0].type, "LoadBook");
+
+        // 2. Push 105 more commands to verify 100 limit FIFO behavior
+        for (let i = 0; i < 105; i++) {
+            await CommandManager.execute(new NavigatePageCommand(i + 2));
+        }
+
+        // History length should clip to 100
+        assert.equal(CommandManager.commandHistory.length, 100);
+
+        // Index 0 must remain LoadBookCommand (fixed protection)
+        assert.equal(CommandManager.commandHistory[0].type, "LoadBook");
+        assert.equal(CommandManager.commandHistory[0].fileName, "test.txt");
+
+        // Index 1 must be NavigatePageCommand (the oldest remaining after FIFO)
+        assert.equal(CommandManager.commandHistory[1].type, "NavigatePage");
+    });
+
+    test('should serialize and deserialize command history to JSON', async () => {
+        const { CommandManager, LoadBookCommand, NavigatePageCommand, UpdateConfigCommand } = window.Yuzora;
+        
+        CommandManager.commandHistory = [];
+        await CommandManager.execute(new LoadBookCommand("novel.txt", "Once upon a time..."));
+        await CommandManager.execute(new UpdateConfigCommand("theme", "dark"));
+        await CommandManager.execute(new NavigatePageCommand(5));
+
+        const json = CommandManager.exportJSON();
+        assert.ok(json.includes("LoadBook"));
+        assert.ok(json.includes("UpdateConfig"));
+        assert.ok(json.includes("NavigatePage"));
+
+        // Parse and restore
+        const restored = CommandManager.importJSON(json);
+        assert.equal(restored.length, 3);
+        assert.equal(restored[0].type, "LoadBook");
+        assert.equal(restored[0].fileName, "novel.txt");
+        assert.equal(restored[1].type, "UpdateConfig");
+        assert.equal(restored[1].configKey, "theme");
+        assert.equal(restored[1].configValue, "dark");
+        assert.equal(restored[2].type, "NavigatePage");
+        assert.equal(restored[2].targetPage, 5);
+    });
+
+    test('should catch invalid JSON input and return null', () => {
+        const { CommandManager } = window.Yuzora;
+        const invalidJson = "{ invalid: json }";
+        const result = CommandManager.importJSON(invalidJson);
+        assert.equal(result, null);
+    });
+
+    test('should filter out and skip prototype pollution payloads', () => {
+        const { CommandManager } = window.Yuzora;
+        const maliciousJson = JSON.stringify([
+            {
+                type: "UpdateConfig",
+                params: {
+                    configKey: "__proto__",
+                    configValue: "polluted"
+                }
+            },
+            {
+                type: "UpdateConfig",
+                params: {
+                    configKey: "constructor",
+                    configValue: "polluted"
+                }
+            },
+            {
+                type: "UpdateConfig",
+                params: {
+                    configKey: "theme",
+                    configValue: "dark"
+                }
+            }
+        ]);
+        const restored = CommandManager.importJSON(maliciousJson);
+        assert.equal(restored.length, 1);
+        assert.equal(restored[0].type, "UpdateConfig");
+        assert.equal(restored[0].configKey, "theme");
+        assert.equal(restored[0].configValue, "dark");
+        assert.equal(Object.prototype["theme"], undefined);
+    });
+
+    test('should filter out and skip invalid command properties or unknown types', () => {
+        const { CommandManager } = window.Yuzora;
+        const invalidCommandsJson = JSON.stringify([
+            {
+                type: "UpdateConfig",
+                params: {
+                    configKey: "theme",
+                    configValue: "malicious-theme-hack"
+                }
+            },
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: -5
+                }
+            },
+            {
+                type: "FakeCommandType",
+                params: {
+                    open: true
+                }
+            },
+            {
+                type: "SyncBookmark",
+                params: {
+                    progress: 0.5
+                }
+            }
+        ]);
+        const restored = CommandManager.importJSON(invalidCommandsJson);
+        assert.equal(restored.length, 1);
+        assert.equal(restored[0].type, "SyncBookmark");
+        assert.equal(restored[0].progress, 0.5);
+    });
+});

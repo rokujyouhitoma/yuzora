@@ -1,8 +1,11 @@
 # Changelog / 変更履歴
 
 All notable changes to this project will be documented in this file.
-
 ## [Unreleased]
+
+- Reorganized the mixed unit test suite in `tests/unit/app.test.js` into separate modular test files (`yuzora.test.js`, `parser.test.js`, `locator.test.js`, `commands.test.js`, `diagnostics.test.js`, `renderer.test.js`) mapping 1-to-1 with JS source modules under `src/js/modules/` (ID: 053).
+- Updated the `test:unit` command in `package.json` to execute the new test files automatically and verified compatibility across the entire test suite (ID: 053).
+
 
 - Migrated the Aozora Bunko text parser (`parser.js`) from regex-based direct string replacement to a compiler-type pipeline containing a tokenizer (`tokenizeInline`), AST parser (`parseTokensToAST`), and DFS generator (`evaluateAST`) (ID: 052).
 - Resolved tag nesting issues (e.g. ruby inside bold tags) by building structural node trees and enhanced XSS mitigation by performing HTML escaping strictly inside the text leaf nodes of the evaluator, while keeping TypeScript typings and Closure Compiler checks robustly typed (ID: 052).

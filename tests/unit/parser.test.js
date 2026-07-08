@@ -4,7 +4,7 @@ const { JSDOM } = require('jsdom');
 const fs = require('fs');
 const path = require('path');
 
-test.describe('Yuzora Parser Unit Tests', () => {
+test.describe('parser.js Unit Tests', () => {
     let window;
     let activeIntervals = [];
     let activeTimeouts = [];
@@ -65,12 +65,6 @@ test.describe('Yuzora Parser Unit Tests', () => {
             activeTimeouts.forEach(id => window.clearTimeout(id));
             window.close();
         }
-    });
-
-    test('should expose Yuzora object on window', () => {
-        assert.ok(window.Yuzora);
-        assert.strictEqual(typeof window.Yuzora.parseAozoraText, 'function');
-        assert.strictEqual(typeof window.Yuzora.formatAozoraMarkup, 'function');
     });
 
     test('should correctly format ruby with delimiter', () => {
@@ -160,36 +154,6 @@ test.describe('Yuzora Parser Unit Tests', () => {
         assert.ok(result.body.includes('<div>スタイルとカスタム属性</div>'));
     });
 
-    test('should sanitize layout content inside VerticalRenderer to prevent XSS (Double Defense)', () => {
-        const { locator } = window.yuzora;
-        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
-        const renderer = locator.resolve(VerticalRendererClass);
-
-        const dirtyHTML = `
-            <p>通常のテキスト。<a href="javascript:alert('XSS')">リンク</a></p>
-            <script>alert('XSS script')</script>
-            <img src="x" onerror="alert('XSS onerror')">
-            <iframe src="javascript:alert('XSS iframe')"></iframe>
-        `;
-
-        renderer.render(dirtyHTML);
-
-        const readerContent = window.document.getElementById('reader-content');
-        const renderedContent = readerContent.innerHTML;
-
-        // script, iframe, onerror, javascript: が除去されていること
-        assert.ok(!renderedContent.includes('<script>'));
-        assert.ok(!renderedContent.includes('alert('));
-        assert.ok(!renderedContent.includes('<iframe>'));
-        assert.ok(!renderedContent.includes('onerror='));
-        assert.ok(!renderedContent.includes('href="javascript:'));
-
-        // 許可されているタグと安全な属性は維持されること
-        assert.ok(renderedContent.includes('通常のテキスト'));
-        assert.ok(renderedContent.includes('<a>リンク</a>'));
-        assert.ok(renderedContent.includes('src="x"'));
-    });
-
     test('should parse page break marker', () => {
         const result = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文第一段\n［＃改ページ］\n本文第二段');
         assert.ok(result.body.includes('<div class="page-break"></div>'));
@@ -217,174 +181,5 @@ test.describe('Yuzora Parser Unit Tests', () => {
         assert.equal(tocWithRuby.length, 1);
         assert.equal(tocWithRuby[0].text, '衆口');
         assert.equal(tocWithRuby[0].level, 2);
-    });
-
-    test('should expose runLayoutDiagnosis on Yuzora and run it successfully', async () => {
-        assert.ok(window.Yuzora.runLayoutDiagnosis);
-        const report = await window.Yuzora.runLayoutDiagnosis();
-        assert.ok(report.includes('レイアウト診断レポート'));
-        assert.ok(report.includes('アライメント検証'));
-    });
-
-    test.describe('Command Pattern & History Manager', () => {
-        test('should execute commands and track history within 100 limit (with LoadBook protection)', async () => {
-            const { CommandManager, LoadBookCommand, NavigatePageCommand } = window.Yuzora;
-            assert.ok(CommandManager);
-
-            // Reset history
-            CommandManager.commandHistory = [];
-
-            // 1. Initial LoadBookCommand
-            const loadCmd = new LoadBookCommand("test.txt", "content");
-            await CommandManager.execute(loadCmd);
-            assert.equal(CommandManager.commandHistory.length, 1);
-            assert.equal(CommandManager.commandHistory[0].type, "LoadBook");
-
-            // 2. Push 105 more commands to verify 100 limit FIFO behavior
-            for (let i = 0; i < 105; i++) {
-                await CommandManager.execute(new NavigatePageCommand(i + 2));
-            }
-
-            // History length should clip to 100
-            assert.equal(CommandManager.commandHistory.length, 100);
-
-            // Index 0 must remain LoadBookCommand (fixed protection)
-            assert.equal(CommandManager.commandHistory[0].type, "LoadBook");
-            assert.equal(CommandManager.commandHistory[0].fileName, "test.txt");
-
-            // Index 1 must be NavigatePageCommand (the oldest remaining after FIFO)
-            assert.equal(CommandManager.commandHistory[1].type, "NavigatePage");
-        });
-
-        test('should serialize and deserialize command history to JSON', async () => {
-            const { CommandManager, LoadBookCommand, NavigatePageCommand, UpdateConfigCommand } = window.Yuzora;
-            
-            CommandManager.commandHistory = [];
-            await CommandManager.execute(new LoadBookCommand("novel.txt", "Once upon a time..."));
-            await CommandManager.execute(new UpdateConfigCommand("theme", "dark"));
-            await CommandManager.execute(new NavigatePageCommand(5));
-
-            const json = CommandManager.exportJSON();
-            assert.ok(json.includes("LoadBook"));
-            assert.ok(json.includes("UpdateConfig"));
-            assert.ok(json.includes("NavigatePage"));
-
-            // Parse and restore
-            const restored = CommandManager.importJSON(json);
-            assert.equal(restored.length, 3);
-            assert.equal(restored[0].type, "LoadBook");
-            assert.equal(restored[0].fileName, "novel.txt");
-            assert.equal(restored[1].type, "UpdateConfig");
-            assert.equal(restored[1].configKey, "theme");
-            assert.equal(restored[1].configValue, "dark");
-            assert.equal(restored[2].type, "NavigatePage");
-            assert.equal(restored[2].targetPage, 5);
-        });
-
-        test('should catch invalid JSON input and return null', () => {
-            const { CommandManager } = window.Yuzora;
-            const invalidJson = "{ invalid: json }";
-            const result = CommandManager.importJSON(invalidJson);
-            assert.equal(result, null);
-        });
-
-        test('should filter out and skip prototype pollution payloads', () => {
-            const { CommandManager } = window.Yuzora;
-            const maliciousJson = JSON.stringify([
-                {
-                    type: "UpdateConfig",
-                    params: {
-                        configKey: "__proto__",
-                        configValue: "polluted"
-                    }
-                },
-                {
-                    type: "UpdateConfig",
-                    params: {
-                        configKey: "constructor",
-                        configValue: "polluted"
-                    }
-                },
-                {
-                    type: "UpdateConfig",
-                    params: {
-                        configKey: "theme",
-                        configValue: "dark"
-                    }
-                }
-            ]);
-            const restored = CommandManager.importJSON(maliciousJson);
-            assert.equal(restored.length, 1);
-            assert.equal(restored[0].type, "UpdateConfig");
-            assert.equal(restored[0].configKey, "theme");
-            assert.equal(restored[0].configValue, "dark");
-            assert.equal(Object.prototype["theme"], undefined);
-        });
-
-        test('should filter out and skip invalid command properties or unknown types', () => {
-            const { CommandManager } = window.Yuzora;
-            const invalidCommandsJson = JSON.stringify([
-                {
-                    type: "UpdateConfig",
-                    params: {
-                        configKey: "theme",
-                        configValue: "malicious-theme-hack"
-                    }
-                },
-                {
-                    type: "NavigatePage",
-                    params: {
-                        targetPage: -5
-                    }
-                },
-                {
-                    type: "FakeCommandType",
-                    params: {
-                        open: true
-                    }
-                },
-                {
-                    type: "SyncBookmark",
-                    params: {
-                        progress: 0.5
-                    }
-                }
-            ]);
-            const restored = CommandManager.importJSON(invalidCommandsJson);
-            assert.equal(restored.length, 1);
-            assert.equal(restored[0].type, "SyncBookmark");
-            assert.equal(restored[0].progress, 0.5);
-        });
-    });
-
-    test.describe('Locator Pattern', () => {
-        test('should resolve registered instances correctly', () => {
-            const { locator } = window;
-            class DummyService {}
-            const dummy = new DummyService();
-            locator.register(DummyService, dummy);
-            assert.strictEqual(locator.resolve(DummyService), dummy);
-        });
-
-        test('should throw error for unregistered classes in resolve()', () => {
-            const { locator } = window;
-            class UnregisteredService {}
-            assert.throws(() => {
-                locator.resolve(UnregisteredService);
-            }, /is not registered in Locator/);
-        });
-
-        test('should auto-instantiate unregistered classes in locate()', () => {
-            const { locator } = window;
-            class AutoService {
-                constructor() {
-                    this.value = 42;
-                }
-            }
-            const instance = locator.locate(AutoService);
-            assert.ok(instance instanceof AutoService);
-            assert.equal(instance.value, 42);
-            assert.strictEqual(locator.locate(AutoService), instance); // Returns the same cached instance
-        });
     });
 });
