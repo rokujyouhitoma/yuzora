@@ -139,7 +139,7 @@ function tokenizeInline(text) {
             }
         }
         
-        const kanjiMatch = text.substring(i).match(/^([一-龠々〆ヶ]+)《([^》]+)》/);
+        const kanjiMatch = text.substring(i).match(/^((?:[一-龠々仝〆〇ヶ]|※［＃二の字点、面区点番号1-2-22］)+|[A-Za-z]+)《([^》]+)》/);
         if (kanjiMatch) {
             tokens.push({ type: 'RUBY', value: kanjiMatch[1], rt: kanjiMatch[2], children: undefined });
             i += kanjiMatch[0].length;

@@ -77,6 +77,58 @@ test.describe('parser.js Unit Tests', () => {
         assert.strictEqual(result, '<ruby>漢字<rt>かんじ</rt></ruby>');
     });
 
+    test('should automatically format ruby with special repeat/kanji characters (々, 仝, 〆, 〇, ヶ)', () => {
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('稍々《やや》'),
+            '<ruby>稍々<rt>やや</rt></ruby>'
+        );
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('仝《どう》'),
+            '<ruby>仝<rt>どう</rt></ruby>'
+        );
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('〆《しめ》'),
+            '<ruby>〆<rt>しめ</rt></ruby>'
+        );
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('〇《れい》'),
+            '<ruby>〇<rt>れい</rt></ruby>'
+        );
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('ヶ《こ》'),
+            '<ruby>ヶ<rt>こ</rt></ruby>'
+        );
+    });
+
+    test('should automatically format ruby for external二の字点 character note', () => {
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('益※［＃二の字点、面区点番号1-2-22］《ますます》'),
+            '<ruby>益※［＃二の字点、面区点番号1-2-22］<rt>ますます</rt></ruby>'
+        );
+    });
+
+    test('should automatically format ruby for single alphabetic words', () => {
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('Fanatiker《ファナチイケル》'),
+            '<ruby>Fanatiker<rt>ファナチイケル</rt></ruby>'
+        );
+    });
+
+    test('should correctly parse group rubies containing spaces or mixed characters using delimiters', () => {
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('｜Au revoir《さらば》'),
+            '<ruby>Au revoir<rt>さらば</rt></ruby>'
+        );
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('｜釜右ヱ門《かまえもん》'),
+            '<ruby>釜右ヱ門<rt>かまえもん</rt></ruby>'
+        );
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('｜お伽話《フェヤリー・ストーリース》'),
+            '<ruby>お伽話<rt>フェヤリー・ストーリース</rt></ruby>'
+        );
+    });
+
     test('should parse alignment markups correctly (chitsuki, chiyose, chitage)', () => {
         const text = "タイトル\n著者\n-------------------------------------------------------\n［＃地付き］下寄せの署名\n［＃地寄せ］右寄せの日付\n［＃地から３字上げ］下から浮かせるテキスト";
         const result = window.Yuzora.parseAozoraText(text);
