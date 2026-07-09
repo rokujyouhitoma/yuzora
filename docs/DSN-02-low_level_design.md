@@ -136,12 +136,20 @@
   - `restoreScrollPosition(progress, smooth)`: 読書進捗率に応じてビューポートのスクロール座標を設定します。
   - `scrollToPage(pageNumber)`: 指定ページへスムーズスクロールします（完了時に解決するPromiseを返します）。
   - `handleResize(progress)`: リサイズ時にレイアウト幅を調整してスクロール座標を再計算します（完了時に解決するPromiseを返します）。
+  - `adjustPageBreaksForOverrun()`: カラム・ページ境界線をまたぐ（見切れる）文字のある段落の直前に動的改ページ `<div class="page-break dynamic-page-break"></div>` を挿入して自動でレイアウトを自己修復します。
 
 #### 1.2.12 `VerticalRenderer` （縦書き用レンダラークラス）
 `RendererInterface` を実装し、縦書き表示およびマルチカラムレイアウトの描画・座標制御をカプセル化する具象クラスです。
+- **プロパティ**:
+  - `lastRepairMetrics` (`!Object`): 直近のレイアウト自己修復処理で収集された統計メトリクス。以下の構造を持ちます。
+    - `passesCount` (`number`): 収束までに実行された補正パスの回数（最大30）。
+    - `insertedCount` (`number`): 挿入された動的改ページの個数。
+    - `durationMs` (`number`): 自己修復処理の所要ミリ秒。
 - **セキュリティ要件 (Defense in Depth)**:
   - `render(htmlContent)` 実行時に、`DOMParser` を介して HTML をパースした上で、ホワイトリスト（タグ・属性制限）に基づくサニタイズ（`sanitizeDOM`）を強制します。
   - サニタイズ後、`innerHTML` による再評価を避けるため、DOMノードを直接移行（`appendChild`）して描画を完了させます。
+- **レイアウト自己修復設計**:
+  - `adjustPageBreaksForOverrun()` は、既存の `.dynamic-page-break` 要素を一旦クリアしたのち、最大30回の反復限界（収束ループ）の中で境界またぎを検出・改ページ挿入し、見切れ不具合を全自動で回避します。修復の完了時には統計メトリクスを収集し、ドメインイベント `system:layout-repaired` を発行します。
 
 ### 1.3 依存注入・サービスロケーターへの登録クラス
 起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector`、`Router`、`ResourceDirector` および `VerticalRenderer` が Locator に登録されます。
@@ -190,6 +198,7 @@ DOM Level 2 の `EventTarget` に準拠したカスタムイベントリスナ�
 | `HISTORY_UPDATED` | `'history-updated'` | `{ history, canUndo, canRedo }` | コマンド履歴スタック更新時 |
 | `DIAGNOSE_RUN` | `'diagnose-run'` | `{ timestamp }` | レイアウト座標診断実行要求時 |
 | `DIAGNOSE_COMPLETED`| `'diagnose-completed'` | `{ report, issuesCount }` | 座標診断レポート生成完了時 |
+| `LAYOUT_REPAIRED` | `'system:layout-repaired'` | `{ passesCount, insertedCount, durationMs }` | 自己修復レイアウトエンジンの実行完了時 |
 
 ### 1.5 画面遷移状態管理フレームワーク (Scene Transition Framework)
 

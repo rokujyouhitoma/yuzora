@@ -2,13 +2,19 @@
 ID: 001
 種別: Bug
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [BUG/SEC] ページの左右が見切れてしまう (ID: 001)
 
 ## 1. 概要 / Summary
 縦書きマルチカラムレイアウトにおいて、ページの左右の端にあるテキストが見切れてしまうバグを修正します。
+
+> [!NOTE]
+> 本バグは、以下の個別Issueの連携によって恒久対策（自己修復レイアウトエンジン）として実装され、無事クローズされました：
+> - 診断の厳密化： [Issue 055](../issues/closed/055-strict-boundary-diagnostics-and-e2e-loop.md)
+> - 自己修復ループの実装： [Issue 056](../issues/closed/056-self-correcting-page-breaks.md)
+> - 観測テレメトリ・デバッグ表示： [Issue 057](../issues/closed/057-layout-repair-observability-and-debugging.md)
 
 ### 再現手順 / Steps to Reproduce
 1. 開発用の青空文庫テキストファイル（例: `52396_yoko.txt`）を読み込ませる。

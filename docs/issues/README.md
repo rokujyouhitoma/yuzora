@@ -9,7 +9,7 @@
 
 | ID | 種別 | 優先度 | ステータス | タイトル | 担当 | 関連ドキュメント・ファイル |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **001** | Bug | High | In Progress | ページの左右が見切れてしまう | AI Agent | [001-page-left-right-overrun.md](001-page-left-right-overrun.md) |
+| **001** | Bug | High | Closed | ページの左右が見切れてしまう | AI Agent | [001-page-left-right-overrun.md](closed/001-page-left-right-overrun.md) |
 | **002** | Feature | Medium | Closed | MNG-00に基づくskills, docsの見直し | AI Agent | [002-review-skills-and-docs-based-on-mng-00.md](closed/002-review-skills-and-docs-based-on-mng-00.md) |
 | **003** | Feature | High | Closed | セキュリティ原則の統合と脅威モデリングスキルの新設 | AI Agent | [003-integrate-security-and-threat-modeling.md](closed/003-integrate-security-and-threat-modeling.md) |
 | **004** | Feature | High | Closed | 包括的脅威モデリングの実施 | AI Agent | [004-perform-threat-modeling.md](closed/004-perform-threat-modeling.md) |
