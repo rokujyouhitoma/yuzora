@@ -58,7 +58,7 @@
 | **048** | Feature | High | Closed | 自己修復レイアウトエンジン（動的改ページ自動挿入）の実装 | [048-self-correcting-page-breaks.md](closed/048-self-correcting-page-breaks.md) |
 | **049** | Refactor | Low | Closed | CSSリセット（初期化CSS）の導入検討 | [049-introduce-css-reset.md](closed/049-introduce-css-reset.md) |
 | **050** | Enhancement | Medium | Closed | レイアウト自己修復の観測機能と視覚的デバッグ補助の導入 | [050-layout-repair-observability-and-debugging.md](closed/050-layout-repair-observability-and-debugging.md) |
-| **051** | Feature | High | Draft | 青空文庫ルビ仕様（漢字・記号判定、グループルビ、アルファベット対応）への準拠 | [051-support-aozora-ruby-specifications.md](051-support-aozora-ruby-specifications.md) |
+| **051** | Feature | High | Approved | 青空文庫ルビ仕様（漢字・記号判定、グループルビ、アルファベット対応）への準拠 | [051-support-aozora-ruby-specifications.md](051-support-aozora-ruby-specifications.md) |
 
 ---
 
