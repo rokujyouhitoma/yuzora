@@ -209,6 +209,7 @@ interface YuzoraInterface {
     UpdateConfigCommand: any;
     SyncBookmarkCommand: any;
     VerticalRenderer: any;
+    ViewContext: any;
 }
 
 interface Window {
@@ -227,6 +228,7 @@ interface RendererInterface {
     scrollToPage(pageNumber: number): Promise<void>;
     handleResize(progress: number): Promise<void>;
     adjustPageBreaksForOverrun(): void;
+    lastRepairMetrics: any;
 }
 
 declare var yuzora: YuzoraInterface;

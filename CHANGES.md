@@ -11,6 +11,9 @@ All notable changes to this project will be documented in this file.
 - Integrated layout diagnostics assertions into Playwright E2E tests (`diagnose.spec.js`) to verify layout completeness automatically without human visual inspection (ID: 055).
 - Implemented `adjustPageBreaksForOverrun` self-repairing layout engine in `renderer.js` to automatically insert dynamic page breaks before paragraphs that overrun viewport/column boundaries (ID: 056).
 - Hooked layout self-correction into book display (`displayBook`) and resize/settings change (`handleResize`) lifecycles, ensuring a stable, overrun-free reading view (ID: 056).
+- Implemented telemetry collection and domain event (`LAYOUT_REPAIRED`) publishing on self-repair convergence in `renderer.js` (ID: 057).
+- Extended the layout diagnostics report in `diagnostics.js` to include the execution passes, page breaks inserted, and duration metrics under a new section (ID: 057).
+- Added visual debugging styles in `reader.css` (toggled by a `debug-active` class on document body when the debug modal is open) to display dashed boundaries and floating labels for auto-inserted page breaks (ID: 057).
 
 
 - Migrated the Aozora Bunko text parser (`parser.js`) from regex-based direct string replacement to a compiler-type pipeline containing a tokenizer (`tokenizeInline`), AST parser (`parseTokensToAST`), and DFS generator (`evaluateAST`) (ID: 052).

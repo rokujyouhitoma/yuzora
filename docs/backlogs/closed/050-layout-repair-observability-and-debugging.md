@@ -2,7 +2,7 @@
 ID: 050
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENH] レイアウト自己修復の観測機能と視覚的デバッグ補助の導入 (ID: 050)

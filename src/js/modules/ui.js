@@ -26,6 +26,7 @@ function closeDebugModal() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     viewContext.debugModal.classList.add("hidden");
     viewContext.debugModalOverlay.classList.add("hidden");
+    document.body.classList.remove("debug-active");
     triggerHeaderShow();
 }
 
@@ -34,6 +35,7 @@ function openDebugModal() {
     if (viewContext.debugModal && viewContext.debugModalOverlay) {
         viewContext.debugModal.classList.remove("hidden");
         viewContext.debugModalOverlay.classList.remove("hidden");
+        document.body.classList.add("debug-active");
         CommandManager.updateDebugMonitor();
     }
 }

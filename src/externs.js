@@ -410,6 +410,12 @@ Object.prototype.dropZone;
 /** @type {?} */
 Object.prototype.fileInput;
 /** @type {?} */
+Object.prototype.passesCount;
+/** @type {?} */
+Object.prototype.insertedCount;
+/** @type {?} */
+Object.prototype.durationMs;
+/** @type {?} */
 Object.prototype.readerViewport;
 /** @type {?} */
 Object.prototype.readerContent;
@@ -567,6 +573,8 @@ YuzoraInterface.prototype.UpdateConfigCommand;
 /** @type {Function} */
 YuzoraInterface.prototype.SyncBookmarkCommand;
 YuzoraInterface.prototype.VerticalRenderer;
+/** @type {Function} */
+YuzoraInterface.prototype.ViewContext;
 
 
 // YuzoraEvent Interface definition
@@ -758,3 +766,5 @@ RendererInterface.prototype.handleResize = function(progress) {};
  * @return {void}
  */
 RendererInterface.prototype.adjustPageBreaksForOverrun = function() {};
+/** @type {!Object} */
+RendererInterface.prototype.lastRepairMetrics;

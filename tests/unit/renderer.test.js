@@ -96,4 +96,54 @@ test.describe('renderer.js Unit Tests', () => {
         assert.ok(renderedContent.includes('<a>リンク</a>'));
         assert.ok(renderedContent.includes('src="x"'));
     });
+
+    test('should capture repair metrics and publish LAYOUT_REPAIRED event when adjustPageBreaksForOverrun is called', () => {
+        const { locator } = window.yuzora;
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = locator.resolve(VerticalRendererClass);
+        const PublisherClass = window.Publisher;
+        const publisher = locator.resolve(PublisherClass);
+        const EventType = window.YuzoraEventType;
+
+        let eventFired = false;
+        let eventPayload = null;
+
+        publisher.subscribe('system:layout-repaired', (data) => {
+            eventFired = true;
+            eventPayload = data;
+        });
+
+        // Initialize viewport dimensions to simulate a layout
+        const readerViewport = window.document.getElementById('reader-viewport');
+        const readerContent = window.document.getElementById('reader-content');
+        
+        const ViewContextClass = window.Yuzora.ViewContext;
+        const viewContext = locator.resolve(ViewContextClass);
+        viewContext.readerViewport = readerViewport;
+        viewContext.readerContent = readerContent;
+
+        // Mock elements sizing properties
+        Object.defineProperties(readerViewport, {
+            clientWidth: { value: 500, configurable: true },
+            scrollWidth: { value: 1500, configurable: true },
+            scrollLeft: { value: 0, writable: true, configurable: true }
+        });
+
+        // Add some dummy paragraph content to readerContent
+        readerContent.innerHTML = '<p id="para1">テストコンテンツ</p>';
+
+        renderer.adjustPageBreaksForOverrun();
+
+        // Verify metrics were saved on renderer
+        assert.ok(renderer.lastRepairMetrics);
+        assert.equal(typeof renderer.lastRepairMetrics.passesCount, 'number');
+        assert.equal(typeof renderer.lastRepairMetrics.insertedCount, 'number');
+        assert.equal(typeof renderer.lastRepairMetrics.durationMs, 'number');
+
+        // Verify domain event was fired
+        assert.strictEqual(eventFired, true);
+        assert.ok(eventPayload);
+        assert.strictEqual(eventPayload.insertedCount, 0); // No overrun in this dummy text
+        assert.strictEqual(eventPayload.passesCount, 1);
+    });
 });

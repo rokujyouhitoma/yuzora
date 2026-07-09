@@ -321,6 +321,17 @@ async function runLayoutDiagnosis() {
     report += await diagnoseParagraphCoordinateInfo(viewportRect, childNodes, updateProgressText);
     report += await diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage, updateProgressText);
 
+    // Retrieve layout repair metrics from renderer
+    const renderer = Yuzora.locator.resolve(VerticalRenderer);
+    if (renderer && renderer.lastRepairMetrics) {
+        const metrics = renderer.lastRepairMetrics;
+        report += `### 🛠️ レイアウト自己修復ステータス\n`;
+        report += `- **修復状態**: ${metrics.passesCount >= 30 ? '⚠️ ループ上限到達 (未収束)' : '✅ 収束完了 (正常)'}\n`;
+        report += `- **実行パス数**: ${metrics.passesCount}回\n`;
+        report += `- **挿入された改ページ数**: ${metrics.insertedCount}個\n`;
+        report += `- **処理所要時間**: ${metrics.durationMs.toFixed(1)}ms\n\n`;
+    }
+
     // Render final diagnostic report
     updateProgressText(report);
 

@@ -20,6 +20,15 @@ class VerticalRenderer {
          * @type {!ConfigModelInterface}
          */
         this.configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+
+        /**
+         * @type {!Object}
+         */
+        this.lastRepairMetrics = {
+            passesCount: 0,
+            insertedCount: 0,
+            durationMs: 0
+        };
     }
 
     /**
@@ -199,11 +208,30 @@ class VerticalRenderer {
         const existingBreaks = readerContent.querySelectorAll('.dynamic-page-break');
         existingBreaks.forEach(el => el.remove());
 
+        const startTime = performance.now();
+        let passesCount = 0;
+
         const maxIterations = 30;
         for (let iteration = 0; iteration < maxIterations; iteration++) {
+            passesCount++;
             if (!runOverrunCheckPass(readerContent, readerViewport)) {
                 break; // Convergence! No page breaks were inserted.
             }
+        }
+
+        const endTime = performance.now();
+        const insertedCount = readerContent.querySelectorAll('.dynamic-page-break').length;
+        const durationMs = endTime - startTime;
+
+        this.lastRepairMetrics = {
+            passesCount: passesCount,
+            insertedCount: insertedCount,
+            durationMs: parseFloat(durationMs.toFixed(1))
+        };
+
+        const publisher = Yuzora.locator.resolve(Publisher);
+        if (publisher) {
+            publisher.publish(YuzoraEventType.LAYOUT_REPAIRED, this.lastRepairMetrics);
         }
     }
 }

@@ -985,6 +985,37 @@ body.layout-direction-ltr .progress-thumb {
     text-decoration: underline;
 }
 
+/* Dynamic Page Break styling for visual debugging */
+body.debug-active .dynamic-page-break {
+    border-left: 2px dashed #ff4d4f;
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    margin: 0 8px;
+    width: 2px;
+    vertical-align: top;
+    break-before: column;
+    -webkit-column-break-before: always;
+    page-break-before: always;
+}
+
+body.debug-active .dynamic-page-break::after {
+    content: "✂［自動改ページ］";
+    position: absolute;
+    top: 12px;
+    left: -10px;
+    font-size: 11px;
+    font-weight: bold;
+    color: #ff4d4f;
+    background-color: var(--bg-card, #f4ecd8);
+    border: 1px solid rgba(255, 77, 79, 0.4);
+    border-radius: 4px;
+    padding: 2px 4px;
+    white-space: nowrap;
+    z-index: 100;
+    writing-mode: horizontal-tb;
+}
+
 /* ==========================================================================
    TOC Drawer (Sidebar)
    ========================================================================== */

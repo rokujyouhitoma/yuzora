@@ -273,6 +273,15 @@ class Yuzora {
     get VerticalRenderer() {
         return VerticalRenderer;
     }
+
+    /**
+     * Gets ViewContext constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get ViewContext() {
+        return ViewContext;
+    }
 }
 
 /**
