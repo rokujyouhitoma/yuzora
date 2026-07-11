@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Extended `updateDebugMonitor()` in `commands.js` to read build metadata from `<meta>` tags and display `Build: <hash>  <date>` as the first line of the `#debug-monitor` panel in the debug modal (ID: 061).
 - Updated the GitHub Pages deploy workflow (`static.yml`) to embed build info into `index.html` during CI deployment, ensuring the live site reflects the correct build version (ID: 061).
 - Updated DSN-02 section 6.1 to document the new `build` field in the debug monitor parameter schema (ID: 061).
+- Extended `embed-build-info` Makefile target to append `?v=<BUILD_ID>` cache-buster query parameter to all `<script src="src/js/...">` tags in `index.html`, preventing browsers from serving stale cached JS files after a new build (ID: 060).
+- Updated GitHub Pages deploy workflow (`static.yml`) to also apply the cache-buster `?v=` rewriting to `<script>` tags during CI deployment (ID: 060).
+
 
 - Reorganized the mixed unit test suite in `tests/unit/app.test.js` into separate modular test files (`yuzora.test.js`, `parser.test.js`, `locator.test.js`, `commands.test.js`, `diagnostics.test.js`, `renderer.test.js`) mapping 1-to-1 with JS source modules under `src/js/modules/` (ID: 053).
 - Expanded inline tokenizer (`tokenizeInline`) in `parser.js` to automatically detect and parse Aozora Bunko rubies for kanji repeat/special symbols (`々`, `仝`, `〆`, `〇`, `ヶ`), external character note `※［＃二の字点、面区点番号1-2-22］`, and single alphabetic words without needing explicit `｜` boundaries (ID: 058).
