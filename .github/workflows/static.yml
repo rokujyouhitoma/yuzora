@@ -39,7 +39,12 @@ jobs:
           java-version: '17'
 
       - name: Build static assets
-        run: make main-min.js src/css/style.css
+        run: |
+          make main-min.js src/css/style.css
+          BUILD_ID=$(git rev-parse --short HEAD)
+          BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          sed -i "s|content=\"BUILD_ID_PLACEHOLDER\"|content=\"${BUILD_ID}\"|" index.html
+          sed -i "s|content=\"BUILD_DATE_PLACEHOLDER\"|content=\"${BUILD_DATE}\"|" index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

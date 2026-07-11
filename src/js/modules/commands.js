@@ -637,7 +637,14 @@ class CommandHistory {
     updateDebugMonitor() {
         const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
         if (viewContext.debugMonitor) {
-            viewContext.debugMonitor.textContent = `History: ${this.commandHistory.length} operations.`;
+            const buildIdMeta = /** @type {?HTMLMetaElement} */ (document.querySelector('meta[name="build-id"]'));
+            const buildDateMeta = /** @type {?HTMLMetaElement} */ (document.querySelector('meta[name="build-date"]'));
+            const rawId = (buildIdMeta && buildIdMeta.content) ? buildIdMeta.content : '';
+            const rawDate = (buildDateMeta && buildDateMeta.content) ? buildDateMeta.content : '';
+            const buildId = (rawId && rawId !== 'BUILD_ID_PLACEHOLDER') ? rawId : 'dev';
+            const buildDate = (rawDate && rawDate !== 'BUILD_DATE_PLACEHOLDER') ? rawDate : '---';
+            viewContext.debugMonitor.textContent =
+                `Build: ${buildId}  ${buildDate}\nHistory: ${this.commandHistory.length} operations.`;
         }
     }
 }

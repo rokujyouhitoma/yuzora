@@ -693,6 +693,10 @@ $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \t
 #### 収集対象パラメータスキーマ
 ```json
 {
+  "build": {
+    "id": "string (Git ショートハッシュ。ビルド時に <meta name=\"build-id\"> から読み取り / 未ビルド時は 'dev')",
+    "date": "string (ビルド日時 UTC ISO8601形式。例: 2026-07-11T13:00:00Z / 未ビルド時は '---')"
+  },
   "state": {
     "currentFileName": "string (読み込み中のファイル名 / 未ロード時は空文字)",
     "currentFileType": "string (txt | html | 空文字)",
@@ -719,6 +723,11 @@ $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \t
   ]
 }
 ```
+
+> **備考**: `build` フィールドの値は `index.html` の `<meta name="build-id">` / `<meta name="build-date">` から
+> 読み取る（`commands.js::updateDebugMonitor()` の実装による）。`make` ビルドを経由していない
+> 開発環境では `BUILD_ID_PLACEHOLDER` / `BUILD_DATE_PLACEHOLDER` のままとなるため、
+> `content` 属性が空またはプレースホルダーの場合はフォールバック値（`dev` / `---`）を表示する。
 
 ### 6.2 localStorage 初期化仕様
 
