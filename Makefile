@@ -29,7 +29,12 @@ CSS_SRCS = src/css/modules/reset.css \
            src/css/modules/debug.css
 CSS_OUT = src/css/style.css
 
-all: lint $(JS_OUT) $(CSS_OUT)
+# Build ID: Git short hash (falls back to "dev" when not in a git repo)
+BUILD_ID   := $(shell git rev-parse --short HEAD 2>/dev/null || echo dev)
+# Build date: Always UTC to ensure consistency between local and CI environments
+BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+
+all: lint $(JS_OUT) $(CSS_OUT) embed-build-info
 
 lint:
 	npm run lint
@@ -50,7 +55,15 @@ $(JS_OUT): $(JS_SRCS)
 $(CSS_OUT): $(CSS_SRCS)
 	cat $(CSS_SRCS) > $(CSS_OUT)
 
+# Embed build information into index.html (replaces placeholder values in <meta> tags)
+embed-build-info:
+	sed -i "s|content=\"BUILD_ID_PLACEHOLDER\"|content=\"$(BUILD_ID)\"|" index.html
+	sed -i "s|content=\"BUILD_DATE_PLACEHOLDER\"|content=\"$(BUILD_DATE)\"|" index.html
+
 clean:
 	rm -f $(JS_OUT) $(CSS_OUT)
+	# WARNING: This discards ALL uncommitted changes to index.html.
+	# Do not run 'make clean' if you have manual edits to index.html that haven't been committed.
+	git checkout -- index.html
 
-.PHONY: all clean lint
+.PHONY: all clean lint embed-build-info

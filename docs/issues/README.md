@@ -70,6 +70,7 @@
 | **058** | Feature | High | Closed | 青空文庫ルビ仕様への準拠 | AI Agent | [058-support-aozora-ruby-specifications.md](closed/058-support-aozora-ruby-specifications.md) |
 | **059** | Bug | High | Closed | `｜`なし自動ルビが非漢字文字の後ろに続く漢字に適用されない | AI Agent | [059-fix-ruby-not-applied-when-preceded-by-non-kanji.md](closed/059-fix-ruby-not-applied-when-preceded-by-non-kanji.md) |
 | **060** | Feature | High | New | ビルド時にキャッシュバスターを付与してブラウザキャッシュ問題を解消 | AI Agent | [060-cache-buster-on-build-to-fix-stale-js-cache.md](060-cache-buster-on-build-to-fix-stale-js-cache.md) |
+| **061** | Enhancement | Medium | Closed | ビルドバージョン番号をデバッグメニューで確認できるようにする | AI Agent | [061-show-build-version-in-debug-menu.md](closed/061-show-build-version-in-debug-menu.md) |
 
 
 
