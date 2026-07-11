@@ -69,6 +69,7 @@
 | **057** | Enhancement | Medium | Closed | レイアウト自己修復の観測機能と視覚的デバッグ補助の導入 | AI Agent | [057-layout-repair-observability-and-debugging.md](closed/057-layout-repair-observability-and-debugging.md) |
 | **058** | Feature | High | Closed | 青空文庫ルビ仕様への準拠 | AI Agent | [058-support-aozora-ruby-specifications.md](closed/058-support-aozora-ruby-specifications.md) |
 | **059** | Bug | High | Closed | `｜`なし自動ルビが非漢字文字の後ろに続く漢字に適用されない | AI Agent | [059-fix-ruby-not-applied-when-preceded-by-non-kanji.md](closed/059-fix-ruby-not-applied-when-preceded-by-non-kanji.md) |
+| **060** | Feature | High | New | ビルド時にキャッシュバスターを付与してブラウザキャッシュ問題を解消 | AI Agent | [060-cache-buster-on-build-to-fix-stale-js-cache.md](060-cache-buster-on-build-to-fix-stale-js-cache.md) |
 
 
 
