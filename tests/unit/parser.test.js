@@ -129,6 +129,29 @@ test.describe('parser.js Unit Tests', () => {
         );
     });
 
+    test('should automatically format ruby for kanji preceded by non-kanji text (BUG-059)', () => {
+        // 平仮名の後の漢字にルビ
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('冬の最中《さなか》で'),
+            '冬の<ruby>最中<rt>さなか</rt></ruby>で'
+        );
+        // 平仮名+漢字の後の漢字にルビ
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('天気は小闇《おぐら》くなり'),
+            '天気は<ruby>小闇<rt>おぐら</rt></ruby>くなり'
+        );
+        // 行頭の漢字にルビ（後続テキストあり）
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('荒村《あれむら》があちこちに'),
+            '<ruby>荒村<rt>あれむら</rt></ruby>があちこちに'
+        );
+        // 同一行に複数のルビが存在する
+        assert.strictEqual(
+            window.Yuzora.formatAozoraMarkup('最中《さなか》で小闇《おぐら》くなり'),
+            '<ruby>最中<rt>さなか</rt></ruby>で<ruby>小闇<rt>おぐら</rt></ruby>くなり'
+        );
+    });
+
     test('should parse alignment markups correctly (chitsuki, chiyose, chitage)', () => {
         const text = "タイトル\n著者\n-------------------------------------------------------\n［＃地付き］下寄せの署名\n［＃地寄せ］右寄せの日付\n［＃地から３字上げ］下から浮かせるテキスト";
         const result = window.Yuzora.parseAozoraText(text);

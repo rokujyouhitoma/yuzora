@@ -194,9 +194,11 @@ function tokenizeInline(text) {
         }
         
         const textChunk = text.substring(i, nextSpecial);
-        const nestedKanjiMatch = textChunk.match(/[一-龠々〆ヶ]+《/);
-        if (nestedKanjiMatch) {
-            nextSpecial = i + nestedKanjiMatch.index;
+        if (text[nextSpecial] === '《') {
+            const nestedKanjiMatch = textChunk.match(/([一-龠々仝〆〇ヶ]+|[A-Za-z]+)$/);
+            if (nestedKanjiMatch) {
+                nextSpecial = i + nestedKanjiMatch.index;
+            }
         }
         
         if (nextSpecial === i) {
