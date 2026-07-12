@@ -2,7 +2,7 @@
 ID: 062
 種別: Bug
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [BUG] E2Eテスト「Verify layout boundaries have zero overruns」が CI で失敗する (ID: 062)
@@ -37,9 +37,9 @@ CI (`tests/e2e/diagnose.spec.js:43`) の E2E テスト「Verify layout boundarie
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
 
-- [ ] [tests/e2e/diagnose.spec.js](../../tests/e2e/diagnose.spec.js) — 失敗しているテストファイル
-- [ ] [src/js/modules/renderer.js](../../src/js/modules/renderer.js) — `adjustPageBreaksForOverrun` 実装
-- [ ] [src/js/modules/diagnostics.js](../../src/js/modules/diagnostics.js) — 境界線はみ出し検出ロジック (`findCharAtBoundary`, `runLayoutDiagnosis`)
+- [x] [tests/e2e/diagnose.spec.js](../../tests/e2e/diagnose.spec.js) — 失敗しているテストファイル
+- [x] [src/js/modules/renderer.js](../../src/js/modules/renderer.js) — `adjustPageBreaksForOverrun` 実装
+- [x] [src/js/modules/diagnostics.js](../../src/js/modules/diagnostics.js) — 境界線はみ出し検出ロジック (`findCharAtBoundary`, `runLayoutDiagnosis`)
 
 ---
 
@@ -115,9 +115,9 @@ const intersectsLeft = rect.left < boundaryLeft && rect.right > boundaryLeft && 
 
 ## 6. 完了条件 / Success Criteria (DoD)
 
-- [ ] `tests/e2e/diagnose.spec.js:43:1 › Verify layout boundaries have zero overruns` が `境界線上の見切れやはみ出しは検出されませんでした。` を含むレポートを返してパスすること。
-- [ ] Retry なしで 1 回目のテスト実行で通過すること（再現性の解消）。
-- [ ] すべての E2E テスト (`npm run test:e2e`) が正常にパスすること。
-- [ ] すべてのユニットテスト (`npm run test:unit`) が正常にパスすること。
-- [ ] DSN-02 の「レイアウト自己修復設計」セクションが実装内容と整合していること（dead document がないこと）。
-- [ ] 実装内容が [DSN-01](../DSN-01-high_level_design.md) および [DSN-02](../DSN-02-low_level_design.md) の設計仕様と完全に整合していること。
+- [x] `tests/e2e/diagnose.spec.js:43:1 › Verify layout boundaries have zero overruns` が `境界線上の見切れやはみ出しは検出されませんでした。` を含むレポートを返してパスすること。
+- [x] Retry なしで 1 回目のテスト実行で通過すること（再現性の解消）。
+- [x] すべての E2E テスト (`npm run test:e2e`) が正常にパスすること。
+- [x] すべてのユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] DSN-02 の「レイアウト自己修復設計」セクションが実装内容と整合していること（dead document がないこと）。
+- [x] 実装内容が [DSN-01](../DSN-01-high_level_design.md) および [DSN-02](../DSN-02-low_level_design.md) の設計仕様と完全に整合していること。

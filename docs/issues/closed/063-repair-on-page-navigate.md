@@ -2,7 +2,7 @@
 ID: 063
 種別: Feature
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT] ページ移動後にはみ出し検査を行い、問題があればレイアウトを自己修復する (ID: 063)
@@ -23,11 +23,11 @@ ID: 063
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
 
-- [ ] [src/js/modules/renderer.js](../../src/js/modules/renderer.js) — `hasOverrunNearCurrentPage()` 新メソッド追加
-- [ ] [src/js/modules/viewer.js](../../src/js/modules/viewer.js) — `scrollToPage()` の `.then()` に呼び出し追加
-- [ ] [src/js/types.d.ts](../../src/js/types.d.ts) — `RendererInterface` に型定義追加
-- [ ] [src/externs.js](../../src/externs.js) — Closure Compiler 用 extern 追加
-- [ ] [docs/DSN-02-low_level_design.md](../DSN-02-low_level_design.md) — セクション 1.2.11/1.2.12 に新メソッドを追記
+- [x] [src/js/modules/renderer.js](../../src/js/modules/renderer.js) — `hasOverrunNearCurrentPage()` 新メソッド追加
+- [x] [src/js/modules/viewer.js](../../src/js/modules/viewer.js) — `scrollToPage()` の `.then()` に呼び出し追加
+- [x] [src/js/types.d.ts](../../src/js/types.d.ts) — `RendererInterface` に型定義追加
+- [x] [src/externs.js](../../src/externs.js) — Closure Compiler 用 extern 追加
+- [x] [docs/DSN-02-low_level_design.md](../DSN-02-low_level_design.md) — セクション 1.2.11/1.2.12 に新メソッドを追記
 
 ---
 
@@ -86,8 +86,8 @@ renderer.scrollToPage(pageNumber).then(() => {
 
 ## 6. 完了条件 / Success Criteria (DoD)
 
-- [ ] ページ移動後に overrun がある場合、`adjustPageBreaksForOverrun()` が自動的に呼ばれること。
-- [ ] overrun がない場合、`adjustPageBreaksForOverrun()` が呼ばれないこと（不要な DOM 書き換えをしない）。
-- [ ] すべての E2E テスト (`npm run test:e2e`) が正常にパスすること。
-- [ ] すべてのユニットテスト (`npm run test:unit`) が正常にパスすること。
-- [ ] 実装内容が [DSN-01](../DSN-01-high_level_design.md) および [DSN-02](../DSN-02-low_level_design.md) の設計仕様と完全に整合していること。
+- [x] ページ移動後に overrun がある場合、`adjustPageBreaksForOverrun()` が自動的に呼ばれること。
+- [x] overrun がない場合、`adjustPageBreaksForOverrun()` が呼ばれないこと（不要な DOM 書き換えをしない）。
+- [x] すべての E2E テスト (`npm run test:e2e`) が正常にパスすること。
+- [x] すべてのユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] 実装内容が [DSN-01](../DSN-01-high_level_design.md) および [DSN-02](../DSN-02-low_level_design.md) の設計仕様と完全に整合していること。
