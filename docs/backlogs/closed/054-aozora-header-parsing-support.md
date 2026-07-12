@@ -2,7 +2,7 @@
 ID: 054
 種別: Feature
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [FEATURE] 青空文庫ヘッダーフォーマットの解析と作品名・著者名の表示サポート (ID: 054)

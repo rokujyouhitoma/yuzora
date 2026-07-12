@@ -257,4 +257,52 @@ test.describe('parser.js Unit Tests', () => {
         assert.equal(tocWithRuby[0].text, '衆口');
         assert.equal(tocWithRuby[0].level, 2);
     });
+
+    test('should parse metadata and filter out Aozora Bunko header explanation block', () => {
+        const text = '吾輩は猫である\n夏目漱石\n\n-------------------------------------------------------\n【テキスト中に現れる記号について】\n《》：ルビ\n（例）吾輩《わがはい》\n-------------------------------------------------------\n\n吾輩《わがはい》は猫である。';
+        const result = window.Yuzora.parseAozoraText(text);
+
+        // Metadata extraction check
+        const bookModel = window.Yuzora.locator.resolve(window.Yuzora.BookModel);
+        assert.strictEqual(bookModel.title, '吾輩は猫である');
+        assert.strictEqual(bookModel.author, '夏目漱石');
+
+        // Dynamic cover page check
+        assert.ok(result.body.includes('<div class="book-cover-page">'));
+        assert.ok(result.body.includes('<h1 class="book-cover-title">吾輩は猫である</h1>'));
+        assert.ok(result.body.includes('<p class="book-cover-author">夏目漱石</p>'));
+
+        // Header block removal check (symbol descriptions shouldn't be rendered as paragraphs)
+        assert.ok(!result.body.includes('【テキスト中に現れる記号について】'));
+        assert.ok(!result.body.includes('《》：ルビ'));
+        assert.ok(!result.body.includes('（例）吾輩'));
+
+        // Body rendering check
+        assert.ok(result.body.includes('<ruby>吾輩<rt>わがはい</rt></ruby>は猫である。'));
+    });
+
+    test('should parse metadata correctly when header explanation block is missing', () => {
+        const text = '砂書きの老人\n上村松園\n\nまだ私が八、九歳のころ...';
+        const result = window.Yuzora.parseAozoraText(text);
+
+        const bookModel = window.Yuzora.locator.resolve(window.Yuzora.BookModel);
+        assert.strictEqual(bookModel.title, '砂書きの老人');
+        assert.strictEqual(bookModel.author, '上村松園');
+
+        assert.ok(result.body.includes('<div class="book-cover-page">'));
+        assert.ok(result.body.includes('<h1 class="book-cover-title">砂書きの老人</h1>'));
+        assert.ok(result.body.includes('<p class="book-cover-author">上村松園</p>'));
+
+        assert.ok(result.body.includes('まだ私が八、九歳のころ...'));
+    });
+
+    test('should escape HTML tags in metadata for security (T-E1 mitigation check)', () => {
+        const text = '作品名<script>alert("xss")</script>\n著者名<iframe src="javascript:alert(1)"></iframe>\n\n本文';
+        const result = window.Yuzora.parseAozoraText(text);
+
+        assert.ok(result.body.includes('&lt;script&gt;alert("xss")&lt;/script&gt;'));
+        assert.ok(result.body.includes('&lt;iframe src="javascript:alert(1)"&gt;&lt;/iframe&gt;'));
+        assert.ok(!result.body.includes('<script>'));
+        assert.ok(!result.body.includes('<iframe>'));
+    });
 });

@@ -448,3 +448,39 @@ body.debug-active .dynamic-page-break::after {
     writing-mode: horizontal-tb;
 }
 
+/* Book Cover (Title/Author) Page Styling */
+.reader-content .book-cover-page {
+    box-sizing: border-box;
+    display: block;
+    height: 100%;
+    margin-left: 4em;
+    margin-right: 2em;
+    break-after: column;
+    -webkit-column-break-after: always;
+    page-break-after: always;
+}
+
+.reader-content .book-cover-title {
+    font-size: 2.2rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-left: 2em;
+    margin-bottom: 0;
+    text-indent: 0;
+    break-before: avoid;
+    -webkit-column-break-before: avoid;
+    page-break-before: avoid;
+}
+
+.reader-content .book-cover-author {
+    font-size: 1.2rem;
+    margin-left: 4em;
+    margin-bottom: 0;
+    text-indent: 0;
+    opacity: 0.85;
+    break-before: avoid;
+    -webkit-column-break-before: avoid;
+    page-break-before: avoid;
+}
+
+

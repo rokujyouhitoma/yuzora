@@ -149,6 +149,7 @@ class ViewContext {
 class BookModel {
     constructor() {
         this.title = '';
+        this.author = '';
         this.content = '';
         this.type = ''; // 'txt' or 'html'
         this.totalPages = 0;
@@ -173,6 +174,7 @@ class BookModel {
     // @ts-expect-error
     clear() {
         this.title = '';
+        this.author = '';
         this.content = '';
         this.type = '';
         this.totalPages = 0;

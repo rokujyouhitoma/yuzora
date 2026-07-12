@@ -292,35 +292,77 @@ function evaluateAST(node) {
     return '';
 }
 
+/**
+ * Cleans metadata text by removing ruby markups and trim.
+ * @param {string} text
+ * @return {string}
+ */
+function cleanAozoraMetadata(text) {
+    if (!text) return '';
+    return text.replace(/[｜|]/g, '')
+               .replace(/《[^》]+》/g, '')
+               .trim();
+}
+
 // eslint-disable-next-line complexity
 function parseAozoraText(text) {
-    Yuzora.locator.resolve(BookModel).toc = [];
+    const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
+    bookModel.toc = [];
     let headingIndex = 0;
 
     let lines = text.split(/\r?\n/);
     let parsedLines = [];
     let title = '';
     let author = '';
-    let inHeader = true;
     
-    if (lines.length > 2) {
-        title = escapeHTML(lines[0].trim());
-        author = escapeHTML(lines[1].trim());
+    if (lines.length > 0) {
+        title = cleanAozoraMetadata(lines[0]);
     }
+    if (lines.length > 1) {
+        author = cleanAozoraMetadata(lines[1]);
+    }
+
+    bookModel.title = title;
+    bookModel.author = author;
+
+    // Dynamic cover page generation
+    const escapedTitle = escapeHTML(title);
+    const escapedAuthor = escapeHTML(author);
+    parsedLines.push('<div class="book-cover-page">');
+    parsedLines.push(`    <h1 class="book-cover-title">${escapedTitle}</h1>`);
+    parsedLines.push(`    <p class="book-cover-author">${escapedAuthor}</p>`);
+    parsedLines.push('</div>');
+    parsedLines.push('PAGE_BREAK');
+
+    let inHeader = true;
+    let inSkipBlock = false;
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i];
 
         if (inHeader) {
-            if (detectHeaderEnd(line, i)) {
+            if (line.includes('-------------------------------------------------------')) {
                 inHeader = false;
-                if (line.includes('-------------------------------------------------------') || 
-                    (line.includes('［＃') && (line.includes('始まり') || line.includes('目次')))) {
-                    continue;
+                // Peek next lines to see if it is indeed the symbol explanation block
+                const nextLine = lines[i + 1] ? lines[i + 1].trim() : '';
+                const nextNextLine = lines[i + 2] ? lines[i + 2].trim() : '';
+                if (nextLine.includes('【テキスト中に現れる記号について】') || nextNextLine.includes('【テキスト中に現れる記号について】')) {
+                    inSkipBlock = true;
                 }
+                continue;
+            }
+            if (line.trim().length > 0 && !line.startsWith('［＃') && i > 1) {
+                inHeader = false;
             } else {
                 continue;
             }
+        }
+
+        if (inSkipBlock) {
+            if (line.includes('-------------------------------------------------------')) {
+                inSkipBlock = false;
+            }
+            continue;
         }
 
         if (line.includes('底本：') || line.includes('青空文庫作成ファイル：')) {
@@ -351,15 +393,12 @@ function parseAozoraText(text) {
     while (parsedLines.length > 0 && parsedLines[parsedLines.length - 1] === '<p class="empty-line">&nbsp;</p>') {
         parsedLines.pop();
     }
-    while (parsedLines.length > 0 && parsedLines[0] === '<p class="empty-line">&nbsp;</p>') {
-        parsedLines.shift();
-    }
 
     let bodyContent = parsedLines.join('\n');
     bodyContent = bodyContent.replace(/PAGE_BREAK/g, '<div class="page-break"></div>');
 
     return {
-        title: title + (author ? ` (${author})` : ''),
+        title: escapeHTML(title) + (author ? ` (${escapeHTML(author)})` : ''),
         body: bodyContent
     };
 }

@@ -316,6 +316,8 @@ function BookModelInterface() {}
 /** @type {string} */
 BookModelInterface.prototype.title;
 /** @type {string} */
+BookModelInterface.prototype.author;
+/** @type {string} */
 BookModelInterface.prototype.content;
 /** @type {string} */
 BookModelInterface.prototype.type;

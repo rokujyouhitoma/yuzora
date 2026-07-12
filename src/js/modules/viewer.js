@@ -76,29 +76,28 @@ async function displayBook() {
     const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
 
     let parsedHTML = '';
-    let title = bookModel.title;
 
     if (bookModel.type === 'txt') {
         // Parse plain text with Aozora annotation
         const parsed = parseAozoraText(bookModel.content);
         parsedHTML = parsed.body;
-        title = parsed.title || bookModel.title.replace('.txt', '');
     } else {
         // XHTML/HTML
         const parsed = parseAozoraHTML(bookModel.content);
         parsedHTML = parsed.body;
-        title = parsed.title || bookModel.title.replace(/\.(x?html)/, '');
+        bookModel.title = parsed.title || bookModel.title.replace(/\.(x?html)/, '');
     }
 
-    // Override with predefined book title if matched
+    // Override with predefined book title/author if matched
     const predefinedBook = PREDEFINED_BOOKS.find(b => b.title === bookModel.title || bookModel.title.includes(b.cardId.toString()));
     if (predefinedBook) {
-        title = predefinedBook.title;
+        bookModel.title = predefinedBook.title;
+        bookModel.author = predefinedBook.author || '';
     }
 
     // Apply to viewer
-    viewContext.bookTitle.textContent = title;
-    document.title = `${title} - ゆうぞら`;
+    viewContext.bookTitle.textContent = bookModel.title;
+    document.title = `${bookModel.title} - ゆうぞら`;
     renderer.render(parsedHTML);
 
     // Set default activeHeadingId to the first TOC item if available

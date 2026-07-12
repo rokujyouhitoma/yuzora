@@ -42,7 +42,8 @@
 #### 1.2.2 `BookModel`（書籍データモデル）
 現在読み込んでいる書籍ファイルのメタデータ、テキスト/HTML本文、および目次情報を管理します。
 - **プロパティ**:
-  - `title` (`string`): 書籍名（ファイル名）。
+  - `title` (`string`): 書籍名。
+  - `author` (`string`): 著者名。
   - `content` (`string`): 読み込んだ生テキストまたはHTMLデータ。
   - `type` (`string`): ファイルタイプ (`"txt"` | `"html"`)。
   - `totalPages` (`number`): 総ページ数。

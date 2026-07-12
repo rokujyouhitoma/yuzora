@@ -141,6 +141,7 @@ interface SessionRepositoryInterface {
 
 interface BookModelInterface {
     title: string;
+    author: string;
     content: string;
     type: string;
     totalPages: number;

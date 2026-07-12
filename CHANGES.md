@@ -14,7 +14,13 @@ All notable changes to this project will be documented in this file.
 - Implemented `YuzoraEventType.PAGE_CHANGED` (`ui:page-changed`) event publication after page navigation settles, and unified layout validation/repair with event-driven architecture (EDA) (ID: 064).
 - Added `LAYOUT_CHECK_REQUESTED` (`system:layout-check-requested`) and `LAYOUT_REPAIR_REQUESTED` (`system:layout-repair-requested`) events. Integrated them as the common EDA flow for book load, window resize, and page change, ensuring the "check lightweight overrun first, repair only if needed" performance guard logic is uniformly enforced (ID: 064).
 - Refactored `VerticalRenderer.prototype.hasOverrunNearCurrentPage` in `renderer.js` to extract private helper methods, lowering cyclomatic complexity below the maximum limit of 10 and resolving the ESLint complexity error (ID: 064).
-- Updated DSN-02 section 1.4 to document new event schemas and sequence flows (ID: 064).
+- Supported Aozora Bunko header format parsing. Automatically extracts the first line as "Title" and the second line as "Author" and manages them independently in `BookModel` (ID: 065).
+- Extended the text parser in `parser.js` to dynamically detect and skip Aozora Bunko's "symbol explanation block" (demarcated by horizontal lines) to prevent guide texts from rendering in the reading viewport (ID: 065).
+- Implemented dynamic cover (title) page generation at the beginning of parsed HTML, showing the title and author in elegant vertical formatting followed by a page break to cleanly start the main content on page 2 (ID: 065).
+- Implemented robust HTML escaping for cover page metadata to prevent XSS (T-E1 mitigation) (ID: 065).
+- Updated upper reader header title display to only show the clean book title without the author suffix (ID: 065).
+- Updated design document DSN-02 section 1.2.2 and BookModel schema configurations (ID: 065).
+
 
 
 - Added `<meta name="build-id">` and `<meta name="build-date">` placeholder tags to `index.html` for build-time substitution (ID: 061).
