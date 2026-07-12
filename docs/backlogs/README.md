@@ -61,6 +61,8 @@
 | **051** | Feature | High | Closed | 青空文庫ルビ仕様（漢字・記号判定、グループルビ、アルファベット対応）への準拠 | [051-support-aozora-ruby-specifications.md](closed/051-support-aozora-ruby-specifications.md) |
 | **052** | Enhancement | Medium | Closed | ビルドバージョン番号をデバッグメニューで確認できるようにする | [052-show-build-version-in-debug-menu.md](closed/052-show-build-version-in-debug-menu.md) |
 | **053** | Feature | Medium | Promoted | ページ移動完了後のPAGE_CHANGEDイベント発火と自己修復連動 | [053-publish-page-changed-event.md](closed/053-publish-page-changed-event.md) |
+| **054** | Feature | Medium | Draft | 青空文庫ヘッダーフォーマットの解析と作品名・著者名の表示サポート | [054-aozora-header-parsing-support.md](054-aozora-header-parsing-support.md) |
+
 
 
 ---
