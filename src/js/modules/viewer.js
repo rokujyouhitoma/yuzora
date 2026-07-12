@@ -224,6 +224,14 @@ function scrollToPage(pageNumber) {
     viewContext.isReflowing = true;
     renderer.scrollToPage(pageNumber).then(() => {
         viewContext.isReflowing = false;
+
+        // After the scroll animation settles, inspect the boundaries flanking the new page.
+        // If an overrun is detected at character level, trigger the self-repair engine.
+        // The check is read-only and skips the expensive DOM repair when not needed.
+        if (renderer.hasOverrunNearCurrentPage()) {
+            renderer.adjustPageBreaksForOverrun();
+        }
+
         // Keep progress and bar updated in real-time
         const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
         bookmarkModel.bookmarkProgress = maxScroll > 0 ? targetScrollLeft / maxScroll : 0;

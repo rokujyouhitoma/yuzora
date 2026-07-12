@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file.
 - Updated `docs/MNG-01-document_ledger.md` to register the phase management ledger as [MNG-10].
 - Updated `docs/MNG-02-development_process.md` section 1.3 to add the `phase-workflow` skill to the document–skill correspondence table.
 - Fixed false positive layout boundary overrun detection in `diagnoseBoundaryOverlap()` (`diagnostics.js`): in RTL multi-column layout, a paragraph on page 1 that naturally wraps past the viewport's left edge (X≈0px) was incorrectly reported as a boundary overrun. Added `isFirstPageLeftEdge` guard (`currentPage === 1 && |scrollLeft| < 1px`) to exclude this case, resolving the CI E2E test failure (ID: 062). Updated DSN-02 section 1.2.12 to document this exclusion rule.
+- Added `hasOverrunNearCurrentPage()` method to `VerticalRenderer` (`renderer.js`): a lightweight, read-only check that inspects the page boundaries flanking the current scroll position for character-level overruns without modifying the DOM (ID: 063).
+- Updated `scrollToPage()` in `viewer.js` to call `hasOverrunNearCurrentPage()` after each page navigation; when an overrun is detected, `adjustPageBreaksForOverrun()` is triggered automatically to self-repair the layout (ID: 063).
+- Updated `RendererInterface` in `types.d.ts` and `externs.js` to include `hasOverrunNearCurrentPage(): boolean` (ID: 063). Updated DSN-02 section 1.2.11 to document the new method.
 
 - Added `<meta name="build-id">` and `<meta name="build-date">` placeholder tags to `index.html` for build-time substitution (ID: 061).
 - Added `BUILD_ID` (Git short hash) and `BUILD_DATE` (UTC ISO8601) variables and an `embed-build-info` Makefile target that rewrites the placeholder values in `index.html` on each build (ID: 061).

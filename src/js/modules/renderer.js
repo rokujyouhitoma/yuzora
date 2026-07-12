@@ -234,6 +234,61 @@ class VerticalRenderer {
             publisher.publish(YuzoraEventType.LAYOUT_REPAIRED, this.lastRepairMetrics);
         }
     }
+
+    /**
+     * Performs a lightweight, read-only check to detect whether any child element
+     * straddles a page boundary adjacent to the current scroll position.
+     * Does NOT modify the DOM. Returns true only when a character-level overrun
+     * is confirmed, avoiding false positives from bounding-box overlaps alone.
+     * @override
+     * @return {boolean}
+     */
+    // @ts-expect-error
+    hasOverrunNearCurrentPage() {
+        if (!this.viewContext.readerContent || !this.viewContext.readerViewport) return false;
+
+        const readerContent = this.viewContext.readerContent;
+        const readerViewport = this.viewContext.readerViewport;
+        const clientWidth = readerViewport.clientWidth;
+        const scrollWidth = readerViewport.scrollWidth;
+        const pageCount = Math.round(scrollWidth / clientWidth) || 0;
+        if (pageCount <= 1) return false;
+
+        const absScroll = Math.abs(readerViewport.scrollLeft);
+        const currentPage = Math.round(absScroll / clientWidth) + 1;
+
+        // Check the two page boundaries that flank the current page.
+        // boundary at (currentPage-1)*clientWidth is the left edge of the current page;
+        // boundary at currentPage*clientWidth is the right edge (= left edge of next page).
+        const boundariesToCheck = [];
+        if (currentPage > 1) {
+            boundariesToCheck.push((currentPage - 1) * clientWidth);
+        }
+        if (currentPage < pageCount) {
+            boundariesToCheck.push(currentPage * clientWidth);
+        }
+        if (boundariesToCheck.length === 0) return false;
+
+        const children = Array.from(readerContent.children).filter(node => {
+            const el = /** @type {!Element} */ (node);
+            return !el.classList.contains('empty-line') && !el.classList.contains('page-break');
+        });
+
+        for (const boundaryX of boundariesToCheck) {
+            for (const child of children) {
+                const rect = child.getBoundingClientRect();
+                const docLeft = rect.left + absScroll;
+                const docRight = rect.right + absScroll;
+                // Bounding-box straddles the boundary: confirm at character level.
+                if (docLeft < boundaryX && docRight > boundaryX) {
+                    if (findCharAtDocumentBoundary(child, boundaryX, readerViewport.scrollLeft)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
 
 /**
