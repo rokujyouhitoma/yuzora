@@ -2,7 +2,7 @@
 ID: 053
 種別: Feature
 優先度: Medium
-ステータス: Approved
+ステータス: Promoted
 ---
 
 # [FEATURE] ページ移動確定後に PAGE_CHANGED イベントを発火し、イベント駆動による共通レイアウト診断・自己修復をトリガーする (ID: 053)

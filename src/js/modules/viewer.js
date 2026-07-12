@@ -127,7 +127,7 @@ async function displayBook() {
     // Wait a tick for rendering to complete before restoring scroll position
     viewContext.isReflowing = true;
     setTimeout(() => {
-        renderer.adjustPageBreaksForOverrun();
+        yuzora.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'all' });
         restoreScrollPosition();
         updateProgress();
         
@@ -225,12 +225,8 @@ function scrollToPage(pageNumber) {
     renderer.scrollToPage(pageNumber).then(() => {
         viewContext.isReflowing = false;
 
-        // After the scroll animation settles, inspect the boundaries flanking the new page.
-        // If an overrun is detected at character level, trigger the self-repair engine.
-        // The check is read-only and skips the expensive DOM repair when not needed.
-        if (renderer.hasOverrunNearCurrentPage()) {
-            renderer.adjustPageBreaksForOverrun();
-        }
+        // Publish PAGE_CHANGED event to trigger the asynchronous layout check flow
+        yuzora.publisher.publish(YuzoraEventType.PAGE_CHANGED, { page: pageNumber });
 
         // Keep progress and bar updated in real-time
         const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;

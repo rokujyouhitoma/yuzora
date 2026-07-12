@@ -205,6 +205,9 @@ DOM Level 2 の `EventTarget` に準拠したカスタムイベントリスナ�
 | `DIAGNOSE_RUN` | `'diagnose-run'` | `{ timestamp }` | レイアウト座標診断実行要求時 |
 | `DIAGNOSE_COMPLETED`| `'diagnose-completed'` | `{ report, issuesCount }` | 座標診断レポート生成完了時 |
 | `LAYOUT_REPAIRED` | `'system:layout-repaired'` | `{ passesCount, insertedCount, durationMs }` | 自己修復レイアウトエンジンの実行完了時 |
+| `LAYOUT_CHECK_REQUESTED` | `'system:layout-check-requested'` | `{ scope }` | レイアウトはみ出し検証の要求時 (`scope: 'current' \| 'all'`) |
+| `LAYOUT_REPAIR_REQUESTED` | `'system:layout-repair-requested'` | `null` | レイアウト修復エンジンの実行要求時 |
+
 
 ### 1.5 画面遷移状態管理フレームワーク (Scene Transition Framework)
 
