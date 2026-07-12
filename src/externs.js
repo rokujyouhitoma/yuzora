@@ -766,5 +766,9 @@ RendererInterface.prototype.handleResize = function(progress) {};
  * @return {void}
  */
 RendererInterface.prototype.adjustPageBreaksForOverrun = function() {};
+/**
+ * @return {boolean}
+ */
+RendererInterface.prototype.hasOverrunNearCurrentPage = function() {};
 /** @type {!Object} */
 RendererInterface.prototype.lastRepairMetrics;

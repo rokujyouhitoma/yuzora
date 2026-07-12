@@ -228,6 +228,7 @@ interface RendererInterface {
     scrollToPage(pageNumber: number): Promise<void>;
     handleResize(progress: number): Promise<void>;
     adjustPageBreaksForOverrun(): void;
+    hasOverrunNearCurrentPage(): boolean;
     lastRepairMetrics: any;
 }
 

@@ -137,6 +137,7 @@
   - `scrollToPage(pageNumber)`: 指定ページへスムーズスクロールします（完了時に解決するPromiseを返します）。
   - `handleResize(progress)`: リサイズ時にレイアウト幅を調整してスクロール座標を再計算します（完了時に解決するPromiseを返します）。
   - `adjustPageBreaksForOverrun()`: カラム・ページ境界線をまたぐ（見切れる）文字のある段落の直前に動的改ページ `<div class="page-break dynamic-page-break"></div>` を挿入して自動でレイアウトを自己修復します。
+  - `hasOverrunNearCurrentPage()`: 現在のスクロール位置に隣接するページ境界（左辺・右辺）をまたぐ文字があるかをDOM非変更の読み取り専用で検査します。文字レベル確認により偽陽性を除外し、真の overrun が存在する場合のみ `true` を返します。ページ移動後に不要なレイアウト再計算を回避するための軽量ガードとして使用します。
 
 #### 1.2.12 `VerticalRenderer` （縦書き用レンダラークラス）
 `RendererInterface` を実装し、縦書き表示およびマルチカラムレイアウトの描画・座標制御をカプセル化する具象クラスです。
