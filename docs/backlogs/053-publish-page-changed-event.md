@@ -2,7 +2,7 @@
 ID: 053
 種別: Feature
 優先度: Medium
-ステータス: Draft
+ステータス: Approved
 ---
 
 # [FEATURE] ページ移動確定後に PAGE_CHANGED イベントを発火し、イベント駆動による共通レイアウト診断・自己修復をトリガーする (ID: 053)
@@ -14,22 +14,70 @@ ID: 053
 
 本バックログでは、ページ移動確定後に `PAGE_CHANGED` イベントを正しく発火させるとともに、**「レイアウトはみ出し検証の要求」および「レイアウト修復の実行」をそれぞれ専用のイベントを介して共通化・疎結合化するイベント駆動設計（EDA）**へと改善します。
 
-### 具体的な設計方針・イベントフロー：
-1. **イベントによる抽象化**
-   - **`LAYOUT_CHECK_REQUESTED` (`'system:layout-check-requested'`)** :
-     - レイアウトの検証が必要なタイミング（書籍ロード完了後、リサイズ時、`PAGE_CHANGED` イベント発生後など）に発火されるイベント。
-   - **`LAYOUT_REPAIR_REQUESTED` (`'system:layout-repair-requested'`)** :
-     - 検証処理によって「真のはみ出し・見切れ」が検出された場合に、修復エンジン（`adjustPageBreaksForOverrun`）の実行を要求するために発火されるイベント。
-2. **処理の流れ（共通イベント駆動フロー）**
-   - 契機（ロード / リサイズ / ページ変更など）が発生。
-   - 契機となったモジュール（`viewer.js` など）は `LAYOUT_CHECK_REQUESTED` イベントを発火。
-   - レイアウト診断コントローラー（または購読側の共通リスナー）が `LAYOUT_CHECK_REQUESTED` を受信し、対象ページの境界（または全体）で `hasOverrun`（はみ出し判定）を実行（DOMを変更しない軽量な読み取り専用チェック）。
-   - もしはみ出しが確認された場合、診断コントローラーは `LAYOUT_REPAIR_REQUESTED` イベントを発火。
-   - レンダラー（`VerticalRenderer`）が `LAYOUT_REPAIR_REQUESTED` を購読し、`adjustPageBreaksForOverrun()` を呼び出して改ページの動的挿入と DOM の自己修復を実行。完了時に `LAYOUT_REPAIRED` を発火する。
+---
 
-### メリット・SAとの検討事項：
-- **パフォーマンス最適化の共通化**：
-  すべてのタイミング（ロード・リサイズ・ページ移動）において、「まず軽量判定し、はみ出している場合のみ重い修復を走らせる」というガードロジックがイベント駆動の共通フローとして強制されます。
-- **モジュールの疎結合化**：
-  `viewer.js` などの各UI制御部が、`renderer.js` の `adjustPageBreaksForOverrun` や `hasOverrunNearCurrentPage` などの具象メソッドを直接呼び出す依存関係が排除され、すべてイベントを介したインターフェースに整理されます。
+## 2. 影響範囲と関連ファイル / Scope and Affected Files
 
+- [ ] [src/js/modules/event.js](../../src/js/modules/event.js) — 新イベント定数（`LAYOUT_CHECK_REQUESTED`, `LAYOUT_REPAIR_REQUESTED`）の追加
+- [ ] [src/js/modules/viewer.js](../../src/js/modules/viewer.js) — ページ移動完了時に `PAGE_CHANGED` を発火、およびロード・ページ移動・リサイズ時のイベント発火連携
+- [ ] [src/js/modules/renderer.js](../../src/js/modules/renderer.js) — `LAYOUT_REPAIR_REQUESTED` イベントの購読と `adjustPageBreaksForOverrun()` のトリガー
+- [ ] [src/js/modules/yuzora.js](../../src/js/modules/yuzora.js) — イベントチェック要求の購読とレイアウト診断ロジックの呼び出し調整（コーディネーター役）
+- [ ] [docs/DSN-02-low_level_design.md](../DSN-02-low_level_design.md) — イベント駆動設計セクション（§1.4）の更新
+
+---
+
+## 3. 要件と技術的詳細 / Requirements & Technical Details
+
+### 3.1 追加するイベント型
+`YuzoraEventType`（`event.js`）に以下のイベントキーを追加します。
+- **`LAYOUT_CHECK_REQUESTED: 'system:layout-check-requested'`** :
+  レイアウト検証が必要なタイミングで発火。ペイロードに `scope` (`'current' | 'all'`) を含めます。
+- **`LAYOUT_REPAIR_REQUESTED: 'system:layout-repair-requested'`** :
+  検証の結果、実際にはみ出しが検出された場合に修復の実行を要求するために発火。
+
+### 3.2 処理シーケンス
+```mermaid
+sequenceDiagram
+    participant V as Viewer (viewer.js)
+    participant Y as Yuzora (yuzora.js / EventBus)
+    participant R as Renderer (renderer.js)
+    
+    Note over V, R: ページ移動 / ロード / リサイズ発生
+    V->>Y: publish(LAYOUT_CHECK_REQUESTED, { scope: 'current' })
+    activate Y
+    Y->>R: hasOverrunNearCurrentPage() / 軽量チェックを実行
+    activate R
+    R-->>Y: true (はみ出しあり)
+    deactivate R
+    Y->>Y: publish(LAYOUT_REPAIR_REQUESTED)
+    Y->>R: adjustPageBreaksForOverrun() / 修復実行
+    activate R
+    R->>Y: publish(LAYOUT_REPAIRED, metrics)
+    deactivate R
+    deactivate Y
+```
+
+### 3.3 実装ステップの仮説
+1. **`event.js` の更新**
+   - イベント定数の追加と window エクスポートの確保。
+2. **`yuzora.js`（コーディネーター）での購読定義**
+   - `LAYOUT_CHECK_REQUESTED` を購読し、`scope` に応じて判定処理を呼び分ける。
+   - `scope: 'current'` の場合は `renderer.hasOverrunNearCurrentPage()` が `true` を返したときのみ `LAYOUT_REPAIR_REQUESTED` を発火する。
+   - `scope: 'all'` の場合は無条件で `LAYOUT_REPAIR_REQUESTED` を発火する（初回ロード時やリサイズ時用）。
+3. **`renderer.js` での購読定義**
+   - `LAYOUT_REPAIR_REQUESTED` を購読し、`adjustPageBreaksForOverrun()` を実行する。
+4. **`viewer.js` での発火**
+   - `scrollToPage()` 完了時に `PAGE_CHANGED` を発火。
+   - `displayBook()`（ロード完了時）および `handleResize()`（リサイズ完了時）で、直接メソッドを呼ぶ代わりに `LAYOUT_CHECK_REQUESTED`（`scope: 'all'`）を発火する。
+   - `PAGE_CHANGED` の購読ハンドラで `LAYOUT_CHECK_REQUESTED`（`scope: 'current'`）を発火する。
+
+---
+
+## 4. 完了条件 / Success Criteria (DoD)
+
+- [ ] ページ移動完了時に `ui:page-changed` イベントが正常に発火されること。
+- [ ] ロード、リサイズ、ページ移動のすべてのタイミングで、直接のメソッド呼び出しではなく `LAYOUT_CHECK_REQUESTED` イベントを経由して検証・修復フローが起動すること。
+- [ ] はみ出しがないクリーンな状態のページ移動では、`adjustPageBreaksForOverrun()` が呼び出されず、無駄な DOM 操作が発生しないこと。
+- [ ] ページ移動時にはみ出しが存在する場合、診断イベントフローを経由して自動的に `adjustPageBreaksForOverrun()` が呼び出され、修復が実行されること。
+- [ ] ユニットテストおよび E2E テストがすべて正常にパスすること。
+- [ ] 設計書（DSN-02）の「イベント駆動アーキテクチャ」セクションに本イベント定義およびフローが反映されていること。
