@@ -77,13 +77,14 @@ async function displayBook() {
 
     let parsedHTML = '';
 
+    const parser = /** @type {!AozoraParserInterface} */ (Yuzora.locator.resolve(AozoraParser));
     if (bookModel.type === 'txt') {
         // Parse plain text with Aozora annotation
-        const parsed = parseAozoraText(bookModel.content);
+        const parsed = parser.parseAozoraText(bookModel.content);
         parsedHTML = parsed.body;
     } else {
         // XHTML/HTML
-        const parsed = parseAozoraHTML(bookModel.content);
+        const parsed = parser.parseAozoraHTML(bookModel.content);
         parsedHTML = parsed.body;
         bookModel.title = parsed.title || bookModel.title.replace(/\.(x?html)/, '');
     }

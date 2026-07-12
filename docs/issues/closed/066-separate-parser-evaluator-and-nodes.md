@@ -2,7 +2,7 @@
 ID: 066
 種別: Feature
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] parser.js からトークナイザー、パーサー、意味解析器、評価器、および AST ノードへのクラス・ファイル分離 (ID: 066)
@@ -21,17 +21,17 @@ ID: 066
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [src/js/modules/tokenizer.js](../../src/js/modules/tokenizer.js) [NEW] — `AozoraTokenizer` クラスの定義
-- [ ] [src/js/modules/ast-nodes.js](../../src/js/modules/ast-nodes.js) [NEW] — `ASTNode` および派生ノードクラスの定義
-- [ ] [src/js/modules/semantic-analyzer.js](../../src/js/modules/semantic-analyzer.js) [NEW] — `AozoraSemanticAnalyzer` クラスの定義
-- [ ] [src/js/modules/evaluator.js](../../src/js/modules/evaluator.js) [NEW] — `AozoraEvaluator` クラスの定義
-- [ ] [src/js/modules/parser.js](../../src/js/modules/parser.js) [MODIFY] — `AozoraParser` クラスの定義と、既存の非構造化関数の廃止
-- [ ] [src/js/modules/yuzora.js](../../src/js/modules/yuzora.js) [MODIFY] — locator / window へのクラス登録
-- [ ] [src/js/modules/viewer.js](../../src/js/modules/viewer.js) [MODIFY] — パース呼び出しの変更
-- [ ] [src/js/types.d.ts](../../src/js/types.d.ts) [MODIFY] — 新クラスの型定義追加
-- [ ] [src/externs.js](../../src/externs.js) [MODIFY] — Closure Compiler 用プロトタイプ定義
-- [ ] [Makefile](../../Makefile) [MODIFY] — `JS_SRCS` に新規ファイルを追加
-- [ ] [tests/unit/parser.test.js](../../tests/unit/parser.test.js) [MODIFY] — 新規テストおよび 10 作品横断検証の追加
+- [x] [src/js/modules/tokenizer.js](../../src/js/modules/tokenizer.js) [NEW] — `AozoraTokenizer` クラスの定義
+- [x] [src/js/modules/ast-nodes.js](../../src/js/modules/ast-nodes.js) [NEW] — `ASTNode` および派生ノードクラスの定義
+- [x] [src/js/modules/semantic-analyzer.js](../../src/js/modules/semantic-analyzer.js) [NEW] — `AozoraSemanticAnalyzer` クラスの定義
+- [x] [src/js/modules/evaluator.js](../../src/js/modules/evaluator.js) [NEW] — `AozoraEvaluator` クラスの定義
+- [x] [src/js/modules/parser.js](../../src/js/modules/parser.js) [MODIFY] — `AozoraParser` クラスの定義と、既存の非構造化関数の廃止
+- [x] [src/js/modules/yuzora.js](../../src/js/modules/yuzora.js) [MODIFY] — locator / window へのクラス登録
+- [x] [src/js/modules/viewer.js](../../src/js/modules/viewer.js) [MODIFY] — パース呼び出しの変更
+- [x] [src/js/types.d.ts](../../src/js/types.d.ts) [MODIFY] — 新クラスの型定義追加
+- [x] [src/externs.js](../../src/externs.js) [MODIFY] — Closure Compiler 用プロトタイプ定義
+- [x] [Makefile](../../Makefile) [MODIFY] — `JS_SRCS` に新規ファイルを追加
+- [x] [tests/unit/parser.test.js](../../tests/unit/parser.test.js) [MODIFY] — 新規テストおよび 10 作品横断検証の追加
 
 ---
 
@@ -75,14 +75,14 @@ Target Branch: `feat/066-separate-parser-evaluator-and-nodes`
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] クラスが `AozoraTokenizer`、`AozoraParser`、`AozoraSemanticAnalyzer`、`AozoraEvaluator`、および `ASTNode` に正しく分割され、個別のファイルに分離されていること。
-- [ ] 意味解析器（`AozoraSemanticAnalyzer`）がルビのネスト違反を正常に検知・補正でき、テストでアサートされていること。
-- [ ] 収録されているプリセットの10作品（「こころ」「故郷」「宮本武蔵 01〜08」）を検証用として、以下の横断的観点がすべてユニットテストでパスすること。
+- [x] クラスが `AozoraTokenizer`、`AozoraParser`、`AozoraSemanticAnalyzer`、`AozoraEvaluator`、および `ASTNode` に正しく分割され、個別のファイルに分離されていること。
+- [x] 意味解析器（`AozoraSemanticAnalyzer`）がルビのネスト違反を正常に検知・補正でき、テストでアサートされていること。
+- [x] 収録されているプリセットの10作品（「こころ」「故郷」「宮本武蔵 01〜08」）を検証用として、以下の横断的観点がすべてユニットテストでパスすること。
   - **メタデータ・表紙**: タイトル・著者名抽出、エスケープ済表紙HTML生成。
   - **記号ブロック除外**: 記号解説テキストのスキップ。
   - **見出しと目次**: 見出し記法が正しい `h` タグに変換され、TOCに正確な階層レベルで登録されていること。
   - **レイアウト装飾**: 字下げ、アライメント、太字・斜体・傍点がすべて正しいクラス属性とタグに変換されていること。
   - **パフォーマンス・堅牢性**: 全作品がクラッシュせずに高速にパースされること。
-- [ ] ビルドコマンド `make` が正常に終了し、Closure Compiler での型安全チェックおよびトランスパイルがパスすること。
-- [ ] 既存のすべてのテスト（ユニットテストおよび Playwright E2E テスト）が 100% 成功すること。
-- [ ] 本リファクタリングが [DSN-01](../docs/DSN-01-high_level_design.md) および [DSN-02](../docs/DSN-02-low_level_design.md) の設計仕様と完全に整合していること（必要に応じて LLD を更新）。
+- [x] ビルドコマンド `make` が正常に終了し、Closure Compiler での型安全チェックおよびトランスパイルがパスすること。
+- [x] 既存のすべてのテスト（ユニットテストおよび Playwright E2E テスト）が 100% 成功すること。
+- [x] 本リファクタリングが [DSN-01](../docs/DSN-01-high_level_design.md) および [DSN-02](../docs/DSN-02-low_level_design.md) の設計仕様と完全に整合していること（必要に応じて LLD を更新）。

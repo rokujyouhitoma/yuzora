@@ -2,7 +2,7 @@
 ID: 055
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] parser.js からトークナイザー、パーサー、意味解析器、評価器、および AST ノードへのクラス・ファイル分離 (ID: 055)
@@ -97,8 +97,8 @@ ID: 055
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] 解析ロジックが `AozoraTokenizer`、`AozoraParser`、`AozoraSemanticAnalyzer`、`AozoraEvaluator`、および `ASTNode` クラスへ正しくリファクタリングされ、ファイルが物理的に分離されていること。
-- [ ] AST ノードがオブジェクト指向的でかつ型安全なクラス群として設計・実装されていること。
-- [ ] 意味解析器（`AozoraSemanticAnalyzer`）がルビの不適切なネストなどの規則違反を正しく検証・警告・自動補正できること。また、そのための単体テストが記述されていること。
-- [ ] ビルドコマンド `make` が正常に終了し、Closure Compiler での型安全チェックおよびトランスパイルがパスすること。
-- [ ] 既存のすべてのテスト（ユニットテストおよび Playwright E2E テスト）が 100% 成功すること。
+- [x] 解析ロジックが `AozoraTokenizer`、`AozoraParser`、`AozoraSemanticAnalyzer`、`AozoraEvaluator`、および `ASTNode` クラスへ正しくリファクタリングされ、ファイルが物理的に分離されていること。
+- [x] AST ノードがオブジェクト指向的でかつ型安全なクラス群として設計・実装されていること.
+- [x] 意味解析器（`AozoraSemanticAnalyzer`）がルビの不適切なネストなどの規則違反を正しく検証・警告・自動補正できること。また、そのための単体テストが記述されていること。
+- [x] ビルドコマンド `make` が正常に終了し、Closure Compiler での型安全チェックおよびトランスパイルがパスすること。
+- [x] 既存のすべてのテスト（ユニットテストおよび Playwright E2E テスト）が 100% 成功すること。

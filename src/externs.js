@@ -575,8 +575,12 @@ YuzoraInterface.prototype.UpdateConfigCommand;
 /** @type {Function} */
 YuzoraInterface.prototype.SyncBookmarkCommand;
 YuzoraInterface.prototype.VerticalRenderer;
-/** @type {Function} */
 YuzoraInterface.prototype.ViewContext;
+YuzoraInterface.prototype.AozoraTokenizer;
+YuzoraInterface.prototype.AozoraParser;
+YuzoraInterface.prototype.AozoraSemanticAnalyzer;
+YuzoraInterface.prototype.AozoraEvaluator;
+YuzoraInterface.prototype.ASTNode;
 
 
 // YuzoraEvent Interface definition
@@ -774,3 +778,51 @@ RendererInterface.prototype.adjustPageBreaksForOverrun = function() {};
 RendererInterface.prototype.hasOverrunNearCurrentPage = function() {};
 /** @type {!Object} */
 RendererInterface.prototype.lastRepairMetrics;
+
+// AozoraTokenizerInterface
+/** @interface */
+function AozoraTokenizerInterface() {}
+/** @param {string} text */
+AozoraTokenizerInterface.prototype.tokenizeInline = function(text) {};
+
+// ASTNodeInterface
+/** @interface */
+function ASTNodeInterface() {}
+/** @type {string} */
+ASTNodeInterface.prototype.type;
+/** @type {string|undefined} */
+ASTNodeInterface.prototype.value;
+/** @type {string|undefined} */
+ASTNodeInterface.prototype.rt;
+/** @type {!Array<!ASTNodeInterface>|undefined} */
+ASTNodeInterface.prototype.children;
+
+// AozoraParserInterface
+/** @interface */
+function AozoraParserInterface() {}
+/** @param {!Array} tokens */
+AozoraParserInterface.prototype.parseTokensToAST = function(tokens) {};
+/** @param {string} text */
+AozoraParserInterface.prototype.parseAozoraText = function(text) {};
+/** @param {string} htmlString */
+AozoraParserInterface.prototype.parseAozoraHTML = function(htmlString) {};
+/** @param {string} line */
+AozoraParserInterface.prototype.formatAozoraMarkup = function(line) {};
+
+// AozoraSemanticAnalyzerInterface
+/** @interface */
+function AozoraSemanticAnalyzerInterface() {}
+/** @param {!ASTNodeInterface} astRoot */
+AozoraSemanticAnalyzerInterface.prototype.analyze = function(astRoot) {};
+
+// AozoraEvaluatorInterface
+/** @interface */
+function AozoraEvaluatorInterface() {}
+/** @param {!ASTNodeInterface} astRoot */
+AozoraEvaluatorInterface.prototype.evaluate = function(astRoot) {};
+/** @param {string} str */
+AozoraEvaluatorInterface.prototype.escapeHTML = function(str) {};
+/** @param {!Element} rootElement */
+AozoraEvaluatorInterface.prototype.sanitizeDOM = function(rootElement) {};
+
+

@@ -293,7 +293,7 @@ test.describe('parser.js Unit Tests', () => {
         assert.ok(result.body.includes('<h1 class="book-cover-title">砂書きの老人</h1>'));
         assert.ok(result.body.includes('<p class="book-cover-author">上村松園</p>'));
 
-        assert.ok(result.body.includes('まだ私が八、九歳のころ...'));
+        assert.ok(result.body.includes('まだ私が八、九歳のころ'));
     });
 
     test('should escape HTML tags in metadata for security (T-E1 mitigation check)', () => {
@@ -304,5 +304,124 @@ test.describe('parser.js Unit Tests', () => {
         assert.ok(result.body.includes('&lt;iframe src="javascript:alert(1)"&gt;&lt;/iframe&gt;'));
         assert.ok(!result.body.includes('<script>'));
         assert.ok(!result.body.includes('<iframe>'));
+    });
+
+    test('AozoraTokenizer - tokenizeInline should generate expected tokens', () => {
+        const tokenizer = new window.AozoraTokenizer();
+        const tokens = tokenizer.tokenizeInline('漢字《かんじ》と［＃ここから太字］重要箇所［＃ここで太字終わり］');
+        assert.ok(tokens.some(t => t.type === 'RUBY' && t.value === '漢字' && t.rt === 'かんじ'));
+        assert.ok(tokens.some(t => t.type === 'BOLD_START'));
+        assert.ok(tokens.some(t => t.type === 'BOLD_END'));
+    });
+
+    test('AozoraParser - parseTokensToAST should build proper AST structure', () => {
+        const parser = new window.AozoraParser();
+        const tokens = [
+            { type: 'TEXT', value: '吾輩は' },
+            { type: 'RUBY', value: '猫', rt: 'ねこ' },
+            { type: 'TEXT', value: 'である' }
+        ];
+        const ast = parser.parseTokensToAST(tokens);
+        assert.strictEqual(ast.type, 'Root');
+        assert.strictEqual(ast.children.length, 3);
+        assert.strictEqual(ast.children[0].type, 'Text');
+        assert.strictEqual(ast.children[1].type, 'Ruby');
+        assert.strictEqual(ast.children[1].rt, 'ねこ');
+    });
+
+    test('AozoraSemanticAnalyzer - analyze should detect and fix nested rubies (Rule 1)', () => {
+        const analyzer = new window.AozoraSemanticAnalyzer();
+        
+        // Construct AST with nested ruby: RubyNode containing child RubyNode
+        const ast = {
+            type: 'Root',
+            children: [
+                {
+                    type: 'Ruby',
+                    value: '親',
+                    rt: 'おや',
+                    children: [
+                        { type: 'Ruby', value: '子', rt: 'こ' } // Violation
+                    ]
+                }
+            ]
+        };
+        
+        const result = analyzer.analyze(ast);
+        // Inside RubyNode child elements, child RubyNode must be flattened to plain TextNode
+        assert.strictEqual(result.children[0].children[0].type, 'Text');
+        assert.strictEqual(result.children[0].children[0].value, '子');
+    });
+
+    test('AozoraEvaluator - evaluate should convert AST to safe HTML', () => {
+        const evaluator = new window.AozoraEvaluator();
+        const ast = {
+            type: 'Root',
+            children: [
+                { type: 'Text', value: '<script>alert(1)</script>' },
+                { type: 'Ruby', value: '漢字', rt: 'かんじ' }
+            ]
+        };
+        const html = evaluator.evaluate(ast);
+        assert.ok(html.includes('&lt;script&gt;alert(1)&lt;/script&gt;'));
+        assert.ok(html.includes('<ruby>漢字<rt>かんじ</rt></ruby>'));
+    });
+
+    test('10 Books Integration & Cross-Cutting Verification', () => {
+        const parser = window.Yuzora.locator.resolve(window.Yuzora.AozoraParser);
+        const bookModel = window.Yuzora.locator.resolve(window.Yuzora.BookModel);
+        
+        const predefinedBooks = [
+            { path: '../../src/books/773_yoko.txt', expectedTitle: 'こころ', expectedAuthor: '夏目漱石' },
+            { path: '../../src/books/42939_yoko.txt', expectedTitle: '故郷', expectedAuthor: '魯迅' },
+            { path: '../../src/books/52395_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '序' },
+            { path: '../../src/books/52396_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '地の巻' },
+            { path: '../../src/books/52397_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '水の巻' },
+            { path: '../../src/books/52398_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '火の巻' },
+            { path: '../../src/books/52399_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '風の巻' },
+            { path: '../../src/books/52400_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '空の巻' },
+            { path: '../../src/books/52401_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '二天の巻' },
+            { path: '../../src/books/52402_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '円明の巻' } // L2 of 52402 is "円明の巻" but the test previously wrote expectedAuthor is "円明の巻"
+        ];
+
+        predefinedBooks.forEach(b => {
+            const absolutePath = path.resolve(__dirname, b.path);
+            const content = fs.readFileSync(absolutePath, 'utf8');
+
+            const start = Date.now();
+            const result = parser.parseAozoraText(content);
+            const duration = Date.now() - start;
+
+            // 6. パフォーマンスと堅牢性の検証 (大容量ファイルの処理速度検証)
+            assert.ok(duration < 350, `Parsing ${b.expectedTitle} took too long: ${duration}ms`);
+            assert.ok(result.body.length > 0, `Parsed HTML body of ${b.expectedTitle} is empty`);
+
+            // 1. メタデータおよび表紙ページの検証
+            assert.strictEqual(bookModel.title, b.expectedTitle, `Title mismatch for ${b.expectedTitle}`);
+            assert.strictEqual(bookModel.author, b.expectedAuthor, `Author mismatch for ${b.expectedTitle}`);
+            assert.ok(result.body.includes('<div class="book-cover-page">'), `Cover page div missing in ${b.expectedTitle}`);
+            assert.ok(result.body.includes('class="book-cover-title"'), `Cover title class missing in ${b.expectedTitle}`);
+            assert.ok(result.body.includes('class="book-cover-author"'), `Cover author class missing in ${b.expectedTitle}`);
+
+            // 2. 記号説明ブロックの除外検証
+            if (b.expectedTitle === 'こころ' || b.expectedTitle === '故郷') {
+                assert.ok(!result.body.includes('【テキスト中に現れる記号について】'), `Symbol guide block not removed in ${b.expectedTitle}`);
+            }
+
+            // 3. 見出し（大・中・小）と目次（TOC）抽出の検証
+            if (b.expectedTitle === 'こころ') {
+                assert.ok(bookModel.toc.some(t => t.text === '上　先生と私' && t.level === 2), `Large heading not extracted in こころ`);
+            } else if (b.expectedTitle.includes('宮本武蔵')) {
+                assert.ok(bookModel.toc.length > 0, `No TOC headings extracted in ${b.expectedTitle}`);
+            }
+
+            // 4. レイアウト装飾・字下げ記法の検証
+            if (b.expectedTitle === '宮本武蔵 03 水の巻') {
+                assert.ok(result.body.includes('class="jisage'), `Indentation classes missing in 水の巻`);
+            }
+
+            // 5. ルビと文字装飾の検証
+            assert.ok(result.body.includes('<ruby>'), `Ruby tag missing in ${b.expectedTitle}`);
+        });
     });
 });

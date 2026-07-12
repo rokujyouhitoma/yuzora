@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Refactored `parser.js` to separate concerns by extracting parsing logic into independent class files: `AozoraTokenizer` (`tokenizer.js`), `AozoraParser` (`parser.js`), `AozoraSemanticAnalyzer` (`semantic-analyzer.js`), `AozoraEvaluator` (`evaluator.js`), and `ASTNode` (`ast-nodes.js`), ensuring strict Single Responsibility Principle (ID: 066).
+- Added robust AST Semantic Analysis rules in `AozoraSemanticAnalyzer`: Rule 1 converts nested ruby node annotations to plain text to prevent malformed nested rendering (ID: 066).
+- Refined header skipping logic threshold within `AozoraParser` by moving index check into a dedicated method `detectHeaderEnd(line, i)` and relaxing it to `i > 2` when no divider line is present, ensuring translator/editor lines are safely inside headers and Kokyo (故郷)'s symbol guide is correctly stripped (ID: 066).
+- Unified parser calls in `yuzora.js` and `viewer.js` to resolve `AozoraParser` from the Service Locator instead of invoking global functions, achieving a cleaner dependency-injected architecture (ID: 066).
+- Updated JSDoc, TypeScript interfaces in `types.d.ts`, and Closure Compiler externs in `externs.js` to ensure property names are not obfuscated during ADVANCED_OPTIMIZATIONS minification (ID: 066).
+- Added modular unit tests for all new compiler classes and a cross-cutting verification loop over 10 books in `parser.test.js` to assert metadata extraction, guide stripping, TOC generation, layout styling, and parsing performance (under 350ms per file) (ID: 066).
+- Updated LLD document `DSN-02-low_level_design.md` section 2.1 to reflect the new class-based compiler pipeline architecture and semantic rule definitions (ID: 066).
 - Added `docs/phases/` directory as the phase management ledger ([MNG-10]) to track the status of each V-model development phase (PHASE-01 through PHASE-09), including `README.md` (phase table) and `template.md` (individual phase file template).
 - Added `phase-workflow` agent skill (`.agents/skills/phase-workflow/SKILL.md`) defining the standard procedure for creating, updating, and completing phase entries under `docs/phases/`.
 - Updated `docs/README.md` to document the new `docs/phases/` directory in the directory structure section.

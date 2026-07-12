@@ -169,7 +169,7 @@ class Yuzora {
      */
     // @ts-expect-error
     parseAozoraText(text) {
-        return parseAozoraText(text);
+        return /** @type {!AozoraParserInterface} */ (this.locator.resolve(AozoraParser)).parseAozoraText(text);
     }
 
     /**
@@ -180,7 +180,7 @@ class Yuzora {
      */
     // @ts-expect-error
     parseAozoraHTML(html) {
-        return parseAozoraHTML(html);
+        return /** @type {!AozoraParserInterface} */ (this.locator.resolve(AozoraParser)).parseAozoraHTML(html);
     }
 
     /**
@@ -191,7 +191,7 @@ class Yuzora {
      */
     // @ts-expect-error
     formatAozoraMarkup(markup) {
-        return formatAozoraMarkup(markup);
+        return /** @type {!AozoraParserInterface} */ (this.locator.resolve(AozoraParser)).formatAozoraMarkup(markup);
     }
 
     /**
@@ -303,6 +303,51 @@ class Yuzora {
     get ViewContext() {
         return ViewContext;
     }
+
+    /**
+     * Gets AozoraTokenizer constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get AozoraTokenizer() {
+        return AozoraTokenizer;
+    }
+
+    /**
+     * Gets AozoraParser constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get AozoraParser() {
+        return AozoraParser;
+    }
+
+    /**
+     * Gets AozoraSemanticAnalyzer constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get AozoraSemanticAnalyzer() {
+        return AozoraSemanticAnalyzer;
+    }
+
+    /**
+     * Gets AozoraEvaluator constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get AozoraEvaluator() {
+        return AozoraEvaluator;
+    }
+
+    /**
+     * Gets ASTNode constructor.
+     * @override
+     */
+    // @ts-expect-error
+    get ASTNode() {
+        return ASTNode;
+    }
 }
 
 /**
@@ -314,6 +359,11 @@ Yuzora.locator = /** @type {!LocatorInterface} */ (locator);
 // Instantiate and register yuzora immediately to prevent race conditions during DOMContentLoaded
 const yuzoraInstance = new Yuzora();
 Yuzora.locator.register(Yuzora, yuzoraInstance);
+Yuzora.locator.register(AozoraTokenizer, new AozoraTokenizer());
+Yuzora.locator.register(AozoraSemanticAnalyzer, new AozoraSemanticAnalyzer());
+Yuzora.locator.register(AozoraEvaluator, new AozoraEvaluator());
+Yuzora.locator.register(AozoraParser, new AozoraParser());
+
 window['yuzora'] = /** @type {*} */ (yuzoraInstance);
 window['Yuzora'] = /** @type {*} */ (yuzoraInstance);
 

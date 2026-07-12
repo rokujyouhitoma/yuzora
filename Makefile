@@ -13,6 +13,10 @@ JS_SRCS = src/js/frameworks/locator.js \
           src/js/modules/asset.js \
           src/js/modules/resource-director.js \
           src/js/modules/commands.js \
+          src/js/modules/ast-nodes.js \
+          src/js/modules/tokenizer.js \
+          src/js/modules/semantic-analyzer.js \
+          src/js/modules/evaluator.js \
           src/js/modules/parser.js \
           src/js/modules/diagnostics.js \
           src/js/modules/renderer.js \

@@ -201,6 +201,11 @@ interface YuzoraInterface {
     formatAozoraMarkup(markup: string): string;
     runLayoutDiagnosis(): Promise<string>;
     getCurrentTOC(): any[];
+    AozoraTokenizer: any;
+    AozoraParser: any;
+    AozoraSemanticAnalyzer: any;
+    AozoraEvaluator: any;
+    ASTNode: any;
     CommandManager: any;
     BookModel: any;
     ConfigModel: any;
@@ -234,4 +239,33 @@ interface RendererInterface {
 }
 
 declare var yuzora: YuzoraInterface;
+
+interface ASTNodeInterface {
+    type: string;
+    value?: string;
+    rt?: string;
+    children?: ASTNodeInterface[];
+}
+
+interface AozoraTokenizerInterface {
+    tokenizeInline(text: string): any[];
+}
+
+interface AozoraParserInterface {
+    parseTokensToAST(tokens: any[]): ASTNodeInterface;
+    parseAozoraText(text: string): { title: string; body: string };
+    parseAozoraHTML(htmlString: string): { title: string; body: string };
+    formatAozoraMarkup(line: string): string;
+}
+
+interface AozoraSemanticAnalyzerInterface {
+    analyze(astRoot: ASTNodeInterface): ASTNodeInterface;
+}
+
+interface AozoraEvaluatorInterface {
+    evaluate(astRoot: ASTNodeInterface): string;
+    escapeHTML(str: string): string;
+    sanitizeDOM(rootElement: any): void;
+}
+
 
