@@ -18,6 +18,7 @@
 * **`docs/backlogs/`**: 将来の機能要望、改善案などのアイデア。`create-backlog` および `polish-backlog` スキルで管理されます（`issues/` と同様の個別ファイル構造）。
 * **`docs/issues/`**: 現在アクティブな開発課題、バグ。`create-issue` および `polish-issue` スキルで管理されます。
 * **`docs/threat-modeling/`**: STRIDE に基づくセキュリティ脅威分析結果シートなどの成果物。
+* **`docs/phases/`**: V 字開発プロセスの各フェーズ（要求定義〜受入検証）の進行状況を追跡するフェーズ管理台帳。`phase-workflow` スキルで管理されます。
 
 > [!NOTE]
 > 各文書の具体的な役割、想定読者、およびすみ分け規則の詳細については、[[MNG-01] 文書管理・ドキュメント台帳](MNG-01-document_ledger.md) を参照してください。

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Added `docs/phases/` directory as the phase management ledger ([MNG-10]) to track the status of each V-model development phase (PHASE-01 through PHASE-09), including `README.md` (phase table) and `template.md` (individual phase file template).
+- Added `phase-workflow` agent skill (`.agents/skills/phase-workflow/SKILL.md`) defining the standard procedure for creating, updating, and completing phase entries under `docs/phases/`.
+- Updated `docs/README.md` to document the new `docs/phases/` directory in the directory structure section.
+- Updated `docs/MNG-01-document_ledger.md` to register the phase management ledger as [MNG-10].
+- Updated `docs/MNG-02-development_process.md` section 1.3 to add the `phase-workflow` skill to the document–skill correspondence table.
+
 - Added `<meta name="build-id">` and `<meta name="build-date">` placeholder tags to `index.html` for build-time substitution (ID: 061).
 - Added `BUILD_ID` (Git short hash) and `BUILD_DATE` (UTC ISO8601) variables and an `embed-build-info` Makefile target that rewrites the placeholder values in `index.html` on each build (ID: 061).
 - Extended `updateDebugMonitor()` in `commands.js` to read build metadata from `<meta>` tags and display `Build: <hash>  <date>` as the first line of the `#debug-monitor` panel in the debug modal (ID: 061).

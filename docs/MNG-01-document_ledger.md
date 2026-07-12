@@ -66,6 +66,7 @@
 | **[ADR-01] アーキテクチャ意思決定記録** | [adr/ADR-01-predefined-books-and-storage.md](adr/ADR-01-predefined-books-and-storage.md) | 重要な設計・技術的トレードオフに関する意思決定とその背景、結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 重要な技術選定、アーキテクチャ上の決定を下した時 |
 | **[ADR-02] 循環的複雑度の閾値決定記録** | [adr/ADR-02-cyclomatic-complexity-threshold.md](adr/ADR-02-cyclomatic-complexity-threshold.md) | サイクロマティック複雑度の閾値10の設定理由、およびそれに伴うコードリファクタリング結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 複雑度ルール・閾値の変更、リファクタリング適用時 |
 | **[ADR-03] CI品質ゲートとPagesデプロイ統合記録** | [adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md](adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md) | GitHub Actions CI の導入による自動検証と GitHub Pages デプロイ統合、E2Eテストのネットワーク遮断方針を記録する。 | 開発チーム、将来の開発者、AI Agent | CI/CD検証ルールや本番デプロイポリシーの変更時 |
+| **[MNG-10] フェーズ管理台帳** | [phases/README.md](phases/README.md) | V 字開発プロセスの各フェーズ（PHASE-01〜09）の進行ステータスを追跡・一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | フェーズの起票、ステータス更新（Pending → Active → Done）、または完了時 |
 
 
 ---

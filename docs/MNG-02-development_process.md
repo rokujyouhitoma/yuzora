@@ -33,6 +33,7 @@
 | **[MNG-09 バックログ管理プロセス定義書](MNG-09-backlog_process.md)**<br>**[backlogs/README.md](backlogs/README.md)** | `create-backlog`<br>`polish-backlog` | 将来のアイデア・要望を個別のバックログ要件ファイルとして起票・詳細化し、承認（Approved）まで引き上げる。 |
 | **[issues/README.md](issues/README.md)**<br>各 Issue ファイル | `create-issue`<br>`polish-issue` | バックログや要件からアクティブな Issue を起票し、設計書（HLD/LLD）の更新計画および成功基準（DoD）を確立する。 |
 | **[MNG-07 脅威モデリング定義書](MNG-07-threat_modeling.md)**<br>包括的脅威分析結果シート | `threat-modeling` | 基本設計（HLD）の策定段階および詳細精査において、STRIDE分析と情報アセット分類のセキュリティ要件を定義する。 |
+| **[MNG-10 フェーズ管理台帳](phases/README.md)**<br>各 Phase ファイル (`docs/phases/PHASE-*.md`) | `phase-workflow` | V 字開発プロセスの各フェーズ（PHASE-01〜09）の起票・ステータス管理・完了処理を行う。フェーズと Issue・ADR・コミットのトレーサビリティを維持する。 |
 | **実装コード** (`app.js`, `style.css`等) | `review-diff-code` | 実装フェーズ（Make）における差分コード（git diff）のセルフレビューと品質基準適合チェックを実行する。 |
 
 ### 1.4 ADR（Architecture Decision Record）の導入による意思決定の記録
