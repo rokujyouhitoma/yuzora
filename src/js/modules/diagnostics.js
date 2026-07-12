@@ -247,7 +247,12 @@ async function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage, on
         const childStyle = window.getComputedStyle(child);
         const fontInfo = `[font-size: ${childStyle.fontSize}, line-height: ${childStyle.lineHeight}, font-family: ${childStyle.fontFamily}]`;
 
-        const intersectsLeft = rect.left < boundaryLeft && rect.right > boundaryLeft;
+        // In RTL multi-column layout, a paragraph on page 1 may naturally extend past
+        // the viewport's left edge (boundaryLeft ≈ 0px) due to column wrapping.
+        // This is not a true overrun — the content flows into the next column on the same page.
+        // Exclude this false positive when we are on page 1 and the scroll position is at origin.
+        const isFirstPageLeftEdge = currentPage === 1 && Math.abs(viewContext.readerViewport.scrollLeft) < 1;
+        const intersectsLeft = rect.left < boundaryLeft && rect.right > boundaryLeft && !isFirstPageLeftEdge;
         if (intersectsLeft) {
             const boundaryCharInfo = findCharAtBoundary(child, boundaryLeft);
             if (boundaryCharInfo) {

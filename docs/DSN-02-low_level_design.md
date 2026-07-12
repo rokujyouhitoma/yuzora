@@ -150,6 +150,11 @@
   - サニタイズ後、`innerHTML` による再評価を避けるため、DOMノードを直接移行（`appendChild`）して描画を完了させます。
 - **レイアウト自己修復設計**:
   - `adjustPageBreaksForOverrun()` は、既存の `.dynamic-page-break` 要素を一旦クリアしたのち、最大30回の反復限界（収束ループ）の中で境界またぎを検出・改ページ挿入し、見切れ不具合を全自動で回避します。修復の完了時には統計メトリクスを収集し、ドメインイベント `system:layout-repaired` を発行します。
+- **診断ロジックにおける第1ページ左端境界の除外ルール**:
+  - RTL マルチカラムレイアウトでは、第1ページの段落が `viewport.left`（≈ 0px）より左に延伸することがあります（次のカラムへの自然な折り返し）。これはレイアウト上の正常な挙動であり、見切れ（overrun）ではありません。
+  - `diagnoseBoundaryOverlap()` の左境界交差判定（`intersectsLeft`）では、`currentPage === 1` かつ `|scrollLeft| < 1px` の場合に `isFirstPageLeftEdge = true` とし、左境界またぎとして計上しない（false positive 除外）。
+  - 一方、修復エンジン（`runOverrunCheckPass`）のページ境界は `k * clientWidth`（k=1, 2...）で計算されるため、第1ページ左端（X=0）はチェック対象外となる。診断の除外ルールはこの修復エンジンの動作範囲と整合した設計方針です。
+
 
 ### 1.3 依存注入・サービスロケーターへの登録クラス
 起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector`、`Router`、`ResourceDirector` および `VerticalRenderer` が Locator に登録されます。

@@ -71,6 +71,7 @@
 | **059** | Bug | High | Closed | `｜`なし自動ルビが非漢字文字の後ろに続く漢字に適用されない | AI Agent | [059-fix-ruby-not-applied-when-preceded-by-non-kanji.md](closed/059-fix-ruby-not-applied-when-preceded-by-non-kanji.md) |
 | **060** | Feature | High | Closed | ビルド時にキャッシュバスターを付与してブラウザキャッシュ問題を解消 | AI Agent | [060-cache-buster-on-build-to-fix-stale-js-cache.md](closed/060-cache-buster-on-build-to-fix-stale-js-cache.md) |
 | **061** | Enhancement | Medium | Closed | ビルドバージョン番号をデバッグメニューで確認できるようにする | AI Agent | [061-show-build-version-in-debug-menu.md](closed/061-show-build-version-in-debug-menu.md) |
+| **062** | Bug | High | In Progress | E2Eテスト「Verify layout boundaries have zero overruns」がCIで失敗する | AI Agent | [062-e2e-layout-overrun-ci-failure.md](062-e2e-layout-overrun-ci-failure.md) |
 
 
 
