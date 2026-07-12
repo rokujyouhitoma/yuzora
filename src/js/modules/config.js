@@ -80,6 +80,14 @@ class ViewContext {
         /** @type {?ConfigModelInterface} */
         this.config = null;
 
+        // Cache and snapping states for performance optimization
+        this.cachedScrollWidth = null;
+        this.cachedClientWidth = null;
+        this.progressAnimationFrameId = null;
+        this.isSnapping = false;
+        this.scrollStartTimestamp = null;
+        this.scrollEventCount = 0;
+
         // Drawer open/closed states
         this.settingsDrawerOpen = false;
         this.tocDrawerOpen = false;

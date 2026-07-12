@@ -475,6 +475,34 @@ Shift_JIS または UTF-8 から文字列へとデコードされたプレーン
 
 $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \text{maxScroll}) & (\text{RTL時}) \\ \text{bookmarkProgress} \times \text{maxScroll} & (\text{LTR時}) \end{cases}$$
 
+### 3.4 パフォーマンス最適化とトレーシングログ設計
+本アプリはクライアントサイドでのみ実行されるため、大規模な書籍データを扱う場合のレンダリング・スクロール性能とイベント駆動処理の安全な制御を確保するため、以下の設計を導入しています。
+
+#### 3.4.1 レイアウト値のキャッシュによるレイアウトスラッシング（Layout Thrashing）の回避
+スクロールイベントの発生ごとに `scrollWidth` や `clientWidth` などのレイアウトプロパティをDOMから動的に読み出し、直後に進行状況バー（`progressBar.style.width`）の更新等の書き込みを行うと、ブラウザの同期レイアウト再計算（レイアウトスラッシング）が多発します。
+これを回避するため、`ViewContext` に `cachedScrollWidth` および `cachedClientWidth` を保持し、以下のタイミングでのみキャッシュを無効化（`null` 設定）してDOMから再取得します。
+- 新規書籍の読み込み時（`displayBook()`）
+- ウィンドウリサイズ時（`handleResize()`）
+- 自己修復レイアウトエンジンの改ページ要素挿入/削除によるDOM構造変化時（`adjustPageBreaksForOverrun()`）
+
+これら以外の通常のスクロール操作中は、キャッシュされた静的サイズ情報を参照して進捗パーセンテージやページ数を算出し、DOMへのプロパティ書き込み処理は `requestAnimationFrame` (rAF) により次の描画フレームまで遅延させ、単一フレーム内の重複実行を `cancelAnimationFrame` で抑制（スロットリング）します。
+
+#### 3.4.2 多重スナップ（Magnetic Snap）の防止と完了検出
+`snapScrollPosition()` によるスムーズスナップスクロール（`scrollTo({ behavior: "smooth" })`）の最中も、ブラウザは連続してスクロールイベントを発生させます。何も制御しない場合、それらのイベントによってさらに `scrollTimeout` が再スケジュールされ、多重に `snapScrollPosition()` が衝突してカクつきが発生します。
+これを防ぐため、以下の排他状態制御を行います。
+1. 磁気スナップが発動し `scrollTo` を呼び出す際、`viewContext.isSnapping = true` に設定。
+2. スナップ中のスクロールイベントによって `onViewportScroll` 内でタイマーが再設定され続け、スナップスクロールのアニメーションが完了するとイベントの発火が止まります。
+3. 静止から 150ms 後に `handleScrollDebounced` -> `snapScrollPosition()` が再び呼び出されます。この時点でターゲット位置との誤差が閾値（5px）以内であればスナップ完了と判定し、`isSnapping` を `false` にリセットします。
+4. このスナップ完了の静止状態判定を契機として、`PAGE_CHANGED` イベントの発行、しおり保存（`saveBookmark`）、進行度更新を実行し、非同期の自己修復レイアウト判定（オーバーラン検証）をトリガーします。
+
+#### 3.4.3 パフォーマンス・トレーシングログ (`__DEBUG_PERFORMANCE__`)
+開発環境における処理速度測定とイベントループ追跡の透過性を確保するため、`window['__DEBUG_PERFORMANCE__']` グローバルデバッグフラグを設定可能にしています。有効時、以下の指標データがコンソールにリアルタイム出力されます。
+- **ページ移動にかかった処理時間 (ms)**: コマンド起動からスクロール完了までの時間。
+- **進行度更新処理のロジック実行時間 (ms)**
+- **スクロール中のイベント発生統計**: スクロール開始から静止するまでに検知したスクロールイベントの総数（`scrollEventCount`）、経過時間、および秒間イベント発生頻度（events/sec）。これによりイベントの重複過剰発生やループ現象を検知できます。
+- **レイアウト見切れ診断の実行時間 (ms)** と診断結果。
+- **自己修復レイアウト調整の実行時間 (ms)**、イテレーションパス回数、および挿入された自動改ページ数。
+
 ---
 
 ## 4. LocalStorage データ保存仕様 (Storage Schema)

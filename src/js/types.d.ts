@@ -49,6 +49,12 @@ interface ViewContextInterface {
     activeHeadingId: string | null;
     tocObserver: any;
     config: any;
+    cachedScrollWidth: number | null;
+    cachedClientWidth: number | null;
+    progressAnimationFrameId: number | null;
+    isSnapping: boolean;
+    scrollStartTimestamp: number | null;
+    scrollEventCount: number;
     app: HTMLElement | null;
     welcomeScreen: HTMLElement | null;
     readerScreen: HTMLElement | null;

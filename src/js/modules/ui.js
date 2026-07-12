@@ -226,6 +226,16 @@ function setupReaderEvents() {
     // Scroll Events on viewport
     let scrollTimeout;
     const onViewportScroll = () => {
+        if (viewContext.isReflowing) return;
+
+        if (window['__DEBUG_PERFORMANCE__']) {
+            if (viewContext.scrollStartTimestamp === null) {
+                viewContext.scrollStartTimestamp = performance.now();
+                viewContext.scrollEventCount = 0;
+            }
+            viewContext.scrollEventCount++;
+        }
+
         handleScroll();
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(handleScrollDebounced, 150);
@@ -400,13 +410,93 @@ function handleScrollDebounced() {
     snapScrollPosition();
 }
 
+/**
+ * Helper to get clientWidth from cache or read from DOM.
+ * @private
+ * @param {!ViewContextInterface} viewContext
+ * @return {number}
+ */
+function getOrCacheClientWidth(viewContext) {
+    let clientWidth = viewContext.cachedClientWidth;
+    if (clientWidth === null) {
+        clientWidth = viewContext.readerViewport.clientWidth;
+        viewContext.cachedClientWidth = clientWidth;
+    }
+    return clientWidth;
+}
+
+/**
+ * Triggers a programmatic scroll snap with smoothing.
+ * @private
+ * @param {!ViewContextInterface} viewContext
+ * @param {number} targetScrollLeft
+ * @param {number} pageNumber
+ */
+function triggerScrollSnap(viewContext, targetScrollLeft, pageNumber) {
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    viewContext.isSnapping = true;
+    if (window['__DEBUG_PERFORMANCE__']) {
+        console.log(`[Scroll Snap] Starting snap to page ${pageNumber} (target scrollLeft: ${targetScrollLeft})`);
+    }
+    viewContext.readerViewport.scrollTo({
+        left: configModel.direction === "rtl" ? -targetScrollLeft : targetScrollLeft,
+        behavior: "smooth"
+    });
+}
+
+/**
+ * Handles settling scroll position (either snapping settled or manual scroll stopped).
+ * @private
+ * @param {!ViewContextInterface} viewContext
+ * @param {number} targetScrollLeft
+ * @param {number} pageNumber
+ * @param {number} clientWidth
+ */
+function handleScrollSettle(viewContext, targetScrollLeft, pageNumber, clientWidth) {
+    const wasScrolling = viewContext.isSnapping || viewContext.scrollStartTimestamp !== null;
+
+    if (viewContext.isSnapping) {
+        viewContext.isSnapping = false;
+        if (window['__DEBUG_PERFORMANCE__']) {
+            console.log(`[Scroll Snap] Snap settled at page ${pageNumber}`);
+        }
+    }
+
+    if (wasScrolling) {
+        // Sync progress, update progress bar, save bookmark
+        const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
+
+        let scrollWidth = viewContext.cachedScrollWidth;
+        if (scrollWidth === null) {
+            scrollWidth = viewContext.readerViewport.scrollWidth;
+            viewContext.cachedScrollWidth = scrollWidth;
+        }
+        const maxScroll = scrollWidth - clientWidth;
+        bookmarkModel.bookmarkProgress = maxScroll > 0 ? targetScrollLeft / maxScroll : 0;
+        updateProgress();
+        saveBookmark();
+
+        // Publish PAGE_CHANGED when scroll settles to trigger layout verification
+        yuzora.publisher.publish(YuzoraEventType.PAGE_CHANGED, { page: pageNumber });
+    }
+
+    // Print scroll performance metrics if debug performance mode is active
+    if (window['__DEBUG_PERFORMANCE__'] && viewContext.scrollStartTimestamp !== null) {
+        const duration = performance.now() - viewContext.scrollStartTimestamp;
+        const count = viewContext.scrollEventCount;
+        const frequency = duration > 0 ? (count / (duration / 1000)).toFixed(1) : 0;
+        console.log(`[Scroll Performance] Scroll ended. Events: ${count}, Duration: ${duration.toFixed(1)}ms, Freq: ${frequency} events/sec`);
+        viewContext.scrollStartTimestamp = null;
+        viewContext.scrollEventCount = 0;
+    }
+}
+
 function snapScrollPosition() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     if (viewContext.isReflowing) return;
 
     const scrollLeft = Math.abs(viewContext.readerViewport.scrollLeft);
-    const clientWidth = viewContext.readerViewport.clientWidth;
+    const clientWidth = getOrCacheClientWidth(viewContext);
 
     // Calculate nearest page boundary offset index matching grid sizes
     const pageIndex = Math.round(scrollLeft / clientWidth);
@@ -414,10 +504,9 @@ function snapScrollPosition() {
 
     // Apply magnetic scrolling alignment snaps
     if (Math.abs(scrollLeft - targetScrollLeft) > 5) {
-        viewContext.readerViewport.scrollTo({
-            left: configModel.direction === "rtl" ? -targetScrollLeft : targetScrollLeft,
-            behavior: "smooth"
-        });
+        triggerScrollSnap(viewContext, targetScrollLeft, pageIndex + 1);
+    } else {
+        handleScrollSettle(viewContext, targetScrollLeft, pageIndex + 1, clientWidth);
     }
 }
 

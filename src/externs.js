@@ -120,6 +120,8 @@ Window.prototype.YuzoraEventType;
 Window.prototype.Publisher;
 /** @type {boolean} */
 Window.prototype.__DEBUG_EVENT__;
+/** @type {boolean} */
+Window.prototype.__DEBUG_PERFORMANCE__;
 
 /** @type {!YuzoraInterface} */
 var yuzora;
@@ -208,6 +210,18 @@ ViewContextInterface.prototype.tocObserver;
 ViewContextInterface.prototype.settingsDrawerOpen;
 /** @type {boolean} */
 ViewContextInterface.prototype.tocDrawerOpen;
+/** @type {?number} */
+ViewContextInterface.prototype.cachedScrollWidth;
+/** @type {?number} */
+ViewContextInterface.prototype.cachedClientWidth;
+/** @type {?number} */
+ViewContextInterface.prototype.progressAnimationFrameId;
+/** @type {boolean} */
+ViewContextInterface.prototype.isSnapping;
+/** @type {?number} */
+ViewContextInterface.prototype.scrollStartTimestamp;
+/** @type {number} */
+ViewContextInterface.prototype.scrollEventCount;
 
 /** @type {?HTMLElement} */
 ViewContextInterface.prototype.app;

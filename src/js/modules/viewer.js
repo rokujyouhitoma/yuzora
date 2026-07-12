@@ -75,6 +75,10 @@ async function displayBook() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
 
+    // Invalidate cached layout dimensions for the new book
+    viewContext.cachedScrollWidth = null;
+    viewContext.cachedClientWidth = null;
+
     let parsedHTML = '';
 
     const parser = /** @type {!AozoraParserInterface} */ (Yuzora.locator.resolve(AozoraParser));
@@ -149,10 +153,23 @@ function updateProgress() {
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     if (!viewContext.readerViewport) return;
 
+    const startTime = performance.now();
+
+    // Use cached values if available to avoid layout thrashing
+    let scrollWidth = viewContext.cachedScrollWidth;
+    let clientWidth = viewContext.cachedClientWidth;
+    if (scrollWidth === null || clientWidth === null) {
+        scrollWidth = viewContext.readerViewport.scrollWidth;
+        clientWidth = viewContext.readerViewport.clientWidth;
+        viewContext.cachedScrollWidth = scrollWidth;
+        viewContext.cachedClientWidth = clientWidth;
+    }
+
+    const sWidth = /** @type {number} */ (scrollWidth);
+    const cWidth = /** @type {number} */ (clientWidth);
+
     const scrollLeft = Math.abs(viewContext.readerViewport.scrollLeft);
-    const scrollWidth = viewContext.readerViewport.scrollWidth;
-    const clientWidth = viewContext.readerViewport.clientWidth;
-    const maxScroll = scrollWidth - clientWidth;
+    const maxScroll = sWidth - cWidth;
 
     if (maxScroll <= 0) {
         bookmarkModel.bookmarkProgress = 0;
@@ -162,13 +179,29 @@ function updateProgress() {
 
     // Progress bar percentage (0 to 100)
     const percentage = Math.min(100, Math.max(0, Math.round(bookmarkModel.bookmarkProgress * 100)));
-    if (viewContext.progressBar) viewContext.progressBar.style.width = `${percentage}%`;
-    if (viewContext.readingPercentage) viewContext.readingPercentage.textContent = `${percentage}%`;
 
-    // Calculate pages based on viewport clientWidth
-    const pageCount = Math.round(scrollWidth / clientWidth);
-    const currentPage = Math.min(pageCount, Math.max(1, Math.round(scrollLeft / clientWidth) + 1));
-    if (viewContext.readingIndex) viewContext.readingIndex.textContent = `${currentPage} / ${pageCount} ページ`;
+    // Cancel pending animation frame to throttle writes
+    if (viewContext.progressAnimationFrameId !== null) {
+        cancelAnimationFrame(viewContext.progressAnimationFrameId);
+    }
+
+    // Schedule DOM writes to avoid layout thrashing
+    viewContext.progressAnimationFrameId = requestAnimationFrame(() => {
+        viewContext.progressAnimationFrameId = null;
+
+        if (viewContext.progressBar) viewContext.progressBar.style.width = `${percentage}%`;
+        if (viewContext.readingPercentage) viewContext.readingPercentage.textContent = `${percentage}%`;
+
+        // Calculate pages based on viewport clientWidth
+        const pageCount = Math.round(sWidth / cWidth);
+        const currentPage = Math.min(pageCount, Math.max(1, Math.round(scrollLeft / cWidth) + 1));
+        if (viewContext.readingIndex) viewContext.readingIndex.textContent = `${currentPage} / ${pageCount} ページ`;
+    });
+
+    const durationMs = performance.now() - startTime;
+    if (window['__DEBUG_PERFORMANCE__'] && durationMs > 1) {
+        console.log(`[Progress Update] updateProgress logic took ${durationMs.toFixed(2)}ms (DOM writes deferred via rAF)`);
+    }
 }
 
 function restoreScrollPosition() {
@@ -193,10 +226,22 @@ async function saveBookmark() {
 
 function nextPage() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const clientWidth = viewContext.readerViewport.clientWidth;
+    if (!viewContext.readerViewport) return;
+
+    let clientWidth = viewContext.cachedClientWidth;
+    let scrollWidth = viewContext.cachedScrollWidth;
+    if (clientWidth === null || scrollWidth === null) {
+        clientWidth = viewContext.readerViewport.clientWidth;
+        scrollWidth = viewContext.readerViewport.scrollWidth;
+        viewContext.cachedClientWidth = clientWidth;
+        viewContext.cachedScrollWidth = scrollWidth;
+    }
+
+    const sWidth = /** @type {number} */ (scrollWidth);
+    const cWidth = /** @type {number} */ (clientWidth);
     const currentScroll = Math.abs(viewContext.readerViewport.scrollLeft);
-    const pageCount = Math.round(viewContext.readerViewport.scrollWidth / clientWidth);
-    const currentPage = Math.round(currentScroll / clientWidth) + 1;
+    const pageCount = Math.round(sWidth / cWidth);
+    const currentPage = Math.round(currentScroll / cWidth) + 1;
 
     if (currentPage < pageCount) {
         CommandManager.execute(new NavigatePageCommand(currentPage + 1));
@@ -205,9 +250,17 @@ function nextPage() {
 
 function prevPage() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const clientWidth = viewContext.readerViewport.clientWidth;
+    if (!viewContext.readerViewport) return;
+
+    let clientWidth = viewContext.cachedClientWidth;
+    if (clientWidth === null) {
+        clientWidth = viewContext.readerViewport.clientWidth;
+        viewContext.cachedClientWidth = clientWidth;
+    }
+
+    const cWidth = /** @type {number} */ (clientWidth);
     const currentScroll = Math.abs(viewContext.readerViewport.scrollLeft);
-    const currentPage = Math.round(currentScroll / clientWidth) + 1;
+    const currentPage = Math.round(currentScroll / cWidth) + 1;
 
     if (currentPage > 1) {
         CommandManager.execute(new NavigatePageCommand(currentPage - 1));
@@ -218,18 +271,35 @@ function scrollToPage(pageNumber) {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
-    const clientWidth = viewContext.readerViewport.clientWidth;
-    const targetScrollLeft = (pageNumber - 1) * clientWidth;
     
+    let clientWidth = viewContext.cachedClientWidth;
+    let scrollWidth = viewContext.cachedScrollWidth;
+    if (clientWidth === null || scrollWidth === null) {
+        clientWidth = viewContext.readerViewport.clientWidth;
+        scrollWidth = viewContext.readerViewport.scrollWidth;
+        viewContext.cachedClientWidth = clientWidth;
+        viewContext.cachedScrollWidth = scrollWidth;
+    }
+
+    const sWidth = /** @type {number} */ (scrollWidth);
+    const cWidth = /** @type {number} */ (clientWidth);
+    const targetScrollLeft = (pageNumber - 1) * cWidth;
+    
+    const startTime = performance.now();
     viewContext.isReflowing = true;
     renderer.scrollToPage(pageNumber).then(() => {
         viewContext.isReflowing = false;
+
+        const durationMs = performance.now() - startTime;
+        if (window['__DEBUG_PERFORMANCE__']) {
+            console.log(`[Page Navigation] Scroll to page ${pageNumber} completed in ${durationMs.toFixed(1)}ms`);
+        }
 
         // Publish PAGE_CHANGED event to trigger the asynchronous layout check flow
         yuzora.publisher.publish(YuzoraEventType.PAGE_CHANGED, { page: pageNumber });
 
         // Keep progress and bar updated in real-time
-        const maxScroll = viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth;
+        const maxScroll = sWidth - cWidth;
         bookmarkModel.bookmarkProgress = maxScroll > 0 ? targetScrollLeft / maxScroll : 0;
         updateProgress();
         saveBookmark();
@@ -243,6 +313,10 @@ function handleResize() {
     
     // Avoid double reflow trigger cycles
     if (viewContext.isReflowing) return;
+    
+    // Invalidate cached dimensions on resize
+    viewContext.cachedScrollWidth = null;
+    viewContext.cachedClientWidth = null;
     
     viewContext.isReflowing = true;
     const oldProgress = bookmarkModel.bookmarkProgress;

@@ -63,6 +63,7 @@
 | **053** | Feature | Medium | Promoted | ページ移動完了後のPAGE_CHANGEDイベント発火と自己修復連動 | [053-publish-page-changed-event.md](closed/053-publish-page-changed-event.md) |
 | **054** | Feature | Medium | Closed | 青空文庫ヘッダーフォーマットの解析と作品名・著者名の表示サポート | [054-aozora-header-parsing-support.md](closed/054-aozora-header-parsing-support.md) |
 | **055** | Refactor | Medium | Closed | parser.js からトークナイザー、パーサー、意味解析器、評価器、および AST ノードへのクラス・ファイル分離 | [055-separate-parser-evaluator-and-nodes.md](closed/055-separate-parser-evaluator-and-nodes.md) |
+| **056** | Refactor | High | Closed | ページ移動パフォーマンスの改善とトレーシングログの導入 | [056-page-transition-performance.md](closed/056-page-transition-performance.md) |
 
 
 

@@ -239,6 +239,14 @@ class VerticalRenderer {
             durationMs: parseFloat(durationMs.toFixed(1))
         };
 
+        // Clear cached layout dimensions as DOM modifications will affect them
+        this.viewContext.cachedScrollWidth = null;
+        this.viewContext.cachedClientWidth = null;
+
+        if (window['__DEBUG_PERFORMANCE__']) {
+            console.log(`[Layout Repair] adjustPageBreaksForOverrun completed in ${durationMs.toFixed(1)}ms. passesCount: ${passesCount}, insertedCount: ${insertedCount}`);
+        }
+
         const publisher = Yuzora.locator.resolve(Publisher);
         if (publisher) {
             publisher.publish(YuzoraEventType.LAYOUT_REPAIRED, this.lastRepairMetrics);
@@ -257,6 +265,8 @@ class VerticalRenderer {
     hasOverrunNearCurrentPage() {
         if (!this.viewContext.readerContent || !this.viewContext.readerViewport) return false;
 
+        const startTime = performance.now();
+
         const readerViewport = this.viewContext.readerViewport;
         const clientWidth = readerViewport.clientWidth;
         const scrollWidth = readerViewport.scrollWidth;
@@ -273,7 +283,14 @@ class VerticalRenderer {
             return !el.classList.contains('empty-line') && !el.classList.contains('page-break');
         });
 
-        return this.checkBoundariesForChildren(boundaries, children, absScroll, readerViewport.scrollLeft);
+        const hasOverrun = this.checkBoundariesForChildren(boundaries, children, absScroll, readerViewport.scrollLeft);
+        const durationMs = performance.now() - startTime;
+
+        if (window['__DEBUG_PERFORMANCE__']) {
+            console.log(`[Layout Check] hasOverrunNearCurrentPage completed in ${durationMs.toFixed(1)}ms. Result: ${hasOverrun}`);
+        }
+
+        return hasOverrun;
     }
 
     /**

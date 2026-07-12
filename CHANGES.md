@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Added layout cache (`cachedScrollWidth` and `cachedClientWidth`) to `ViewContext` to eliminate Layout Thrashing in `updateProgress`, nextPage, prevPage, and manual/magnetic scrolls, and updated DSN-02 (Backlog ID: 056).
+- Added requestAnimationFrame throttling and frame cancellation to progress updates inside `updateProgress` to separate DOM reads and DOM writes (Backlog ID: 056).
+- Added snapping scroll event cascade guard (`isSnapping` flag) and scroll-settle detection in `snapScrollPosition` to prevent overlapping snaps and trigger layout checking only when scroll settles (Backlog ID: 056).
+- Added global performance tracing flag `window.__DEBUG_PERFORMANCE__` to output detailed execution metrics (page navigation times, layout check/repair durations, scroll event counts and frequencies) to browser console, and updated DSN-02 (Backlog ID: 056).
+- Fixed pre-existing dev environment script loading crash by inserting the missing script tags for `ast-nodes.js`, `tokenizer.js`, `semantic-analyzer.js`, and `evaluator.js` into `index.html`.
+- Documentation: Created and polished backlog item [056-page-transition-performance.md](docs/backlogs/056-page-transition-performance.md) to define requirements for page transition performance tuning and tracing log integration (Backlog ID: 056).
 - Refactored `parser.js` to separate concerns by extracting parsing logic into independent class files: `AozoraTokenizer` (`tokenizer.js`), `AozoraParser` (`parser.js`), `AozoraSemanticAnalyzer` (`semantic-analyzer.js`), `AozoraEvaluator` (`evaluator.js`), and `ASTNode` (`ast-nodes.js`), ensuring strict Single Responsibility Principle (ID: 066).
 - Added robust AST Semantic Analysis rules in `AozoraSemanticAnalyzer`: Rule 1 converts nested ruby node annotations to plain text to prevent malformed nested rendering (ID: 066).
 - Refined header skipping logic threshold within `AozoraParser` by moving index check into a dedicated method `detectHeaderEnd(line, i)` and relaxing it to `i > 2` when no divider line is present, ensuring translator/editor lines are safely inside headers and Kokyo (故郷)'s symbol guide is correctly stripped (ID: 066).
