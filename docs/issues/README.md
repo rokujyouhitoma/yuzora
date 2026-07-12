@@ -73,6 +73,8 @@
 | **061** | Enhancement | Medium | Closed | ビルドバージョン番号をデバッグメニューで確認できるようにする | AI Agent | [061-show-build-version-in-debug-menu.md](closed/061-show-build-version-in-debug-menu.md) |
 | **062** | Bug | High | Closed | E2Eテスト「Verify layout boundaries have zero overruns」がCIで失敗する | AI Agent | [062-e2e-layout-overrun-ci-failure.md](closed/062-e2e-layout-overrun-ci-failure.md) |
 | **063** | Feature | High | Closed | ページ移動後にはみ出し検査を行い問題があればレイアウト自己修復する | AI Agent | [063-repair-on-page-navigate.md](closed/063-repair-on-page-navigate.md) |
+| **064** | Feature | Medium | Closed | ページ移動確定後のPAGE_CHANGEDイベント発火と自己修復連動 | AI Agent | [064-publish-page-changed-event.md](closed/064-publish-page-changed-event.md) |
+
 
 
 

@@ -30,7 +30,9 @@ const YuzoraEventType = {
     HISTORY_UPDATED: 'system:history-updated',
     DIAGNOSE_RUN: 'system:diagnose-run',
     DIAGNOSE_COMPLETED: 'system:diagnose-completed',
-    LAYOUT_REPAIRED: 'system:layout-repaired'
+    LAYOUT_REPAIRED: 'system:layout-repaired',
+    LAYOUT_CHECK_REQUESTED: 'system:layout-check-requested',
+    LAYOUT_REPAIR_REQUESTED: 'system:layout-repair-requested'
 };
 
 // Expose classes on window for test accessibility and property preservation

@@ -11,7 +11,11 @@ All notable changes to this project will be documented in this file.
 - Fixed false positive layout boundary overrun detection in `diagnoseBoundaryOverlap()` (`diagnostics.js`): in RTL multi-column layout, a paragraph on page 1 that naturally wraps past the viewport's left edge (X≈0px) was incorrectly reported as a boundary overrun. Added `isFirstPageLeftEdge` guard (`currentPage === 1 && |scrollLeft| < 1px`) to exclude this case, resolving the CI E2E test failure (ID: 062). Updated DSN-02 section 1.2.12 to document this exclusion rule.
 - Added `hasOverrunNearCurrentPage()` method to `VerticalRenderer` (`renderer.js`): a lightweight, read-only check that inspects the page boundaries flanking the current scroll position for character-level overruns without modifying the DOM (ID: 063).
 - Updated `scrollToPage()` in `viewer.js` to call `hasOverrunNearCurrentPage()` after each page navigation; when an overrun is detected, `adjustPageBreaksForOverrun()` is triggered automatically to self-repair the layout (ID: 063).
-- Updated `RendererInterface` in `types.d.ts` and `externs.js` to include `hasOverrunNearCurrentPage(): boolean` (ID: 063). Updated DSN-02 section 1.2.11 to document the new method.
+- Implemented `YuzoraEventType.PAGE_CHANGED` (`ui:page-changed`) event publication after page navigation settles, and unified layout validation/repair with event-driven architecture (EDA) (ID: 064).
+- Added `LAYOUT_CHECK_REQUESTED` (`system:layout-check-requested`) and `LAYOUT_REPAIR_REQUESTED` (`system:layout-repair-requested`) events. Integrated them as the common EDA flow for book load, window resize, and page change, ensuring the "check lightweight overrun first, repair only if needed" performance guard logic is uniformly enforced (ID: 064).
+- Refactored `VerticalRenderer.prototype.hasOverrunNearCurrentPage` in `renderer.js` to extract private helper methods, lowering cyclomatic complexity below the maximum limit of 10 and resolving the ESLint complexity error (ID: 064).
+- Updated DSN-02 section 1.4 to document new event schemas and sequence flows (ID: 064).
+
 
 - Added `<meta name="build-id">` and `<meta name="build-date">` placeholder tags to `index.html` for build-time substitution (ID: 061).
 - Added `BUILD_ID` (Git short hash) and `BUILD_DATE` (UTC ISO8601) variables and an `embed-build-info` Makefile target that rewrites the placeholder values in `index.html` on each build (ID: 061).

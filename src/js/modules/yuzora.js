@@ -138,6 +138,27 @@ class Yuzora {
                 viewContext.debugHistoryJSON.value = JSON.stringify(historyDetail.history, null, 2);
             }
         });
+
+        // Listen to page changed events to trigger layout validation
+        this.publisher.subscribe(YuzoraEventType.PAGE_CHANGED, () => {
+            this.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'current' });
+        });
+
+        // Listen to layout check requests
+        this.publisher.subscribe(YuzoraEventType.LAYOUT_CHECK_REQUESTED, (detail) => {
+            const checkDetail = /** @type {{scope: string}} */ (detail);
+            const renderer = /** @type {!RendererInterface} */ (this.locator.resolve(VerticalRenderer));
+
+            if (checkDetail && checkDetail.scope === 'current') {
+                // Lightweight read-only check flanking current page
+                if (renderer.hasOverrunNearCurrentPage()) {
+                    this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
+                }
+            } else {
+                // "all" scope (e.g. load book, resize) - trigger repair unconditionally
+                this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
+            }
+        });
     }
 
     /**

@@ -29,6 +29,13 @@ class VerticalRenderer {
             insertedCount: 0,
             durationMs: 0
         };
+
+        const publisher = /** @type {!PublisherInterface} */ (Yuzora.locator.resolve(Publisher));
+        if (publisher) {
+            publisher.subscribe(YuzoraEventType.LAYOUT_REPAIR_REQUESTED, () => {
+                this.adjustPageBreaksForOverrun();
+            });
+        }
     }
 
     /**
@@ -179,8 +186,11 @@ class VerticalRenderer {
                 // Enforce column content size width constraints
                 this.viewContext.readerContent.style.width = 'max-content';
                 
-                // Adjust page breaks for overrun on the recalculated layout
-                this.adjustPageBreaksForOverrun();
+                // Trigger event-driven layout check instead of direct repair
+                const publisher = /** @type {!PublisherInterface} */ (Yuzora.locator.resolve(Publisher));
+                if (publisher) {
+                    publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'all' });
+                }
 
                 // Restore progress coordinates on new dimensions
                 const maxScroll = Math.abs(this.viewContext.readerViewport.scrollWidth - this.viewContext.readerViewport.clientWidth);
@@ -247,7 +257,6 @@ class VerticalRenderer {
     hasOverrunNearCurrentPage() {
         if (!this.viewContext.readerContent || !this.viewContext.readerViewport) return false;
 
-        const readerContent = this.viewContext.readerContent;
         const readerViewport = this.viewContext.readerViewport;
         const clientWidth = readerViewport.clientWidth;
         const scrollWidth = readerViewport.scrollWidth;
@@ -256,32 +265,51 @@ class VerticalRenderer {
 
         const absScroll = Math.abs(readerViewport.scrollLeft);
         const currentPage = Math.round(absScroll / clientWidth) + 1;
+        const boundaries = this.getBoundariesToCheck(currentPage, pageCount, clientWidth);
+        if (boundaries.length === 0) return false;
 
-        // Check the two page boundaries that flank the current page.
-        // boundary at (currentPage-1)*clientWidth is the left edge of the current page;
-        // boundary at currentPage*clientWidth is the right edge (= left edge of next page).
-        const boundariesToCheck = [];
-        if (currentPage > 1) {
-            boundariesToCheck.push((currentPage - 1) * clientWidth);
-        }
-        if (currentPage < pageCount) {
-            boundariesToCheck.push(currentPage * clientWidth);
-        }
-        if (boundariesToCheck.length === 0) return false;
-
-        const children = Array.from(readerContent.children).filter(node => {
+        const children = Array.from(this.viewContext.readerContent.children).filter(node => {
             const el = /** @type {!Element} */ (node);
             return !el.classList.contains('empty-line') && !el.classList.contains('page-break');
         });
 
-        for (const boundaryX of boundariesToCheck) {
+        return this.checkBoundariesForChildren(boundaries, children, absScroll, readerViewport.scrollLeft);
+    }
+
+    /**
+     * @private
+     * @param {number} currentPage
+     * @param {number} pageCount
+     * @param {number} clientWidth
+     * @return {!Array<number>}
+     */
+    getBoundariesToCheck(currentPage, pageCount, clientWidth) {
+        const boundaries = [];
+        if (currentPage > 1) {
+            boundaries.push((currentPage - 1) * clientWidth);
+        }
+        if (currentPage < pageCount) {
+            boundaries.push(currentPage * clientWidth);
+        }
+        return boundaries;
+    }
+
+    /**
+     * @private
+     * @param {!Array<number>} boundaries
+     * @param {!Array<!Element>} children
+     * @param {number} absScroll
+     * @param {number} scrollLeft
+     * @return {boolean}
+     */
+    checkBoundariesForChildren(boundaries, children, absScroll, scrollLeft) {
+        for (const boundaryX of boundaries) {
             for (const child of children) {
                 const rect = child.getBoundingClientRect();
                 const docLeft = rect.left + absScroll;
                 const docRight = rect.right + absScroll;
-                // Bounding-box straddles the boundary: confirm at character level.
                 if (docLeft < boundaryX && docRight > boundaryX) {
-                    if (findCharAtDocumentBoundary(child, boundaryX, readerViewport.scrollLeft)) {
+                    if (findCharAtDocumentBoundary(child, boundaryX, scrollLeft)) {
                         return true;
                     }
                 }
