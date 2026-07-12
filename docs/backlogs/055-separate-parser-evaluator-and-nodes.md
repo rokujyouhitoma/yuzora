@@ -5,7 +5,7 @@ ID: 055
 ステータス: Draft
 ---
 
-# [REFACTOR] parser.js からトークナイザー、パーサー、評価器、および AST ノードへのクラス・ファイル分離 (ID: 055)
+# [REFACTOR] parser.js からトークナイザー、パーサー、意味解析器、評価器、および AST ノードへのクラス・ファイル分離 (ID: 055)
 
 ## 1. 概要 / Summary
 現在、`src/js/modules/parser.js` には、青空文庫テキストを解析して AST (抽象構文木) を生成する「トークナイザー/パーサー」、AST ノードを解釈して HTML を構築する「評価器 (Evaluator)」、および AST の構造を表現する「ノードクラス群 (Node)」が単一のファイル・グローバル関数群として混在して定義されています。
@@ -19,9 +19,11 @@ ID: 055
    - 青空文庫テキストの字句解析を担当し、トークン（Tokens）の配列を生成するクラス（例: `AozoraTokenizer`）を定義。
 2. **`parser.js` (パーサー/Parser)**:
    - 生成されたトークン配列から構文解析を行い、AST (抽象構文木) を構築するクラス（例: `AozoraParser`）を定義。
-3. **`evaluator.js` (評価器/Evaluator)**:
-   - 構築された AST を巡回・評価して HTML 文字列へ変換するクラス（例: `AozoraEvaluator`）を定義。
-4. **`ast-nodes.js` (AST ノードモデル/AST Nodes)**:
+3. **`semantic-analyzer.js` (意味解析器/Semantic Analyzer)**:
+   - 構築された AST を巡回・検査し、意味規則の検証（例: ルビの不正な入れ子の検出、構造的に不正な装飾のネストのチェックなど）を行い、必要に応じて警告出力や木構造の自動補正を実行するクラス（例: `AozoraSemanticAnalyzer`）を定義。
+4. **`evaluator.js` (評価器/Evaluator)**:
+   - 検証済みの AST を巡回・評価して HTML 文字列へ変換するクラス（例: `AozoraEvaluator`）を定義。
+5. **`ast-nodes.js` (AST ノードモデル/AST Nodes)**:
    - 各種構文要素に対応するノードクラス（`TextNode`, `RubyNode`, `BoldNode`, `ItalicNode`, `GroupNode` 等）を定義。必要に応じて共通の基底クラス `ASTNode` を作成。
 
-これにより、字句解析・構文解析・中間表現・コード生成というコンパイラパイプラインとしての設計をクリーンに整理し、各モジュールの保守性・拡張性を向上させます。
+これにより、字句解析・構文解析・意味解析・中間表現・コード生成というコンパイラパイプラインとしての設計をクリーンに整理し、各モジュールの保守性・拡張性を向上させます。
