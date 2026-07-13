@@ -146,4 +146,56 @@ test.describe('renderer.js Unit Tests', () => {
         assert.strictEqual(eventPayload.insertedCount, 0); // No overrun in this dummy text
         assert.strictEqual(eventPayload.passesCount, 1);
     });
+
+    test('DEBUG: Simulate large book load and page navigation to diagnose timeout/loop issues', () => {
+        const { locator } = window.yuzora;
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = locator.resolve(VerticalRendererClass);
+        const readerViewport = window.document.getElementById('reader-viewport');
+        const readerContent = window.document.getElementById('reader-content');
+        
+        const ViewContextClass = window.Yuzora.ViewContext;
+        const viewContext = locator.resolve(ViewContextClass);
+        viewContext.readerViewport = readerViewport;
+        viewContext.readerContent = readerContent;
+
+        // Mock viewport sizing
+        Object.defineProperties(readerViewport, {
+            clientWidth: { value: 800, configurable: true },
+            scrollWidth: { value: 8000, writable: true, configurable: true },
+            scrollLeft: { value: 0, writable: true, configurable: true }
+        });
+
+        // Set direction to RTL in config
+        const ConfigModelClass = window.Yuzora.ConfigModel;
+        const configModel = locator.resolve(ConfigModelClass);
+        configModel.direction = 'rtl';
+
+        // Add 50 paragraphs. Some are long.
+        let html = '';
+        for (let idx = 1; idx <= 50; idx++) {
+            if (idx === 15) {
+                html += `<p class="paragraph" style="width: 2500px;">段落 15 です。非常に長いテキストで、複数のページ境界を跨ぎます。${"あ".repeat(800)}終わり。</p>`;
+            } else {
+                html += `<p class="paragraph" style="width: 150px;">段落 ${idx} です。通常の長さです。${"う".repeat(20)}</p>`;
+            }
+        }
+        readerContent.innerHTML = html;
+
+        console.log("--- START SIMULATED INITIAL REPAIR ---");
+        renderer.adjustPageBreaksForOverrun();
+        console.log("Initial repair complete. Inserted count:", readerContent.querySelectorAll('.dynamic-page-break').length);
+
+        console.log("--- SIMULATING PAGE NAV: scroll to Page 2 ---");
+        readerViewport.scrollLeft = -800;
+        
+        window.yuzora.publisher.publish(window.YuzoraEventType.PAGE_CHANGED, { page: 2 });
+        
+        console.log("--- SIMULATING PAGE NAV: scroll to Page 3 ---");
+        readerViewport.scrollLeft = -1600;
+        window.yuzora.publisher.publish(window.YuzoraEventType.PAGE_CHANGED, { page: 3 });
+
+        console.log("--- END SIMULATED NAV DIAGNOSTIC ---");
+        assert.ok(true);
+    });
 });

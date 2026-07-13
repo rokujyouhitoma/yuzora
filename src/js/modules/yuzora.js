@@ -141,22 +141,31 @@ class Yuzora {
 
         // Listen to page changed events to trigger layout validation
         this.publisher.subscribe(YuzoraEventType.PAGE_CHANGED, () => {
-            this.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'current' });
+            const renderer = /** @type {!VerticalRenderer} */ (this.locator.resolve(VerticalRenderer));
+            if (renderer.isRepairing) return;
+            setTimeout(() => {
+                this.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'current' });
+            }, 0);
         });
 
         // Listen to layout check requests
         this.publisher.subscribe(YuzoraEventType.LAYOUT_CHECK_REQUESTED, (detail) => {
-            const checkDetail = /** @type {{scope: string}} */ (detail);
-            const renderer = /** @type {!RendererInterface} */ (this.locator.resolve(VerticalRenderer));
+            const renderer = /** @type {!VerticalRenderer} */ (this.locator.resolve(VerticalRenderer));
+            if (renderer.isRepairing) return;
 
+            const checkDetail = /** @type {{scope: string}} */ (detail);
             if (checkDetail && checkDetail.scope === 'current') {
                 // Lightweight read-only check flanking current page
                 if (renderer.hasOverrunNearCurrentPage()) {
-                    this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
+                    setTimeout(() => {
+                        this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
+                    }, 0);
                 }
             } else {
                 // "all" scope (e.g. load book, resize) - trigger repair unconditionally
-                this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
+                setTimeout(() => {
+                    this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
+                }, 0);
             }
         });
     }

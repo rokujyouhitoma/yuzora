@@ -131,14 +131,20 @@ async function displayBook() {
     // Wait a tick for rendering to complete before restoring scroll position
     viewContext.isReflowing = true;
     setTimeout(() => {
-        yuzora.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'all' });
-        restoreScrollPosition();
-        updateProgress();
-        
-        yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
-        setTimeout(() => {
+        try {
+            yuzora.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'all' });
+            restoreScrollPosition();
+            updateProgress();
+            
+            yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
+            setTimeout(() => {
+                viewContext.isReflowing = false;
+            }, 50);
+        } catch (err) {
+            document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
+            console.error("FATAL_ERROR: ", err);
             viewContext.isReflowing = false;
-        }, 50);
+        }
     }, 100);
 }
 

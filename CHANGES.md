@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Optimize the layout repair engine by replacing the recursive previousElementSibling DOM back-traversal inside `isPrecededByPageBreak()` with a 1-pass sequential O(N) child walk to avoid infinite rendering loop events (Issue ID: 070).
+- Guard layout checks and repairs in `yuzora.js` via an `isRepairing` flag on `VerticalRenderer` to prevent concurrent overlapping executions.
+- Enhance compiler safety by declaring the `isRepairing` property in JSDoc for `VerticalRenderer` and utilizing dot notation to allow compiler-safe ADVANCED_OPTIMIZATIONS minification without properties renaming issues.
+- Defuse layout execution cascades by wrapping `PAGE_CHANGED`, `LAYOUT_CHECK_REQUESTED`, and `LAYOUT_REPAIR_REQUESTED` event dispatches with a `setTimeout(..., 0)` macro-task deferral to ensure browser synchronous layout recalculation settles cleanly.
+- Ignore layout check and repair checks at or before the absolute book start boundaries (`boundaryX <= 0`) to prevent infinite page-break insertion loops on the title or first elements.
+- Replaced standard DOM TreeWalker text node collection with a secure recursive `collectTextNodes` DFS walk in `findCharAtDocumentBoundary` to guarantee correct text node retrieval and bypass potential JSDOM/Headless traversal freezes.
+- Declared binary search bounds helper `updateSearchBounds` with strict type annotations (`@return {{low: number, high: number}}`) to satisfy Closure Compiler type-checking rules.
 - Documentation: Closed backlog item 057 (`parser-evaluator-responsibility-separation`) to complete the separation of compiler concern (ID: 057).
 - Documentation: Created and polished backlog items 058 and 059, and initialized issues 070 and 071 for 1-pass layout repair optimization and absolute bounds caching (ID: 070, ID: 071).
 - Documentation: Updated LLD design document DSN-02 sections 1.2.11 and 1.2.12 to reflect the new 1-pass layout repair algorithm and paragraph absolute bounds cache mechanisms (ID: 070, ID: 071).

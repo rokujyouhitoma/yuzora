@@ -6,6 +6,7 @@
 /**
  * Concrete implementation of the rendering and layout calculation logic for vertical writing mode.
  * @implements {RendererInterface}
+ * @property {boolean} isRepairing
  */
 class VerticalRenderer {
     constructor() {
@@ -29,6 +30,9 @@ class VerticalRenderer {
             insertedCount: 0,
             durationMs: 0
         };
+
+        /** @type {boolean} */
+        this.isRepairing = false;
 
         const publisher = /** @type {!PublisherInterface} */ (Yuzora.locator.resolve(Publisher));
         if (publisher) {
@@ -209,47 +213,56 @@ class VerticalRenderer {
      */
     // @ts-expect-error
     adjustPageBreaksForOverrun() {
+        if (this.isRepairing) return;
         if (!this.viewContext.readerContent || !this.viewContext.readerViewport) return;
 
-        const readerContent = this.viewContext.readerContent;
-        const readerViewport = this.viewContext.readerViewport;
+        this.isRepairing = true;
+        try {
+            const readerContent = this.viewContext.readerContent;
+            const readerViewport = this.viewContext.readerViewport;
 
-        // 1. Remove all existing dynamic page break elements to start fresh
-        const existingBreaks = readerContent.querySelectorAll('.dynamic-page-break');
-        existingBreaks.forEach(el => el.remove());
+            // 1. Remove all existing dynamic page break elements to start fresh
+            const existingBreaks = readerContent.querySelectorAll('.dynamic-page-break');
+            existingBreaks.forEach(el => el.remove());
 
-        const startTime = performance.now();
-        let passesCount = 0;
+            const startTime = performance.now();
 
-        const maxIterations = 30;
-        for (let iteration = 0; iteration < maxIterations; iteration++) {
-            passesCount++;
-            if (!runOverrunCheckPass(readerContent, readerViewport)) {
-                break; // Convergence! No page breaks were inserted.
+            const childNodes = Array.from(readerContent.children).filter(node => {
+                const style = window.getComputedStyle(node);
+                return style.display !== 'none';
+            });
+
+            let i = 0;
+            while (i < childNodes.length) {
+                const child = childNodes[i];
+                checkAndRepairParagraph(child, readerViewport);
+                i++;
             }
-        }
 
-        const endTime = performance.now();
-        const insertedCount = readerContent.querySelectorAll('.dynamic-page-break').length;
-        const durationMs = endTime - startTime;
+            const endTime = performance.now();
+            const insertedCount = readerContent.querySelectorAll('.dynamic-page-break').length;
+            const durationMs = endTime - startTime;
 
-        this.lastRepairMetrics = {
-            passesCount: passesCount,
-            insertedCount: insertedCount,
-            durationMs: parseFloat(durationMs.toFixed(1))
-        };
+            this.lastRepairMetrics = {
+                passesCount: 1,
+                insertedCount: insertedCount,
+                durationMs: parseFloat(durationMs.toFixed(1))
+            };
 
-        // Clear cached layout dimensions as DOM modifications will affect them
-        this.viewContext.cachedScrollWidth = null;
-        this.viewContext.cachedClientWidth = null;
+            // Clear cached layout dimensions as DOM modifications will affect them
+            this.viewContext.cachedScrollWidth = null;
+            this.viewContext.cachedClientWidth = null;
 
-        if (window['__DEBUG_PERFORMANCE__']) {
-            console.log(`[Layout Repair] adjustPageBreaksForOverrun completed in ${durationMs.toFixed(1)}ms. passesCount: ${passesCount}, insertedCount: ${insertedCount}`);
-        }
+            if (window['__DEBUG_PERFORMANCE__']) {
+                console.log(`[Layout Repair] adjustPageBreaksForOverrun completed in ${durationMs.toFixed(1)}ms. passesCount: 1, insertedCount: ${insertedCount}`);
+            }
 
-        const publisher = Yuzora.locator.resolve(Publisher);
-        if (publisher) {
-            publisher.publish(YuzoraEventType.LAYOUT_REPAIRED, this.lastRepairMetrics);
+            const publisher = Yuzora.locator.resolve(Publisher);
+            if (publisher) {
+                publisher.publish(YuzoraEventType.LAYOUT_REPAIRED, this.lastRepairMetrics);
+            }
+        } finally {
+            this.isRepairing = false;
         }
     }
 
@@ -269,6 +282,7 @@ class VerticalRenderer {
 
         const readerViewport = this.viewContext.readerViewport;
         const clientWidth = readerViewport.clientWidth;
+        if (!clientWidth || clientWidth <= 0) return false;
         const scrollWidth = readerViewport.scrollWidth;
         const pageCount = Math.round(scrollWidth / clientWidth) || 0;
         if (pageCount <= 1) return false;
@@ -320,15 +334,56 @@ class VerticalRenderer {
      * @return {boolean}
      */
     checkBoundariesForChildren(boundaries, children, absScroll, scrollLeft) {
+        const parent = this.viewContext.readerContent;
+        if (!parent) return false;
+
+        const rawChildren = Array.from(parent.children);
+
         for (const boundaryX of boundaries) {
-            for (const child of children) {
-                const rect = child.getBoundingClientRect();
-                const docLeft = rect.left + absScroll;
-                const docRight = rect.right + absScroll;
-                if (docLeft < boundaryX && docRight > boundaryX) {
-                    if (findCharAtDocumentBoundary(child, boundaryX, scrollLeft)) {
-                        return true;
-                    }
+            if (boundaryX <= 0) {
+                continue;
+            }
+            if (this.checkSingleBoundary(boundaryX, rawChildren, absScroll, scrollLeft)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @private
+     * @param {number} boundaryX
+     * @param {!Array<!Element>} rawChildren
+     * @param {number} absScroll
+     * @param {number} scrollLeft
+     * @return {boolean}
+     */
+    checkSingleBoundary(boundaryX, rawChildren, absScroll, scrollLeft) {
+        let hasPageBreakSinceLastParagraph = true;
+
+        for (const child of rawChildren) {
+            if (child.classList.contains('page-break')) {
+                hasPageBreakSinceLastParagraph = true;
+                continue;
+            }
+            if (child.classList.contains('empty-line')) {
+                continue;
+            }
+
+            // Normal paragraph element
+            const isPreceded = hasPageBreakSinceLastParagraph;
+            hasPageBreakSinceLastParagraph = false;
+
+            if (isPreceded) {
+                continue;
+            }
+
+            const rect = child.getBoundingClientRect();
+            const docLeft = rect.left + absScroll;
+            const docRight = rect.right + absScroll;
+            if (docLeft < boundaryX && docRight > boundaryX) {
+                if (findCharAtDocumentBoundary(child, boundaryX, scrollLeft)) {
+                    return true;
                 }
             }
         }
@@ -336,65 +391,79 @@ class VerticalRenderer {
     }
 }
 
+
+
 /**
- * Runs a single pass of the overrun check and repairs the first detected overrun.
- * @param {!Element} readerContent
- * @param {!Element} readerViewport
- * @return {boolean} True if a page break was inserted in this pass.
+ * Pure helper function to walk text nodes of an element and find if any character slices
+ * a document-relative boundary coordinate.
+ * @param {!Element} element
+ * @param {number} boundaryX
+ * @param {number} currentScrollLeft
+ * @return {?Object}
  */
-function runOverrunCheckPass(readerContent, readerViewport) {
-    const clientWidth = readerViewport.clientWidth;
-    const scrollWidth = readerViewport.scrollWidth;
-    const pageCount = Math.round(scrollWidth / clientWidth) || 0;
-    if (pageCount <= 1) {
-        return false;
-    }
 
-    const childNodes = Array.from(readerContent.children).filter(node => {
-        const style = window.getComputedStyle(node);
-        return style.display !== 'none';
-    });
-
-    for (let k = 1; k < pageCount; k++) {
-        const boundaryX = k * clientWidth;
-
-        for (let i = 0; i < childNodes.length; i++) {
-            if (checkAndRepairParagraphOverrun(childNodes[i], boundaryX, readerViewport)) {
-                return true;
+/**
+ * Helper to check a single paragraph and insert page break if it overruns a page boundary.
+ * Returns true if a page break was inserted.
+ * @private
+ * @param {!Element} child
+ * @param {!Element} readerViewport
+ * @return {boolean}
+ */
+/**
+ * Safe utility to compute which page boundaries a paragraph absolute span crosses.
+ * @private
+ * @param {number} docLeft
+ * @param {number} docRight
+ * @param {number} clientWidth
+ * @return {!Array<number>}
+ */
+function getCrossedBoundaries(docLeft, docRight, clientWidth) {
+    const boundaries = [];
+    if (isFinite(docLeft) && isFinite(docRight) && docLeft < docRight) {
+        let boundary = Math.ceil(docLeft / clientWidth) * clientWidth;
+        let safetyCounter = 0;
+        while (boundary < docRight && safetyCounter < 50) {
+            if (boundary > 0) {
+                boundaries.push(boundary);
             }
+            boundary += clientWidth;
+            safetyCounter++;
         }
     }
-
-    return false;
+    return boundaries;
 }
 
-/**
- * Helper to check a single paragraph for boundary overrun and repair it by inserting a page break.
- * @param {!Element} child
- * @param {number} boundaryX
- * @param {!Element} readerViewport
- * @return {boolean} True if a page break was inserted.
- */
-function checkAndRepairParagraphOverrun(child, boundaryX, readerViewport) {
+function checkAndRepairParagraph(child, readerViewport) {
     if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
         return false;
     }
 
+    const clientWidth = readerViewport.clientWidth;
+    if (!clientWidth || clientWidth <= 0) {
+        return false;
+    }
+    const scrollLeft = readerViewport.scrollLeft;
+    const absScroll = Math.abs(scrollLeft);
+
     const rect = child.getBoundingClientRect();
-    const absScroll = Math.abs(readerViewport.scrollLeft);
     const docLeft = rect.left + absScroll;
     const docRight = rect.right + absScroll;
 
-    // Check if paragraph bounding box spans the boundary
-    if (docLeft < boundaryX && docRight > boundaryX) {
+    const boundaries = getCrossedBoundaries(docLeft, docRight, clientWidth);
+
+    for (const boundaryX of boundaries) {
+        if (boundaryX <= docLeft || boundaryX >= docRight) {
+            continue;
+        }
+
         // Check if the paragraph is already preceded by a page break to avoid infinite loop
-        const prev = child.previousElementSibling;
-        if (prev && prev.classList.contains('page-break')) {
+        if (isPrecededByPageBreak(child)) {
             return false;
         }
 
         // Check if there is a character crossing the boundary
-        const charInfo = findCharAtDocumentBoundary(child, boundaryX, readerViewport.scrollLeft);
+        const charInfo = findCharAtDocumentBoundary(child, boundaryX, scrollLeft);
         if (charInfo) {
             // Insert page break before this paragraph
             const pageBreak = document.createElement('div');
@@ -407,14 +476,6 @@ function checkAndRepairParagraphOverrun(child, boundaryX, readerViewport) {
     return false;
 }
 
-/**
- * Pure helper function to walk text nodes of an element and find if any character slices
- * a document-relative boundary coordinate.
- * @param {!Element} element
- * @param {number} boundaryX
- * @param {number} currentScrollLeft
- * @return {?Object}
- */
 /**
  * Checks if a text node's bounding box crosses the boundary.
  * @private
@@ -453,11 +514,13 @@ function searchCrossingCharInNode(node, boundaryX, absScroll, isRtl) {
         return null; // The entire text node is strictly to the left or right of the boundary
     }
 
-    // 2. Binary search to find crossing character
+    // 2. Binary search to find crossing character safely with maximum iterations guard
     let low = 0;
     let high = text.length - 1;
+    let binarySafetyCounter = 0;
 
-    while (low <= high) {
+    while (low <= high && binarySafetyCounter < 100) {
+        binarySafetyCounter++;
         const mid = Math.floor((low + high) / 2);
         const range = document.createRange();
         try {
@@ -480,33 +543,66 @@ function searchCrossingCharInNode(node, boundaryX, absScroll, isRtl) {
             };
         }
 
-        if (isRtl) {
-            // RTL: larger index -> smaller X (further left)
-            if (docLeft >= boundaryX - 0.5) {
-                low = mid + 1;
-            } else {
-                high = mid - 1;
-            }
-        } else {
-            // LTR: larger index -> larger X (further right)
-            if (docLeft >= boundaryX - 0.5) {
-                high = mid - 1;
-            } else {
-                low = mid + 1;
-            }
-        }
+        const nextBounds = updateSearchBounds(isRtl, docLeft, boundaryX, mid, low, high);
+        low = nextBounds.low;
+        high = nextBounds.high;
     }
 
     return null;
 }
 
+/**
+ * Safe helper to update binary search bounds based on text direction and boundary crossing.
+ * @private
+ * @param {boolean} isRtl
+ * @param {number} docLeft
+ * @param {number} boundaryX
+ * @param {number} mid
+ * @param {number} low
+ * @param {number} high
+ * @return {{low: number, high: number}} Contains updated low and high
+ */
+function updateSearchBounds(isRtl, docLeft, boundaryX, mid, low, high) {
+    if (isRtl) {
+        if (docLeft >= boundaryX - 0.5) {
+            return { low: mid + 1, high: high };
+        } else {
+            return { low: low, high: mid - 1 };
+        }
+    } else {
+        if (docLeft >= boundaryX - 0.5) {
+            return { low: low, high: mid - 1 };
+        } else {
+            return { low: mid + 1, high: high };
+        }
+    }
+}
+
+/**
+ * Recursively collect all text nodes under a parent element.
+ * @private
+ * @param {!Node} node
+ * @param {!Array<!Node>} outTextNodes
+ */
+function collectTextNodes(node, outTextNodes) {
+    if (node.nodeType === 3) {
+        if (node.textContent && node.textContent.trim().length > 0) {
+            outTextNodes.push(node);
+        }
+        return;
+    }
+    let child = node.firstChild;
+    let safetyCounter = 0;
+    while (child && safetyCounter < 1000) {
+        collectTextNodes(child, outTextNodes);
+        child = child.nextSibling;
+        safetyCounter++;
+    }
+}
+
 function findCharAtDocumentBoundary(element, boundaryX, currentScrollLeft) {
     const textNodes = [];
-    const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
-    let node;
-    while (node = walk.nextNode()) {
-        textNodes.push(node);
-    }
+    collectTextNodes(element, textNodes);
 
     const absScroll = Math.abs(currentScrollLeft);
     const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
@@ -520,4 +616,26 @@ function findCharAtDocumentBoundary(element, boundaryX, currentScrollLeft) {
     }
 
     return null;
+}
+
+/**
+ * Checks if a paragraph is preceded by a page break, skipping empty lines.
+ * @private
+ * @param {!Element} child
+ * @return {boolean}
+ */
+function isPrecededByPageBreak(child) {
+    let prev = child.previousElementSibling;
+    let steps = 0;
+    while (prev && steps < 10) {
+        if (prev.classList.contains('page-break')) {
+            return true;
+        }
+        if (!prev.classList.contains('empty-line')) {
+            break;
+        }
+        prev = prev.previousElementSibling;
+        steps++;
+    }
+    return false;
 }

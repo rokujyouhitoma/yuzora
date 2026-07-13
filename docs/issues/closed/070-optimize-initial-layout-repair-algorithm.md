@@ -2,10 +2,10 @@
 ID: 070
 種別: Refactor
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
-# [FEAT/ENH] 初期レイアウト修復アルゴリズムの1パス化によるロード処理の最適化 (ID: 070)
+# [FEAT/ENH] 初期レイアウト修復アルゴリズムの1パス化によるロード処理 of 最適化 (ID: 070)
 
 ## 1. 概要 / Summary
 大容量書籍（吉川英治「地の巻」など）のロード直後やリサイズ時に実行されるレイアウト修復処理（`adjustPageBreaksForOverrun`）が、最大30回ループの $O(MaxIterations \times pageCount \times N)$ ループ設計になっているため、ロード完了後にUIスレッドが数秒間ブロッキングし、操作不能になる問題を解消します。
@@ -21,10 +21,10 @@ ID: 070
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [src/js/modules/renderer.js](../../src/js/modules/renderer.js)
+- [x] [src/js/modules/renderer.js](../../src/js/modules/renderer.js)
   - `adjustPageBreaksForOverrun()` の実装を1パス走査に最適化
   - 不要となった `runOverrunCheckPass()` および `checkAndRepairParagraphOverrun()` を削除
-- [ ] [docs/DSN-02-low_level_design.md](../DSN-02-low_level_design.md)
+- [x] [docs/DSN-02-low_level_design.md](../DSN-02-low_level_design.md)
   - セクション 1.2.11 の「最大30回の反復限界（収束ループ）」に関する設計説明を、1パス走査アルゴリズムの説明へ更新
 
 ---
@@ -58,8 +58,8 @@ Target Branch: `feat/070-optimize-initial-layout-repair`
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] 「地の巻」ロード時の `adjustPageBreaksForOverrun` の処理時間が劇的に削減されること（目安として 200ms 以下）。
-- [ ] 書籍ロード時のUIスレッドのフリーズ（数秒のフリーズ）が完全に解消されること。
-- [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
-- [ ] 実装内容が [DSN-02-low_level_design.md](../docs/DSN-02-low_level_design.md) と完全に一致していること（デッドドキュメントがないこと）。
-- [ ] `make` による Closure Compiler のコンパイルが正常に完了すること。
+- [x] 「地の巻」ロード時の `adjustPageBreaksForOverrun` の処理時間が劇的に削減されること（目安として 200ms 以下）。
+- [x] 書籍ロード時のUIスレッドのフリーズ（数秒のフリーズ）が完全に解消されること。
+- [x] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] 実装内容が [DSN-02-low_level_design.md](../docs/DSN-02-low_level_design.md) と完全に一致していること（デッドドキュメントがないこと）。
+- [x] `make` による Closure Compiler のコンパイルが正常に完了すること。
