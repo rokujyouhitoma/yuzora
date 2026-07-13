@@ -251,6 +251,12 @@ interface ASTNodeInterface {
     value?: string;
     rt?: string;
     children?: ASTNodeInterface[];
+    title?: string;
+    author?: string;
+    level?: number;
+    headingId?: string;
+    jisageClass?: string;
+    alignmentClass?: string;
 }
 
 interface AozoraTokenizerInterface {

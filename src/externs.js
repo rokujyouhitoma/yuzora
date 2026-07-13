@@ -810,6 +810,18 @@ ASTNodeInterface.prototype.value;
 ASTNodeInterface.prototype.rt;
 /** @type {!Array<!ASTNodeInterface>|undefined} */
 ASTNodeInterface.prototype.children;
+/** @type {string|undefined} */
+ASTNodeInterface.prototype.title;
+/** @type {string|undefined} */
+ASTNodeInterface.prototype.author;
+/** @type {number|undefined} */
+ASTNodeInterface.prototype.level;
+/** @type {string|undefined} */
+ASTNodeInterface.prototype.headingId;
+/** @type {string|undefined} */
+ASTNodeInterface.prototype.jisageClass;
+/** @type {string|undefined} */
+ASTNodeInterface.prototype.alignmentClass;
 
 // AozoraParserInterface
 /** @interface */

@@ -78,7 +78,6 @@ class AozoraParser {
         let headingIndex = 0;
 
         let lines = text.split(/\r?\n/);
-        let parsedLines = [];
         let title = '';
         let author = '';
         
@@ -92,14 +91,11 @@ class AozoraParser {
         bookModel.title = title;
         bookModel.author = author;
 
+        const documentChildren = [];
+
         // Dynamic cover page generation
-        const escapedTitle = this.evaluator.escapeHTML(title);
-        const escapedAuthor = this.evaluator.escapeHTML(author);
-        parsedLines.push('<div class="book-cover-page">');
-        parsedLines.push(`    <h1 class="book-cover-title">${escapedTitle}</h1>`);
-        parsedLines.push(`    <p class="book-cover-author">${escapedAuthor}</p>`);
-        parsedLines.push('</div>');
-        parsedLines.push('PAGE_BREAK');
+        documentChildren.push(new CoverPageNode(title, author));
+        documentChildren.push(new PageBreakNode());
 
         let inHeader = true;
         let inSkipBlock = false;
@@ -132,28 +128,33 @@ class AozoraParser {
                 continue;
             }
 
+            if (line.trim().length === 0) {
+                documentChildren.push(new EmptyLineNode());
+                continue;
+            }
+
             const { jisageClass, line: lineAfterJisage } = this.parseJisage(line);
             const { alignmentClass, line: lineAfterAlignment } = this.parseAlignment(lineAfterJisage);
             const { isHeading, headingLevel, headingText, line: finalLineText } = this.parseHeading(lineAfterAlignment);
 
-            const parsedLineMarkup = this.formatAozoraMarkup(finalLineText);
+            const inlineAST = this.parseLineToAST(finalLineText);
 
-            const { html, headingIndex: nextHeadingIndex } = this.buildLineHTML(
-                parsedLineMarkup, 
-                jisageClass, 
-                alignmentClass, 
-                isHeading, 
-                headingLevel, 
-                headingText, 
-                headingIndex
-            );
-            
-            parsedLines.push(html);
-            headingIndex = nextHeadingIndex;
+            if (isHeading) {
+                const headingId = `toc-heading-${headingIndex}`;
+                const cleanText = headingText
+                    .replace(/[｜|]/g, '')
+                    .replace(/《[^》]+》/g, '')
+                    .trim();
+                bookModel.toc.push({ id: headingId, text: cleanText, level: headingLevel });
+                headingIndex++;
+                documentChildren.push(new HeadingNode(headingLevel, headingId, inlineAST.children || [], jisageClass, alignmentClass));
+            } else {
+                documentChildren.push(new ParagraphNode(jisageClass, alignmentClass, inlineAST.children || []));
+            }
         }
 
-        let bodyContent = parsedLines.join('\n');
-        bodyContent = bodyContent.replace(/PAGE_BREAK/g, '<div class="page-break"></div>');
+        const documentAST = new DocumentNode(documentChildren);
+        const bodyContent = this.evaluator.evaluate(documentAST);
 
         return {
             title: this.evaluator.escapeHTML(title) + (author ? ` (${this.evaluator.escapeHTML(author)})` : ''),
@@ -203,10 +204,20 @@ class AozoraParser {
      */
     // @ts-expect-error
     formatAozoraMarkup(line) {
+        const ast = this.parseLineToAST(line);
+        return this.evaluator.evaluate(ast);
+    }
+
+    /**
+     * @private
+     * @param {string} line
+     * @return {!ASTNodeInterface}
+     */
+    parseLineToAST(line) {
         const tokens = this.tokenizer.tokenizeInline(line);
         let ast = this.parseTokensToAST(tokens);
         ast = this.semanticAnalyzer.analyze(ast);
-        return this.evaluator.evaluate(ast);
+        return ast;
     }
 
     /**

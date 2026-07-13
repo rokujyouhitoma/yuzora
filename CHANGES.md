@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Refactored `AozoraParser` to completely eliminate raw HTML tag assembly strings, introducing block-level AST nodes (`DocumentNode`, `CoverPageNode`, `PageBreakNode`, `EmptyLineNode`, `HeadingNode`, and `ParagraphNode`) and consolidating HTML rendering inside `AozoraEvaluator.evaluate()` (Issue ID: 069).
 - Optimized page boundary overrun check in `findCharAtDocumentBoundary` by implementing a `selectNodeContents` bounding-box check to skip non-crossing text nodes and a binary search over character indices, reducing layout check execution times from 300ms+ to <1ms (Issue ID: 068).
 - Added layout cache (`cachedScrollWidth` and `cachedClientWidth`) to `ViewContext` to eliminate Layout Thrashing in `updateProgress`, nextPage, prevPage, and manual/magnetic scrolls, and updated DSN-02 (Backlog ID: 056).
 - Added requestAnimationFrame throttling and frame cancellation to progress updates inside `updateProgress` to separate DOM reads and DOM writes (Backlog ID: 056).

@@ -26,6 +26,38 @@ class AozoraEvaluator {
      */
     // eslint-disable-next-line complexity
     evaluateNode(node) {
+        if (node.type === 'Document') {
+            return (node.children || []).map(child => this.evaluateNode(child)).join('\n');
+        }
+        if (node.type === 'CoverPage') {
+            const escapedTitle = this.escapeHTML(node.title || '');
+            const escapedAuthor = this.escapeHTML(node.author || '');
+            return `<div class="book-cover-page">\n    <h1 class="book-cover-title">${escapedTitle}</h1>\n    <p class="book-cover-author">${escapedAuthor}</p>\n</div>`;
+        }
+        if (node.type === 'PageBreak') {
+            return '<div class="page-break"></div>';
+        }
+        if (node.type === 'EmptyLine') {
+            return '<p class="empty-line">&nbsp;</p>';
+        }
+        if (node.type === 'Heading') {
+            const level = node.level || 2;
+            const headingId = node.headingId || '';
+            let classes = [];
+            if (node.jisageClass) classes.push(node.jisageClass);
+            if (node.alignmentClass) classes.push(node.alignmentClass);
+            const classAttr = classes.length > 0 ? ` class="${classes.join(' ')}"` : '';
+            const evaluatedChildren = (node.children || []).map(child => this.evaluateNode(child)).join('');
+            return `<h${level} id="${headingId}"${classAttr}>${evaluatedChildren}</h${level}>`;
+        }
+        if (node.type === 'Paragraph') {
+            let classes = [];
+            if (node.jisageClass) classes.push(node.jisageClass);
+            if (node.alignmentClass) classes.push(node.alignmentClass);
+            const classAttr = classes.length > 0 ? ` class="${classes.join(' ')}"` : '';
+            const evaluatedChildren = (node.children || []).map(child => this.evaluateNode(child)).join('');
+            return `<p${classAttr}>${evaluatedChildren}</p>`;
+        }
         if (node.type === 'Root') {
             return (node.children || []).map(child => this.evaluateNode(child)).join('');
         }
