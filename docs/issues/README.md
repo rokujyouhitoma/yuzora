@@ -77,6 +77,7 @@
 | **065** | Feature | Medium | Closed | 青空文庫ヘッダーフォーマットの解析と作品名・著者名の表示サポート | AI Agent | [065-aozora-header-parsing-support.md](closed/065-aozora-header-parsing-support.md) |
 | **066** | Feature | Medium | Closed | parser.js からトークナイザー、パーサー、意味解析器、評価器、および AST ノードへのクラス・ファイル分離 | AI Agent | [066-separate-parser-evaluator-and-nodes.md](closed/066-separate-parser-evaluator-and-nodes.md) |
 | **067** | Refactor | High | Closed | ページ移動パフォーマンスの改善とトレーシングログの導入 | AI Agent | [067-page-transition-performance.md](closed/067-page-transition-performance.md) |
+| **068** | Bug | High | Closed | ページ境界のはみ出し文字検査処理のボトルネックによるページ遷移遅延 | AI Agent | [068-optimize-page-boundary-overrun-check.md](closed/068-optimize-page-boundary-overrun-check.md) |
 
 
 

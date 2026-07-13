@@ -415,6 +415,91 @@ function checkAndRepairParagraphOverrun(child, boundaryX, readerViewport) {
  * @param {number} currentScrollLeft
  * @return {?Object}
  */
+/**
+ * Checks if a text node's bounding box crosses the boundary.
+ * @private
+ * @param {!Node} node
+ * @param {number} boundaryX
+ * @param {number} absScroll
+ * @return {boolean}
+ */
+function isNodeCrossingBoundary(node, boundaryX, absScroll) {
+    const nodeRange = document.createRange();
+    try {
+        nodeRange.selectNodeContents(node);
+    } catch (e) {
+        return false;
+    }
+    const nodeRect = nodeRange.getBoundingClientRect();
+    const nodeLeft = nodeRect.left + absScroll;
+    const nodeRight = nodeRect.right + absScroll;
+    return nodeLeft < boundaryX && nodeRight > boundaryX;
+}
+
+/**
+ * Helper to perform binary search for a boundary-crossing character inside a text node.
+ * @private
+ * @param {!Node} node
+ * @param {number} boundaryX
+ * @param {number} absScroll
+ * @param {boolean} isRtl
+ * @return {?Object}
+ */
+function searchCrossingCharInNode(node, boundaryX, absScroll, isRtl) {
+    const text = node.textContent;
+    if (!text) return null;
+
+    if (!isNodeCrossingBoundary(node, boundaryX, absScroll)) {
+        return null; // The entire text node is strictly to the left or right of the boundary
+    }
+
+    // 2. Binary search to find crossing character
+    let low = 0;
+    let high = text.length - 1;
+
+    while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        const range = document.createRange();
+        try {
+            range.setStart(node, mid);
+            range.setEnd(node, mid + 1);
+        } catch (e) {
+            break;
+        }
+        const rect = range.getBoundingClientRect();
+        const docLeft = rect.left + absScroll;
+        const docRight = rect.right + absScroll;
+
+        if (docLeft < boundaryX - 0.5 && docRight > boundaryX + 0.5) {
+            const before = text.substring(Math.max(0, mid - 10), mid);
+            const after = text.substring(mid + 1, Math.min(text.length, mid + 11));
+            return {
+                char: text[mid],
+                rect: rect,
+                context: { before, after }
+            };
+        }
+
+        if (isRtl) {
+            // RTL: larger index -> smaller X (further left)
+            if (docLeft >= boundaryX - 0.5) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        } else {
+            // LTR: larger index -> larger X (further right)
+            if (docLeft >= boundaryX - 0.5) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+    }
+
+    return null;
+}
+
 function findCharAtDocumentBoundary(element, boundaryX, currentScrollLeft) {
     const textNodes = [];
     const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
@@ -424,30 +509,13 @@ function findCharAtDocumentBoundary(element, boundaryX, currentScrollLeft) {
     }
 
     const absScroll = Math.abs(currentScrollLeft);
+    const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+    const isRtl = configModel.direction === "rtl";
 
     for (const node of textNodes) {
-        const text = node.textContent;
-        for (let i = 0; i < text.length; i++) {
-            const range = document.createRange();
-            try {
-                range.setStart(node, i);
-                range.setEnd(node, i + 1);
-            } catch (e) {
-                continue;
-            }
-            const rect = range.getBoundingClientRect();
-            const docLeft = rect.left + absScroll;
-            const docRight = rect.right + absScroll;
-            
-            if (docLeft < boundaryX - 0.5 && docRight > boundaryX + 0.5) {
-                const before = text.substring(Math.max(0, i - 10), i);
-                const after = text.substring(i + 1, Math.min(text.length, i + 11));
-                return {
-                    char: text[i],
-                    rect: rect,
-                    context: { before, after }
-                };
-            }
+        const result = searchCrossingCharInNode(node, boundaryX, absScroll, isRtl);
+        if (result) {
+            return result;
         }
     }
 
