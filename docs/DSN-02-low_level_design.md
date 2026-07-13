@@ -144,14 +144,19 @@
 `RendererInterface` を実装し、縦書き表示およびマルチカラムレイアウトの描画・座標制御をカプセル化する具象クラスです。
 - **プロパティ**:
   - `lastRepairMetrics` (`!Object`): 直近のレイアウト自己修復処理で収集された統計メトリクス。以下の構造を持ちます。
-    - `passesCount` (`number`): 収束までに実行された補正パスの回数（最大30）。
+    - `passesCount` (`number`): 補正パスの回数（1パス化のため常に 1）。
     - `insertedCount` (`number`): 挿入された動的改ページの個数。
     - `durationMs` (`number`): 自己修復処理の所要ミリ秒。
+  - `paragraphBoundsCache` (`!Array<!Object>`): 各段落のドキュメント絶対座標（`docLeft`, `docRight`）を保持するメモリキャッシュ。リフロー発生を抑えてパフォーマンスを向上させます。
+- **メソッド**:
+  - `cacheParagraphBounds()`: 全段落の絶対座標（`docLeft = rect.left + absScroll`, `docRight = rect.right + absScroll`）を計算し、`paragraphBoundsCache` を構築します。
 - **セキュリティ要件 (Defense in Depth)**:
   - `render(htmlContent)` 実行時に、`DOMParser` を介して HTML をパースした上で、ホワイトリスト（タグ・属性制限）に基づくサニタイズ（`sanitizeDOM`）を強制します。
   - サニタイズ後、`innerHTML` による再評価を避けるため、DOMノードを直接移行（`appendChild`）して描画を完了させます。
 - **レイアウト自己修復設計**:
-  - `adjustPageBreaksForOverrun()` は、既存の `.dynamic-page-break` 要素を一旦クリアしたのち、最大30回の反復限界（収束ループ）の中で境界またぎを検出・改ページ挿入し、見切れ不具合を全自動で回避します。修復の完了時には統計メトリクスを収集し、ドメインイベント `system:layout-repaired` を発行します。
+  - `adjustPageBreaksForOverrun()` は、既存の `.dynamic-page-break` 要素を一旦クリアしたのち、段落ノードを前から順に1パス（1方向の走査）で走査し、境界またぎを検出して改ページを挿入します。改ページを挿入した段落は自動的に次のページに押し出されるため、再度その段落を評価しながら $O(N)$ の時間計算量で処理を完了します。修復の完了時には統計メトリクスを収集し、全段落の絶対座標（`docLeft`, `docRight`）を `paragraphBoundsCache` に構築した後、ドメインイベント `system:layout-repaired` を発行します。
+- **絶対座標キャッシュによる境界診断の高速化**:
+  - `hasOverrunNearCurrentPage()` は、スクロール動作中には変化しない各段落の絶対座標（`docLeft`, `docRight`）のキャッシュ（`paragraphBoundsCache`）を参照して現在ページの境界との交差判定を行います。これにより、ページめくり時の `getBoundingClientRect()` 呼び出しに伴う Layout Thrashing を完全に排除し、処理時間を 1ms 以下に短縮します。交差する段落が検出された場合のみ、ピンポイントで文字レベルのはみ出しチェックを実行します。
 - **診断ロジックにおける第1ページ左端境界の除外ルール**:
   - RTL マルチカラムレイアウトでは、第1ページの段落が `viewport.left`（≈ 0px）より左に延伸することがあります（次のカラムへの自然な折り返し）。これはレイアウト上の正常な挙動であり、見切れ（overrun）ではありません。
   - `diagnoseBoundaryOverlap()` の左境界交差判定（`intersectsLeft`）では、`currentPage === 1` かつ `|scrollLeft| < 1px` の場合に `isFirstPageLeftEdge = true` とし、左境界またぎとして計上しない（false positive 除外）。

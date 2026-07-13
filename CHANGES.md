@@ -3,6 +3,9 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Documentation: Closed backlog item 057 (`parser-evaluator-responsibility-separation`) to complete the separation of compiler concern (ID: 057).
+- Documentation: Created and polished backlog items 058 and 059, and initialized issues 070 and 071 for 1-pass layout repair optimization and absolute bounds caching (ID: 070, ID: 071).
+- Documentation: Updated LLD design document DSN-02 sections 1.2.11 and 1.2.12 to reflect the new 1-pass layout repair algorithm and paragraph absolute bounds cache mechanisms (ID: 070, ID: 071).
 - Refactored `AozoraParser` to completely eliminate raw HTML tag assembly strings, introducing block-level AST nodes (`DocumentNode`, `CoverPageNode`, `PageBreakNode`, `EmptyLineNode`, `HeadingNode`, and `ParagraphNode`) and consolidating HTML rendering inside `AozoraEvaluator.evaluate()` (Issue ID: 069).
 - Optimized page boundary overrun check in `findCharAtDocumentBoundary` by implementing a `selectNodeContents` bounding-box check to skip non-crossing text nodes and a binary search over character indices, reducing layout check execution times from 300ms+ to <1ms (Issue ID: 068).
 - Added layout cache (`cachedScrollWidth` and `cachedClientWidth`) to `ViewContext` to eliminate Layout Thrashing in `updateProgress`, nextPage, prevPage, and manual/magnetic scrolls, and updated DSN-02 (Backlog ID: 056).

@@ -2,7 +2,7 @@
 ID: 057
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] Parser からの HTML 組み立て処理の完全排除と Evaluator への責務集約 (ID: 057)

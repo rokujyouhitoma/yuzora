@@ -79,14 +79,8 @@
 | **067** | Refactor | High | Closed | ページ移動パフォーマンスの改善とトレーシングログの導入 | AI Agent | [067-page-transition-performance.md](closed/067-page-transition-performance.md) |
 | **068** | Bug | High | Closed | ページ境界のはみ出し文字検査処理のボトルネックによるページ遷移遅延 | AI Agent | [068-optimize-page-boundary-overrun-check.md](closed/068-optimize-page-boundary-overrun-check.md) |
 | **069** | Feature | High | Closed | Parser からの HTML 組み立て処理の完全排除と Evaluator への責務集約 | AI Agent | [069-parser-evaluator-responsibility-separation.md](closed/069-parser-evaluator-responsibility-separation.md) |
-
-
-
-
-
-
-
-
+| **070** | Refactor | High | In Progress | 初期レイアウト修復アルゴリズムの1パス化によるロード処理の最適化 | AI Agent | [070-optimize-initial-layout-repair-algorithm.md](070-optimize-initial-layout-repair-algorithm.md) |
+| **071** | Refactor | High | In Progress | 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 | AI Agent | [071-cache-paragraph-absolute-bounds-on-scroll.md](071-cache-paragraph-absolute-bounds-on-scroll.md) |
 
 ## 2. 状態（ステータス）定義
 
