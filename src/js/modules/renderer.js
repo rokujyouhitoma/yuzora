@@ -334,7 +334,11 @@ class VerticalRenderer {
 
         const children = Array.from(this.viewContext.readerContent.children).filter(node => {
             const el = /** @type {!Element} */ (node);
-            return !el.classList.contains('empty-line') && !el.classList.contains('page-break');
+            if (el.classList.contains('empty-line')) {
+                return false;
+            }
+            const style = window.getComputedStyle(el);
+            return style.display !== 'none';
         });
 
         const hasOverrun = this.checkBoundariesForChildren(boundaries, children, absScroll, readerViewport.scrollLeft);

@@ -264,4 +264,50 @@ test.describe('renderer.js Unit Tests', () => {
         // Assert cache is utilized
         assert.ok(renderer.paragraphBoundsCache.length > 0);
     });
+
+    test('VerticalRenderer - hasOverrunNearCurrentPage bypasses preceded elements (Issue 072)', () => {
+        const { locator } = window.yuzora;
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = locator.resolve(VerticalRendererClass);
+        const readerViewport = window.document.getElementById('reader-viewport');
+        const readerContent = window.document.getElementById('reader-content');
+
+        const ViewContextClass = window.Yuzora.ViewContext;
+        const viewContext = locator.resolve(ViewContextClass);
+        viewContext.readerViewport = readerViewport;
+        viewContext.readerContent = readerContent;
+
+        // Set dimensions
+        Object.defineProperties(readerViewport, {
+            clientWidth: { value: 800, configurable: true },
+            scrollWidth: { value: 2400, writable: true, configurable: true },
+            scrollLeft: { value: 0, writable: true, configurable: true }
+        });
+
+        // Add a mock page break and a paragraph preceded by it
+        readerContent.innerHTML = `
+            <div class="page-break dynamic-page-break"></div>
+            <p class="paragraph" style="width: 100px;">境界またぎテスト段落</p>
+        `;
+        
+        // Mock paragraph coordinates to cross boundary 800
+        const child = readerContent.children[1];
+        child.getBoundingClientRect = () => ({
+            left: 750,
+            right: 850,
+            top: 0,
+            bottom: 50,
+            width: 100,
+            height: 50
+        });
+
+        // Rebuild cache
+        renderer.cacheParagraphBounds();
+
+        // Normally, coordinates 750-850 cross boundary 800.
+        // However, since it is preceded by a page-break element, it MUST be skipped.
+        // Thus, hasOverrunNearCurrentPage should return false.
+        const hasOverrun = renderer.hasOverrunNearCurrentPage();
+        assert.strictEqual(hasOverrun, false);
+    });
 });
