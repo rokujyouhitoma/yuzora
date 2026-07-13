@@ -2,10 +2,10 @@
 ID: 071
 種別: Refactor
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
-# [FEAT/ENH] 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 (ID: 071)
+# [FEAT/ENH] 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定 of 高速化 (ID: 071)
 
 ## 1. 概要 / Summary
 ページめくり（遷移）完了時に実行されるはみ出し軽量チェック（`hasOverrunNearCurrentPage`）において、スクロールのたびに全段落の `getBoundingClientRect` を呼び出して境界との交差判定を行っているため、Layout Thrashing が発生しページ遷移や入力反応がもたつく問題を解決します。
@@ -21,16 +21,16 @@ ID: 071
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [src/js/modules/renderer.js](../../src/js/modules/renderer.js)
+- [x] [src/js/modules/renderer.js](../../src/js/modules/renderer.js)
   - `paragraphBoundsCache` プロパティの追加
   - `cacheParagraphBounds()` メソッドの追加
   - `adjustPageBreaksForOverrun()` 終了時のキャッシュ構築呼び出し
   - `checkBoundariesForChildren()` の判定ロジックでキャッシュを参照するようにリファクタリング
-- [ ] [src/js/types.d.ts](../../src/js/types.d.ts)
+- [x] [src/js/types.d.ts](../../src/js/types.d.ts)
   - `RendererInterface` や `VerticalRenderer` クラス定義、およびキャッシュ用オブジェクトの型定義の追加
-- [ ] [src/externs.js](../../src/externs.js)
+- [x] [src/externs.js](../../src/externs.js)
   - Closure Compiler 向けに新規追加プロパティ (`paragraphBoundsCache`, `docLeft`, `docRight`, `cacheParagraphBounds`) の extern 宣言を追加
-- [ ] [docs/DSN-02-low_level_design.md](../DSN-02-low_level_design.md)
+- [x] [docs/DSN-02-low_level_design.md](../DSN-02-low_level_design.md)
   - セクション 1.2.12 の軽量境界診断メソッド `hasOverrunNearCurrentPage()` の説明に、絶対座標キャッシュ機構の記述を追記
 
 ---
@@ -63,8 +63,8 @@ Target Branch: `feat/071-cache-paragraph-absolute-bounds`
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] ページ遷移完了後の `hasOverrunNearCurrentPage` の処理時間が 1ms 以下に削減されること。
-- [ ] 「地の巻」などの大容量書籍で、ページ遷移（めくり・スナップ）中のカクつきが解消され、滑らかに動作すること。
-- [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
-- [ ] 実装内容が [DSN-02-low_level_design.md](../docs/DSN-02-low_level_design.md) と完全に一致していること（デッドドキュメントがないこと）。
-- [ ] `make` による Closure Compiler のコンパイルが正常に完了すること。
+- [x] ページ遷移完了後の `hasOverrunNearCurrentPage` の処理時間が 1ms 以下に削減されること。
+- [x] 「地の巻」などの大容量書籍で、ページ遷移（めくり・スナップ）中のカクつきが解消され、滑らかに動作すること。
+- [x] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [x] 実装内容が [DSN-02-low_level_design.md](../docs/DSN-02-low_level_design.md) と完全に一致していること（デッドドキュメントがないこと）。
+- [x] `make` による Closure Compiler のコンパイルが正常に完了すること。

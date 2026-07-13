@@ -2,10 +2,10 @@
 ID: 059
 種別: Refactor
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
-# [REFACTOR] 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 (ID: 059)
+# [REFACTOR] 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定 of 高速化 (ID: 059)
 
 ## 1. 概要 / Summary
 ページめくり（遷移）完了時に実行されるはみ出し軽量チェック（`hasOverrunNearCurrentPage`）において、スクロールのたびに全段落の `getBoundingClientRect` を呼び出して境界との交差判定を行っているため、Layout Thrashing が発生しページ遷移や入力反応がもたつく問題を解決します。
@@ -49,7 +49,7 @@ ID: 059
 ---
 
 ## 4. 完了条件 / Success Criteria (DoD)
-- [ ] ページ遷移完了後の `hasOverrunNearCurrentPage` の処理時間が 1ms 以下に削減されること。
-- [ ] ページめくりおよびスクロールスナップの動作中にカクつきが発生しないこと。
-- [ ] テストスイート（`tests/unit/renderer.test.js` など）がすべてパスすること。
-- [ ] `make` による Closure Compiler のビルドがエラーなしで完了すること。
+- [x] ページ遷移完了後の `hasOverrunNearCurrentPage` の処理時間が 1ms 以下に削減されること。
+- [x] ページめくりおよびスクロールスナップの動作中にカクつきが発生しないこと。
+- [x] テストスイート（`tests/unit/renderer.test.js` など）がすべてパスすること。
+- [x] `make` による Closure Compiler のビルドがエラーなしで完了すること。

@@ -242,6 +242,8 @@ interface RendererInterface {
     adjustPageBreaksForOverrun(): void;
     hasOverrunNearCurrentPage(): boolean;
     lastRepairMetrics: any;
+    paragraphBoundsCache: any[];
+    cacheParagraphBounds(): void;
 }
 
 declare var yuzora: YuzoraInterface;

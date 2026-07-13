@@ -34,6 +34,9 @@ class VerticalRenderer {
         /** @type {boolean} */
         this.isRepairing = false;
 
+        /** @type {!Array<!Object>} */
+        this.paragraphBoundsCache = [];
+
         const publisher = /** @type {!PublisherInterface} */ (Yuzora.locator.resolve(Publisher));
         if (publisher) {
             publisher.subscribe(YuzoraEventType.LAYOUT_REPAIR_REQUESTED, () => {
@@ -50,6 +53,8 @@ class VerticalRenderer {
     // @ts-expect-error
     render(htmlContent) {
         if (!this.viewContext.readerContent) return;
+
+        this.paragraphBoundsCache = [];
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(htmlContent, 'text/html');
@@ -182,6 +187,8 @@ class VerticalRenderer {
     handleResize(progress) {
         if (!this.viewContext.readerContent || !this.viewContext.readerViewport) return Promise.resolve();
 
+        this.paragraphBoundsCache = [];
+
         // Temporarily reset columns layout width before recalculations to get accurate sizing
         this.viewContext.readerContent.style.width = 'auto';
         
@@ -257,12 +264,45 @@ class VerticalRenderer {
                 console.log(`[Layout Repair] adjustPageBreaksForOverrun completed in ${durationMs.toFixed(1)}ms. passesCount: 1, insertedCount: ${insertedCount}`);
             }
 
+            this.cacheParagraphBounds();
+
             const publisher = Yuzora.locator.resolve(Publisher);
             if (publisher) {
                 publisher.publish(YuzoraEventType.LAYOUT_REPAIRED, this.lastRepairMetrics);
             }
         } finally {
             this.isRepairing = false;
+        }
+    }
+
+    /**
+     * Computes the document-relative absolute coordinates of all relevant paragraph child nodes
+     * and stores them in the paragraphBoundsCache memory cache.
+     * @override
+     * @return {void}
+     */
+    // @ts-expect-error
+    cacheParagraphBounds() {
+        this.paragraphBoundsCache = [];
+        const parent = this.viewContext.readerContent;
+        const viewport = this.viewContext.readerViewport;
+        if (!parent || !viewport) return;
+
+        const rawChildren = Array.from(parent.children);
+        const absScroll = Math.abs(viewport.scrollLeft);
+
+        for (const child of rawChildren) {
+            if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
+                continue;
+            }
+            const rect = child.getBoundingClientRect();
+            const docLeft = rect.left + absScroll;
+            const docRight = rect.right + absScroll;
+            this.paragraphBoundsCache.push({
+                element: child,
+                docLeft: docLeft,
+                docRight: docRight
+            });
         }
     }
 
@@ -359,7 +399,12 @@ class VerticalRenderer {
      * @return {boolean}
      */
     checkSingleBoundary(boundaryX, rawChildren, absScroll, scrollLeft) {
+        if (!this.paragraphBoundsCache || this.paragraphBoundsCache.length === 0) {
+            this.cacheParagraphBounds();
+        }
+
         let hasPageBreakSinceLastParagraph = true;
+        let cacheIndex = 0;
 
         for (const child of rawChildren) {
             if (child.classList.contains('page-break')) {
@@ -375,19 +420,52 @@ class VerticalRenderer {
             hasPageBreakSinceLastParagraph = false;
 
             if (isPreceded) {
+                cacheIndex++;
                 continue;
             }
 
+            const res = this.checkParagraphOverlap(child, boundaryX, absScroll, scrollLeft, cacheIndex);
+            cacheIndex = res.nextIndex;
+            if (res.overrun) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @private
+     * @param {!Element} child
+     * @param {number} boundaryX
+     * @param {number} absScroll
+     * @param {number} scrollLeft
+     * @param {number} cacheIndex
+     * @return {{overrun: boolean, nextIndex: number}}
+     */
+    checkParagraphOverlap(child, boundaryX, absScroll, scrollLeft, cacheIndex) {
+        const cache = /** @type {{element: !Element, docLeft: number, docRight: number}|undefined} */ (this.paragraphBoundsCache[cacheIndex]);
+        const nextIndex = cacheIndex + 1;
+
+        if (cache && cache.element === child) {
+            const docLeft = cache.docLeft;
+            const docRight = cache.docRight;
+
+            if (docLeft < boundaryX && docRight > boundaryX) {
+                if (findCharAtDocumentBoundary(child, boundaryX, scrollLeft)) {
+                    return { overrun: true, nextIndex };
+                }
+            }
+        } else {
             const rect = child.getBoundingClientRect();
             const docLeft = rect.left + absScroll;
             const docRight = rect.right + absScroll;
             if (docLeft < boundaryX && docRight > boundaryX) {
                 if (findCharAtDocumentBoundary(child, boundaryX, scrollLeft)) {
-                    return true;
+                    return { overrun: true, nextIndex };
                 }
             }
         }
-        return false;
+        return { overrun: false, nextIndex };
     }
 }
 

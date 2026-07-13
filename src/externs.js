@@ -792,6 +792,11 @@ RendererInterface.prototype.adjustPageBreaksForOverrun = function() {};
 RendererInterface.prototype.hasOverrunNearCurrentPage = function() {};
 /** @type {!Object} */
 RendererInterface.prototype.lastRepairMetrics;
+/** @type {boolean} */
+RendererInterface.prototype.isRepairing;
+/** @type {!Array<!Object>} */
+RendererInterface.prototype.paragraphBoundsCache;
+RendererInterface.prototype.cacheParagraphBounds = function() {};
 
 // AozoraTokenizerInterface
 /** @interface */
@@ -851,4 +856,7 @@ AozoraEvaluatorInterface.prototype.escapeHTML = function(str) {};
 /** @param {!Element} rootElement */
 AozoraEvaluatorInterface.prototype.sanitizeDOM = function(rootElement) {};
 
-
+/** @type {number} */
+var docLeft;
+/** @type {number} */
+var docRight;

@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Implement absolute coordinates cache `paragraphBoundsCache` on `VerticalRenderer` to completely avoid Layout Thrashing and expensive DOM queries on page navigation (Issue ID: 071).
+- Declared interface signatures for `paragraphBoundsCache` and `cacheParagraphBounds()` in `types.d.ts` and `externs.js` to ensure renaming safety with ADVANCED_OPTIMIZATIONS minification.
+- Reconstructed bounds cache dynamically on layout repair completion and cleared cache upon renderer re-initialization (`render`) or resizing (`handleResize`).
+- Extracted complexity helper `checkParagraphOverlap` from `checkSingleBoundary` to strictly adhere to ESLint cyclomatic complexity limits.
 - Optimize the layout repair engine by replacing the recursive previousElementSibling DOM back-traversal inside `isPrecededByPageBreak()` with a 1-pass sequential O(N) child walk to avoid infinite rendering loop events (Issue ID: 070).
 - Guard layout checks and repairs in `yuzora.js` via an `isRepairing` flag on `VerticalRenderer` to prevent concurrent overlapping executions.
 - Enhance compiler safety by declaring the `isRepairing` property in JSDoc for `VerticalRenderer` and utilizing dot notation to allow compiler-safe ADVANCED_OPTIMIZATIONS minification without properties renaming issues.
