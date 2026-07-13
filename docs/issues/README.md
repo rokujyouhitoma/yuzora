@@ -82,6 +82,7 @@
 | **070** | Refactor | High | Closed | 初期レイアウト修復アルゴリズムの1パス化によるロード処理の最適化 | AI Agent | [070-optimize-initial-layout-repair-algorithm.md](closed/070-optimize-initial-layout-repair-algorithm.md) |
 | **071** | Refactor | High | Closed | 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 | AI Agent | [071-cache-paragraph-absolute-bounds-on-scroll.md](closed/071-cache-paragraph-absolute-bounds-on-scroll.md) |
 | **072** | Bug | High | Closed | スクロールでのページ遷移後にページの先頭位置が勝手に移動（カクつく）する問題 | AI Agent | [072-fix-layout-jumping-on-scroll.md](closed/072-fix-layout-jumping-on-scroll.md) |
+| **073** | Bug | High | Closed | 縦書きマルチカラムレイアウトにおいて改ページ（.page-break）が機能しない問題 | AI Agent | [073-fix-page-break-not-working.md](closed/073-fix-page-break-not-working.md) |
 
 ## 2. 状態（ステータス）定義
 

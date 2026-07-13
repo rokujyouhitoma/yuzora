@@ -126,10 +126,11 @@
 
 /* Page Break element inside columns */
 .page-break {
+    display: block;
     break-before: column;
     -webkit-column-break-before: always;
     page-break-before: always;
-    height: 0;
+    height: 100%;
     width: 0;
 }
 

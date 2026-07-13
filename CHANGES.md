@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Fixed column/page break failure in vertical layout by enforcing `display: block; height: 100%; width: 0;` on `.page-break` elements to prevent the browser layout engine from ignoring empty break blocks (Issue ID: 073).
 - Fixed scroll-transition jumping and stuttering by including `.page-break` elements in the children array scanned by `hasOverrunNearCurrentPage()` to ensure that the layout repair bypass guard functions correctly on page navigation (Issue ID: 072).
 - Implement absolute coordinates cache `paragraphBoundsCache` on `VerticalRenderer` to completely avoid Layout Thrashing and expensive DOM queries on page navigation (Issue ID: 071).
 - Declared interface signatures for `paragraphBoundsCache` and `cacheParagraphBounds()` in `types.d.ts` and `externs.js` to ensure renaming safety with ADVANCED_OPTIMIZATIONS minification.
