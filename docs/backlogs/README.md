@@ -65,7 +65,7 @@
 | **055** | Refactor | Medium | Closed | parser.js からトークナイザー、パーサー、意味解析器、評価器、および AST ノードへのクラス・ファイル分離 | [055-separate-parser-evaluator-and-nodes.md](closed/055-separate-parser-evaluator-and-nodes.md) |
 | **056** | Refactor | High | Closed | ページ移動パフォーマンスの改善とトレーシングログの導入 | [056-page-transition-performance.md](closed/056-page-transition-performance.md) |
 | **057** | Refactor | Medium | Closed | Parser からの HTML 組み立て処理の完全排除と Evaluator への責務集約 | [057-parser-evaluator-responsibility-separation.md](closed/057-parser-evaluator-responsibility-separation.md) |
-| **058** | Refactor | High | Approved | 初期レイアウト修復アルゴリズムの1パス化によるロード処理の最適化 | [058-optimize-initial-layout-repair-algorithm.md](058-optimize-initial-layout-repair-algorithm.md) |
+| **058** | Refactor | High | Closed | 初期レイアウト修復アルゴリズムの1パス化によるロード処理の最適化 | [058-optimize-initial-layout-repair-algorithm.md](closed/058-optimize-initial-layout-repair-algorithm.md) |
 | **059** | Refactor | High | Approved | 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 | [059-cache-paragraph-absolute-bounds-on-scroll.md](059-cache-paragraph-absolute-bounds-on-scroll.md) |
 
 ---

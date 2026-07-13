@@ -2,7 +2,7 @@
 ID: 058
 種別: Refactor
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] 初期レイアウト修復アルゴリズムの1パス化によるロード処理の最適化 (ID: 058)
@@ -45,7 +45,7 @@ ID: 058
 ---
 
 ## 4. 完了条件 / Success Criteria (DoD)
-- [ ] 「地の巻」ロード時の `adjustPageBreaksForOverrun` の処理時間が劇的に削減されること（目安として 200ms 以下）。
-- [ ] 処理中のUIスレッドの長時間ブロッキング（数秒のフリーズ）が解消されること。
-- [ ] 既存の単体テスト（`tests/unit/renderer.test.js` など）およびE2Eテストがすべてパスすること。
-- [ ] Closure Compiler によるコンパイルがエラーなしで完了すること。
+- [x] 「地の巻」ロード時の `adjustPageBreaksForOverrun` の処理時間が劇的に削減されること（目安として 200ms 以下）。
+- [x] 処理中のUIスレッドの長時間ブロッキング（数秒のフリーズ）が解消されること。
+- [x] 既存の単体テスト（`tests/unit/renderer.test.js` など）およびE2Eテストがすべてパスすること。
+- [x] Closure Compiler によるコンパイルがエラーなしで完了すること。
