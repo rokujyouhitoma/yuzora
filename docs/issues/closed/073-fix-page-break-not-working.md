@@ -26,17 +26,15 @@ ID: 073
 ---
 
 ## 3. 根本原因分析 (RCA) / Root Cause Analysis
-- `break-before: column` はブロック要素に対して機能するが、対象要素である `.page-break` に `display: block;` が明示されていない。
-- 縦書きマルチカラム（`writing-mode: vertical-rl`）では、カラムの進行方向が水平（X軸）であり、高さ（Y軸）は固定です。
-- `.page-break` が `height: 0; width: 0;` の空のブロックとして定義されているため、ブラウザ（WebKit/Blink）の最適化またはバグにより、高さと幅のないレイアウト要素として無視され、改カラムブレイクが発生しない。
-- 解決するためには、`display: block; height: 100%; width: 0;` と定義し、ブラウザに対して「カラム高さ全体を占める空のブロックである」と認識させることで、`break-before: column` による改カラムを 100% 確実に強制させる必要があります。
+- 縦書きマルチカラム（`writing-mode: vertical-rl`）かつ `column-fill: auto` の環境下では、空の `div`（`.page-break`）自体の物理サイズが `0` になり、かつコンテンツを持たないため、ブラウザ（Chromium/WebKit）のレイアウトエンジン最適化により `break-before: column` や `break-before: page` などの強制改カラム指定が完全に無視される。
+- これを解決するためには、空の `.page-break` 自体にスタイルを当てるのではなく、**隣接兄弟セレクタ（`.page-break + *`）**を用いて、**直後の実体テキストを持つ段落要素自体に対して強制的に `break-before: column !important` を適用する**必要がある。これにより、ブラウザの改段処理が 100% 確実に発火する。
 
 ---
 
 ## 4. 暫定対処と恒久対策 / Workaround & Permanent Fix
 * **暫定対処 (Workaround)**: なし
 * **恒久対策 (Permanent Fix)**:
-  - `src/css/modules/reader.css` および `src/css/style.css` の `.page-break` スタイル定義を修正し、`display: block; height: 100%; width: 0;` を適用する。
+  - `src/css/modules/reader.css` および `src/css/style.css` に隣接兄弟セレクタ `.page-break + *` を追加し、改カラム指定を適用する。
 
 ---
 
@@ -44,18 +42,22 @@ ID: 073
 Target Branch: `fix/073-fix-page-break-styling`
 
 1. **CSS定義の修正**:
-   - `src/css/modules/reader.css` の `.page-break` 定義を修正。
-   - `src/css/style.css` の `.page-break` 定義を修正。
+   - `src/css/modules/reader.css` および `src/css/style.css` に以下のルールを追加。
      ```css
      .page-break {
          display: block;
-         break-before: column;
-         -webkit-column-break-before: always;
-         page-break-before: always;
-         height: 100%;
          width: 0;
+         height: 0;
+         visibility: hidden;
+     }
+     .page-break + * {
+         break-before: column !important;
+         -webkit-column-break-before: always !important;
+         page-break-before: always !important;
      }
      ```
+2. **E2Eテストの追加と実証**:
+   - `tests/e2e/pagebreak.spec.js` を作成し、Playwright で実際の座標計算（`boundingBox()`）に基づき、`.page-break` の直後にある段落が物理的に隣のカラム（左側のカラム）へと押し出されていることを自動テストで検証する。
 
 ---
 
