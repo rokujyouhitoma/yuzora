@@ -696,16 +696,10 @@ a:hover {
 .page-break {
     display: block;
     width: 0;
-    height: 0;
+    height: 100%;
     visibility: hidden;
 }
 
-/* Force column break on the element immediately following a page break */
-.page-break + * {
-    break-before: column !important;
-    -webkit-column-break-before: always !important;
-    page-break-before: always !important;
-}
 
 /* Set page column width to match viewport height-based ratio */
 @media (min-width: 768px) {

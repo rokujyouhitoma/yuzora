@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Fixed column/page break failure in vertical RTL multi-column layout by introducing a dynamic Remaining Width Placeholder sizing mechanism in `renderer.js` to bypass Chromium's CSS fragmentation bugs, and updated tests in `pagebreak.spec.js` (Issue ID: 074).
 - Fixed column/page break (RTL multi-column layout) failing in Chromium/WebKit engines by introducing an adjacent sibling selector CSS rule (`.page-break + *`) to enforce `break-before: column !important` on the immediately following paragraph element, ensuring 100% reliable layout-engine fracturing of empty page-break blocks (Issue ID: 073).
 - Added comprehensive E2E test `tests/e2e/pagebreak.spec.js` using absolute bounding box coordinate tracking to prevent regressions in RTL vertical page break calculations (Issue ID: 073).
 - Fixed column/page break failure in vertical layout by enforcing `display: block; height: 100%; width: 0;` on `.page-break` elements to prevent the browser layout engine from ignoring empty break blocks (Issue ID: 073).

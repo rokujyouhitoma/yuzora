@@ -83,6 +83,9 @@
 | **071** | Refactor | High | Closed | 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 | AI Agent | [071-cache-paragraph-absolute-bounds-on-scroll.md](closed/071-cache-paragraph-absolute-bounds-on-scroll.md) |
 | **072** | Bug | High | Closed | スクロールでのページ遷移後にページの先頭位置が勝手に移動（カクつく）する問題 | AI Agent | [072-fix-layout-jumping-on-scroll.md](closed/072-fix-layout-jumping-on-scroll.md) |
 | **073** | Bug | High | Closed | 縦書きマルチカラムレイアウトにおいて改ページ（.page-break）が機能しない問題 | AI Agent | [073-fix-page-break-not-working.md](closed/073-fix-page-break-not-working.md) |
+| **074** | Bug | High | Closed | CSSの.page-breakでページがブレイクしていない問題 | AI Agent | [074-page-break-not-working.md](closed/074-page-break-not-working.md) |
+
+
 
 ## 2. 状態（ステータス）定義
 

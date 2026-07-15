@@ -276,6 +276,40 @@ class VerticalRenderer {
     }
 
     /**
+     * Calculates and sets the correct width for all .page-break elements 
+     * to fill the remaining width of their respective columns.
+     * @private
+     * @return {void}
+     */
+    applyPageBreakSizes() {
+        const params = resolveLayoutParameters(
+            this.viewContext.readerContent,
+            this.viewContext.readerViewport
+        );
+        if (!params) return;
+
+        const children = Array.from(params.parent.children);
+        
+        for (let i = 0; i < children.length; i++) {
+            const child = /** @type {!HTMLElement} */ (children[i]);
+            if (!child.classList.contains('page-break')) {
+                continue;
+            }
+
+            const prevElement = findPredecessorElement(children, i);
+            let remainingWidth = params.columnWidth;
+            if (prevElement) {
+                remainingWidth = calculateRemainingWidth(prevElement, params.parent, params.columnWidth, params.step);
+            }
+
+            child.style.width = `${remainingWidth}px`;
+            child.style.height = '100%';
+        }
+    }
+
+
+
+    /**
      * Computes the document-relative absolute coordinates of all relevant paragraph child nodes
      * and stores them in the paragraphBoundsCache memory cache.
      * @override
@@ -283,6 +317,7 @@ class VerticalRenderer {
      */
     // @ts-expect-error
     cacheParagraphBounds() {
+        this.applyPageBreakSizes();
         this.paragraphBoundsCache = [];
         const parent = this.viewContext.readerContent;
         const viewport = this.viewContext.readerViewport;
@@ -721,3 +756,80 @@ function isPrecededByPageBreak(child) {
     }
     return false;
 }
+
+/**
+ * Finds the predecessor non-empty visual element.
+ * @private
+ * @param {!Array<!Element>} children
+ * @param {number} startIndex
+ * @return {?Element}
+ */
+function findPredecessorElement(children, startIndex) {
+    for (let j = startIndex - 1; j >= 0; j--) {
+        const sibling = /** @type {!HTMLElement} */ (children[j]);
+        if (sibling.classList.contains('page-break') || sibling.classList.contains('empty-line')) {
+            continue;
+        }
+        const style = window.getComputedStyle(sibling);
+        if (style.display !== 'none') {
+            return sibling;
+        }
+    }
+    return null;
+}
+
+/**
+ * Calculates the remaining width of the current column.
+ * @private
+ * @param {!Element} prevElement
+ * @param {!Element} parent
+ * @param {number} columnWidth
+ * @param {number} step
+ * @return {number}
+ */
+function calculateRemainingWidth(prevElement, parent, columnWidth, step) {
+    const rect = prevElement.getBoundingClientRect();
+    const parentRight = parent.getBoundingClientRect().right;
+    const prevLeft = rect.left;
+    const relativeLeft = parentRight - prevLeft;
+
+    const columnIndex = Math.floor(relativeLeft / step);
+    const boundaryLeft = columnIndex * step + columnWidth;
+    
+    const remainingWidth = boundaryLeft - relativeLeft;
+    
+    if (remainingWidth <= 0 || remainingWidth > columnWidth) {
+        return columnWidth;
+    }
+    return remainingWidth;
+}
+
+/**
+ * Resolves layout parameter configuration safely.
+ * Returns null if parameters are invalid.
+ * @private
+ * @param {?Element} parent
+ * @param {?Element} viewport
+ * @return {?{parent: !Element, columnWidth: number, step: number}}
+ */
+function resolveLayoutParameters(parent, viewport) {
+    if (!parent || !viewport) return null;
+
+    const clientWidth = viewport.clientWidth;
+    if (!clientWidth || clientWidth <= 0) return null;
+
+    const computedStyle = window.getComputedStyle(parent);
+    const columnWidth = parseFloat(computedStyle.columnWidth);
+    if (!columnWidth || isNaN(columnWidth)) return null;
+
+    const columnGap = parseFloat(computedStyle.columnGap);
+    const step = columnWidth + (isNaN(columnGap) ? 0 : columnGap);
+
+    return {
+        parent: parent,
+        columnWidth: columnWidth,
+        step: step
+    };
+}
+
+

@@ -23,6 +23,7 @@ test.describe('Yuzora Page Break Tests', () => {
       // Clear bounds cache to force recalculation
       const renderer = window.yuzora.locator.resolve(window.Yuzora.VerticalRenderer);
       renderer.paragraphBoundsCache = [];
+      renderer.cacheParagraphBounds();
     });
 
     // 4. Wait a frame for layout rendering
@@ -76,4 +77,43 @@ test.describe('Yuzora Page Break Tests', () => {
     // So rectAfter.x should be significantly less than rectBefore.x.
     expect(rectAfter.x).toBeLessThan(rectBefore.x - 300);
   });
+
+  test('should successfully enforce column break on .page-break elements even with short text', async ({ page }) => {
+    // 1. Navigate to main page
+    await page.goto('http://localhost:8080/');
+
+    // 2. Load the predefined book
+    await page.click('.book-card:has-text("こころ")');
+    await page.waitForSelector('#reader-viewport');
+
+    // 3. Inject short HTML content with a page break
+    await page.evaluate(() => {
+      const content = document.getElementById('reader-content');
+      content.style.blockSize = 'max-content';
+      content.innerHTML = `
+        <p id="p-before-short">Before</p>
+        <div class="page-break" id="test-page-break-short"></div>
+        <p id="p-after-short">After</p>
+      `;
+      // Clear bounds cache to force recalculation
+      const renderer = window.yuzora.locator.resolve(window.Yuzora.VerticalRenderer);
+      renderer.paragraphBoundsCache = [];
+      renderer.cacheParagraphBounds();
+    });
+
+    // 4. Wait a frame for layout rendering
+    await page.waitForTimeout(500);
+
+    // 5. Measure dimensions
+    const rectBefore = await page.locator('#p-before-short').boundingBox();
+    const rectAfter = await page.locator('#p-after-short').boundingBox();
+
+    console.log(`[Short Text Test Debug] p-before x: ${rectBefore.x}, width: ${rectBefore.width}`);
+    console.log(`[Short Text Test Debug] p-after x: ${rectAfter.x}, width: ${rectAfter.width}`);
+
+    // In RTL, the successor element (#p-after-short) MUST be in the next column to the left.
+    // The step is 640px. So rectAfter.x should be significantly less than rectBefore.x.
+    expect(rectAfter.x).toBeLessThan(rectBefore.x - 400);
+  });
 });
+
