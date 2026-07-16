@@ -290,6 +290,16 @@ class VerticalRenderer {
 
         const children = Array.from(params.parent.children);
         
+        // Reset all page break sizes to avoid layout distortion on subsequent measurements (e.g. resize)
+        for (let i = 0; i < children.length; i++) {
+            const child = /** @type {!HTMLElement} */ (children[i]);
+            if (child.classList.contains('page-break')) {
+                child.style.width = '';
+                child.style.height = '';
+                child.style.removeProperty('margin-block-end');
+            }
+        }
+        
         for (let i = 0; i < children.length; i++) {
             const child = /** @type {!HTMLElement} */ (children[i]);
             if (!child.classList.contains('page-break')) {
