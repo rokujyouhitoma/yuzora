@@ -84,6 +84,8 @@
 | **072** | Bug | High | Closed | スクロールでのページ遷移後にページの先頭位置が勝手に移動（カクつく）する問題 | AI Agent | [072-fix-layout-jumping-on-scroll.md](closed/072-fix-layout-jumping-on-scroll.md) |
 | **073** | Bug | High | Closed | 縦書きマルチカラムレイアウトにおいて改ページ（.page-break）が機能しない問題 | AI Agent | [073-fix-page-break-not-working.md](closed/073-fix-page-break-not-working.md) |
 | **074** | Bug | High | Closed | CSSの.page-breakでページがブレイクしていない問題 | AI Agent | [074-page-break-not-working.md](closed/074-page-break-not-working.md) |
+| **075** | Bug | High | Closed | page-breakの幅計算誤りの修正 | AI Agent | [075-fix-page-break-width-calculation.md](closed/075-fix-page-break-width-calculation.md) |
+
 
 
 

@@ -684,7 +684,7 @@ $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \t
   2. 複数のマルチカラムコンテナを横並びに配置すると、ブラウザによる端数計算のズレが蓄積し、さらにスクロール限界（左端）でコンテナのパディングが切り捨てられるため、最後のページのテキストの左端（縦書きにおけるへん側）が見切れてしまいます。
 * **対策**: 
   1. 読書画面内の見出し（`<h1>`〜`<h5>`）に対し、改段・改ページを防止する CSS プロパティ `break-inside: avoid` およびその互換用プロパティを適用します。通常の段落（`<p>`）は、各ページ間で自然に分割されるようにします。
-  2. ドキュメント全体を単一のマルチカラムコンテナ（`.reader-content`）に格納し、改ページ（改段）位置には `<div class="page-break"></div>` を挿入します。Chromium等の縦書きマルチカラムにおける改ページCSS無視バグを回避するため、直前の要素の左端から次のカラム境界までの残り幅（`remainingWidth`）をJavaScript（`VerticalRenderer.applyPageBreakSizes()`）で動的に計算して `width` スタイルに適用し、物理的にカラムの残りスペースを埋めることで確実に改ページ（改カラム）制御を行います。
+  2. ドキュメント全体を単一のマルチカラムコンテナ（`.reader-content`）に格納し、改ページ（改段）位置には `<div class="page-break"></div>` を挿入します。Chromium等の縦書きマルチカラムにおける改ページCSS無視バグを回避するため、直前の要素の左端から次のカラム境界までの残り幅（`remainingWidth`）をJavaScript（`VerticalRenderer.applyPageBreakSizes()`）で動的に計算して `width` スタイルに適用し、物理的にカラムの残りスペースを埋め、さらに `margin-block-end` に `columnGap` を設定して後続の要素をカラムギャップの先から次のカラムへ安全に送り出すことで確実に改ページ（改カラム）制御を行います。
   3. スクロール限界でのパディング消失を防ぐ本流設計として、安全余白マージン（`margin-block-start/end: var(--reader-viewport-padding-x)`、モバイル: 24px、PC: 40px）をコンテナ自身に直接適用し、カラム幅（`column-width`）とカラム隙間（`column-gap`）を以下の数式に基づいて設定し、スクロール量と完全に同期させます。
      - モバイル時（画面幅767px以下）: `column-width: calc(100% - var(--reader-viewport-padding-x) * 2); column-gap: calc(var(--reader-viewport-padding-x) * 2);`
      - PC時（画面幅768px以上）: `column-width: calc(50% - var(--reader-viewport-padding-x) * 2); column-gap: calc(var(--reader-viewport-padding-x) * 2);`

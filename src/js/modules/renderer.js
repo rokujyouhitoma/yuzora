@@ -304,6 +304,7 @@ class VerticalRenderer {
 
             child.style.width = `${remainingWidth}px`;
             child.style.height = '100%';
+            child.style.setProperty('margin-block-end', `${params.columnGap}px`);
         }
     }
 
@@ -810,7 +811,7 @@ function calculateRemainingWidth(prevElement, parent, columnWidth, step) {
  * @private
  * @param {?Element} parent
  * @param {?Element} viewport
- * @return {?{parent: !Element, columnWidth: number, step: number}}
+ * @return {?{parent: !Element, columnWidth: number, columnGap: number, step: number}}
  */
 function resolveLayoutParameters(parent, viewport) {
     if (!parent || !viewport) return null;
@@ -823,11 +824,13 @@ function resolveLayoutParameters(parent, viewport) {
     if (!columnWidth || isNaN(columnWidth)) return null;
 
     const columnGap = parseFloat(computedStyle.columnGap);
-    const step = columnWidth + (isNaN(columnGap) ? 0 : columnGap);
+    const parsedGap = isNaN(columnGap) ? 0 : columnGap;
+    const step = columnWidth + parsedGap;
 
     return {
         parent: parent,
         columnWidth: columnWidth,
+        columnGap: parsedGap,
         step: step
     };
 }
