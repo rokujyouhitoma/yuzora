@@ -309,7 +309,25 @@ class VerticalRenderer {
             const prevElement = findPredecessorElement(children, i);
             let remainingWidth = params.columnWidth;
             if (prevElement) {
-                remainingWidth = calculateRemainingWidth(prevElement, params.parent, params.columnWidth, params.step);
+                const isRtl = this.configModel.direction === 'rtl';
+                const rect = prevElement.getBoundingClientRect();
+                const parentRect = params.parent.getBoundingClientRect();
+                const relativeLeft = isRtl 
+                    ? (parentRect.right - rect.left)
+                    : (rect.right - parentRect.left);
+
+                // Math.round clientWidth / step gives N (columns per page)
+                const clientWidth = this.viewContext.readerViewport.clientWidth;
+                const N = Math.max(1, Math.round(clientWidth / params.step));
+
+                const columnIndex = Math.floor(relativeLeft / params.step);
+                const nextPageColumnIndex = (Math.floor(columnIndex / N) + 1) * N;
+
+                remainingWidth = nextPageColumnIndex * params.step - relativeLeft - params.columnGap;
+            }
+
+            if (remainingWidth <= 0) {
+                remainingWidth = params.columnWidth;
             }
 
             child.style.width = `${remainingWidth}px`;

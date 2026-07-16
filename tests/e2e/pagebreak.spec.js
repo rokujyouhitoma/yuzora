@@ -76,6 +76,11 @@ test.describe('Yuzora Page Break Tests', () => {
     // The column gap is 80px, and column width is 560px (total step 640px).
     // So rectAfter.x should be significantly less than rectBefore.x.
     expect(rectAfter.x).toBeLessThan(rectBefore.x - 300);
+
+    // CRITICAL: Guarantee that subsequent elements are completely outside the visible viewport (Page 2 or later, left of the viewport)
+    const rectViewport = await page.locator('#reader-viewport').boundingBox();
+    console.log(`[Test Debug] viewport x: ${rectViewport.x}, width: ${rectViewport.width}`);
+    expect(rectAfter.x + rectAfter.width).toBeLessThan(rectViewport.x);
   });
 
   test('should successfully enforce column break on .page-break elements even with short text', async ({ page }) => {
@@ -114,6 +119,11 @@ test.describe('Yuzora Page Break Tests', () => {
     // In RTL, the successor element (#p-after-short) MUST be in the next column to the left.
     // The step is 640px. So rectAfter.x should be significantly less than rectBefore.x.
     expect(rectAfter.x).toBeLessThan(rectBefore.x - 400);
+
+    // CRITICAL: Guarantee that subsequent elements are completely outside the visible viewport (Page 2 or later, left of the viewport)
+    const rectViewport = await page.locator('#reader-viewport').boundingBox();
+    console.log(`[Short Text Test Debug] viewport x: ${rectViewport.x}, width: ${rectViewport.width}`);
+    expect(rectAfter.x + rectAfter.width).toBeLessThan(rectViewport.x);
   });
 
   test('should successfully adjust page break sizes on window resize / different viewport widths', async ({ page }) => {
@@ -186,6 +196,11 @@ test.describe('Yuzora Page Break Tests', () => {
       const diff = Math.abs(pAfterRight - expectedRight);
       console.log(`[Resize Test - ${width}px] pAfterRight: ${pAfterRight}, expectedRight: ${expectedRight}, diff: ${diff}`);
       expect(diff).toBeLessThan(3.0); // Allow 3px subpixel rounding error across layouts
+
+      // CRITICAL: Guarantee that subsequent elements are completely outside the visible viewport (Page 2 or later, left of the viewport)
+      const rectViewport = await page.locator('#reader-viewport').boundingBox();
+      console.log(`[Resize Test - ${width}px] viewport x: ${rectViewport.x}, width: ${rectViewport.width}`);
+      expect(pAfterRight).toBeLessThan(rectViewport.x);
     }
   });
 });
