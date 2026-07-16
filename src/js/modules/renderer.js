@@ -242,7 +242,10 @@ class VerticalRenderer {
             let i = 0;
             while (i < childNodes.length) {
                 const child = childNodes[i];
-                checkAndRepairParagraph(child, readerViewport);
+                const repaired = checkAndRepairParagraph(child, readerViewport);
+                if (repaired) {
+                    this.applyPageBreakSizes();
+                }
                 i++;
             }
 
@@ -265,6 +268,15 @@ class VerticalRenderer {
             }
 
             this.cacheParagraphBounds();
+
+            try {
+                const bookmarkModel = /** @type {?BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
+                if (bookmarkModel) {
+                    this.restoreScrollPosition(bookmarkModel.bookmarkProgress, false);
+                }
+            } catch (e) {
+                // Ignore in tests where BookmarkModel is not registered
+            }
 
             const publisher = Yuzora.locator.resolve(Publisher);
             if (publisher) {

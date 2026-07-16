@@ -86,6 +86,8 @@
 | **074** | Bug | High | Closed | CSSの.page-breakでページがブレイクしていない問題 | AI Agent | [074-page-break-not-working.md](closed/074-page-break-not-working.md) |
 | **075** | Bug | High | Closed | page-breakの幅計算誤りの修正 | AI Agent | [075-fix-page-break-width-calculation.md](closed/075-fix-page-break-width-calculation.md) |
 | **076** | Feature | High | Closed | CSSファイルのキャッシュバスター自動付与およびバージョンアップ | AI Agent | [076-css-cache-busting-and-version-upgrade.md](closed/076-css-cache-busting-and-version-upgrade.md) |
+| **077** | Bug | High | Closed | 自己修復レイアウトエンジンにおける動的改ページの動的サイズ計算適用 | AI Agent | [077-dynamic-page-break-sizing-on-repair.md](closed/077-dynamic-page-break-sizing-on-repair.md) |
+| **078** | Bug | High | Closed | ページ読込時の自動スクロール完了後にレイアウト自己修復によるスクロール位置のズレ（跳ね）が発生する問題 | AI Agent | [078-fix-scroll-jumping-on-load-repair.md](closed/078-fix-scroll-jumping-on-load-repair.md) |
 
 
 

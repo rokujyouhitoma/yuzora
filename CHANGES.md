@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Fixed scroll position jumping on book load by re-restoring the scroll position precisely using the settled scrollWidth dimensions after overrun layout repairs finish (ID: 078).
+- Fixed dynamic page-break sizing in self-correcting layout engine by applying page-break dimensions immediately inside the overrun repair loop, preventing redundant repairs and out-of-date position checks (ID: 077).
 - Added CSS cache-busting version query parameter automatically applied to stylesheet links in index.html during build, and upgraded the application version to 1.1.0 (ID: 076).
 - Fixed page-break width calculation in vertical multi-column layout by accounting for the number of columns visible per page, ensuring subsequent elements are completely pushed to the next page and hidden from the current visible viewport, and updated DSN-02 (ID: 075).
 - Fixed column/page break failure in vertical RTL multi-column layout by introducing a dynamic Remaining Width Placeholder sizing mechanism in `renderer.js` to bypass Chromium's CSS fragmentation bugs, and updated tests in `pagebreak.spec.js` (Issue ID: 074).
