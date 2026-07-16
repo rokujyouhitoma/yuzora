@@ -1,6 +1,6 @@
 {
   "name": "yuzora",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "青空文庫のテキストファイル（.txt）やXHTMLファイル（.html）をブラウザへドラッグ＆ドロップするだけで、美しい縦書き表示に変換し、快適に読書ができるクライアントサイド専用の静的Web SPAビューアーです。",
   "main": "index.js",
   "directories": {

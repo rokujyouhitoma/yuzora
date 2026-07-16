@@ -66,6 +66,7 @@ embed-build-info:
 	sed -i "s|content=\"BUILD_ID_PLACEHOLDER\"|content=\"$(BUILD_ID)\"|" index.html
 	sed -i "s|content=\"BUILD_DATE_PLACEHOLDER\"|content=\"$(BUILD_DATE)\"|" index.html
 	sed -i 's|src/js/\([^"]*\)\.js"|src/js/\1.js?v=$(BUILD_ID)"|g' index.html
+	sed -i 's|src/css/\([^"]*\)\.css"|src/css/\1.css?v=$(BUILD_ID)"|g' index.html
 
 clean:
 	rm -f $(JS_OUT) $(CSS_OUT)

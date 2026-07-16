@@ -2,7 +2,7 @@
 ID: 060
 種別: Enhancement
 優先度: Medium
-ステータス: Draft
+ステータス: Promoted
 ---
 
 # [ENHANCEMENT] CSSファイルのブラウザキャッシュ回避用バージョン付与 (ID: 060)
