@@ -16,8 +16,8 @@ ID: 062
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-*   [parser.js](file:///workspace/yuzora/src/js/modules/parser.js): `parseAozoraText` 内の `HeadingNode` 生成処理の直前において、直前の有効な AST ノードを評価して `PageBreakNode` を動的に挿入するロジックを実装します。
-*   [parser.test.js](file:///workspace/yuzora/tests/unit/parser.test.js): 自動改ページの挙動、見出し連続時の例外、空行介在時の例外、小見出しの除外などのバリエーションを網羅するテストケースを追加します。
+*   [parser.js](../../src/js/modules/parser.js): `parseAozoraText` 内の `HeadingNode` 生成処理の直前において、直前の有効な AST ノードを評価して `PageBreakNode` を動的に挿入するロジックを実装します。
+*   [parser.test.js](../../tests/unit/parser.test.js): 自動改ページの挙動、見出し連続時の例外、空行介在時の例外、小見出しの除外などのバリエーションを網羅するテストケースを追加します。
 
 ---
 

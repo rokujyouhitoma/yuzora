@@ -21,8 +21,8 @@ ID: 079
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [x] [parser.js](file:///workspace/yuzora/src/js/modules/parser.js)
-- [x] [parser.test.js](file:///workspace/yuzora/tests/unit/parser.test.js)
+- [x] [parser.js](../../../src/js/modules/parser.js)
+- [x] [parser.test.js](../../../tests/unit/parser.test.js)
 
 ---
 
