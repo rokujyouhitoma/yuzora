@@ -133,6 +133,11 @@ class AozoraParser {
                 continue;
             }
 
+            if (line.trim() === '［＃改ページ］') {
+                documentChildren.push(new PageBreakNode());
+                continue;
+            }
+
             const { jisageClass, line: lineAfterJisage } = this.parseJisage(line);
             const { alignmentClass, line: lineAfterAlignment } = this.parseAlignment(lineAfterJisage);
             const { isHeading, headingLevel, headingText, line: finalLineText } = this.parseHeading(lineAfterAlignment);

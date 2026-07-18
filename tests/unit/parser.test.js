@@ -231,7 +231,8 @@ test.describe('parser.js Unit Tests', () => {
 
     test('should parse page break marker', () => {
         const result = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文第一段\n［＃改ページ］\n本文第二段');
-        assert.ok(result.body.includes('<div class="page-break"></div>'));
+        const pageBreaks = result.body.match(/<div class="page-break"><\/div>/g) || [];
+        assert.strictEqual(pageBreaks.length, 2);
     });
 
     test('should parse headings (large, medium, small) and preserve rubies inside', () => {

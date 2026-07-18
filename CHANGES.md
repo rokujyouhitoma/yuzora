@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Fixed parser bug where the Aozora page break marker ［＃改ページ］ in body text was ignored by the tokenizer, bypassing standard paragraph blocks and failing to generate page break elements, and strictified the unit tests (ID: 079).
+
 - Fixed scroll position jumping on book load by re-restoring the scroll position precisely using the settled scrollWidth dimensions after overrun layout repairs finish (ID: 078).
 - Fixed dynamic page-break sizing in self-correcting layout engine by applying page-break dimensions immediately inside the overrun repair loop, preventing redundant repairs and out-of-date position checks (ID: 077).
 - Added CSS cache-busting version query parameter automatically applied to stylesheet links in index.html during build, and upgraded the application version to 1.1.0 (ID: 076).
