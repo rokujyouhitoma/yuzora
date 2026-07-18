@@ -68,6 +68,7 @@
 | **058** | Refactor | High | Closed | 初期レイアウト修復アルゴリズムの1パス化によるロード処理の最適化 | [058-optimize-initial-layout-repair-algorithm.md](closed/058-optimize-initial-layout-repair-algorithm.md) |
 | **059** | Refactor | High | Closed | 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 | [059-cache-paragraph-absolute-bounds-on-scroll.md](closed/059-cache-paragraph-absolute-bounds-on-scroll.md) |
 | **060** | Enhancement | Medium | Promoted | CSSファイルのブラウザキャッシュ回避用バージョン付与 | [060-cache-busting-for-css-files.md](closed/060-cache-busting-for-css-files.md) |
+| **061** | Bug | High | Approved | 本文中の青空文庫改ページ記法「［＃改ページ］」のパース不具合の修正 | [061-fix-aozora-page-break-parsing.md](061-fix-aozora-page-break-parsing.md) |
 
 ---
 
