@@ -69,6 +69,7 @@
 | **059** | Refactor | High | Closed | 段落のドキュメント絶対座標キャッシュ導入によるページ遷移判定の高速化 | [059-cache-paragraph-absolute-bounds-on-scroll.md](closed/059-cache-paragraph-absolute-bounds-on-scroll.md) |
 | **060** | Enhancement | Medium | Promoted | CSSファイルのブラウザキャッシュ回避用バージョン付与 | [060-cache-busting-for-css-files.md](closed/060-cache-busting-for-css-files.md) |
 | **061** | Bug | High | Approved | 本文中の青空文庫改ページ記法「［＃改ページ］」のパース不具合の修正 | [061-fix-aozora-page-break-parsing.md](061-fix-aozora-page-break-parsing.md) |
+| **062** | Enhancement | Medium | Draft | 見出しの直前での自動改ページ機能の追加 | [062-page-break-before-headings.md](062-page-break-before-headings.md) |
 
 ---
 
