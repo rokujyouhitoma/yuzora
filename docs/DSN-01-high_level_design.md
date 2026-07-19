@@ -1,6 +1,6 @@
 # [DSN-01] 基本設計書 (High-Level Design) - ゆうぞら (Yuzora)
 
-本ドキュメントは、要件定義書（[REQ-03-system_requirements.md](/docs/REQ-03-system_requirements.md)）に規定されたシステム要件に基づき、青空文庫縦書きビューアー「ゆうぞら (Yuzora)」の基本設計（High-Level Design）を定義します。
+本ドキュメントは、要件定義書（[REQ-03-system_requirements.md](REQ-03-system_requirements.md)）に規定されたシステム要件に基づき、青空文庫縦書きビューアー「ゆうぞら (Yuzora)」の基本設計（High-Level Design）を定義します。
 
 ---
 
@@ -42,6 +42,10 @@ graph TD
                 JS_Asset["asset.js"]
                 JS_Resource["resource-director.js"]
                 JS_Cmds["commands.js"]
+                JS_ASTNodes["ast-nodes.js"]
+                JS_Tokenizer["tokenizer.js"]
+                JS_Semantic["semantic-analyzer.js"]
+                JS_Evaluator["evaluator.js"]
                 JS_Parser["parser.js"]
                 JS_Diag["diagnostics.js"]
                 JS_Viewer["viewer.js"]
@@ -67,17 +71,17 @@ graph TD
 
 | レイヤー / コンポーネント | 技術・ファイル名 | 役割と責務 |
 | :--- | :--- | :--- |
-| **表示レイヤー (View)** | [index.html](/index.html) (開発用)<br>[compiled.html](/compiled.html) (デプロイ用)<br>[src/css/modules/](/src/css/modules/) (開発用CSS)<br>[src/css/style.css](/src/css/style.css) (統合CSS) | ユーザーインターフェースの構造定義およびスタイリング。開発時には機能・画面単位に細分化された CSS モジュールを使用し、本番デプロイ時（`compiled.html`）には `make` にて統合された `style.css` を読み込む。 |
-| **制御レイヤー (Controller)** | [src/js/frameworks/](/src/js/frameworks/) (汎用JS)<br>[src/js/modules/](/src/js/modules/) (ドメインJS)<br>`main-min.js` (ビルド成果物) | アプリケーションロジックを構成するモジュール群。非依存の汎用構造ロジックは `frameworks/` に分離され、Yuzoraドメインに依存する制御コードは `modules/` に配置される。新たにアセットおよびリソース管理を抽象化する `asset.js` や `resource-director.js` が含まれる。開発時には各ファイルを個別に読み込み、本番ビルド（`make`）時には Closure Compiler で最適化・カプセル化された `main-min.js` を生成する。 |
+| **表示レイヤー (View)** | [index.html](../index.html) (開発用)<br>[compiled.html](../compiled.html) (デプロイ用)<br>[src/css/modules/](../src/css/modules/) (開発用CSS)<br>[src/css/style.css](../src/css/style.css) (統合CSS) | ユーザーインターフェースの構造定義およびスタイリング。開発時には機能・画面単位に細分化された CSS モジュールを使用し、本番デプロイ時（`compiled.html`）には `make`にて統合された `style.css` を読み込む。 |
+| **制御レイヤー (Controller)** | [src/js/frameworks/](../src/js/frameworks/) (汎用JS)<br>[src/js/modules/](../src/js/modules/) (ドメインJS)<br>`main-min.js` (ビルド成果物) | アプリケーションロジックを構成するモジュール群。非依存の汎用構造ロジックは `frameworks/` に分離され、Yuzoraドメインに依存する制御コードは `modules/` に配置される。新たにアセットおよびリソース管理を抽象化する `asset.js` や `resource-director.js` に加え、パース処理をコンパイラパイプラインとして分割した `tokenizer.js`, `ast-nodes.js`, `semantic-analyzer.js`, `evaluator.js`, `parser.js` が含まれる。開発時には各ファイルを個別に読み込み、本番ビルド（`make`）時には Closure Compiler で最適化・カプセル化された `main-min.js` を生成する。 |
 | **永続化レイヤー (Storage)** | `localStorage` | セッションを跨いだユーザー設定およびしおり情報（読了進捗率、最後に読んだファイルの内容・メタデータ）の永続化。 |
 
 ### 1.3 アーキテクチャドメインとADR（意思決定記録）の位置づけ
 * **TOGAF EA との位置づけ**:
   本ドキュメントは、**TOGAF EA** の「アプリケーションアーキテクチャ (AA)」「データアーキテクチャ (DA)」「テクノロジーアーキテクチャ (TA)」における**論理（概念）設計**を定義します。各レイヤーの境界、画面遷移、カラー変数名などを論理的に規定します。
 * **ADR (Architecture Decision Record) との連携**:
-  本基本設計に至る過程で議論・策定された、Vanilla JSの選定、CSSマルチカラムの採用、セッション復元の持ち方などの重要なアーキテクチャ意思決定は、[docs/adr/](/docs/adr/) 配下に個別のドキュメントとして記録・管理されます。意思決定の起票・承認プロセスは、[MNG-08-adr_process.md](/docs/MNG-08-adr_process.md) に規定されるプロセスに従います。
+  本基本設計に至る過程で議論・策定された、Vanilla JSの選定、CSSマルチカラムの採用、セッション復元の持ち方などの重要なアーキテクチャ意思決定は、[adr/](adr/) 配下に個別のドキュメントとして記録・管理されます。意思決定の起票・承認プロセスは、[MNG-08-adr_process.md](MNG-08-adr_process.md) に規定されるプロセスに従います。
 * **設計ドキュメント間のすみ分け**:
-  要件定義（SRD）や詳細設計（LLD）との境界、およびオーバーラップした際のすみ分け・分掌については、[文書管理・ドキュメント台帳](/docs/MNG-01-document_ledger.md) に規定されている「設計ドキュメント間のすみ分けと分掌」に従います。
+  要件定義（SRD）や詳細設計（LLD）との境界、およびオーバーラップした際のすみ分け・分掌については、[文書管理・ドキュメント台帳](MNG-01-document_ledger.md) に規定されている「設計ドキュメント間のすみ分けと分掌」に従います。
 
 ---
 
@@ -171,7 +175,10 @@ sequenceDiagram
         activate C
         C->>C: 同梱データ(JS内蔵) または 外部フェッチ(Fetch API) で本文テキスト取得
     end
-    C->>C: 青空文庫記法パース & HTMLタグエスケープ
+    C->>C: AozoraTokenizerによる字句解析 (ブロック＆インライン)
+    C->>C: AozoraParserによるASTノードツリー構築
+    C->>C: AozoraSemanticAnalyzerによるルビネスト等の意味解析
+    C->>C: AozoraEvaluatorによるHTML生成＆XSS防御エスケープ
     C->>V: HTMLレンダリング (reader-content)
     C->>S: 最後に読んだファイル名でしおり情報を照会
     S-->>C: 前回の読了進捗率 (0.0 - 1.0)
