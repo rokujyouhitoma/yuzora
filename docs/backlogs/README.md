@@ -70,6 +70,9 @@
 | **060** | Enhancement | Medium | Promoted | CSSファイルのブラウザキャッシュ回避用バージョン付与 | [060-cache-busting-for-css-files.md](closed/060-cache-busting-for-css-files.md) |
 | **061** | Bug | High | Closed | 本文中の青空文庫改ページ記法「［＃改ページ］」のパース不具合の修正 | [061-fix-aozora-page-break-parsing.md](closed/061-fix-aozora-page-break-parsing.md) |
 | **062** | Enhancement | Medium | Closed | 見出しの直前での自動改ページ機能の追加 | [062-page-break-before-headings.md](closed/062-page-break-before-headings.md) |
+| **063** | Enhancement | Medium | Draft | 表示設定に依存しない明示的改ページの完全なレイアウト担保と余白最適化 | [063-robust-page-break-layout-under-extreme-settings.md](063-robust-page-break-layout-under-extreme-settings.md) |
+| **064** | Feature | Medium | Draft | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | [064-user-customization-for-heading-page-break.md](064-user-customization-for-heading-page-break.md) |
+| **065** | Enhancement | High | Draft | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | [065-improve-overrun-repair-precision-and-performance.md](065-improve-overrun-repair-precision-and-performance.md) |
 
 ---
 
