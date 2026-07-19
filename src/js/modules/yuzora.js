@@ -151,8 +151,6 @@ class Yuzora {
         // Listen to layout check requests
         this.publisher.subscribe(YuzoraEventType.LAYOUT_CHECK_REQUESTED, (detail) => {
             const renderer = /** @type {!VerticalRenderer} */ (this.locator.resolve(VerticalRenderer));
-            if (renderer.isRepairing) return;
-
             const checkDetail = /** @type {{scope: string}} */ (detail);
             if (checkDetail && checkDetail.scope === 'current') {
                 // Lightweight read-only check flanking current page

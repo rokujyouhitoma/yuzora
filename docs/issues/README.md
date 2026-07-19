@@ -90,9 +90,9 @@
 | **078** | Bug | High | Closed | ページ読込時の自動スクロール完了後にレイアウト自己修復によるスクロール位置のズレ（跳ね）が発生する問題 | AI Agent | [078-fix-scroll-jumping-on-load-repair.md](closed/078-fix-scroll-jumping-on-load-repair.md) |
 | **079** | Bug | High | Closed | 本文中の青空文庫改ページ記法「［＃改ページ］」のパース不具合の修正 | AI Agent | [079-fix-aozora-page-break-parsing.md](closed/079-fix-aozora-page-break-parsing.md) |
 | **080** | Feature | Medium | Closed | 見出しの直前での自動改ページ機能の追加 | AI Agent | [080-page-break-before-headings.md](closed/080-page-break-before-headings.md) |
-| **081** | Feature | Medium | In Progress | 表示設定に依存しない明示的改ページの完全なレイアウト担保と余白最適化 | AI Agent | [081-robust-page-break-layout-under-extreme-settings.md](081-robust-page-break-layout-under-extreme-settings.md) |
-| **082** | Feature | Medium | In Progress | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | AI Agent | [082-user-customization-for-heading-page-break.md](082-user-customization-for-heading-page-break.md) |
-| **083** | Feature | High | In Progress | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | AI Agent | [083-improve-overrun-repair-precision-and-performance.md](083-improve-overrun-repair-precision-and-performance.md) |
+| **081** | Feature | Medium | Closed | 表示設定に依存しない明示的改ページの完全なレイアウト担保と余白最適化 | AI Agent | [081-robust-page-break-layout-under-extreme-settings.md](closed/081-robust-page-break-layout-under-extreme-settings.md) |
+| **082** | Feature | Medium | Closed | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | AI Agent | [082-user-customization-for-heading-page-break.md](closed/082-user-customization-for-heading-page-break.md) |
+| **083** | Feature | High | Closed | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | AI Agent | [083-improve-overrun-repair-precision-and-performance.md](closed/083-improve-overrun-repair-precision-and-performance.md) |
 
 
 

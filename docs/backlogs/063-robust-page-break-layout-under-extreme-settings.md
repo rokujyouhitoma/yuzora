@@ -2,7 +2,7 @@
 ID: 063
 種別: Enhancement
 優先度: Medium
-ステータス: Draft
+ステータス: Approved
 ---
 
 # [ENH] 表示設定に依存しない明示的改ページの完全なレイアウト担保と余白最適化 (ID: 063)
@@ -18,12 +18,14 @@ ID: 063
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [reader.css](../../src/css/modules/reader.css): page-break前後の余白設定、マージンプロパティの可変サイズ化。
-- [ ] [renderer.js](../../src/js/modules/renderer.js): `applyPageBreakSizes` における改ページ要素の残り幅計算ロジック。
+- [x] [reader.css](../../src/css/modules/reader.css): page-break前後の余白設定、マージンプロパティの可変サイズ化。
+- [x] [renderer.js](../../src/js/modules/renderer.js): `applyPageBreakSizes` における改ページ要素の残り幅計算ロジック。
 
 ---
 
 ## 4. 詳細要件と実装ステップ / Detailed Requirements and Implementation Steps
+
+### 仕様定義 (SA/設計レビュー済)
 1.  **可変マージン設計**:
     改ページ要素の幅やマージンに固定値を使用するのをやめ、フォントサイズや行高さに連動するCSS変数（例: `rem` や `lh`）を使用した比率ベースの計算式に変更します。
 2.  **白紙ページ防止ガード**:
@@ -31,6 +33,7 @@ ID: 063
 
 ---
 
-## 5. 受入基準 (DoD) / Acceptance Criteria
-- [ ] 文字サイズ設定を最大（`size-lg` やカスタム設定）にした場合でも、改ページ前後の余白が崩れず、美しくアライメントされること。
+## 5. 受入基準 (DoD) / Acceptance Criteria (STレビュー済)
+- [ ] 文字サイズ設定を最大（`size-lg`）にした場合でも、改ページ前後の余白が崩れず、美しくアライメントされること。
 - [ ] 改ページマーカーの直後に不要な白紙カラム（またはスクロール領域の余計な空欄）が追加されないこと。
+- [ ] すべてのE2Eテストおよびユニットテストが正常にパスすること。

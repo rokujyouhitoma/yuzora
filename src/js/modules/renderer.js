@@ -34,6 +34,9 @@ class VerticalRenderer {
         /** @type {boolean} */
         this.isRepairing = false;
 
+        /** @type {number} */
+        this.currentRepairId = 0;
+
         /** @type {!Array<!Object>} */
         this.paragraphBoundsCache = [];
 
@@ -217,13 +220,17 @@ class VerticalRenderer {
 
     /**
      * @override
+     * @return {!Promise<void>}
      */
     // @ts-expect-error
-    adjustPageBreaksForOverrun() {
-        if (this.isRepairing) return;
+    // eslint-disable-next-line complexity
+    async adjustPageBreaksForOverrun() {
         if (!this.viewContext.readerContent || !this.viewContext.readerViewport) return;
 
+        // 新しい修復IDを発行（進行中の修復処理を Abort させる）
+        const repairId = ++this.currentRepairId;
         this.isRepairing = true;
+
         try {
             const readerContent = this.viewContext.readerContent;
             const readerViewport = this.viewContext.readerViewport;
@@ -240,13 +247,30 @@ class VerticalRenderer {
             });
 
             let i = 0;
+            let batchCounter = 0;
             while (i < childNodes.length) {
+                // 中断チェック：新しい修復が割り込んだ場合は即座に実行を終了する
+                if (this.currentRepairId !== repairId) {
+                    return;
+                }
+
                 const child = childNodes[i];
                 const repaired = checkAndRepairParagraph(child, readerViewport);
                 if (repaired) {
                     this.applyPageBreakSizes();
                 }
                 i++;
+                batchCounter++;
+                if (batchCounter >= 600) {
+                    batchCounter = 0;
+                    // メインスレッドを解放してブロッキングを回避（タイムスライス）
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+
+            // 中断チェック
+            if (this.currentRepairId !== repairId) {
+                return;
             }
 
             const endTime = performance.now();
@@ -324,9 +348,11 @@ class VerticalRenderer {
                 const isRtl = this.configModel.direction === 'rtl';
                 const rect = prevElement.getBoundingClientRect();
                 const parentRect = params.parent.getBoundingClientRect();
+                // 5pxの安全バッファを引くことで、端数誤差によるカラムインデックスの誤判定（白紙ページ発生）を防ぐ
+                const buffer = 5;
                 const relativeLeft = isRtl 
-                    ? (parentRect.right - rect.left)
-                    : (rect.right - parentRect.left);
+                    ? (parentRect.right - rect.left - buffer)
+                    : (rect.right - parentRect.left - buffer);
 
                 // Math.round clientWidth / step gives N (columns per page)
                 const clientWidth = this.viewContext.readerViewport.clientWidth;

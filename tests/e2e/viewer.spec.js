@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Yuzora E2E Reader Tests', () => {
     test.beforeEach(async ({ page }) => {
+        page.on('console', msg => console.log('BROWSER CONSOLE:', msg.text()));
         // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
         await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
         await page.route('https://fonts.googleapis.com/**', route => route.abort());
@@ -48,6 +49,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const btnSettings = page.locator('#btn-settings');
         const readerHeader = page.locator('.reader-header');
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
         await expect(readerHeader).toHaveClass(/hidden/, { timeout: 8000 });
         await page.click('#reader-viewport');
         await expect(readerHeader).not.toHaveClass(/hidden/);
@@ -77,6 +79,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
         // Wait for content to load
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         // Scroll all the way to the left (end of the book)
         await page.evaluate(() => {
@@ -107,6 +110,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         // Assert debug modal is hidden initially
         const debugModal = page.locator('#debug-modal');
@@ -149,6 +153,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         const readerHeader = page.locator('.reader-header');
 
@@ -182,6 +187,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         const readerHeader = page.locator('.reader-header');
         const readerViewport = page.locator('#reader-viewport');
@@ -213,6 +219,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         // 2. Open Settings drawer
         const btnSettings = page.locator('#btn-settings');
@@ -256,6 +263,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         // 7. Load book again to test replay
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         // 8. Open Debug modal again to import history
         await page.keyboard.press('d');
@@ -280,6 +288,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         // 2. Click TOC button to open drawer
         const btnTOC = page.locator('#btn-toc');
@@ -324,6 +333,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         // 1. Open a book (Kokoro by default is RTL)
         await page.locator('#developer-books-grid .book-card').first().click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         // Verify we start at Page 1
         const readingIndex = page.locator('#reading-index');
@@ -370,6 +380,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
         // 1. Open a book (Kokoro by default is RTL)
         await page.locator('#developer-books-grid .book-card').first().click();
         await page.waitForSelector('#reader-content p');
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
         const readingIndex = page.locator('#reading-index');
         await expect(readingIndex).toHaveText(/1 \/ \d+ ページ/);

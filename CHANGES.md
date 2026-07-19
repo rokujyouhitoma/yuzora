@@ -3,7 +3,9 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
-- Added automatic page break before large and medium headings (heading level 2 and 3) when not preceded by another heading, page break, or cover page to enhance reading layout, and strictified unit and E2E tests (ID: 080).
+- Added `headingPageBreakMode` dynamic user customization settings (`none`, `large`, `all`) with display settings drawer UI controls, and updated DSN-01 and DSN-02 (ID: 082).
+- Fixed paragraph overrun repair engine to run asynchronously via time-slicing (batch size 600) with concurrent execution abort checks, and updated DSN-01 and DSN-02 (ID: 083).
+- Fixed explicit page break logic (`applyPageBreakSizes`) by adding a 5px safety buffer to prevent double-page breaks under extreme font settings, and stabilized E2E tests using a non-obfuscated `window.__isReflowing__` global flag (ID: 081).
 
 - Fixed parser bug where the Aozora page break marker ［＃改ページ］ in body text was ignored by the tokenizer, bypassing standard paragraph blocks and failing to generate page break elements, and strictified the unit tests (ID: 079).
 

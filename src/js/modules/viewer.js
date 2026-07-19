@@ -130,20 +130,31 @@ async function displayBook() {
 
     // Wait a tick for rendering to complete before restoring scroll position
     viewContext.isReflowing = true;
-    setTimeout(() => {
+    window['__isReflowing__'] = true;
+    setTimeout(async () => {
         try {
-            yuzora.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'all' });
-            restoreScrollPosition();
-            updateProgress();
-            
-            yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
-            setTimeout(() => {
+            // 直接、自己修復処理を呼び出して完了を待つ
+            await renderer.adjustPageBreaksForOverrun();
+
+            try {
+                restoreScrollPosition();
+                updateProgress();
+                yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
+                setTimeout(() => {
+                    viewContext.isReflowing = false;
+                    window['__isReflowing__'] = false;
+                }, 50);
+            } catch (err) {
+                document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
+                console.error("FATAL_ERROR: ", err);
                 viewContext.isReflowing = false;
-            }, 50);
+                window['__isReflowing__'] = false;
+            }
         } catch (err) {
             document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
             console.error("FATAL_ERROR: ", err);
             viewContext.isReflowing = false;
+            window['__isReflowing__'] = false;
         }
     }, 100);
 }
@@ -325,16 +336,22 @@ function handleResize() {
     viewContext.cachedClientWidth = null;
     
     viewContext.isReflowing = true;
+    window['__isReflowing__'] = true;
     const oldProgress = bookmarkModel.bookmarkProgress;
     
-    renderer.handleResize(oldProgress).then(() => {
+    // 自己修復（非同期タイムスライス）の完了イベントを待ってから最終処理を行う
+    const handler = () => {
+        yuzora.publisher.unsubscribe(YuzoraEventType.LAYOUT_REPAIRED, handler);
         bookmarkModel.bookmarkProgress = oldProgress;
         updateProgress();
-        
         setTimeout(() => {
             viewContext.isReflowing = false;
+            window['__isReflowing__'] = false;
         }, 50);
-    });
+    };
+    yuzora.publisher.subscribe(YuzoraEventType.LAYOUT_REPAIRED, handler);
+
+    renderer.handleResize(oldProgress);
 }
 
 async function checkLastSession() {

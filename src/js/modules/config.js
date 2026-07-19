@@ -203,6 +203,7 @@ class ConfigModel {
         this.size = 'size-md';
         this.lh = 'line-height-normal';
         this.spacing = 'spacing-normal';
+        this.headingPageBreakMode = 'large-medium';
     }
 
     /**
@@ -230,6 +231,7 @@ class ConfigModel {
         if (parsedConfig['size']) this.size = parsedConfig['size'];
         if (parsedConfig['lh']) this.lh = parsedConfig['lh'];
         if (parsedConfig['spacing']) this.spacing = parsedConfig['spacing'];
+        if (parsedConfig['headingPageBreakMode']) this.headingPageBreakMode = parsedConfig['headingPageBreakMode'];
     }
 
     /**
@@ -246,7 +248,8 @@ class ConfigModel {
             'direction': this.direction,
             'size': this.size,
             'lh': this.lh,
-            'spacing': this.spacing
+            'spacing': this.spacing,
+            'headingPageBreakMode': this.headingPageBreakMode
         });
     }
 
@@ -293,6 +296,11 @@ class ConfigModel {
             syncButtonState(".size-selector button", "size", this.size);
             syncButtonState(".lh-selector button", "lh", this.lh);
             syncButtonState(".spacing-selector button", "spacing", this.spacing);
+        }
+
+        const selectHeadingBreak = document.getElementById("select-heading-break");
+        if (selectHeadingBreak) {
+            /** @type {!HTMLSelectElement} */ (selectHeadingBreak).value = this.headingPageBreakMode;
         }
     }
 }

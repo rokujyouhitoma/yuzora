@@ -97,7 +97,7 @@ test.describe('renderer.js Unit Tests', () => {
         assert.ok(renderedContent.includes('src="x"'));
     });
 
-    test('should capture repair metrics and publish LAYOUT_REPAIRED event when adjustPageBreaksForOverrun is called', () => {
+    test('should capture repair metrics and publish LAYOUT_REPAIRED event when adjustPageBreaksForOverrun is called', async () => {
         const { locator } = window.yuzora;
         const VerticalRendererClass = window.Yuzora.VerticalRenderer;
         const renderer = locator.resolve(VerticalRendererClass);
@@ -132,7 +132,7 @@ test.describe('renderer.js Unit Tests', () => {
         // Add some dummy paragraph content to readerContent
         readerContent.innerHTML = '<p id="para1">テストコンテンツ</p>';
 
-        renderer.adjustPageBreaksForOverrun();
+        await renderer.adjustPageBreaksForOverrun();
 
         // Verify metrics were saved on renderer
         assert.ok(renderer.lastRepairMetrics);
@@ -147,7 +147,7 @@ test.describe('renderer.js Unit Tests', () => {
         assert.strictEqual(eventPayload.passesCount, 1);
     });
 
-    test('DEBUG: Simulate large book load and page navigation to diagnose timeout/loop issues', () => {
+    test('DEBUG: Simulate large book load and page navigation to diagnose timeout/loop issues', async () => {
         const { locator } = window.yuzora;
         const VerticalRendererClass = window.Yuzora.VerticalRenderer;
         const renderer = locator.resolve(VerticalRendererClass);
@@ -183,7 +183,7 @@ test.describe('renderer.js Unit Tests', () => {
         readerContent.innerHTML = html;
 
         console.log("--- START SIMULATED INITIAL REPAIR ---");
-        renderer.adjustPageBreaksForOverrun();
+        await renderer.adjustPageBreaksForOverrun();
         console.log("Initial repair complete. Inserted count:", readerContent.querySelectorAll('.dynamic-page-break').length);
 
         console.log("--- SIMULATING PAGE NAV: scroll to Page 2 ---");

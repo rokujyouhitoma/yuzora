@@ -2,7 +2,7 @@
 ID: 064
 種別: Feature
 優先度: Medium
-ステータス: Draft
+ステータス: Approved
 ---
 
 # [FEAT] 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 (ID: 064)
@@ -18,13 +18,16 @@ ID: 064
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [config.js](../../src/js/modules/config.js): 設定項目 `headingPageBreakMode`（なし / 大のみ / 大・中のみ / すべて）の追加。
-- [ ] [ui.js](../../src/js/modules/ui.js): 設定ドロワーへのドロップダウン（またはトグル）要素の追加とイベントバインド。
-- [ ] [parser.js](../../src/js/modules/parser.js): 自動改ページの判定時に `ConfigModel` の値を参照して改ページを決定するよう変更。
+- [x] [config.js](../../src/js/modules/config.js): 設定項目 `headingPageBreakMode`（なし / 大のみ / 大・中のみ / すべて）の追加。
+- [x] [ui.js](../../src/js/modules/ui.js): 設定ドロワーへのドロップダウン（またはトグル）要素の追加とイベントバインド。
+- [x] [parser.js](../../src/js/modules/parser.js): 自動改ページの判定時に `ConfigModel` の値を参照して改ページを決定するよう変更。
+- [x] [index.html](../../index.html): 表示設定ドロワーのHTML構造の拡張。
 
 ---
 
 ## 4. 詳細要件と実装ステップ / Detailed Requirements and Implementation Steps
+
+### 仕様定義 (SA/設計レビュー済)
 1.  **設定データモデルの拡張**:
     `SettingsRepository` および `ConfigModel` に、見出し自動改ページのポリシー設定を追加します。デフォルト値は「大・中のみ（`large-medium`）」とします。
 2.  **UIコントロールの構築**:
@@ -34,8 +37,9 @@ ID: 064
 
 ---
 
-## 5. 受入基準 (DoD) / Acceptance Criteria
+## 5. 受入基準 (DoD) / Acceptance Criteria (STレビュー済)
 - [ ] 設定を「大のみ」に変更した際、中見出しの前では自動改ページが入らなくなること。
 - [ ] 設定を「すべて」に変更した際、小見出しの前でも自動改ページが入ること。
 - [ ] 設定を「なし」にした際、すべての自動改ページ（明示的な改ページ以外）が無効化されること。
 - [ ] 設定変更がブラウザキャッシュに保存され、再読込後も維持されること。
+- [ ] すべてのE2Eテストおよびユニットテストが正常にパスすること。

@@ -362,6 +362,8 @@ ConfigModelInterface.prototype.size;
 ConfigModelInterface.prototype.lh;
 /** @type {string} */
 ConfigModelInterface.prototype.spacing;
+/** @type {string} */
+ConfigModelInterface.prototype.headingPageBreakMode;
 /** @type {function():!Promise<void>} */
 ConfigModelInterface.prototype.load = function() {};
 /** @type {function():!Promise<void>} */
@@ -783,7 +785,7 @@ RendererInterface.prototype.scrollToPage = function(pageNumber) {};
  */
 RendererInterface.prototype.handleResize = function(progress) {};
 /**
- * @return {void}
+ * @return {!Promise<void>}
  */
 RendererInterface.prototype.adjustPageBreaksForOverrun = function() {};
 /**

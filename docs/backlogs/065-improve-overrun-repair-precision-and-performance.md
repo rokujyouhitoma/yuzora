@@ -2,7 +2,7 @@
 ID: 065
 種別: Enhancement
 優先度: High
-ステータス: Draft
+ステータス: Approved
 ---
 
 # [ENH] カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 (ID: 065)
@@ -18,12 +18,14 @@ ID: 065
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [renderer.js](../../src/js/modules/renderer.js): `adjustPageBreaksForOverrun` の非同期化（Promise化）とバッチ処理。
-- [ ] [viewer.js](../../src/js/modules/viewer.js): レンダリング処理の非同期イベントハンドリングへの統合。
+- [x] [renderer.js](../../src/js/modules/renderer.js): `adjustPageBreaksForOverrun` の非同期化（Promise化）とバッチ処理。
+- [x] [viewer.js](../../src/js/modules/viewer.js): レンダリング処理の非同期イベントハンドリングへの統合。
 
 ---
 
 ## 4. 詳細要件と実装ステップ / Detailed Requirements and Implementation Steps
+
+### 仕様定義 (SA/設計レビュー済)
 1.  **境界跨ぎ判定の厳密化**:
     ブラウザや文字サイズごとのピクセル計算誤差による「1文字だけ隣のカラムへはみ出す」現象を防ぐため、アライメント計測（`boundingBox` の交差）の判定ロジックに安全マージン（バッファ）を設け、判定のブレを排除します。
 2.  **非同期バッチ処理の導入**:
@@ -31,6 +33,7 @@ ID: 065
 
 ---
 
-## 5. 受入基準 (DoD) / Acceptance Criteria
+## 5. 受入基準 (DoD) / Acceptance Criteria (STレビュー済)
 - [ ] 文字サイズや行間を頻繁に変更した場合でも、画面の追従がスムーズで、フリーズ（フリーズ警告）が発生しないこと。
 - [ ] すべてのページにおいて、文字の見切れ（段落がカラム間で部分的に見切れて一部が欠ける現象）が一切発生しないこと。
+- [ ] すべてのE2Eテストおよびユニットテストが正常にパスすること。

@@ -14,6 +14,8 @@ class AozoraParser {
         this.semanticAnalyzer = /** @type {!AozoraSemanticAnalyzerInterface} */ (Yuzora.locator.resolve(AozoraSemanticAnalyzer));
         /** @private {!AozoraEvaluatorInterface} */
         this.evaluator = /** @type {!AozoraEvaluatorInterface} */ (Yuzora.locator.resolve(AozoraEvaluator));
+        /** @private {!ConfigModelInterface} */
+        this.configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
     }
 
     /**
@@ -145,8 +147,18 @@ class AozoraParser {
             const inlineAST = this.parseLineToAST(finalLineText);
 
             if (isHeading) {
-                // 自動改ページの挿入判定 (大見出し[2] または 中見出し[3] のみ対象)
-                if (headingLevel === 2 || headingLevel === 3) {
+                // 自動改ページの挿入判定 (headingPageBreakModeの設定値に応じた動的適用)
+                const headingMode = this.configModel['headingPageBreakMode'] || 'large-medium';
+                let isTarget = false;
+                if (headingMode === 'large' && headingLevel === 2) {
+                    isTarget = true;
+                } else if (headingMode === 'large-medium' && (headingLevel === 2 || headingLevel === 3)) {
+                    isTarget = true;
+                } else if (headingMode === 'all' && (headingLevel === 2 || headingLevel === 3 || headingLevel === 4)) {
+                    isTarget = true;
+                }
+
+                if (isTarget) {
                     let prevNode = null;
                     for (let j = documentChildren.length - 1; j >= 0; j--) {
                         if (documentChildren[j].type !== 'EmptyLine') {

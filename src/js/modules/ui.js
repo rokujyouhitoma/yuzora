@@ -19,6 +19,12 @@ function updateSettingsUI(key, value) {
         viewContext.readerContent.className = "reader-content";
         viewContext.readerContent.classList.add(configModel.font, `direction-${configModel.direction}`, configModel.size, configModel.lh, configModel.spacing);
         handleResize(); // Trigger bounds recalibration on font sizing metrics updates
+    } else if (key === "headingPageBreakMode") {
+        const selectHeadingBreak = document.getElementById("select-heading-break");
+        if (selectHeadingBreak) {
+            /** @type {!HTMLSelectElement} */ (selectHeadingBreak).value = value;
+        }
+        yuzora.publisher.publish(YuzoraEventType.BOOK_LOADED);
     }
 }
 
@@ -653,6 +659,14 @@ function setupSettingSelectorGroups_() {
     setupButtonGroup(".spacing-selector button", "spacing", (val) => {
         CommandManager.execute(new UpdateConfigCommand("spacing", val));
     });
+
+    const selectHeadingBreak = document.getElementById("select-heading-break");
+    if (selectHeadingBreak) {
+        bindReaderEvent_(selectHeadingBreak, "change", (e) => {
+            const val = /** @type {!HTMLSelectElement} */ (e.target).value;
+            CommandManager.execute(new UpdateConfigCommand("headingPageBreakMode", val));
+        });
+    }
 }
 
 function setupStorageResetButtons_() {

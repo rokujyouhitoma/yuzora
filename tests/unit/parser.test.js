@@ -267,6 +267,39 @@ test.describe('parser.js Unit Tests', () => {
         assert.strictEqual(countFirst.length, 1);
     });
 
+    test('should honor headingPageBreakMode configuration during parsing', () => {
+        const { locator } = window.yuzora;
+        const configModel = locator.resolve(window.Yuzora.ConfigModel);
+        const originalMode = configModel['headingPageBreakMode'];
+
+        try {
+            // 1. headingPageBreakMode = 'none' の場合：見出し前の自動改ページは一切挿入されない
+            configModel['headingPageBreakMode'] = 'none';
+            const resNone = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃大見出し］［＃「大見出し」は大見出し］');
+            const countNone = resNone.body.match(/<div class="page-break"><\/div>/g) || [];
+            // 表紙後の改ページのみ（表紙後の改ページは見出し自動改ページではないため挿入される）
+            assert.strictEqual(countNone.length, 1);
+
+            // 2. headingPageBreakMode = 'large' の場合：大見出しのみ自動改ページが挿入され、中見出しは挿入されない
+            configModel['headingPageBreakMode'] = 'large';
+            const resLarge = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃大見出し］［＃「大見出し」は大見出し］\n\n［＃中見出し］［＃「中見出し」は中見出し］');
+            const countLarge = resLarge.body.match(/<div class="page-break"><\/div>/g) || [];
+            // 表紙後 + 大見出し前 = 2
+            assert.strictEqual(countLarge.length, 2);
+
+            // 3. headingPageBreakMode = 'all' の場合：大・中・小すべてに見出し前の自動改ページが挿入される
+            configModel['headingPageBreakMode'] = 'all';
+            const resAll = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃小見出し］［＃「小見出し」は小見出し］');
+            const countAll = resAll.body.match(/<div class="page-break"><\/div>/g) || [];
+            // 表紙後 + 小見出し前 = 2
+            assert.strictEqual(countAll.length, 2);
+
+        } finally {
+            // テスト後に元の設定に戻す
+            configModel['headingPageBreakMode'] = originalMode;
+        }
+    });
+
     test('should parse headings (large, medium, small) and preserve rubies inside', () => {
         const resultLarge = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃２字下げ］上　先生と私［＃「上　先生と私」は大見出し］');
         assert.ok(resultLarge.body.includes('<h2 id="toc-heading-0" class="jisage2">上　先生と私</h2>'));
