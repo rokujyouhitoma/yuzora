@@ -490,4 +490,29 @@ test.describe('parser.js Unit Tests', () => {
             assert.ok(result.body.includes('<ruby>'), `Ruby tag missing in ${b.expectedTitle}`);
         });
     });
+
+    test('AozoraTokenizer.tokenize should extract block tokens and metadata', () => {
+        const tokenizer = new window.AozoraTokenizer();
+        const text = 'タイトル\n著者\n\n［＃改ページ］\n［＃２字下げ］上　先生と私［＃「上　先生と私」は大見出し］\n［＃地寄せ］終わり';
+        const tokens = tokenizer.tokenize(text);
+
+        assert.strictEqual(tokens.length, 6);
+        assert.strictEqual(tokens[0]['type'], 'BLOCK_PARAGRAPH');
+        assert.strictEqual(tokens[0]['value'], 'タイトル');
+
+        assert.strictEqual(tokens[1]['type'], 'BLOCK_PARAGRAPH');
+        assert.strictEqual(tokens[1]['value'], '著者');
+
+        assert.strictEqual(tokens[2]['type'], 'BLOCK_EMPTY_LINE');
+
+        assert.strictEqual(tokens[3]['type'], 'BLOCK_PAGE_BREAK');
+
+        assert.strictEqual(tokens[4]['type'], 'BLOCK_HEADING');
+        assert.strictEqual(tokens[4]['headingLevel'], 2);
+        assert.strictEqual(tokens[4]['headingText'], '上　先生と私');
+        assert.strictEqual(tokens[4]['jisageClass'], 'jisage2');
+
+        assert.strictEqual(tokens[5]['type'], 'BLOCK_PARAGRAPH');
+        assert.strictEqual(tokens[5]['alignmentClass'], 'chiyose');
+    });
 });

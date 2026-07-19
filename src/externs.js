@@ -805,6 +805,8 @@ RendererInterface.prototype.cacheParagraphBounds = function() {};
 function AozoraTokenizerInterface() {}
 /** @param {string} text */
 AozoraTokenizerInterface.prototype.tokenizeInline = function(text) {};
+/** @param {string} text */
+AozoraTokenizerInterface.prototype.tokenize = function(text) {};
 
 // ASTNodeInterface
 /** @interface */

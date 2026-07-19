@@ -263,6 +263,7 @@ interface ASTNodeInterface {
 
 interface AozoraTokenizerInterface {
     tokenizeInline(text: string): any[];
+    tokenize(text: string): any[];
 }
 
 interface AozoraParserInterface {

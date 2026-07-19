@@ -33,31 +33,31 @@ class AozoraParser {
             const token = tokens[i];
             const current = stack[stack.length - 1];
             
-            if (token.type === 'TEXT') {
-                current.children.push(new TextNode(token.value || ''));
-            } else if (token.type === 'RUBY') {
-                current.children.push(new RubyNode(token.value || '', token.rt || ''));
-            } else if (token.type === 'BOLD_START') {
+            if (token['type'] === 'TEXT') {
+                current.children.push(new TextNode(token['value'] || ''));
+            } else if (token['type'] === 'RUBY') {
+                current.children.push(new RubyNode(token['value'] || '', token['rt'] || ''));
+            } else if (token['type'] === 'BOLD_START') {
                 const node = new BoldNode([]);
                 current.children.push(node);
                 stack.push(node);
-            } else if (token.type === 'BOLD_END') {
+            } else if (token['type'] === 'BOLD_END') {
                 if (stack.length > 1 && stack[stack.length - 1].type === 'Bold') {
                     stack.pop();
                 }
-            } else if (token.type === 'ITALIC_START') {
+            } else if (token['type'] === 'ITALIC_START') {
                 const node = new ItalicNode([]);
                 current.children.push(node);
                 stack.push(node);
-            } else if (token.type === 'ITALIC_END') {
+            } else if (token['type'] === 'ITALIC_END') {
                 if (stack.length > 1 && stack[stack.length - 1].type === 'Italic') {
                     stack.pop();
                 }
-            } else if (token.type === 'BOUTEN_START') {
+            } else if (token['type'] === 'BOUTEN_START') {
                 const node = new BoutenNode([]);
                 current.children.push(node);
                 stack.push(node);
-            } else if (token.type === 'BOUTEN_END') {
+            } else if (token['type'] === 'BOUTEN_END') {
                 if (stack.length > 1 && stack[stack.length - 1].type === 'Bouten') {
                     stack.pop();
                 }
@@ -79,15 +79,25 @@ class AozoraParser {
         bookModel.toc = [];
         let headingIndex = 0;
 
-        let lines = text.split(/\r?\n/);
+        // Tokenizer を呼び出し、ブロックトークン配列を取得
+        const blocks = this.tokenizer.tokenize(text);
+        
         let title = '';
         let author = '';
+        let textBlocksCount = 0;
         
-        if (lines.length > 0) {
-            title = this.cleanAozoraMetadata(lines[0]);
-        }
-        if (lines.length > 1) {
-            author = this.cleanAozoraMetadata(lines[1]);
+        for (let i = 0; i < blocks.length; i++) {
+            const block = blocks[i];
+            if (block['type'] !== 'BLOCK_EMPTY_LINE' && block['type'] !== 'BLOCK_PAGE_BREAK') {
+                if (textBlocksCount === 0) {
+                    title = this.cleanAozoraMetadata(block['value'] || '');
+                    textBlocksCount++;
+                } else if (textBlocksCount === 1) {
+                    author = this.cleanAozoraMetadata(block['value'] || '');
+                    textBlocksCount++;
+                    break;
+                }
+            }
         }
 
         bookModel.title = title;
@@ -102,15 +112,18 @@ class AozoraParser {
         let inHeader = true;
         let inSkipBlock = false;
 
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
+        for (let i = 0; i < blocks.length; i++) {
+            const block = blocks[i];
+            const line = block['value'] || '';
 
             if (inHeader) {
                 if (line.includes('-------------------------------------------------------')) {
                     inHeader = false;
-                    // Peek next lines to see if it is indeed the symbol explanation block
-                    const nextLine = lines[i + 1] ? lines[i + 1].trim() : '';
-                    const nextNextLine = lines[i + 2] ? lines[i + 2].trim() : '';
+                    // Peek next blocks to see if it is indeed the symbol explanation block
+                    const nextBlock = blocks[i + 1];
+                    const nextLine = nextBlock ? (nextBlock['value'] || '').trim() : '';
+                    const nextNextBlock = blocks[i + 2];
+                    const nextNextLine = nextNextBlock ? (nextNextBlock['value'] || '').trim() : '';
                     if (nextLine.includes('【テキスト中に現れる記号について】') || nextNextLine.includes('【テキスト中に現れる記号について】')) {
                         inSkipBlock = true;
                     }
@@ -130,23 +143,28 @@ class AozoraParser {
                 continue;
             }
 
-            if (line.trim().length === 0) {
+            if (block['type'] === 'BLOCK_EMPTY_LINE') {
                 documentChildren.push(new EmptyLineNode());
                 continue;
             }
 
-            if (line.trim() === '［＃改ページ］') {
+            if (block['type'] === 'BLOCK_PAGE_BREAK') {
                 documentChildren.push(new PageBreakNode());
                 continue;
             }
 
-            const { jisageClass, line: lineAfterJisage } = this.parseJisage(line);
-            const { alignmentClass, line: lineAfterAlignment } = this.parseAlignment(lineAfterJisage);
-            const { isHeading, headingLevel, headingText, line: finalLineText } = this.parseHeading(lineAfterAlignment);
+            // トークンからすでに解析済みの地下げ、揃え、見出しクラス/プロパティを取得
+            const jisageClass = block['jisageClass'] || '';
+            const alignmentClass = block['alignmentClass'] || '';
+            
+            // インラインASTの構築
+            const inlineAST = this.parseTokensToAST(block['inlineTokens'] || []);
+            const inlineChildren = inlineAST.children || [];
 
-            const inlineAST = this.parseLineToAST(finalLineText);
-
-            if (isHeading) {
+            if (block['type'] === 'BLOCK_HEADING') {
+                const headingLevel = block['headingLevel'] || 2;
+                const headingText = block['headingText'] || '';
+                
                 // 自動改ページの挿入判定 (headingPageBreakModeの設定値に応じた動的適用)
                 const headingMode = this.configModel['headingPageBreakMode'] || 'large-medium';
                 let isTarget = false;
@@ -181,9 +199,9 @@ class AozoraParser {
                     .trim();
                 bookModel.toc.push({ id: headingId, text: cleanText, level: headingLevel });
                 headingIndex++;
-                documentChildren.push(new HeadingNode(headingLevel, headingId, inlineAST.children || [], jisageClass, alignmentClass));
+                documentChildren.push(new HeadingNode(headingLevel, headingId, inlineChildren, jisageClass, alignmentClass));
             } else {
-                documentChildren.push(new ParagraphNode(jisageClass, alignmentClass, inlineAST.children || []));
+                documentChildren.push(new ParagraphNode(jisageClass, alignmentClass, inlineChildren));
             }
         }
 
@@ -238,20 +256,10 @@ class AozoraParser {
      */
     // @ts-expect-error
     formatAozoraMarkup(line) {
-        const ast = this.parseLineToAST(line);
-        return this.evaluator.evaluate(ast);
-    }
-
-    /**
-     * @private
-     * @param {string} line
-     * @return {!ASTNodeInterface}
-     */
-    parseLineToAST(line) {
         const tokens = this.tokenizer.tokenizeInline(line);
         let ast = this.parseTokensToAST(tokens);
         ast = this.semanticAnalyzer.analyze(ast);
-        return ast;
+        return this.evaluator.evaluate(ast);
     }
 
     /**
@@ -283,111 +291,6 @@ class AozoraParser {
             return true;
         }
         return false;
-    }
-
-    /**
-     * @private
-     * @param {string} line
-     * @return {{ jisageClass: string, line: string }}
-     */
-    parseJisage(line) {
-        let jisageClass = '';
-        const jisageMatch = line.match(/［＃([０-９0-9]+)字下げ］/);
-        if (jisageMatch) {
-            const rawNum = jisageMatch[1];
-            const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-            const n = parseInt(cleanNum, 10);
-            jisageClass = `jisage${n}`;
-            line = line.replace(/［＃[０-９0-9]+字下げ］/, '');
-        }
-        return { jisageClass, line };
-    }
-
-    /**
-     * @private
-     * @param {string} line
-     * @return {{ alignmentClass: string, line: string }}
-     */
-    parseAlignment(line) {
-        let alignmentClass = '';
-        if (line.includes('［＃地付き］')) {
-            alignmentClass = 'chitsuki';
-            line = line.replace(/［＃地付き］/g, '');
-        } else if (line.includes('［＃地寄せ］')) {
-            alignmentClass = 'chiyose';
-            line = line.replace(/［＃地寄せ］/g, '');
-        } else {
-            const chitageMatch = line.match(/［＃地から([０-９0-9]+)字上げ］/);
-            if (chitageMatch) {
-                const rawNum = chitageMatch[1];
-                const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-                const n = parseInt(cleanNum, 10);
-                alignmentClass = `chitage-${n}`;
-                line = line.replace(/［＃地から[０-９0-9]+字上げ］/g, '');
-            }
-        }
-        return { alignmentClass, line };
-    }
-
-    /**
-     * @private
-     * @param {string} line
-     * @return {{ isHeading: boolean, headingLevel: number, headingText: string, line: string }}
-     */
-    parseHeading(line) {
-        let isHeading = false;
-        let headingLevel = 2; // Default to h2 for large heading
-        let headingText = '';
-        const headingMatch = line.match(/［＃「([^」]+)」は(大|中|小)見出し］/);
-        if (headingMatch) {
-            isHeading = true;
-            headingText = headingMatch[1];
-            const levelChar = headingMatch[2];
-            if (levelChar === '大') headingLevel = 2;
-            else if (levelChar === '中') headingLevel = 3;
-            else if (levelChar === '小') headingLevel = 4;
-            
-            line = line.replace(/［＃「[^」]+」は(?:大|中|小)見出し］/, '');
-        }
-        return { isHeading, headingLevel, headingText, line };
-    }
-
-    /**
-     * @private
-     * @param {string} line
-     * @param {string} jisageClass
-     * @param {string} alignmentClass
-     * @param {boolean} isHeading
-     * @param {number} headingLevel
-     * @param {string} headingText
-     * @param {number} headingIndex
-     * @return {{ html: string, headingIndex: number }}
-     */
-    buildLineHTML(line, jisageClass, alignmentClass, isHeading, headingLevel, headingText, headingIndex) {
-        if (line.trim().length === 0) {
-            return { html: '<p class="empty-line">&nbsp;</p>', headingIndex };
-        }
-        let classes = [];
-        if (jisageClass) classes.push(jisageClass);
-        if (alignmentClass) classes.push(alignmentClass);
-        const classAttr = classes.length > 0 ? ` class="${classes.join(' ')}"` : '';
-
-        if (isHeading) {
-            const headingId = `toc-heading-${headingIndex}`;
-            const cleanText = headingText
-                .replace(/[｜|]/g, '')
-                .replace(/《[^》]+》/g, '')
-                .trim();
-            Yuzora.locator.resolve(BookModel).toc.push({ id: headingId, text: cleanText, level: headingLevel });
-            return {
-                html: `<h${headingLevel} id="${headingId}"${classAttr}>${line}</h${headingLevel}>`,
-                headingIndex: headingIndex + 1
-            };
-        }
-        if (line.startsWith('<h2>') || line.startsWith('<h3>')) {
-            return { html: line, headingIndex };
-        }
-        return { html: `<p${classAttr}>${line}</p>`, headingIndex };
     }
 }
 
