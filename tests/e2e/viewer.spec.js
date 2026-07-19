@@ -45,12 +45,12 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const readerScreen = page.locator('#reader-screen');
         await expect(readerScreen).toBeVisible();
 
-        // Open settings drawer
         const btnSettings = page.locator('#btn-settings');
         const readerHeader = page.locator('.reader-header');
-        if (await readerHeader.getAttribute('class').then(c => c.includes('hidden'))) {
-            await page.click('#reader-viewport');
-        }
+        await page.waitForSelector('#reader-content p');
+        await expect(readerHeader).toHaveClass(/hidden/, { timeout: 8000 });
+        await page.click('#reader-viewport');
+        await expect(readerHeader).not.toHaveClass(/hidden/);
         await btnSettings.click();
 
         // Assert settings drawer is open
@@ -218,6 +218,11 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const btnSettings = page.locator('#btn-settings');
         const settingsDrawer = page.locator('#settings-drawer');
         await expect(settingsDrawer).not.toHaveClass(/open/);
+
+        const readerHeader = page.locator('.reader-header');
+        await expect(readerHeader).toHaveClass(/hidden/, { timeout: 8000 });
+        await page.click('#reader-viewport');
+        await expect(readerHeader).not.toHaveClass(/hidden/);
         await btnSettings.click();
         await expect(settingsDrawer).toHaveClass(/open/);
 
@@ -280,6 +285,11 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const btnTOC = page.locator('#btn-toc');
         const tocDrawer = page.locator('#toc-drawer');
         await expect(tocDrawer).not.toHaveClass(/open/);
+
+        const readerHeader = page.locator('.reader-header');
+        await expect(readerHeader).toHaveClass(/hidden/, { timeout: 8000 });
+        await page.click('#reader-viewport');
+        await expect(readerHeader).not.toHaveClass(/hidden/);
         await btnTOC.click();
         await expect(tocDrawer).toHaveClass(/open/);
 

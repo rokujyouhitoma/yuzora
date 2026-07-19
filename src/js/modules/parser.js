@@ -145,6 +145,23 @@ class AozoraParser {
             const inlineAST = this.parseLineToAST(finalLineText);
 
             if (isHeading) {
+                // 自動改ページの挿入判定 (大見出し[2] または 中見出し[3] のみ対象)
+                if (headingLevel === 2 || headingLevel === 3) {
+                    let prevNode = null;
+                    for (let j = documentChildren.length - 1; j >= 0; j--) {
+                        if (documentChildren[j].type !== 'EmptyLine') {
+                            prevNode = documentChildren[j];
+                            break;
+                        }
+                    }
+                    if (prevNode && 
+                        prevNode.type !== 'Heading' && 
+                        prevNode.type !== 'PageBreak' && 
+                        prevNode.type !== 'CoverPage') {
+                        documentChildren.push(new PageBreakNode());
+                    }
+                }
+
                 const headingId = `toc-heading-${headingIndex}`;
                 const cleanText = headingText
                     .replace(/[｜|]/g, '')

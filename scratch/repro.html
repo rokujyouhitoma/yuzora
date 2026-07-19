@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Break Repro</title>
+    <style>
+        :root {
+            --bg-color: #f4ecd8;
+            --text-color: #333029;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            font-family: serif;
+        }
+        .viewport {
+            width: 800px;
+            height: 400px;
+            border: 2px solid #333;
+            overflow: auto;
+        }
+        .content {
+            writing-mode: vertical-rl;
+            height: 100%;
+            column-width: 200px;
+            column-gap: 40px;
+            column-fill: auto;
+        }
+        p {
+            margin: 0;
+            padding: 0;
+            text-indent: 1em;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        /* 現在の page-break スタイル */
+        .page-break {
+            display: block;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+        }
+        .page-break + * {
+            break-before: column !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+
+        /* 比較用の別の page-break スタイル（クラス名を分けて検証できるようにする） */
+        .page-break-direct {
+            display: block;
+            width: 1px;
+            height: 100%;
+            margin-left: -1px; /* 領域を占有しないように引き戻す */
+            break-before: column;
+            -webkit-column-break-before: always;
+            page-break-before: always;
+            visibility: hidden;
+        }
+
+        .page-break-inline {
+            display: inline-block;
+            width: 0;
+            height: 100%;
+            break-before: column;
+            -webkit-column-break-before: always;
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+    <h1>Page Break Validation Repro</h1>
+    
+    <h2>Pattern 1: Current Implementation (.page-break + *)</h2>
+    <div class="viewport">
+        <div class="content" id="content1">
+            <p>これは1つ目の段落です。ここからテキストが始まります。ある程度の長さを持たせて、カラムの途中で改ページが発生するようにします。吾輩は猫である。名前はまだ無い。</p>
+            <div class="page-break"></div>
+            <p>これは改ページ後の段落です。正常であれば、この段落は次のカラム（左側）の先頭から開始されるはずです。</p>
+            <p>さらに続く段落です。適当なテキストを配置して、改ページの効果を確認します。</p>
+        </div>
+    </div>
+
+    <h2>Pattern 2: Direct Break on element (page-break-direct)</h2>
+    <div class="viewport">
+        <div class="content" id="content2">
+            <p>これは1つ目の段落です。ここからテキストが始まります。ある程度の長さを持たせて、カラムの途中で改ページが発生するようにします。吾輩は猫である。名前はまだ無い。</p>
+            <div class="page-break-direct"></div>
+            <p>これは改ページ後の段落です。正常であれば、この段落は次のカラム（左側）の先頭から開始されるはずです。</p>
+            <p>さらに続く段落です。適当なテキストを配置して、改ページの効果を確認します。</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -235,6 +235,38 @@ test.describe('parser.js Unit Tests', () => {
         assert.strictEqual(pageBreaks.length, 2);
     });
 
+    test('should automatically parse page break before large or medium headings when not preceded by heading/pagebreak/cover', () => {
+        // 大見出しの前に自動改ページが入ること (計2箇所: 表紙後 + 本文中)
+        const resLarge = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃大見出し］［＃「大見出し」は大見出し］');
+        const countLarge = resLarge.body.match(/<div class="page-break"><\/div>/g) || [];
+        assert.strictEqual(countLarge.length, 2);
+
+        // 中見出しの前に自動改ページが入ること (計2箇所: 表紙後 + 本文中)
+        const resMedium = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃中見出し］［＃「中見出し」は中見出し］');
+        const countMedium = resMedium.body.match(/<div class="page-break"><\/div>/g) || [];
+        assert.strictEqual(countMedium.length, 2);
+
+        // 小見出しの直前は自動改ページの対象外であること (計1箇所: 表紙後のみ)
+        const resSmall = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃小見出し］［＃「小見出し」は小見出し］');
+        const countSmall = resSmall.body.match(/<div class="page-break"><\/div>/g) || [];
+        assert.strictEqual(countSmall.length, 1);
+
+        // 見出しが連続した場合、または間に空行のみを挟む場合に、2つ目の見出しの前に自動改ページが二重挿入されないこと (計2箇所: 表紙後 + 大見出し前)
+        const resSeq = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃大見出し］［＃「大見出し」は大見出し］\n\n［＃中見出し］［＃「中見出し」は中見出し］');
+        const countSeq = resSeq.body.match(/<div class="page-break"><\/div>/g) || [];
+        assert.strictEqual(countSeq.length, 2);
+
+        // 明示的な改ページの直後の見出しで二重改ページにならないこと (計2箇所: 表紙後 + 明示的改ページ)
+        const resExplicit = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n本文段落\n［＃改ページ］\n［＃大見出し］［＃「大見出し」は大見出し］');
+        const countExplicit = resExplicit.body.match(/<div class="page-break"><\/div>/g) || [];
+        assert.strictEqual(countExplicit.length, 2);
+
+        // 表紙の直後（＝書籍の最初の実質的な要素）が見出しの場合、二重改ページにならないこと (計1箇所: 表紙後のみ)
+        const resFirst = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃大見出し］［＃「大見出し」は大見出し］');
+        const countFirst = resFirst.body.match(/<div class="page-break"><\/div>/g) || [];
+        assert.strictEqual(countFirst.length, 1);
+    });
+
     test('should parse headings (large, medium, small) and preserve rubies inside', () => {
         const resultLarge = window.Yuzora.parseAozoraText('タイトル\n著者\n-------------------------------------------------------\n［＃２字下げ］上　先生と私［＃「上　先生と私」は大見出し］');
         assert.ok(resultLarge.body.includes('<h2 id="toc-heading-0" class="jisage2">上　先生と私</h2>'));

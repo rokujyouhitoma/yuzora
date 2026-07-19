@@ -2,7 +2,7 @@
 ID: 062
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENH] 見出しの直前での自動改ページ機能の追加 (ID: 062)

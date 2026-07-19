@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Page Break CSS Experiment</title>
+    <style>
+        body {
+            background-color: #f4ecd8;
+            color: #333029;
+            margin: 0;
+            padding: 20px;
+            font-family: serif;
+        }
+        .viewport {
+            width: 800px;
+            height: 300px;
+            border: 2px solid #333;
+            overflow: auto;
+            margin-bottom: 20px;
+        }
+        .content {
+            writing-mode: vertical-rl;
+            height: 100%;
+            column-width: 200px;
+            column-gap: 40px;
+            column-fill: auto;
+            block-size: max-content;
+        }
+        p {
+            margin: 0;
+            padding: 0;
+            text-indent: 1em;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* ---------------------------------------------------- */
+        /* Pattern A: Current Implementation (+ * with break-before: column) */
+        .pat-a-pb {
+            display: block;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+        }
+        .pat-a-pb + * {
+            break-before: column !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+
+        /* Pattern B: Direct break-before on pb itself (width: 1px, height: 100%) */
+        .pat-b-pb {
+            display: block;
+            width: 1px;
+            height: 100%;
+            margin-left: -1px;
+            visibility: hidden;
+            break-before: column !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+
+        /* Pattern C: Direct break-before on pb itself (height/width: 0) */
+        .pat-c-pb {
+            display: block;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+            break-before: column !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+
+        /* Pattern D: break-after on pb itself (display: block, height/width: 0) */
+        .pat-d-pb {
+            display: block;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+            break-after: column !important;
+            -webkit-column-break-after: always !important;
+            page-break-after: always !important;
+        }
+
+        /* Pattern E: Direct break-before on pb itself with display: inline-block */
+        .pat-e-pb {
+            display: inline-block;
+            width: 0;
+            height: 100%;
+            break-before: column !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+
+        /* Pattern F: + * with break-before: page */
+        .pat-f-pb {
+            display: block;
+            width: 0;
+            height: 0;
+            visibility: hidden;
+        }
+        .pat-f-pb + * {
+            break-before: page !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+
+        /* Pattern G: Direct break-before on hr, height:0, width:0 */
+        hr.pat-g-pb {
+            margin: 0;
+            border: 0;
+            width: 0;
+            height: 0;
+            break-before: column !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+
+        /* Pattern I: Using break-before: column on pb itself, height: 100%, width: 0 */
+        .pat-i-pb {
+            display: block;
+            width: 0;
+            height: 100%;
+            visibility: hidden;
+            break-before: column !important;
+            -webkit-column-break-before: always !important;
+            page-break-before: always !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Page Break CSS Experiment</h1>
+
+    <h2>Pattern A (Current: .page-break + * { break-before: column })</h2>
+    <div class="viewport" id="viewport-a">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <div class="pat-a-pb"></div>
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+
+    <h2>Pattern B (Direct break-before on pb, height:100%, width:1px)</h2>
+    <div class="viewport" id="viewport-b">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <div class="pat-b-pb"></div>
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+
+    <h2>Pattern C (Direct break-before on pb, height:0, width:0)</h2>
+    <div class="viewport" id="viewport-c">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <div class="pat-c-pb"></div>
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+
+    <h2>Pattern D (Direct break-after on pb, height:0, width:0)</h2>
+    <div class="viewport" id="viewport-d">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <div class="pat-d-pb"></div>
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+
+    <h2>Pattern E (Direct break-before on pb, inline-block, height:100%)</h2>
+    <div class="viewport" id="viewport-e">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <div class="pat-e-pb"></div>
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+
+    <h2>Pattern F (Current + * with break-before: page)</h2>
+    <div class="viewport" id="viewport-f">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <div class="pat-f-pb"></div>
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+
+    <h2>Pattern G (Direct break-before on hr, height:0, width:0)</h2>
+    <div class="viewport" id="viewport-g">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <hr class="pat-g-pb">
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+
+    <h2>Pattern I (Direct break-before on pb, height:100%, width:0)</h2>
+    <div class="viewport" id="viewport-i">
+        <div class="content">
+            <p class="before-text">これは改ページ前の非常に長い段落テキストです。確実にカラムの途中で改ページが発生するようにするためのダミーテキスト。吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。</p>
+            <div class="pat-i-pb"></div>
+            <p class="after-text">これは改ページ後の段落テキストです。正常に改カラムされていれば、前のカラムではなく次のカラムの先頭から配置されます。</p>
+        </div>
+    </div>
+</body>
+</html>

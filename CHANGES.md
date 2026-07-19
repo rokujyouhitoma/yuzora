@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Added automatic page break before large and medium headings (heading level 2 and 3) when not preceded by another heading, page break, or cover page to enhance reading layout, and strictified unit and E2E tests (ID: 080).
+
 - Fixed parser bug where the Aozora page break marker ［＃改ページ］ in body text was ignored by the tokenizer, bypassing standard paragraph blocks and failing to generate page break elements, and strictified the unit tests (ID: 079).
 
 - Fixed scroll position jumping on book load by re-restoring the scroll position precisely using the settled scrollWidth dimensions after overrun layout repairs finish (ID: 078).

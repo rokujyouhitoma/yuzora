@@ -89,6 +89,7 @@
 | **077** | Bug | High | Closed | 自己修復レイアウトエンジンにおける動的改ページの動的サイズ計算適用 | AI Agent | [077-dynamic-page-break-sizing-on-repair.md](closed/077-dynamic-page-break-sizing-on-repair.md) |
 | **078** | Bug | High | Closed | ページ読込時の自動スクロール完了後にレイアウト自己修復によるスクロール位置のズレ（跳ね）が発生する問題 | AI Agent | [078-fix-scroll-jumping-on-load-repair.md](closed/078-fix-scroll-jumping-on-load-repair.md) |
 | **079** | Bug | High | Closed | 本文中の青空文庫改ページ記法「［＃改ページ］」のパース不具合の修正 | AI Agent | [079-fix-aozora-page-break-parsing.md](closed/079-fix-aozora-page-break-parsing.md) |
+| **080** | Feature | Medium | Closed | 見出しの直前での自動改ページ機能の追加 | AI Agent | [080-page-break-before-headings.md](closed/080-page-break-before-headings.md) |
 
 
 
