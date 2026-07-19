@@ -2,7 +2,7 @@
 ID: 063
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [ENH] 表示設定に依存しない明示的改ページの完全なレイアウト担保と余白最適化 (ID: 063)

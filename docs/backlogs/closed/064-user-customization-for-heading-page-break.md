@@ -2,7 +2,7 @@
 ID: 064
 種別: Feature
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [FEAT] 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 (ID: 064)
