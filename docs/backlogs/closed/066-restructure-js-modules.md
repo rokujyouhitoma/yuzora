@@ -2,7 +2,7 @@
 ID: 066
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] JSモジュールの構造化とサブディレクトリ整理 (ID: 066)

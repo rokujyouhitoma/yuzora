@@ -2,7 +2,7 @@
 ID: 084
 種別: Feature
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] JSモジュールの構造化とサブディレクトリ整理 (ID: 084)
