@@ -52,21 +52,21 @@
 | **[MNG-03] 問題管理定義書** | [MNG-03-problem_management.md](MNG-03-problem_management.md) | システム上の不具合や脆弱性などの問題を検知・分析し、解決・恒久対策を行うための管理策を定義する。 | 開発チーム、人間（User）、AI Agent | 新しい管理基準や問題対応プロセスの追加・変更時 |
 | **[MNG-04] 変更管理定義書** | [MNG-04-change_management.md](MNG-04-change_management.md) | システムや要件の変更に伴うリスクを最小化し、承認および検証された変更を適用するための管理策を定義する。 | 開発チーム、人間（User）、AI Agent | 変更手続きや検証・承認プロセスの見直し時 |
 | **[MNG-05] テスト仕様書** | [MNG-05-test_cases.md](MNG-05-test_cases.md) | 各検証レベル（受入検証、システム検証、結合検証、単体検証、および実装セルフチェック）に対応した品質および機能性のためのテストケースを定義する。 | 開発チーム、人間（User）、AI Agent | 新機能の追加、仕様変更、および検証プロセスの見直し時 |
-| **[MNG-06] Active Issues台帳** | [issues/README.md](issues/README.md) | 現在進行中・開発中のアクティブなIssueのステータスや担当を追跡・一元管理する。 | 開発チーム、人間（User）、AI Agent | 新規Issueの起票、進捗更新、またはクローズ時 |
+| **[MNG-06] Active Issues台帳** | [issues/README.md](../issues/README.md) | 現在進行中・開発中のアクティブなIssueのステータスや担当を追跡・一元管理する。 | 開発チーム、人間（User）、AI Agent | 新規Issueの起票、進捗更新、またはクローズ時 |
 | **[MNG-07] 脅威モデリング定義書** | [MNG-07-threat_modeling.md](MNG-07-threat_modeling.md) | セキュリティ・バイ・デザインの実現に向け、STRIDEを用いたセキュリティ脅威の識別・分析・緩和のための管理策を定義する。 | 開発チーム、人間（User）、AI Agent | セキュリティポリシーの変更、または新たな脅威ベクトルの発生・改定時 |
 | **[MNG-08] アーキテクチャ意思決定プロセス** | [MNG-08-adr_process.md](MNG-08-adr_process.md) | 技術選定や設計のトレードオフを明文化するADRの運用・管理プロセスを定義する。 | 開発チーム、人間（User）、AI Agent | 新たな設計方針や技術選定プロセスの導入・見直し時 |
 | **[MNG-09] バックログ管理プロセス定義書** | [MNG-09-backlog_process.md](MNG-09-backlog_process.md) | 将来の機能要望、改善のアイデアのプールおよび起票・管理プロセスを定義する。 | 人間（User）、開発チーム、AI Agent | 管理プロセスの見直し、または定義変更時 |
-| **[MNG-09] バックログ管理台帳** | [backlogs/README.md](backlogs/README.md) | 将来の機能要望、改善のアイデアなどの詳細バックログファイルを一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | 新規バックログの起票、進捗更新、または昇格（クローズ）時 |
-| **[REQ-01] 要求定義書** | [REQ-01-user_requirements.md](REQ-01-user_requirements.md) | ユーザーの目的、必須対応作品、ユースケースなどのビジネス上の「要求（URD）」を定義する。 | 人間（User）、AI Agent | ユーザー要求の変更、動作保証作品の追加・変更時 |
-| **[REQ-02] 機能一覧** | [REQ-02-feature_list.md](REQ-02-feature_list.md) | 実装済みおよび今後実装予定の全機能を一覧化し、各機能の仕様概要、ステータス、追跡性を管理する。 | 開発チーム、人間（User）、AI Agent | 機能の追加・削除・実装ステータスの変更時 |
-| **[REQ-03] 要件定義書** | [REQ-03-system_requirements.md](REQ-03-system_requirements.md) | システム概要、対応フォーマット、および機能・非機能的な「要件（SRD）」を定義する。 | 開発チーム、AI Agent | システムに対する機能・非機能要件の追加・変更時 |
-| **[DSN-01] 基本設計書 (HLD)** | [DSN-01-high_level_design.md](DSN-01-high_level_design.md) | システムアーキテクチャ、コンポーネント役割、画面遷移、デザインシステム等の論理的な設計を定義する。 | 開発チーム、AI Agent | システムアーキテクチャの変更、UIコンポーネント構成の変更時 |
-| **[DSN-02] 詳細設計書 (LLD)** | [DSN-02-low_level_design.md](DSN-02-low_level_design.md) | 関数仕様、変数、正規表現、ページ計算数式、データスキーマ等の実装に直結する物理設計を定義する。 | 実装担当エージェント、開発者 | コーディング仕様の変更、アルゴリズムの追加・変更時 |
-| **[USR-01] 操作マニュアル** | [USR-01-user_manual.md](USR-01-user_manual.md) | アプリケーションの操作方法、カスタマイズ設定、しおり保存機能等のユーザー向けガイドを定義する。 | 人間（User）、一般ユーザー | ドキュメントの新規作成、機能変更時 |
-| **[ADR-01] アーキテクチャ意思決定記録** | [adr/ADR-01-predefined-books-and-storage.md](adr/ADR-01-predefined-books-and-storage.md) | 重要な設計・技術的トレードオフに関する意思決定とその背景、結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 重要な技術選定、アーキテクチャ上の決定を下した時 |
-| **[ADR-02] 循環的複雑度の閾値決定記録** | [adr/ADR-02-cyclomatic-complexity-threshold.md](adr/ADR-02-cyclomatic-complexity-threshold.md) | サイクロマティック複雑度の閾値10の設定理由、およびそれに伴うコードリファクタリング結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 複雑度ルール・閾値の変更、リファクタリング適用時 |
-| **[ADR-03] CI品質ゲートとPagesデプロイ統合記録** | [adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md](adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md) | GitHub Actions CI の導入による自動検証と GitHub Pages デプロイ統合、E2Eテストのネットワーク遮断方針を記録する。 | 開発チーム、将来の開発者、AI Agent | CI/CD検証ルールや本番デプロイポリシーの変更時 |
-| **[MNG-10] フェーズ管理台帳** | [phases/README.md](phases/README.md) | V 字開発プロセスの各フェーズ（PHASE-01〜09）の進行ステータスを追跡・一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | フェーズの起票、ステータス更新（Pending → Active → Done）、または完了時 |
+| **[MNG-09] バックログ管理台帳** | [backlogs/README.md](../backlogs/README.md) | 将来の機能要望、改善のアイデアなどの詳細バックログファイルを一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | 新規バックログの起票、進捗更新、または昇格（クローズ）時 |
+| **[REQ-01] 要求定義書** | [REQ-01-user_requirements.md](../requirements/REQ-01-user_requirements.md) | ユーザーの目的、必須対応作品、ユースケースなどのビジネス上の「要求（URD）」を定義する。 | 人間（User）、AI Agent | ユーザー要求の変更、動作保証作品の追加・変更時 |
+| **[REQ-02] 機能一覧** | [REQ-02-feature_list.md](../requirements/REQ-02-feature_list.md) | 実装済みおよび今後実装予定の全機能を一覧化し、各機能の仕様概要、ステータス、追跡性を管理する。 | 開発チーム、人間（User）、AI Agent | 機能の追加・削除・実装ステータスの変更時 |
+| **[REQ-03] 要件定義書** | [REQ-03-system_requirements.md](../requirements/REQ-03-system_requirements.md) | システム概要、対応フォーマット、および機能・非機能的な「要件（SRD）」を定義する。 | 開発チーム、AI Agent | システムに対する機能・非機能要件の追加・変更時 |
+| **[DSN-01] 基本設計書 (HLD)** | [DSN-01-high_level_design.md](../designs/DSN-01-high_level_design.md) | システムアーキテクチャ、コンポーネント役割、画面遷移、デザインシステム等の論理的な設計を定義する。 | 開発チーム、AI Agent | システムアーキテクチャの変更、UIコンポーネント構成の変更時 |
+| **[DSN-02] 詳細設計書 (LLD)** | [DSN-02-low_level_design.md](../designs/DSN-02-low_level_design.md) | 関数仕様、変数、正規表現、ページ計算数式、データスキーマ等の実装に直結する物理設計を定義する。 | 実装担当エージェント、開発者 | コーディング仕様の変更、アルゴリズムの追加・変更時 |
+| **[USR-01] 操作マニュアル** | [USR-01-user_manual.md](../manuals/USR-01-user_manual.md) | アプリケーションの操作方法、カスタマイズ設定、しおり保存機能等のユーザー向けガイドを定義する。 | 人間（User）、一般ユーザー | ドキュメントの新規作成、機能変更時 |
+| **[ADR-01] アーキテクチャ意思決定記録** | [adr/ADR-01-predefined-books-and-storage.md](../adr/ADR-01-predefined-books-and-storage.md) | 重要な設計・技術的トレードオフに関する意思決定とその背景、結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 重要な技術選定、アーキテクチャ上の決定を下した時 |
+| **[ADR-02] 循環的複雑度の閾値決定記録** | [adr/ADR-02-cyclomatic-complexity-threshold.md](../adr/ADR-02-cyclomatic-complexity-threshold.md) | サイクロマティック複雑度の閾値10の設定理由、およびそれに伴うコードリファクタリング結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 複雑度ルール・閾値の変更、リファクタリング適用時 |
+| **[ADR-03] CI品質ゲートとPagesデプロイ統合記録** | [adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md](../adr/ADR-03-ci-cd-quality-gate-and-pages-deployment.md) | GitHub Actions CI の導入による自動検証と GitHub Pages デプロイ統合、E2Eテストのネットワーク遮断方針を記録する。 | 開発チーム、将来の開発者、AI Agent | CI/CD検証ルールや本番デプロイポリシーの変更時 |
+| **[MNG-10] フェーズ管理台帳** | [phases/README.md](../phases/README.md) | V 字開発プロセスの各フェーズ（PHASE-01〜09）の進行ステータスを追跡・一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | フェーズの起票、ステータス更新（Pending → Active → Done）、または完了時 |
 
 
 ---
@@ -77,8 +77,8 @@
 
 ### 3.1 HLD（基本設計）と LLD（詳細設計）のすみ分け
 * **原則**: 
-  * HLDは **「何が（What）」定義されているか（論理・概念）** に終始します。
-  * LLDは **「どのように（How）実装するか（物理・具象）」** を詳細に規定します。
+  * HLDは **「何が（What）」定義されているか（論理・概念）** に終始します。コード片や個別ファイル名などの実装依存情報を一切含めず、経営層・PM・ST向けに論理アーキテクチャ・データフロー・業務ユースケースシナリオを記述します。
+  * LLDは **「どのように（How）実装するか（物理・具象）」** を詳細に規定します。個別クラス、プロパティ、メソッドシグネチャ、サービスロケーター仕様、具体的なHTML ID/CSS Class変数定義などの物理仕様を詳細に規定し、開発者が迷わず実装・テストできる詳細度を持たせます。
 * **オーバーラップの排除例**:
   * **データ構造**:
     * HLD：データが `localStorage` に保存されること、保存するエンティティの項目名（テーマ、フォントサイズ等）を論理的に記述。
@@ -93,7 +93,7 @@
   * 設計は **「その要件を技術的にどう解決するか（How the system solves it）」** を定義します。
   * **分掌の競合解決ルール**:
   * 実装や検証の過程で要件定義（SRD）と設計（HLD/LLD）の間に矛盾が発覚した場合、 **「要件定義（SRD）が上位」** となります。
-  * 設計側の都合で要件を変更する場合は、まず [REQ-03-system_requirements.md](REQ-03-system_requirements.md) の変更履歴（要件変更プロセス）を経て要件を改定したのち、設計書（HLD/LLD）をそれに追従させます。
+  * 設計側の都合で要件を変更する場合は、まず [REQ-03-system_requirements.md](../requirements/REQ-03-system_requirements.md) の変更履歴（要件変更プロセス）を経て要件を改定したのち、設計書（HLD/LLD）をそれに追従させます。
 
 ### 3.3 TOGAF EA ドメイン間のすみ分け
 TOGAF EA の4ドメイン（BA, AA, DA, TA）に沿った記述のオーバーラップは、以下のマトリクスに基づき、ドキュメントの目的ごとに分担（分掌）します。

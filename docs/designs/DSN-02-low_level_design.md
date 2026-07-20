@@ -1,14 +1,14 @@
 # [DSN-02] 詳細設計書 (Low-Level Design) - ゆうぞら (Yuzora)
 
-本ドキュメントは、基本設計書（[DSN-01-high_level_design.md](/docs/DSN-01-high_level_design.md)）で定義された設計方針に基づき、青空文庫縦書きビューアー「ゆうぞら (Yuzora)」の内部設計およびアルゴリズム仕様（Low-Level Design）を定義します。
+本ドキュメントは、基本設計書（[DSN-01-high_level_design.md](DSN-01-high_level_design.md)）で定義された設計方針に基づき、青空文庫縦書きビューアー「ゆうぞら (Yuzora)」の内部設計およびアルゴリズム仕様（Low-Level Design）を定義します。
 
 ## 0. 設計の位置づけ (Design Alignment)
 * **TOGAF EA との位置づけ**:
   本ドキュメント（詳細設計書）は、**TOGAF EA** の「データアーキテクチャ (DA)」および「テクノロジーアーキテクチャ (TA)」における**物理（実装）設計**を定義します。具体的な関数仕様、変数名、正規表現の置換仕様、ページ計算アルゴリズム、LocalStorageのJSONシリアライズスキーマ、CSS変数の実数値へのマッピングなどを物理レベルで規定します。
 * **ADR (Architecture Decision Record) との連携**:
-  パース処理の正規表現定義や、RTLにおけるスクロール位置補正計算式など、詳細設計・実装段階で発生した個別の技術的な意思決定や制約事項は、[docs/adr/](/docs/adr/) 内のADRに背景とともに記録されます。意思決定の起票・承認プロセスは、[MNG-08-adr_process.md](/docs/MNG-08-adr_process.md) に規定されるプロセスに従います。
+  パース処理の正規表現定義や、RTLにおけるスクロール位置補正計算式など、詳細設計・実装段階で発生した個別の技術的な意思決定や制約事項は、[docs/adr/](../adr/) 内のADRに背景とともに記録されます。意思決定の起票・承認プロセスは、[MNG-08-adr_process.md](../processes/MNG-08-adr_process.md) に規定されるプロセスに従います。
 * **設計ドキュメント間のすみ分け**:
-  基本設計（HLD）や要件定義（SRD）との詳細な記述のすみ分け、およびオーバーラップした際のすみ分け・分掌については、[文書管理・ドキュメント台帳](/docs/MNG-01-document_ledger.md) に規定されている「設計ドキュメント間のすみ分けと分掌」に従います。
+  基本設計（HLD）や要件定義（SRD）との詳細な記述のすみ分け、およびオーバーラップした際のすみ分け・分掌については、[文書管理・ドキュメント台帳](../processes/MNG-01-document_ledger.md) に規定されている「設計ドキュメント間のすみ分けと分掌」に従います。
 
 ---
 
@@ -17,7 +17,7 @@
 アプリケーションの動作状態やDOM要素の参照は、グローバル変数に直接保持するのではなく、**Service Locatorパターン**を用いて管理します。これにより、グローバルスコープの汚染を防ぎ、モジュール間の疎結合化とテスタビリティ（モック化の容易さ）を実現します。
 
 ### 1.1 サービスロケーター (`Locator` クラス)
-[src/js/modules/locator.js](/src/js/modules/locator.js) に実装された `Locator` クラスは、依存解決のためのレジストリとして機能します。
+[src/js/modules/locator.js](../../src/js/modules/core/locator.js) に実装された `Locator` クラスは、依存解決のためのレジストリとして機能します。
 
 - **`window.locator`**: `Locator` クラスのグローバルなシングルトンインスタンス。
 - **主要メソッド**:
@@ -27,7 +27,7 @@
 
 ### 1.2 アプリケーションドメインモデルおよびコンテキスト設計
 
-[src/js/modules/config.js](../src/js/modules/config.js) に定義された各ドメインクラスおよびコンテキストクラスは、アプリケーションのデータ、設定、表示状態、およびDOM要素への参照を関心事ごとに分離して管理します。起動時に各クラスのインスタンスはサービスロケーター（`Locator`）に登録され、他モジュールからはロケーター経由で直接解決されます。グローバル変数や `window` プロキシへのアクセスは完全に排除されています。
+[src/js/modules/config.js](../../src/js/modules/core/config.js) に定義された各ドメインクラスおよびコンテキストクラスは、アプリケーションのデータ、設定、表示状態、およびDOM要素への参照を関心事ごとに分離して管理します。起動時に各クラスのインスタンスはサービスロケーター（`Locator`）に登録され、他モジュールからはロケーター経由で直接解決されます。グローバル変数や `window` プロキシへのアクセスは完全に排除されています。
 
 #### 1.2.1 `ViewContext`（表示・UIコンテキスト）
 一時的なUI状態やレイアウト制御値、および初期化されたすべてのDOM要素参照を保持します。
@@ -546,7 +546,7 @@ $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \t
 
 テーマやカスタマイズ設定は、CSSのクラス切り替えとカスタムプロパティ（CSS変数）により実現されます。
 
-### 5.1 テーマ変数マッピング ([style.css](/src/css/style.css))
+### 5.1 テーマ変数マッピング ([style.css](../../src/css/style.css))
 
 | CSS変数名 | `:root` (和紙/Sepia) | `.theme-light` (明) | `.theme-dark` (暗) | `.theme-black` (漆黒) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -926,6 +926,103 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
 - **チャンク化スケジュールアルゴリズム**:
   - 目次項目数が膨大な場合におけるメインスレッドの占有（カクつき）を避けるため、1フレームあたり **`100件`** ずつ描画処理を分割します。
   - 1チャンク挿入後、まだ未描画の項目がある場合は `requestAnimationFrame` で次のチャンク処理をスケジュールします。
+
+---
+
+## 9. DOM構造・画面構成要素物理設計 (UI Screen DOM Component Breakdown)
+
+本セクションでは、アプリケーションを構成する主要画面の物理的な DOM 構成要素、および対応する HTML 識別子 (ID/Class) の対応定義を規定します。
+
+### 9.1 ウェルカム画面 (Welcome Screen)
+ファイル未読み込み時の初期画面です。全体コンテナは `#welcome-screen` (クラス: `.welcome-screen`) です。
+
+| 構成要素名 | 識別子 (ID / Class) | 親要素 | 役割・機能説明 |
+| :--- | :--- | :--- | :--- |
+| **カードコンテナ** | `.welcome-card` | `#welcome-screen` | ウェルカム画面のコンテンツ全体を中央配置で内包するボックス。 |
+| **logo領域** | `.logo` | `.welcome-card` | アプリケーションのロゴおよびサブタイトルを表示する領域。 |
+| ├ ロゴテキスト | `.logo-text` | `.logo` | 「ゆうぞら」のロゴ文字列表示。 |
+| └ サブタイトル | `.logo-sub` | `.logo` | 「青空文庫 縦書きビューアー」の表示。 |
+| **説明文** | `.description` | `.welcome-card` | アプリケーションの概要およびドラッグ＆ドロップ動作を説明するテキスト。 |
+| **ドロップゾーン** | `#drop-zone` / `.drop-zone` | `.welcome-card` | ファイルのドロップイベントを待ち受ける枠線付きのドラッグエリア。 |
+| ├ アイコン | `.icon-upload` | `#drop-zone` | アップロードを視覚的に表現するSVGアイコン。 |
+| ├ ドラッグ案内 | `.drop-text` | `#drop-zone` | 「ファイルをここにドラッグ＆ドロップ」の文字列表示。 |
+| ├ 接続詞 | `.drop-or` | `#drop-zone` | 「または」の文字列表示。 |
+| └ ファイル選択ボタン | `label.btn-primary` | `#drop-zone` | クリックでファイルブラウザを起動する装飾ボタン。 |
+| **ファイルインプット** | `#file-input` | `label` 内 | `<input type="file" accept=".txt,.html,.xhtml">` (CSSで実体は非表示)。 |
+| **事前定義作品セクション** | `.predefined-books-section`| `.welcome-card` | ローカルにファイルがないユーザー向けのオススメ作品選択領域。 |
+| ├ セクションタイトル | `.section-title` | `.predefined-books-section`| 「開発者のオススメ本」または「読書家のオススメ本」の文字列表示。 |
+| └ 作品グリッド | `#developer-books-grid` / `#reader-books-grid` / `.predefined-books-grid` | `.predefined-books-section`| 各カテゴリの作品カードが動的に流し込まれるコンテナ。 |
+| **作品カード** | `.book-card` (動的生成) | 作品グリッド内 | 個々の作品を選択するためのボタン型カード要素。 |
+| ├ カバー | `.book-card-cover` | `.book-card` | 本の表紙を模した、和風の縦書きタイトル表示領域。 |
+| └ メタ情報 | `.book-card-meta` | `.book-card` | 作品の巻数や著者名等のメタ情報を横書きで表示する領域。 |
+| **作品カードプレースホルダー** | `.book-card-skeleton` | 作品グリッド内 | ロード完了までの間に表示されるスケルトンスクリーン。シマーアニメーションを適用する。 |
+| **ヘルプセクション** | `.help-section` | `.welcome-card` | 青空文庫からのダウンロード手順・利用方法を説明する領域。 |
+
+### 9.2 読書画面 (Reader Screen)
+メインの閲覧画面です。全体コンテナは `#reader-screen` (クラス: `.reader-screen`) です。未ロード時は `.hidden` クラスによって非表示化されます。
+
+| 構成要素名 | 識別子 (ID / Class) | 親要素 | 役割・機能説明 |
+| :--- | :--- | :--- | :--- |
+| **ヘッダーコントロール** | `.reader-header` | `#reader-screen` | 画面上部の操作・表示ヘッダー。操作時に一時表示され、自動フェードアウトする。 |
+| ├ ホーム戻るボタン | `#btn-back` / `.btn-icon` | `.reader-header` | クリック時に読書画面を閉じ、ウェルカム画面へと戻る。 |
+| ├ 作品タイトル表示 | `#book-title` / `.book-title` | `.reader-header` | 読み込み中の作品名を中央に表示する領域。 |
+| └ 右側コントロール | `.right-controls` | `.reader-header` | ヘッダー右側に配置される操作ボタン群。 |
+| 　├ 最初へボタン | `#btn-first-page` / `.btn-icon`| `.right-controls` | ワンクリックで作品の先頭へジャンプする。 |
+| 　└ 表示設定ボタン | `#btn-settings` / `.btn-icon` | `.reader-header` | クリック時に設定ドロワーを起動する。 |
+| **読書ビューポート** | `#reader-viewport` / `.reader-viewport` | `#reader-screen` | スクロールやスワイプを検知し、表示範囲を制限するメイン表示窓 (`overflow-x: hidden`)。 |
+| └ 本文表示コンテナ | `#reader-content` / `.reader-content` | `#reader-viewport` | パースされた縦書きHTMLが動的に流し込まれるコンテナ。テーマやフォント等の設定クラスが動的に付与される。 |
+| **ページナビゲーション** | `.page-nav` (左右共通) | `#reader-screen` | 画面左右の両端にオーバーレイされた透明なクリック/タップターゲット。 |
+| ├ 左側タップエリア | `#page-nav-left` / `.page-nav-left`| `#reader-screen` | 左側のタップエリア。「次のページへ」を割り当て (RTL時)。 |
+| └ 右側タップエリア | `#page-nav-right` / `.page-nav-right`| `#reader-screen` | 右側のタップエリア。「前のページへ」を割り当て (RTL時)。 |
+| **フッターコントロール** | `.reader-footer` | `#reader-screen` | 画面下部に配置される進捗コントロール。自動フェードアウトする。 |
+| ├ 進捗バーコンテナ | `.progress-bar-container` | `.reader-footer` | 進捗バーを配置する外枠。 |
+| 　├ 進捗バートラック | `#progress-bar` / `.progress-bar` | `.progress-bar-container` | 進捗を示す横バー。クリック・ドラッグによる位置移動を検知。 |
+| 　└ 進捗つまみ | `#progress-thumb` / `.progress-thumb` | `#progress-bar` | 現在位置を視覚化する進捗バー上の丸形インジケータ。 |
+| └ フッター情報表示 | `.footer-info` | `.reader-footer` | テキストによる進捗状況の表示。 |
+| 　├ 読了進捗率 | `#reading-percentage` | `.footer-info` | 現在位置の読了割合 (「〇%」) を表示。 |
+| 　└ ページ数表示 | `#reading-index` | `.footer-info` | 現在のページ位置と総ページ数 (「〇 / 〇 ページ」) を表示。 |
+
+### 9.3 設定ドロワー (Settings Drawer)
+読書画面の設定ボタンで起動するサイドメニューです。全体コンテナは `#settings-drawer` (クラス: `.settings-drawer`) です。背面には暗幕 `#drawer-overlay` (クラス: `.drawer-overlay`) がオーバーレイされます。
+
+| 構成要素名 | 識別子 (ID / Class) | 親要素 | 役割・機能説明 |
+| :--- | :--- | :--- | :--- |
+| **ドロワーヘッダー** | `.drawer-header` | `#settings-drawer` | ドロワー最上部のタイトルおよびクローズ領域。 |
+| ├ ドロワータイトル | `h2` | `.drawer-header` | 「表示設定」のテキスト表示。 |
+| └ 閉じるボタン | `#btn-close-settings` / `.btn-icon`| `.drawer-header` | クリック時にドロワーおよび背面暗幕を閉じる。 |
+| **ドロワーコンテンツ** | `.drawer-content` | `#settings-drawer` | スタイル調整用セレクターを格納する設定グループ群。 |
+| ├ テーマ設定 | `.settings-group` (テーマ用) | `.drawer-content` | 背景色・カラーテーマ (和紙、明、暗、漆黒) を切り替えるボタン群。 |
+| ├ 書体設定 | `.settings-group` (書体用) | `.drawer-content` | 表示フォント (明朝体、ゴシック体) を切り替えるボタン群。 |
+| ├ ページ送り方向 | `.settings-group` (送り方向用) | `.drawer-content` | ページの進行・スクロール方向 (右から左、左から右) を切り替えるボタン群。 |
+| ├ 文字サイズ設定 | `.settings-group` (サイズ用) | `.drawer-content` | 文字サイズ (小、中、大、特大) を切り替えるボタン群。 |
+| ├ 行間設定 | `.settings-group` (行間用) | `.drawer-content` | カラム内の行送り幅 (狭い、標準、広い) を切り替えるボタン群。 |
+| └ 文字間設定 | `.settings-group` (文字間用) | `.drawer-content` | 各文字の間隔 (狭い、標準、広い) を切り替えるボタン群。 |
+| └ 開発者向け設定 | `.settings-group.dev-section` | `.drawer-content` | デバッグモーダルを起動する「デバッグ画面を開く」ボタン (`#btn-open-debug`) を内包する領域。 |
+
+### 9.4 デバッグモーダル (Debug Modal)
+開発者向けの動作状態モニター、レイアウト診断、および `localStorage` 操作を行うモーダル画面です。コンテナは `#debug-modal` (クラス: `.debug-modal`)、背面暗幕は `#debug-modal-overlay` (クラス: `.debug-modal-overlay`) です。
+
+| 構成要素名 | 識別子 (ID / Class) | 親要素 | 役割・機能説明 |
+| :--- | :--- | :--- | :--- |
+| **モーダルヘッダー** | `.debug-modal-header` | `#debug-modal` | タイトルと閉じるボタンの領域。 |
+| ├ タイトル | `h2` | `.debug-modal-header` | 「デバッグ情報 & 操作」のテキスト表示。 |
+| └ 閉じるボタン | `#btn-close-debug` / `.btn-icon`| `.debug-modal-header` | モーダルを閉じるボタン。 |
+| **タブ選択バー** | `.debug-tabs` | `#debug-modal` | 状態モニターとレイアウト診断を切り替えるタブ領域。 |
+| ├ システム状態タブボタン | `#tab-btn-monitor` / `.debug-tab-btn` | `.debug-tabs` | クリック時にシステム状態モニターおよびlocalStorage操作パネルを表示。 |
+| └ レイアウト診断タブボタン | `#tab-btn-diagnose` / `.debug-tab-btn` | `.debug-tabs` | クリック時にレイアウト診断パネルを表示。 |
+| **モーダルボディ** | `.debug-modal-body` | `#debug-modal` | 選択されたタブのコンテンツを表示する領域。 |
+| **システム状態コンテンツ**| `#debug-tab-content-monitor` / `.debug-tab-content` | `.debug-modal-body` | システム状態モニターとlocalStorage操作を格納。 |
+| ├ 状態モニターセクション| `.debug-modal-section` (モニター用)| `#debug-tab-content-monitor` | アプリの状態変数をリアルタイム表示する領域。 |
+| │ └ モニタープレビュー| `#debug-monitor` | `.debug-monitor-container` | JSON化した内部状態のテキストプレビュー。 |
+| └ 操作パネルセクション | `.debug-modal-section` (操作用)| `#debug-tab-content-monitor` | `localStorage` の初期化を行うボタン群。 |
+| 　├ しおり初期化ボタン | `#btn-clear-bookmarks` | `.debug-buttons` | クリック時に読書履歴や各作品の進捗データを削除。 |
+| 　├ 設定初期化ボタン | `#btn-clear-config` | `.debug-buttons` | クリック時に表示カスタマイズ設定をデフォルトにリセット。 |
+| 　└ 完全初期化ボタン | `#btn-clear-all` | `.debug-buttons` | 全ての `localStorage` をクリアしてアプリを強制再読込。 |
+| **レイアウト診断コンテンツ**| `#debug-tab-content-diagnose` / `.debug-tab-content` | `.debug-modal-body` | レイアウト診断機能を格納するコンテンツ。 |
+| └ 診断パネルセクション | `.debug-modal-section` (診断用) | `#debug-tab-content-diagnose` | アライメントズレおよび境界交差文字の診断レポートを扱う領域。 |
+| 　├ 診断実行ボタン | `#btn-diagnose-layout` | `.debug-buttons` | 現在の画面サイズ・スクロール位置から見切れ文字やズレを診断。 |
+| 　├ レポートコピーボタン| `#btn-copy-debug-report` | `.debug-buttons` | 生成したMarkdownレポートをクリップボードにコピー。 |
+| 　└ 診断レポート表示エリア| `#diagnose-report-output` | `.debug-monitor-container` | 生成されたMarkdown診断レポートのテキストプレビューエリア。 |
 
 
 

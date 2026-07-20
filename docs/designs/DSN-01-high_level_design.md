@@ -1,6 +1,6 @@
 # [DSN-01] 基本設計書 (High-Level Design) - ゆうぞら (Yuzora)
 
-本ドキュメントは、要件定義書（[REQ-03-system_requirements.md](REQ-03-system_requirements.md)）に規定されたシステム要件に基づき、青空文庫縦書きビューアー「ゆうぞら (Yuzora)」の基本設計（High-Level Design）を定義します。
+本ドキュメントは、要件定義書（[REQ-03-system_requirements.md](../requirements/REQ-03-system_requirements.md)）に規定されたシステム要件に基づき、青空文庫縦書きビューアー「ゆうぞら (Yuzora)」の基本設計（High-Level Design）を定義します。
 
 ---
 
@@ -89,9 +89,9 @@ graph TD
 * **TOGAF EA との位置づけ**:
   本ドキュメントは、**TOGAF EA** の「アプリケーションアーキテクチャ (AA)」「データアーキテクチャ (DA)」「テクノロジーアーキテクチャ (TA)」における**論理（概念）設計**を定義します。各レイヤーの境界、画面遷移、カラー変数名などを論理的に規定します。
 * **ADR (Architecture Decision Record) との連携**:
-  本基本設計に至る過程で議論・策定された、Vanilla JSの選定、CSSマルチカラムの採用、セッション復元の持ち方などの重要なアーキテクチャ意思決定は、[adr/](adr/) 配下に個別のドキュメントとして記録・管理されます。意思決定の起票・承認プロセスは、[MNG-08-adr_process.md](MNG-08-adr_process.md) に規定されるプロセスに従います。
+  本基本設計に至る過程で議論・策定された、Vanilla JSの選定、CSSマルチカラムの採用、セッション復元の持ち方などの重要なアーキテクチャ意思決定は、[adr/](../adr/) 配下に個別のドキュメントとして記録・管理されます。意思決定の起票・承認プロセスは、[MNG-08-adr_process.md](../processes/MNG-08-adr_process.md) に規定されるプロセスに従います。
 * **設計ドキュメント間のすみ分け**:
-  要件定義（SRD）や詳細設計（LLD）との境界、およびオーバーラップした際のすみ分け・分掌については、[文書管理・ドキュメント台帳](MNG-01-document_ledger.md) に規定されている「設計ドキュメント間のすみ分けと分掌」に従います。
+  要件定義（SRD）や詳細設計（LLD）との境界、およびオーバーラップした際のすみ分け・分掌については、[文書管理・ドキュメント台帳](../processes/MNG-01-document_ledger.md) に規定されている「設計ドキュメント間のすみ分けと分掌」に従います。
 
 ---
 
