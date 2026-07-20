@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Realigned the "ST" role as IT Strategist across documentation, establishing specific PM / ST / SA / SC / QA project actors and updating phases in MNG-02 development process document.
+- Added strategic business value definition (TCO minimization and privacy as brand strength) in REQ-01 requirements document.
+- Redefined the testing role as "Verification Team" (QA / Tester) in MNG-05 to prevent naming collisions with IT Strategist (ST).
+
 - Restructured the flat documentation directory structure into categorized subdirectories (requirements/, designs/, processes/, manuals/) to organize management, design, requirements, and manual files separately, maintaining ADR, Backlog, Issue, and Phase directories for tool compatibility.
 - Refactored DSN-01 High-Level Design (HLD) to abstract system architecture models, logical data flows, and scenarios, removing all code and implementation-level details, and consolidated all physical DOM/UI components (HTML IDs and class mappings) into DSN-02 Low-Level Design (LLD).
 - Re-aligned relative reference links across all documentation, including system test cases (MNG-05) and phase definitions.
