@@ -255,18 +255,18 @@ class VerticalRenderer {
                 }
 
                 const child = childNodes[i];
-                checkAndRepairParagraph(child, readerViewport);
+                const repaired = checkAndRepairParagraph(child, readerViewport);
+                if (repaired) {
+                    this.applyPageBreakSizes();
+                }
                 i++;
                 batchCounter++;
-                if (batchCounter >= 500) {
+                if (batchCounter >= 600) {
                     batchCounter = 0;
                     // メインスレッドを解放してブロッキングを回避（タイムスライス）
                     await new Promise(resolve => setTimeout(resolve, 0));
                 }
             }
-
-            // ループがすべて完了した後に、1回だけ改ページのサイズ計算を同期適用する
-            this.applyPageBreakSizes();
 
             // 中断チェック
             if (this.currentRepairId !== repairId) {
