@@ -64,6 +64,3 @@ class BookAsset extends Asset {
     this.toc = [];
   }
 }
-
-window['Asset'] = Asset;
-window['BookAsset'] = BookAsset;

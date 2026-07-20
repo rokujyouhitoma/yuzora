@@ -98,15 +98,6 @@ class BoutenNode extends ASTNode {
     }
 }
 
-// Export for global exposure
-window['ASTNode'] = ASTNode;
-window['RootNode'] = RootNode;
-window['TextNode'] = TextNode;
-window['RubyNode'] = RubyNode;
-window['BoldNode'] = BoldNode;
-window['ItalicNode'] = ItalicNode;
-window['BoutenNode'] = BoutenNode;
-
 /**
  * @implements {ASTNodeInterface}
  */
@@ -195,10 +186,3 @@ class ParagraphNode extends ASTNode {
         this.alignmentClass = alignmentClass;
     }
 }
-
-window['DocumentNode'] = DocumentNode;
-window['CoverPageNode'] = CoverPageNode;
-window['PageBreakNode'] = PageBreakNode;
-window['EmptyLineNode'] = EmptyLineNode;
-window['HeadingNode'] = HeadingNode;
-window['ParagraphNode'] = ParagraphNode;

@@ -181,6 +181,3 @@ class ScopedEventTarget {
         return new ScopedEventTarget(this.parent_, `${this.scopePrefix_}:${scopePrefix}`);
     }
 }
-
-// Expose ScopedEventTarget on window for test accessibility
-window['ScopedEventTarget'] = ScopedEventTarget;
