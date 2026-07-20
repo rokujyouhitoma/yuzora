@@ -46,21 +46,21 @@
 
 | 文書名 | ファイルパス | 目的 (Purpose) | 想定読者 (Audience) | 作成・更新主担当 | 更新契機 (Trigger) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **[MNG-00] 開発哲学・マニフェスト** | [MNG-00-development_philosophy.md](MNG-00-development_philosophy.md) | プロジェクトの基本理念、UX・設計思想、運用統制の管理策および三位一体モデルを定義する。 | 開発チーム、人間（User）、AI Agent | プロジェクトの設計方針や開発プロセスの理念が更新・変更された時 |
-| **[MNG-01] 文書管理・ドキュメント台帳** | [MNG-01-document_ledger.md](MNG-01-document_ledger.md) | 管理対象ドキュメントの目的・担当、および設計書間のすみ分け・分掌ルールを定義する。 | 開発チーム、人間（User）、AI Agent | 管理対象ドキュメントの追加・削除、すみ分け方針の変更時 |
-| **[MNG-02] 開発プロセス定義書** | [MNG-02-development_process.md](MNG-02-development_process.md) | プロジェクトの開発ライフサイクル、各工程の作業定義、担当者、および成果物の追跡性を定義する。 | 開発チーム、人間（User）、AI Agent | 開発手法やプロセス方針を変更した時 |
+| **[MNG-00] 開発哲学・マニフェスト** | [MNG-00-development_philosophy.md](MNG-00-development_philosophy.md) | プロジェクトの基本理念、UX・設計思想、運用統制の管理策および三位一体モデルを定義する。 | 経営層、ITストラテジスト (ST)、開発チーム、人間（User）、AI Agent | ITストラテジスト (ST)、PM | プロジェクトの設計方針や開発プロセスの理念が更新・変更された時 |
+| **[MNG-01] 文書管理・ドキュメント台帳** | [MNG-01-document_ledger.md](MNG-01-document_ledger.md) | 管理対象ドキュメントの目的・担当、および設計書間のすみ分け・分掌ルールを定義する。 | 経営層、ITストラテジスト (ST)、開発チーム、人間（User）、AI Agent | PM | 管理対象ドキュメントの追加・削除、すみ分け方針の変更時 |
+| **[MNG-02] 開発プロセス定義書** | [MNG-02-development_process.md](MNG-02-development_process.md) | プロジェクトの開発ライフサイクル、各工程の作業定義、担当者、および成果物の追跡性を定義する。 | 経営層、ITストラテジスト (ST)、開発チーム、人間（User）、AI Agent | PM、ITストラテジスト (ST) | 開発手法やプロセス方針を変更した時 |
 | **[MNG-03] 問題管理定義書** | [MNG-03-problem_management.md](MNG-03-problem_management.md) | システム上の不具合や脆弱性などの問題を検知・分析し、解決・恒久対策を行うための管理策を定義する。 | 開発チーム、人間（User）、AI Agent | 新しい管理基準や問題対応プロセスの追加・変更時 |
 | **[MNG-04] 変更管理定義書** | [MNG-04-change_management.md](MNG-04-change_management.md) | システムや要件の変更に伴うリスクを最小化し、承認および検証された変更を適用するための管理策を定義する。 | 開発チーム、人間（User）、AI Agent | 変更手続きや検証・承認プロセスの見直し時 |
-| **[MNG-05] テスト仕様書** | [MNG-05-test_cases.md](MNG-05-test_cases.md) | 各検証レベル（受入検証、システム検証、結合検証、単体検証、および実装セルフチェック）に対応した品質および機能性のためのテストケースを定義する。 | 開発チーム、人間（User）、AI Agent | 新機能の追加、仕様変更、および検証プロセスの見直し時 |
+| **[MNG-05] テスト仕様書** | [MNG-05-test_cases.md](MNG-05-test_cases.md) | 各検証レベル（受入検証、システム検証、結合検証、単体検証、および実装セルフチェック）に対応した品質および機能性のためのテストケースを定義する。 | 開発チーム、検証チーム (QA)、AI Agent | 検証チーム (QA) | 新機能の追加、仕様変更、および検証プロセスの見直し時 |
 | **[MNG-06] Active Issues台帳** | [issues/README.md](../issues/README.md) | 現在進行中・開発中のアクティブなIssueのステータスや担当を追跡・一元管理する。 | 開発チーム、人間（User）、AI Agent | 新規Issueの起票、進捗更新、またはクローズ時 |
 | **[MNG-07] 脅威モデリング定義書** | [MNG-07-threat_modeling.md](MNG-07-threat_modeling.md) | セキュリティ・バイ・デザインの実現に向け、STRIDEを用いたセキュリティ脅威の識別・分析・緩和のための管理策を定義する。 | 開発チーム、人間（User）、AI Agent | セキュリティポリシーの変更、または新たな脅威ベクトルの発生・改定時 |
 | **[MNG-08] アーキテクチャ意思決定プロセス** | [MNG-08-adr_process.md](MNG-08-adr_process.md) | 技術選定や設計のトレードオフを明文化するADRの運用・管理プロセスを定義する。 | 開発チーム、人間（User）、AI Agent | 新たな設計方針や技術選定プロセスの導入・見直し時 |
 | **[MNG-09] バックログ管理プロセス定義書** | [MNG-09-backlog_process.md](MNG-09-backlog_process.md) | 将来の機能要望、改善のアイデアのプールおよび起票・管理プロセスを定義する。 | 人間（User）、開発チーム、AI Agent | 管理プロセスの見直し、または定義変更時 |
 | **[MNG-09] バックログ管理台帳** | [backlogs/README.md](../backlogs/README.md) | 将来の機能要望、改善のアイデアなどの詳細バックログファイルを一元管理する台帳。 | 開発チーム、人間（User）、AI Agent | 新規バックログの起票、進捗更新、または昇格（クローズ）時 |
-| **[REQ-01] 要求定義書** | [REQ-01-user_requirements.md](../requirements/REQ-01-user_requirements.md) | ユーザーの目的、必須対応作品、ユースケースなどのビジネス上の「要求（URD）」を定義する。 | 人間（User）、AI Agent | ユーザー要求の変更、動作保証作品の追加・変更時 |
-| **[REQ-02] 機能一覧** | [REQ-02-feature_list.md](../requirements/REQ-02-feature_list.md) | 実装済みおよび今後実装予定の全機能を一覧化し、各機能の仕様概要、ステータス、追跡性を管理する。 | 開発チーム、人間（User）、AI Agent | 機能の追加・削除・実装ステータスの変更時 |
-| **[REQ-03] 要件定義書** | [REQ-03-system_requirements.md](../requirements/REQ-03-system_requirements.md) | システム概要、対応フォーマット、および機能・非機能的な「要件（SRD）」を定義する。 | 開発チーム、AI Agent | システムに対する機能・非機能要件の追加・変更時 |
-| **[DSN-01] 基本設計書 (HLD)** | [DSN-01-high_level_design.md](../designs/DSN-01-high_level_design.md) | システムアーキテクチャ、コンポーネント役割、画面遷移、デザインシステム等の論理的な設計を定義する。 | 開発チーム、AI Agent | システムアーキテクチャの変更、UIコンポーネント構成の変更時 |
+| **[REQ-01] 要求定義書** | [REQ-01-user_requirements.md](../requirements/REQ-01-user_requirements.md) | ユーザーの目的、必須対応作品、ユースケースなどのビジネス上の「要求（URD）」を定義する。 | 経営層、ITストラテジスト (ST)、人間（User）、AI Agent | ITストラテジスト (ST) | ユーザー要求の変更、動作保証作品の追加・変更時 |
+| **[REQ-02] 機能一覧** | [REQ-02-feature_list.md](../requirements/REQ-02-feature_list.md) | 実装済みおよび今後実装予定の全機能を一覧化し、各機能の仕様概要、ステータス、追跡性を管理する。 | ITストラテジスト (ST)、開発チーム、AI Agent | PM | 機能の追加・削除・実装ステータスの変更時 |
+| **[REQ-03] 要件定義書** | [REQ-03-system_requirements.md](../requirements/REQ-03-system_requirements.md) | システム概要、対応フォーマット、および機能・非機能的な「要件（SRD）」を定義する。 | ITストラテジスト (ST)、開発チーム、AI Agent | SA、ITストラテジスト (ST) | システムに対する機能・非機能要件の追加・変更時 |
+| **[DSN-01] 基本設計書 (HLD)** | [DSN-01-high_level_design.md](../designs/DSN-01-high_level_design.md) | システムアーキテクチャ、コンポーネント役割、画面遷移、デザインシステム等の論理的な設計を定義する。 | 経営層、ITストラテジスト (ST)、PM、開発チーム、AI Agent | SA | システムアーキテクチャの変更、UIコンポーネント構成の変更時 |
 | **[DSN-02] 詳細設計書 (LLD)** | [DSN-02-low_level_design.md](../designs/DSN-02-low_level_design.md) | 関数仕様、変数、正規表現、ページ計算数式、データスキーマ等の実装に直結する物理設計を定義する。 | 実装担当エージェント、開発者 | コーディング仕様の変更、アルゴリズムの追加・変更時 |
 | **[USR-01] 操作マニュアル** | [USR-01-user_manual.md](../manuals/USR-01-user_manual.md) | アプリケーションの操作方法、カスタマイズ設定、しおり保存機能等のユーザー向けガイドを定義する。 | 人間（User）、一般ユーザー | ドキュメントの新規作成、機能変更時 |
 | **[ADR-01] アーキテクチャ意思決定記録** | [adr/ADR-01-predefined-books-and-storage.md](../adr/ADR-01-predefined-books-and-storage.md) | 重要な設計・技術的トレードオフに関する意思決定とその背景、結果を記録する。 | 開発チーム、将来の開発者、AI Agent | 重要な技術選定、アーキテクチャ上の決定を下した時 |
