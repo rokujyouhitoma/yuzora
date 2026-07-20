@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Restructured the flat documentation directory structure into categorized subdirectories (requirements/, designs/, processes/, manuals/) to organize management, design, requirements, and manual files separately, maintaining ADR, Backlog, Issue, and Phase directories for tool compatibility.
+- Refactored DSN-01 High-Level Design (HLD) to abstract system architecture models, logical data flows, and scenarios, removing all code and implementation-level details, and consolidated all physical DOM/UI components (HTML IDs and class mappings) into DSN-02 Low-Level Design (LLD).
+- Re-aligned relative reference links across all documentation, including system test cases (MNG-05) and phase definitions.
+
 - Refactored global window bindings across all JS files, removing redundant exposures (ASTNode classes, ScopedEventTarget, Asset/BookAsset, and the global window.locator singleton) to prevent global scope pollution, routing service locator access via window.Yuzora namespace placeholder while maintaining necessary bindings for test accessibility and service locator keys.
 - Refactored `AozoraEvaluator.escapeHTML` to escape double quotes (`&quot;`) and single quotes (`&#x27;`) to prevent potential XSS in attribute context (ID: 085).
 - Reorganized title extraction flow in `AozoraParser.parseAozoraText` to return raw text instead of escaped text, resolving double escaping display bugs in the reader UI (ID: 085).
