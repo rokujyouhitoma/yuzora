@@ -69,7 +69,10 @@ function loadPredefinedBook(book) {
         });
 }
 
+let currentLoadId = 0;
+
 async function displayBook() {
+    const loadId = ++currentLoadId;
     const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
     const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
@@ -128,19 +131,34 @@ async function displayBook() {
     const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
     bookmarkModel.bookmarkProgress = await bookmarkRepo.load(bookModel.title);
 
+    if (currentLoadId !== loadId) {
+        return;
+    }
+
     // Wait a tick for rendering to complete before restoring scroll position
     viewContext.isReflowing = true;
     window['__isReflowing__'] = true;
     setTimeout(async () => {
+        if (currentLoadId !== loadId) {
+            return;
+        }
+
         try {
             // 直接、自己修復処理を呼び出して完了を待つ
             await renderer.adjustPageBreaksForOverrun();
+
+            if (currentLoadId !== loadId) {
+                return;
+            }
 
             try {
                 restoreScrollPosition();
                 updateProgress();
                 yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
                 setTimeout(() => {
+                    if (currentLoadId !== loadId) {
+                        return;
+                    }
                     viewContext.isReflowing = false;
                     window['__isReflowing__'] = false;
                 }, 50);

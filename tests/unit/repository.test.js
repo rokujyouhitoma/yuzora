@@ -17,7 +17,7 @@ const path = require('path');
 // We need to load repository.js in isolation.
 // Since it references `locator` at module load time, we stub it.
 const repositorySource = fs.readFileSync(
-    path.resolve(__dirname, '../../src/js/modules/repository.js'),
+    path.resolve(__dirname, '../../src/js/modules/storage/repository.js'),
     'utf8'
 );
 

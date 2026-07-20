@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Changed flat JS module files under `src/js/modules/` into structured subdirectories (`core/`, `parser/`, `storage/`, `ui/`), updated references in `index.html` and `Makefile`, updated `fs.readFileSync` paths in `tests/unit/` unit tests, and updated DSN-01 (ID: 084).
 - Added `headingPageBreakMode` dynamic user customization settings (`none`, `large`, `all`) with display settings drawer UI controls, and updated DSN-01 and DSN-02 (ID: 082).
 - Fixed paragraph overrun repair engine to run asynchronously via time-slicing (batch size 600) with concurrent execution abort checks, and updated DSN-01 and DSN-02 (ID: 083).
 - Fixed explicit page break logic (`applyPageBreakSizes`) by adding a 5px safety buffer to prevent double-page breaks under extreme font settings, and stabilized E2E tests using a non-obfuscated `window.__isReflowing__` global flag (ID: 081).

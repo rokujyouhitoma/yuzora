@@ -1229,23 +1229,6 @@ body.debug-active .dynamic-page-break::after {
     grid-template-columns: repeat(4, 1fr);
 }
 
-.select-control {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    background: var(--bg-app);
-    color: var(--text-main);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: var(--font-ui);
-    transition: var(--transition-fast);
-    outline: none;
-}
-.select-control:focus {
-    border-color: var(--color-primary);
-}
-
 /* Drawer button styles */
 .theme-selector button,
 .font-selector button,

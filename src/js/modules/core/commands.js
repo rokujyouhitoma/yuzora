@@ -238,9 +238,14 @@ class ExitReaderCommand extends Command {
         const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
         const sessionRepo = /** @type {!SessionRepositoryInterface} */ (Yuzora.locator.resolve(SessionRepository));
         const router = /** @type {!RouterInterface} */ (Yuzora.locator.resolve(Router));
+        const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
+        
         router.navigate("/welcome");
         sessionRepo.clear();
         bookModel.clear();
+        
+        viewContext.isReflowing = false;
+        window['__isReflowing__'] = false;
     }
     /** @override */
     serialize() {

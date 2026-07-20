@@ -73,6 +73,7 @@
 | **063** | Enhancement | Medium | Closed | 表示設定に依存しない明示的改ページの完全なレイアウト担保と余白最適化 | [063-robust-page-break-layout-under-extreme-settings.md](closed/063-robust-page-break-layout-under-extreme-settings.md) |
 | **064** | Feature | Medium | Closed | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | [064-user-customization-for-heading-page-break.md](closed/064-user-customization-for-heading-page-break.md) |
 | **065** | Enhancement | High | Closed | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | [065-improve-overrun-repair-precision-and-performance.md](closed/065-improve-overrun-repair-precision-and-performance.md) |
+| **066** | Refactor | Medium | Approved | JSモジュールの構造化とサブディレクトリ整理 | [066-restructure-js-modules.md](066-restructure-js-modules.md) |
 
 ---
 

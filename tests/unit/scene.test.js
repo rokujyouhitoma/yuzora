@@ -82,7 +82,7 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
         global.SceneDirector = frameworkContainer.SceneDirector;
 
         // Load scene.js code
-        const sceneJsPath = path.resolve(__dirname, '../../src/js/modules/scene.js');
+        const sceneJsPath = path.resolve(__dirname, '../../src/js/modules/ui/scene.js');
         const sceneJsCode = fs.readFileSync(sceneJsPath, 'utf8');
         
         const sceneContainer = {};

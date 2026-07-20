@@ -93,6 +93,7 @@
 | **081** | Feature | Medium | Closed | 表示設定に依存しない明示的改ページの完全なレイアウト担保と余白最適化 | AI Agent | [081-robust-page-break-layout-under-extreme-settings.md](closed/081-robust-page-break-layout-under-extreme-settings.md) |
 | **082** | Feature | Medium | Closed | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | AI Agent | [082-user-customization-for-heading-page-break.md](closed/082-user-customization-for-heading-page-break.md) |
 | **083** | Feature | High | Closed | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | AI Agent | [083-improve-overrun-repair-precision-and-performance.md](closed/083-improve-overrun-repair-precision-and-performance.md) |
+| **084** | Feature | Medium | In Progress | JSモジュールの構造化とサブディレクトリ整理 | AI Agent | [084-restructure-js-modules.md](084-restructure-js-modules.md) |
 
 
 

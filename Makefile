@@ -4,25 +4,25 @@ JS_SRCS = src/js/frameworks/locator.js \
           src/js/frameworks/publisher.js \
           src/js/frameworks/scene.js \
           src/js/frameworks/router.js \
-          src/js/modules/locator.js \
-          src/js/modules/scene.js \
-          src/js/modules/repository.js \
-          src/js/modules/event.js \
-          src/js/modules/publisher.js \
-          src/js/modules/config.js \
-          src/js/modules/asset.js \
-          src/js/modules/resource-director.js \
-          src/js/modules/commands.js \
-          src/js/modules/ast-nodes.js \
-          src/js/modules/tokenizer.js \
-          src/js/modules/semantic-analyzer.js \
-          src/js/modules/evaluator.js \
-          src/js/modules/parser.js \
-          src/js/modules/diagnostics.js \
-          src/js/modules/renderer.js \
-          src/js/modules/viewer.js \
-          src/js/modules/ui.js \
-          src/js/modules/yuzora.js
+          src/js/modules/core/locator.js \
+          src/js/modules/ui/scene.js \
+          src/js/modules/storage/repository.js \
+          src/js/modules/core/event.js \
+          src/js/modules/core/publisher.js \
+          src/js/modules/core/config.js \
+          src/js/modules/storage/asset.js \
+          src/js/modules/storage/resource-director.js \
+          src/js/modules/core/commands.js \
+          src/js/modules/parser/ast-nodes.js \
+          src/js/modules/parser/tokenizer.js \
+          src/js/modules/parser/semantic-analyzer.js \
+          src/js/modules/parser/evaluator.js \
+          src/js/modules/parser/parser.js \
+          src/js/modules/core/diagnostics.js \
+          src/js/modules/ui/renderer.js \
+          src/js/modules/ui/viewer.js \
+          src/js/modules/ui/ui.js \
+          src/js/modules/core/yuzora.js
 JS_OUT = main-min.js
 
 CSS_SRCS = src/css/modules/reset.css \
