@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Added Software Quality Assurance Specialist (QA) agent definition in `.agents/agents/` based on other existing agents.
 - Realigned the "ST" role as IT Strategist across documentation, establishing specific PM / ST / SA / SC / QA project actors and updating phases in MNG-02 development process document.
 - Added strategic business value definition (TCO minimization and privacy as brand strength) in REQ-01 requirements document.
 - Redefined the testing role as "Verification Team" (QA / Tester) in MNG-05 to prevent naming collisions with IT Strategist (ST).
