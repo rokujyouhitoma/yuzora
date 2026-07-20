@@ -22,6 +22,9 @@ class VerticalRenderer {
          */
         this.configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
 
+        /** @private @const {!DOMParser} */
+        this.domParser = new DOMParser();
+
         /**
          * @type {!Object}
          */
@@ -59,84 +62,21 @@ class VerticalRenderer {
 
         this.paragraphBoundsCache = [];
 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlContent, 'text/html');
+        const doc = this.domParser.parseFromString(htmlContent, 'text/html');
         const body = doc.body;
         if (!body) return;
 
         // Force white-list based DOM sanitization (Defense in Depth)
-        this.sanitizeDOM(body);
+        const evaluator = /** @type {!AozoraEvaluatorInterface} */ (Yuzora.locator.resolve(AozoraEvaluator));
+        if (evaluator) {
+            evaluator.sanitizeDOM(body);
+        }
 
         // Safe DOM Node migration (prevents browser re-parsing innerHTML)
         this.viewContext.readerContent.innerHTML = '';
         while (body.firstChild) {
             this.viewContext.readerContent.appendChild(body.firstChild);
         }
-    }
-
-    /**
-     * Sanitize a DOM tree against XSS attacks using an allowed tags/attrs whitelist.
-     * @private
-     * @param {!Element} rootElement
-     */
-    sanitizeDOM(rootElement) {
-        const allowedTags = new Set([
-            'div', 'span', 'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
-            'a', 'ruby', 'rt', 'rp', 'br', 'img', 'b', 'i', 'strong', 'em'
-        ]);
-        const allowedAttrs = new Set(['class', 'id', 'src', 'alt', 'href']);
-
-        /**
-         * @param {!Element} element
-         */
-        const cleanAttributes = (element) => {
-            const attributes = Array.from(element.attributes);
-            for (const attr of attributes) {
-                const attrName = attr.name.toLowerCase();
-                if (attrName.startsWith('on') || !allowedAttrs.has(attrName)) {
-                    element.removeAttribute(attr.name);
-                } else if (attrName === 'href' || attrName === 'src') {
-                    const val = attr.value.trim().toLowerCase();
-                    if (val.startsWith('javascript:') || val.startsWith('data:') || val.startsWith('vbscript:')) {
-                        element.removeAttribute(attr.name);
-                    }
-                }
-            }
-        };
-
-        // Sanitize root element attributes
-        cleanAttributes(rootElement);
-
-        /**
-         * @param {!Element} element
-         */
-        const sanitize = (element) => {
-            const childNodes = Array.from(element.childNodes);
-            for (const child of childNodes) {
-                if (child.nodeType === 1) { // Node.ELEMENT_NODE
-                    const childElement = /** @type {!Element} */ (child);
-                    const tagName = childElement.tagName.toLowerCase();
-                    if (!allowedTags.has(tagName)) {
-                        // Strip unsafe elements completely
-                        if (["script", "style", "iframe"].includes(tagName)) {
-                            childElement.remove();
-                        } else {
-                            // Unwrap other tags (pull child nodes up)
-                            while (childElement.firstChild) {
-                                childElement.parentNode.insertBefore(childElement.firstChild, childElement);
-                            }
-                            childElement.remove();
-                        }
-                    } else {
-                        cleanAttributes(childElement);
-                        // Recursive sanitize
-                        sanitize(childElement);
-                    }
-                }
-            }
-        };
-
-        sanitize(rootElement);
     }
 
     /**

@@ -16,6 +16,8 @@ class AozoraParser {
         this.evaluator = /** @type {!AozoraEvaluatorInterface} */ (Yuzora.locator.resolve(AozoraEvaluator));
         /** @private {!ConfigModelInterface} */
         this.configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
+        /** @private @const {!DOMParser} */
+        this.domParser = new DOMParser();
     }
 
     /**
@@ -209,7 +211,7 @@ class AozoraParser {
         const bodyContent = this.evaluator.evaluate(documentAST);
 
         return {
-            title: this.evaluator.escapeHTML(title) + (author ? ` (${this.evaluator.escapeHTML(author)})` : ''),
+            title: title + (author ? ` (${author})` : ''),
             body: bodyContent
         };
     }
@@ -221,8 +223,7 @@ class AozoraParser {
      */
     // @ts-expect-error
     parseAozoraHTML(htmlString) {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(htmlString, 'text/html');
+        const doc = this.domParser.parseFromString(htmlString, 'text/html');
         
         const titleEl = doc.querySelector('title');
         let title = titleEl ? titleEl.textContent : '';

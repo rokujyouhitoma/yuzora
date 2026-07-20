@@ -170,7 +170,7 @@ test.describe('parser.js Unit Tests', () => {
     test('should safely sanitize bold and italic tags containing malicious payload (XSS mitigation)', () => {
         const text = "タイトル\n著者\n-------------------------------------------------------\n［＃ここから太字］<script>alert(\'XSS\')</script>［＃ここで太字終わり］";
         const result = window.Yuzora.parseAozoraText(text);
-        assert.ok(result.body.includes('&lt;script&gt;alert(\'XSS\')&lt;/script&gt;'));
+        assert.ok(result.body.includes('&lt;script&gt;alert(&#x27;XSS&#x27;)&lt;/script&gt;'));
         assert.ok(result.body.includes('<strong class="aozora-bold">'));
     });
 
@@ -183,10 +183,17 @@ test.describe('parser.js Unit Tests', () => {
 
     test('should escape HTML syntax to prevent XSS', () => {
         const result = window.Yuzora.parseAozoraText('<script>alert("title")</script>\n<script>alert("author")</script>\n-------------------------------------------------------\n<script>alert("body")</script>');
-        assert.ok(result.title.includes('&lt;script&gt;'));
-        assert.ok(result.title.includes('&lt;/script&gt;'));
+        // Title is returned as raw text from parser, to be safely set via textContent on UI
+        assert.ok(result.title.includes('<script>alert("title")</script>'));
         assert.ok(result.body.includes('&lt;script&gt;'));
         assert.ok(result.body.includes('&lt;/script&gt;'));
+    });
+
+    test('AozoraEvaluator.escapeHTML should escape HTML special characters including quotes and single quotes', () => {
+        const evaluator = new window.AozoraEvaluator();
+        const raw = `& < > " '`;
+        const expected = '&amp; &lt; &gt; &quot; &#x27;';
+        assert.strictEqual(evaluator.escapeHTML(raw), expected);
     });
 
     test('should sanitize HTML structure to prevent XSS (T-E2)', () => {
@@ -366,8 +373,8 @@ test.describe('parser.js Unit Tests', () => {
         const text = '作品名<script>alert("xss")</script>\n著者名<iframe src="javascript:alert(1)"></iframe>\n\n本文';
         const result = window.Yuzora.parseAozoraText(text);
 
-        assert.ok(result.body.includes('&lt;script&gt;alert("xss")&lt;/script&gt;'));
-        assert.ok(result.body.includes('&lt;iframe src="javascript:alert(1)"&gt;&lt;/iframe&gt;'));
+        assert.ok(result.body.includes('&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;'));
+        assert.ok(result.body.includes('&lt;iframe src=&quot;javascript:alert(1)&quot;&gt;&lt;/iframe&gt;'));
         assert.ok(!result.body.includes('<script>'));
         assert.ok(!result.body.includes('<iframe>'));
     });
