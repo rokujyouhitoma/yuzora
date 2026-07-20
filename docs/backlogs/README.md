@@ -74,6 +74,7 @@
 | **064** | Feature | Medium | Closed | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | [064-user-customization-for-heading-page-break.md](closed/064-user-customization-for-heading-page-break.md) |
 | **065** | Enhancement | High | Closed | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | [065-improve-overrun-repair-precision-and-performance.md](closed/065-improve-overrun-repair-precision-and-performance.md) |
 | **066** | Refactor | Medium | Closed | JSモジュールの構造化とサブディレクトリ整理 | [066-restructure-js-modules.md](closed/066-restructure-js-modules.md) |
+| **067** | Refactor | Medium | Draft | パーサーおよびレンダラーのセキュリティ強化と堅牢性向上（エスケープ強化・サニタイズ共通化・メモリ最適化） | [067-security-and-robustness-hardening-for-parser-renderer.md](067-security-and-robustness-hardening-for-parser-renderer.md) |
 
 ---
 
