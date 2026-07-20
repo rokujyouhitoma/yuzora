@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Refactored global window bindings across all JS files, removing redundant exposures (ASTNode classes, ScopedEventTarget, Asset/BookAsset) to prevent global scope pollution while maintaining necessary bindings for test accessibility and service locator keys.
 - Refactored `AozoraEvaluator.escapeHTML` to escape double quotes (`&quot;`) and single quotes (`&#x27;`) to prevent potential XSS in attribute context (ID: 085).
 - Reorganized title extraction flow in `AozoraParser.parseAozoraText` to return raw text instead of escaped text, resolving double escaping display bugs in the reader UI (ID: 085).
 - Consolidated duplicate `sanitizeDOM` implementations into `AozoraEvaluator.prototype.sanitizeDOM`, deleting the redundant definition from `VerticalRenderer` and invoking it via Service Locator (ID: 086).
