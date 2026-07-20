@@ -260,8 +260,16 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const welcomeScreen = page.locator('#welcome-screen');
         await expect(welcomeScreen).not.toHaveClass(/hidden/);
 
+        // Wait for recommendation book card to be visible
+        await expect(bookCard).toBeVisible({ timeout: 15000 });
+
         // 7. Load book again to test replay
         await bookCard.click();
+        
+        // Assert reader screen is visible (loading started)
+        const readerScreen = page.locator('#reader-screen');
+        await expect(readerScreen).toBeVisible({ timeout: 15000 });
+        
         await page.waitForSelector('#reader-content p');
         await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
 
