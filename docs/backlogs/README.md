@@ -77,6 +77,7 @@
 | **067** | Refactor | Medium | Closed | AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 | [067-complete-escape-html-and-resolve-title-escaping.md](closed/067-complete-escape-html-and-resolve-title-escaping.md) |
 | **068** | Refactor | Medium | Closed | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | [068-consolidate-sanitize-dom-method.md](closed/068-consolidate-sanitize-dom-method.md) |
 | **069** | Refactor | Medium | Closed | DOMParser インスタンスの再利用化によるメモリリーク低減 | [069-reuse-dom-parser-instance.md](closed/069-reuse-dom-parser-instance.md) |
+| **070** | Refactor | Medium | Closed | ITストラテジスト (ST) の立場に基づくドキュメント管理・役割定義の見直しプラン | [070-align-st-role-as-it-strategist.md](closed/070-align-st-role-as-it-strategist.md) |
 
 ---
 

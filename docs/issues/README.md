@@ -97,6 +97,7 @@
 | **085** | Feature | Medium | Closed | AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 | AI Agent | [085-complete-escape-html-and-resolve-title-escaping.md](closed/085-complete-escape-html-and-resolve-title-escaping.md) |
 | **086** | Feature | Medium | Closed | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | AI Agent | [086-consolidate-sanitize-dom-method.md](closed/086-consolidate-sanitize-dom-method.md) |
 | **087** | Feature | Medium | Closed | DOMParser インスタンスの再利用化によるメモリリーク低減 | AI Agent | [087-reuse-dom-parser-instance.md](closed/087-reuse-dom-parser-instance.md) |
+| **088** | Refactor | Medium | Closed | ITストラテジスト (ST) の立場に基づくドキュメント管理・役割定義の見直し | AI Agent | [088-align-st-role-as-it-strategist.md](closed/088-align-st-role-as-it-strategist.md) |
 
 
 ## 2. 状態（ステータス）定義
