@@ -2,7 +2,7 @@
 ID: 069
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Refactor] DOMParser インスタンスの再利用化によるメモリリーク低減 (ID: 069)

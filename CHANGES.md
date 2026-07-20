@@ -3,6 +3,11 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Refactored `AozoraEvaluator.escapeHTML` to escape double quotes (`&quot;`) and single quotes (`&#x27;`) to prevent potential XSS in attribute context (ID: 085).
+- Reorganized title extraction flow in `AozoraParser.parseAozoraText` to return raw text instead of escaped text, resolving double escaping display bugs in the reader UI (ID: 085).
+- Consolidated duplicate `sanitizeDOM` implementations into `AozoraEvaluator.prototype.sanitizeDOM`, deleting the redundant definition from `VerticalRenderer` and invoking it via Service Locator (ID: 086).
+- Optimized performance and memory usage by reusing single `DOMParser` instances stored in `AozoraParser` and `VerticalRenderer` member variables (ID: 087).
+- Documentation: Closed backlogs 067, 068, 069 and issues 085, 086, 087 (ID: 085, 086, 087).
 - Changed flat JS module files under `src/js/modules/` into structured subdirectories (`core/`, `parser/`, `storage/`, `ui/`), updated references in `index.html` and `Makefile`, updated `fs.readFileSync` paths in `tests/unit/` unit tests, and updated DSN-01 (ID: 084).
 - Added `headingPageBreakMode` dynamic user customization settings (`none`, `large`, `all`) with display settings drawer UI controls, and updated DSN-01 and DSN-02 (ID: 082).
 - Fixed paragraph overrun repair engine to run asynchronously via time-slicing (batch size 600) with concurrent execution abort checks, and updated DSN-01 and DSN-02 (ID: 083).

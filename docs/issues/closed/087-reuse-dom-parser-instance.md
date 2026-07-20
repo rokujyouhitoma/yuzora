@@ -2,7 +2,7 @@
 ID: 087
 種別: Feature
 優先度: Medium
-ステータス: In Progress
+ステータス: Closed
 ---
 
 # [FEAT/ENH] DOMParser インスタンスの再利用化によるメモリリーク低減 (ID: 087)
@@ -20,10 +20,10 @@ ID: 087
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [parser.js](file:///workspace/yuzora/src/js/modules/parser/parser.js) (`AozoraParser` のコンストラクタおよび `parseAozoraHTML`)
-- [ ] [renderer.js](file:///workspace/yuzora/src/js/modules/ui/renderer.js) (`VerticalRenderer` のコンストラクタおよび `render`)
-- [ ] [parser.test.js](file:///workspace/yuzora/tests/unit/parser/parser.test.js) (JSDOM環境の DOMParser ライフサイクル動作確認)
-- [ ] [renderer.test.js](file:///workspace/yuzora/tests/unit/ui/renderer.test.js) (JSDOM環境の DOMParser ライフサイクル動作確認)
+- [ ] [parser.js](../../src/js/modules/parser/parser.js) (`AozoraParser` のコンストラクタおよび `parseAozoraHTML`)
+- [ ] [renderer.js](../../src/js/modules/ui/renderer.js) (`VerticalRenderer` のコンストラクタおよび `render`)
+- [ ] [parser.test.js](../../tests/unit/parser/parser.test.js) (JSDOM環境の DOMParser ライフサイクル動作確認)
+- [ ] [renderer.test.js](../../tests/unit/ui/renderer.test.js) (JSDOM環境 of DOMParser lifetime behavior check)
 
 ---
 

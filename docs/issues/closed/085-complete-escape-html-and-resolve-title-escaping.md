@@ -2,7 +2,7 @@
 ID: 085
 種別: Feature
 優先度: Medium
-ステータス: In Progress
+ステータス: Closed
 ---
 
 # [FEAT/ENH] AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 (ID: 085)
@@ -20,9 +20,9 @@ XSS防御（CWE-79）の堅牢性向上として `escapeHTML` でのエスケー
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [evaluator.js](file:///workspace/yuzora/src/js/modules/parser/evaluator.js) (`AozoraEvaluator.prototype.escapeHTML`)
-- [ ] [parser.js](file:///workspace/yuzora/src/js/modules/parser/parser.js) (`AozoraParser.prototype.parseAozoraText` 内戻り値オブジェクト)
-- [ ] [parser.test.js](file:///workspace/yuzora/tests/unit/parser/parser.test.js) (タイトルエスケープ不整合解消に伴う期待値修正と、`escapeHTML` 自体の新規テスト追加)
+- [ ] [evaluator.js](../../src/js/modules/parser/evaluator.js) (`AozoraEvaluator.prototype.escapeHTML`)
+- [ ] [parser.js](../../src/js/modules/parser/parser.js) (`AozoraParser.prototype.parseAozoraText` 内戻り値オブジェクト)
+- [ ] [parser.test.js](../../tests/unit/parser/parser.test.js) (タイトルエスケープ不整合解消に伴う期待値修正と、`escapeHTML` 自体の新規テスト追加)
 
 ---
 

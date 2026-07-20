@@ -38,7 +38,14 @@ BUILD_ID   := $(shell git rev-parse --short HEAD 2>/dev/null || echo dev)
 # Build date: Always UTC to ensure consistency between local and CI environments
 BUILD_DATE := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
 
-all: lint $(JS_OUT) $(CSS_OUT) embed-build-info
+all: install-git-hooks lint $(JS_OUT) $(CSS_OUT) embed-build-info
+
+install-git-hooks:
+	@if [ -d .git ]; then \
+		mkdir -p .git/hooks; \
+		cp tools/git-hooks/pre-commit .git/hooks/pre-commit; \
+		chmod +x .git/hooks/pre-commit; \
+	fi
 
 lint:
 	npm run lint
@@ -74,4 +81,4 @@ clean:
 	# Do not run 'make clean' if you have manual edits to index.html that haven't been committed.
 	git checkout -- index.html
 
-.PHONY: all clean lint embed-build-info
+.PHONY: all clean lint embed-build-info install-git-hooks

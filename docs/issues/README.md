@@ -94,9 +94,9 @@
 | **082** | Feature | Medium | Closed | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | AI Agent | [082-user-customization-for-heading-page-break.md](closed/082-user-customization-for-heading-page-break.md) |
 | **083** | Feature | High | Closed | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | AI Agent | [083-improve-overrun-repair-precision-and-performance.md](closed/083-improve-overrun-repair-precision-and-performance.md) |
 | **084** | Feature | Medium | Closed | JSモジュールの構造化とサブディレクトリ整理 | AI Agent | [084-restructure-js-modules.md](closed/084-restructure-js-modules.md) |
-| **085** | Feature | Medium | In Progress | AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 | AI Agent | [085-complete-escape-html-and-resolve-title-escaping.md](085-complete-escape-html-and-resolve-title-escaping.md) |
-| **086** | Feature | Medium | In Progress | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | AI Agent | [086-consolidate-sanitize-dom-method.md](086-consolidate-sanitize-dom-method.md) |
-| **087** | Feature | Medium | In Progress | DOMParser インスタンスの再利用化によるメモリリーク低減 | AI Agent | [087-reuse-dom-parser-instance.md](087-reuse-dom-parser-instance.md) |
+| **085** | Feature | Medium | Closed | AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 | AI Agent | [085-complete-escape-html-and-resolve-title-escaping.md](closed/085-complete-escape-html-and-resolve-title-escaping.md) |
+| **086** | Feature | Medium | Closed | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | AI Agent | [086-consolidate-sanitize-dom-method.md](closed/086-consolidate-sanitize-dom-method.md) |
+| **087** | Feature | Medium | Closed | DOMParser インスタンスの再利用化によるメモリリーク低減 | AI Agent | [087-reuse-dom-parser-instance.md](closed/087-reuse-dom-parser-instance.md) |
 
 
 ## 2. 状態（ステータス）定義

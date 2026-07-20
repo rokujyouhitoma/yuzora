@@ -2,7 +2,7 @@
 ID: 068
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Refactor] サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 (ID: 068)

@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Get list of staged files (excluding deletions)
+staged_files=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$staged_files" ]; then
+    exit 0
+fi
+
+# Flag to track invalid paths
+found_invalid=0
+
+# Get repository root and home absolute paths dynamically
+repo_root=$(git rev-parse --show-toplevel 2>/dev/null)
+pattern_workspace=""
+if [ -n "$repo_root" ]; then
+    pattern_workspace="file://${repo_root}"
+fi
+pattern_gemini="file://${HOME}/.gemini"
+
+for file in $staged_files; do
+    # Extract newly added lines only (lines starting with '+' but not '+++' diff headers)
+    added_lines=$(git diff --cached -U0 "$file" | grep '^[+][^+]')
+    if [ -z "$added_lines" ]; then
+        continue
+    fi
+
+    # Scan for absolute local paths dynamically to avoid self-detection
+    if [ -n "$pattern_workspace" ]; then
+        if echo "$added_lines" | grep -F "$pattern_workspace" >/dev/null 2>&1 || \
+           echo "$added_lines" | grep -F "$pattern_gemini" >/dev/null 2>&1; then
+            echo "❌ ERROR: Staged file '$file' contains absolute local path."
+            echo "   Please replace it with a relative path before committing."
+            found_invalid=1
+        fi
+    fi
+done
+
+if [ $found_invalid -ne 0 ]; then
+    echo "Commit aborted due to absolute path check."
+    exit 1
+fi
+
+exit 0

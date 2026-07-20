@@ -2,7 +2,7 @@
 ID: 086
 種別: Feature
 優先度: Medium
-ステータス: In Progress
+ステータス: Closed
 ---
 
 # [FEAT/ENH] サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 (ID: 086)
@@ -20,9 +20,9 @@ ID: 086
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [renderer.js](file:///workspace/yuzora/src/js/modules/ui/renderer.js) (`VerticalRenderer.prototype.sanitizeDOM` の削除、呼び出し元修正)
-- [ ] [evaluator.js](file:///workspace/yuzora/src/js/modules/parser/evaluator.js) (共通化された `AozoraEvaluator.prototype.sanitizeDOM`)
-- [ ] [renderer.test.js](file:///workspace/yuzora/tests/unit/ui/renderer.test.js) (モックの修正およびテスト影響範囲確認)
+- [ ] [renderer.js](../../src/js/modules/ui/renderer.js) (`VerticalRenderer.prototype.sanitizeDOM` の削除、呼び出し元修正)
+- [ ] [evaluator.js](../../src/js/modules/parser/evaluator.js) (共通化された `AozoraEvaluator.prototype.sanitizeDOM`)
+- [ ] [renderer.test.js](../../tests/unit/ui/renderer.test.js) (モックの修正およびテスト影響範囲確認)
 
 ---
 

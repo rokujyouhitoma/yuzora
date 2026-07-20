@@ -74,9 +74,9 @@
 | **064** | Feature | Medium | Closed | 見出し自動改ページ設定のユーザーカスタマイズ機能の追加 | [064-user-customization-for-heading-page-break.md](closed/064-user-customization-for-heading-page-break.md) |
 | **065** | Enhancement | High | Closed | カラムまたぎ時の段落見切れ防止の精度向上と非同期タイムスライス処理による最適化 | [065-improve-overrun-repair-precision-and-performance.md](closed/065-improve-overrun-repair-precision-and-performance.md) |
 | **066** | Refactor | Medium | Closed | JSモジュールの構造化とサブディレクトリ整理 | [066-restructure-js-modules.md](closed/066-restructure-js-modules.md) |
-| **067** | Refactor | Medium | Approved | AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 | [067-complete-escape-html-and-resolve-title-escaping.md](067-complete-escape-html-and-resolve-title-escaping.md) |
-| **068** | Refactor | Medium | Approved | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | [068-consolidate-sanitize-dom-method.md](068-consolidate-sanitize-dom-method.md) |
-| **069** | Refactor | Medium | Approved | DOMParser インスタンスの再利用化によるメモリリーク低減 | [069-reuse-dom-parser-instance.md](069-reuse-dom-parser-instance.md) |
+| **067** | Refactor | Medium | Closed | AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 | [067-complete-escape-html-and-resolve-title-escaping.md](closed/067-complete-escape-html-and-resolve-title-escaping.md) |
+| **068** | Refactor | Medium | Closed | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | [068-consolidate-sanitize-dom-method.md](closed/068-consolidate-sanitize-dom-method.md) |
+| **069** | Refactor | Medium | Closed | DOMParser インスタンスの再利用化によるメモリリーク低減 | [069-reuse-dom-parser-instance.md](closed/069-reuse-dom-parser-instance.md) |
 
 ---
 

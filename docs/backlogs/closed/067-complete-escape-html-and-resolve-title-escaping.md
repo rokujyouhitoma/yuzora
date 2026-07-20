@@ -2,7 +2,7 @@
 ID: 067
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Refactor] AozoraEvaluator.escapeHTML のエスケープ完全化とタイトル表示不整合の解消 (ID: 067)
