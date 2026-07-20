@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 test.describe('Yuzora Page Break Tests', () => {
   test('should successfully enforce column break on .page-break elements', async ({ page }) => {
     // 1. Navigate to main page
-    await page.goto('http://localhost:8080/');
+    await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // 2. Load the predefined book "こころ" (which has natural columns and we can insert a manual test element)
     await page.click('.book-card:has-text("こころ")');
@@ -85,7 +85,7 @@ test.describe('Yuzora Page Break Tests', () => {
 
   test('should successfully enforce column break on .page-break elements even with short text', async ({ page }) => {
     // 1. Navigate to main page
-    await page.goto('http://localhost:8080/');
+    await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // 2. Load the predefined book
     await page.click('.book-card:has-text("こころ")');
@@ -128,7 +128,7 @@ test.describe('Yuzora Page Break Tests', () => {
 
   test('should successfully adjust page break sizes on window resize / different viewport widths', async ({ page }) => {
     // 1. Navigate to main page
-    await page.goto('http://localhost:8080/');
+    await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // 2. Load the predefined book "こころ"
     await page.click('.book-card:has-text("こころ")');

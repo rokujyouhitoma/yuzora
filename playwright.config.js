@@ -21,6 +21,6 @@ module.exports = defineConfig({
     command: 'node node_modules/http-server/bin/http-server -p 8080 -c-1',
     url: 'http://localhost:8080',
     reuseExistingServer: true,
-    timeout: 10000,
+    timeout: 30000,
   },
 });

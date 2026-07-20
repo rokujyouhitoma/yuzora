@@ -98,6 +98,8 @@
 | **086** | Feature | Medium | Closed | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | AI Agent | [086-consolidate-sanitize-dom-method.md](closed/086-consolidate-sanitize-dom-method.md) |
 | **087** | Feature | Medium | Closed | DOMParser インスタンスの再利用化によるメモリリーク低減 | AI Agent | [087-reuse-dom-parser-instance.md](closed/087-reuse-dom-parser-instance.md) |
 | **088** | Refactor | Medium | Closed | ITストラテジスト (ST) の立場に基づくドキュメント管理・役割定義の見直し | AI Agent | [088-align-st-role-as-it-strategist.md](closed/088-align-st-role-as-it-strategist.md) |
+| **089** | Feature | High | New | 難読化ビルドに対するE2Eの100%適用 | AI Agent | [089-enforce-e2e-on-minified-build.md](089-enforce-e2e-on-minified-build.md) |
+| **090** | Feature | High | New | セキュリティ・スキャンツールのCI統合 | AI Agent | [090-integrate-security-scanner-in-ci.md](090-integrate-security-scanner-in-ci.md) |
 
 
 ## 2. 状態（ステータス）定義

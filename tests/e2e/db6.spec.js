@@ -1,7 +1,7 @@
 const { test, expect } = require('@playwright/test');
 test('db click', async ({ page }) => {
     await page.route('**/*.{ttf,woff,woff2,otf}', r => r.abort());
-    await page.goto('http://localhost:8080/');
+    await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
     await page.locator('#developer-books-grid .book-card').first().click();
     await page.waitForSelector('#reader-content p');
     await page.waitForTimeout(500);

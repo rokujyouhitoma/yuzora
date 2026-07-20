@@ -78,6 +78,11 @@
 | **068** | Refactor | Medium | Closed | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | [068-consolidate-sanitize-dom-method.md](closed/068-consolidate-sanitize-dom-method.md) |
 | **069** | Refactor | Medium | Closed | DOMParser インスタンスの再利用化によるメモリリーク低減 | [069-reuse-dom-parser-instance.md](closed/069-reuse-dom-parser-instance.md) |
 | **070** | Refactor | Medium | Closed | ITストラテジスト (ST) の立場に基づくドキュメント管理・役割定義の見直しプラン | [070-align-st-role-as-it-strategist.md](closed/070-align-st-role-as-it-strategist.md) |
+| **071** | Enhancement | High | Approved | 難読化ビルドに対するE2Eの100%適用 | [071-enforce-e2e-on-minified-build.md](071-enforce-e2e-on-minified-build.md) |
+| **072** | Enhancement | High | Approved | セキュリティ・スキャンツールのCI統合 | [072-integrate-security-scanner-in-ci.md](072-integrate-security-scanner-in-ci.md) |
+| **073** | Feature | Medium | Approved | Visual Regression Testing (VRT) の導入 | [073-introduce-visual-regression-testing.md](073-introduce-visual-regression-testing.md) |
+| **074** | Enhancement | Medium | Approved | 自動テスト用サンプル書籍の拡充 | [074-expand-sample-books-for-layout-diagnostics.md](074-expand-sample-books-for-layout-diagnostics.md) |
+| **075** | Enhancement | Low | Approved | テストカバレッジ・品質メトリクス可視化 | [075-visualize-test-coverage-and-quality-metrics.md](075-visualize-test-coverage-and-quality-metrics.md) |
 
 ---
 
