@@ -312,6 +312,8 @@ class ConfigModel {
 class BookmarkModel {
     constructor() {
         this.bookmarkProgress = 0;
+        /** @private {number|null} */
+        this.idleId_ = null;
     }
 
     /**
@@ -325,8 +327,34 @@ class BookmarkModel {
     async save(fileName, progress) {
         if (fileName) {
             this.bookmarkProgress = progress;
-            const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
-            await bookmarkRepo.save(fileName, progress);
+
+            if (this.idleId_ !== null) {
+                if (window['cancelIdleCallback']) {
+                    window['cancelIdleCallback'](this.idleId_);
+                } else {
+                    window.clearTimeout(this.idleId_);
+                }
+                this.idleId_ = null;
+            }
+
+            return new Promise((resolve) => {
+                const saveAction = async () => {
+                    const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
+                    await bookmarkRepo.save(fileName, progress);
+                    this.idleId_ = null;
+                    resolve();
+                };
+
+                if (window['requestIdleCallback']) {
+                    this.idleId_ = window['requestIdleCallback'](() => {
+                        saveAction();
+                    });
+                } else {
+                    this.idleId_ = window.setTimeout(() => {
+                        saveAction();
+                    }, 0);
+                }
+            });
         }
     }
 
