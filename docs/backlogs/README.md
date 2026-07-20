@@ -11,7 +11,7 @@
 | **001** | Feature | Medium | Draft | 横書き表示モードのサポート | [001-horizontal-layout-support.md](001-horizontal-layout-support.md) |
 | **002** | Feature | Low | Draft | しおり手動一覧管理 | [002-manual-bookmark-management.md](002-manual-bookmark-management.md) |
 | **003** | Feature | Low | Draft | PDF/EPUB形式のインポート対応 | [003-pdf-epub-import.md](003-pdf-epub-import.md) |
-| **004** | Refactor | Medium | Draft | CSSスタイルのモジュール化 | [004-css-module.md](004-css-module.md) |
+| **004** | Refactor | Medium | Closed | CSSスタイルのモジュール化 | [004-css-module.md](closed/004-css-module.md) |
 | **005** | Feature | High | Closed | 目次表示およびジャンプ機能 (TOC) | [005-table-of-contents-toc.md](closed/005-table-of-contents-toc.md) |
 | **006** | Enhancement | Low | Promoted | 非同期処理による目次抽出および描画の高速化 | [006-async-toc-generation.md](closed/006-async-toc-generation.md) |
 | **007** | Feature | High | Draft | 大容量テキストのインクリメンタルパースおよびレンダリング（Web Worker対応） | [007-incremental-text-parsing.md](007-incremental-text-parsing.md) |

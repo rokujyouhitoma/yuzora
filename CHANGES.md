@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Added Software Quality Assurance Specialist (QA) agent definition in `.agents/agents/` based on other existing agents.
 - Enforced Playwright E2E testing on minified production builds (`compiled.html`) via `TEST_PATH` environment variable switching (ID: 089).
 - Integrated `npm audit` dependency security scanning and minified build E2E test runs in the GitHub Actions CI pipeline (ID: 090).
+- Formally closed backlog 004 and issue 091 registries for CSS modularization.
 - Realigned the "ST" role as IT Strategist across documentation, establishing specific PM / ST / SA / SC / QA project actors and updating phases in MNG-02 development process document.
 - Added strategic business value definition (TCO minimization and privacy as brand strength) in REQ-01 requirements document.
 - Redefined the testing role as "Verification Team" (QA / Tester) in MNG-05 to prevent naming collisions with IT Strategist (ST).

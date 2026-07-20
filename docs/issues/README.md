@@ -100,6 +100,7 @@
 | **088** | Refactor | Medium | Closed | ITストラテジスト (ST) の立場に基づくドキュメント管理・役割定義の見直し | AI Agent | [088-align-st-role-as-it-strategist.md](closed/088-align-st-role-as-it-strategist.md) |
 | **089** | Feature | High | New | 難読化ビルドに対するE2Eの100%適用 | AI Agent | [089-enforce-e2e-on-minified-build.md](089-enforce-e2e-on-minified-build.md) |
 | **090** | Feature | High | New | セキュリティ・スキャンツールのCI統合 | AI Agent | [090-integrate-security-scanner-in-ci.md](090-integrate-security-scanner-in-ci.md) |
+| **091** | Feature | Medium | Closed | CSSスタイルのモジュール化 | AI Agent | [091-css-module-refactoring.md](closed/091-css-module-refactoring.md) |
 
 
 ## 2. 状態（ステータス）定義
