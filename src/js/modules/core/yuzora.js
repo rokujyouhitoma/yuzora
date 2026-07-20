@@ -357,11 +357,12 @@ class Yuzora {
     }
 }
 
+const existingLocator = window['Yuzora'] ? window['Yuzora'].locator : null;
 /**
  * @type {!LocatorInterface}
  * @nocollapse
  */
-Yuzora.locator = /** @type {!LocatorInterface} */ (locator);
+Yuzora.locator = /** @type {!LocatorInterface} */ (existingLocator || locator);
 
 // Instantiate and register yuzora immediately to prevent race conditions during DOMContentLoaded
 const yuzoraInstance = new Yuzora();

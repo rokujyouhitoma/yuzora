@@ -68,7 +68,7 @@ test.describe('locator.js Unit Tests', () => {
     });
 
     test('should resolve registered instances correctly', () => {
-        const { locator } = window;
+        const { locator } = window.yuzora;
         class DummyService {}
         const dummy = new DummyService();
         locator.register(DummyService, dummy);
@@ -76,7 +76,7 @@ test.describe('locator.js Unit Tests', () => {
     });
 
     test('should throw error for unregistered classes in resolve()', () => {
-        const { locator } = window;
+        const { locator } = window.yuzora;
         class UnregisteredService {}
         assert.throws(() => {
             locator.resolve(UnregisteredService);
@@ -84,7 +84,7 @@ test.describe('locator.js Unit Tests', () => {
     });
 
     test('should auto-instantiate unregistered classes in locate()', () => {
-        const { locator } = window;
+        const { locator } = window.yuzora;
         class AutoService {
             constructor() {
                 this.value = 42;

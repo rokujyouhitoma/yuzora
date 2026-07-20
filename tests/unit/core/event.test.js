@@ -63,14 +63,16 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should expose YuzoraEventTarget in locator', () => {
-        const { locator, YuzoraEventTarget } = window;
+        const { locator } = window.yuzora;
+        const { YuzoraEventTarget } = window;
         assert.ok(YuzoraEventTarget);
         const eventBus = locator.resolve(YuzoraEventTarget);
         assert.ok(eventBus instanceof YuzoraEventTarget);
     });
 
     test('should register and dispatch event successfully with details payload', () => {
-        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const { locator } = window.yuzora;
+        const { YuzoraEventTarget, YuzoraEvent } = window;
         const eventBus = locator.resolve(YuzoraEventTarget);
 
         let receivedEvent = null;
@@ -94,7 +96,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should stop notifying listeners after removeEventListener is called', () => {
-        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const { locator } = window.yuzora;
+        const { YuzoraEventTarget, YuzoraEvent } = window;
         const eventBus = locator.resolve(YuzoraEventTarget);
 
         let count = 0;
@@ -112,7 +115,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should resolve Publisher in locator and support subscribe/publish', () => {
-        const { locator, Publisher } = window;
+        const { locator } = window.yuzora;
+        const { Publisher } = window;
         assert.ok(Publisher);
         const publisher = locator.resolve(Publisher);
         assert.ok(publisher instanceof Publisher);
@@ -131,7 +135,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should stop notifying subscriber after unsubscribe is called', () => {
-        const { locator, Publisher } = window;
+        const { locator } = window.yuzora;
+        const { Publisher } = window;
         const publisher = locator.resolve(Publisher);
 
         let count = 0;
@@ -149,7 +154,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should support same callback registered on multiple topics independently', () => {
-        const { locator, Publisher } = window;
+        const { locator } = window.yuzora;
+        const { Publisher } = window;
         const publisher = locator.resolve(Publisher);
 
         let lastTopic = null;
@@ -185,7 +191,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should expose Yuzora class and yuzora instance on window', () => {
-        const { yuzora, locator } = window;
+        const { yuzora } = window;
+        const locator = yuzora.locator;
         assert.ok(yuzora);
         const YuzoraClass = yuzora.constructor;
         assert.ok(YuzoraClass);
@@ -196,7 +203,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should support ScopedEventTarget and verify event scope routing', () => {
-        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const { locator } = window.yuzora;
+        const { YuzoraEventTarget, YuzoraEvent } = window;
         const eventBus = locator.resolve(YuzoraEventTarget);
 
         const uiBus = eventBus.scoped('ui');
@@ -228,7 +236,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should support nested ScopedEventTarget routing', () => {
-        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const { locator } = window.yuzora;
+        const { YuzoraEventTarget, YuzoraEvent } = window;
         const eventBus = locator.resolve(YuzoraEventTarget);
 
         const nestedBus = eventBus.scoped('parent').scoped('child');
@@ -245,7 +254,8 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
     });
 
     test('should audit dispatching events when __DEBUG_EVENT__ is active', () => {
-        const { locator, YuzoraEventTarget, YuzoraEvent } = window;
+        const { locator } = window.yuzora;
+        const { YuzoraEventTarget, YuzoraEvent } = window;
         const eventBus = locator.resolve(YuzoraEventTarget);
 
         let logOutput = '';

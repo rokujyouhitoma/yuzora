@@ -5,4 +5,5 @@
 
 // Global locator singleton instance using frameworks/locator.js definition
 const locator = new Locator();
-window['locator'] = locator;
+window['Yuzora'] = window['Yuzora'] || {};
+window['Yuzora'].locator = locator;

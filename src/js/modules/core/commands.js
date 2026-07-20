@@ -659,10 +659,9 @@ const CommandManagerClass = CommandHistory;
 
 // Register CommandHistory in Locator
 const globalCommandHistory = new CommandHistory();
-locator.register(CommandHistory, globalCommandHistory);
-locator.register(CommandManagerClass, globalCommandHistory); // For backwards compatibility
+window['Yuzora'].locator.register(CommandHistory, globalCommandHistory);
+window['Yuzora'].locator.register(CommandManagerClass, globalCommandHistory); // For backwards compatibility
 
 // Compatibility global variable
 /** @type {!CommandManagerInterface} */
-var CommandManager = /** @type {!CommandManagerInterface} */ (locator.resolve(CommandHistory));
-
+var CommandManager = /** @type {!CommandManagerInterface} */ (window['Yuzora'].locator.resolve(CommandHistory));
