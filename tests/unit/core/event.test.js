@@ -45,7 +45,7 @@ test.describe('Yuzora Event Driven Architecture Unit Tests', () => {
         window.Element.prototype.scrollTo = () => {};
 
         // Load main-min.js code
-        const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../main-min.js'), 'utf8');
+        const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../../main-min.js'), 'utf8');
         const scriptEl = window.document.createElement('script');
         scriptEl.textContent = appJsCode;
         window.document.body.appendChild(scriptEl);

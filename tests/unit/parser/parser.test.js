@@ -48,7 +48,7 @@ test.describe('parser.js Unit Tests', () => {
         window.Element.prototype.scrollTo = () => {};
 
         // Load main-min.js code
-        const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../main-min.js'), 'utf8');
+        const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../../main-min.js'), 'utf8');
         const scriptEl = window.document.createElement('script');
         scriptEl.textContent = appJsCode;
         window.document.body.appendChild(scriptEl);
@@ -438,16 +438,16 @@ test.describe('parser.js Unit Tests', () => {
         const bookModel = window.Yuzora.locator.resolve(window.Yuzora.BookModel);
         
         const predefinedBooks = [
-            { path: '../../src/books/773_yoko.txt', expectedTitle: 'こころ', expectedAuthor: '夏目漱石' },
-            { path: '../../src/books/42939_yoko.txt', expectedTitle: '故郷', expectedAuthor: '魯迅' },
-            { path: '../../src/books/52395_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '序' },
-            { path: '../../src/books/52396_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '地の巻' },
-            { path: '../../src/books/52397_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '水の巻' },
-            { path: '../../src/books/52398_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '火の巻' },
-            { path: '../../src/books/52399_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '風の巻' },
-            { path: '../../src/books/52400_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '空の巻' },
-            { path: '../../src/books/52401_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '二天の巻' },
-            { path: '../../src/books/52402_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '円明の巻' } // L2 of 52402 is "円明の巻" but the test previously wrote expectedAuthor is "円明の巻"
+            { path: '../../../src/books/773_yoko.txt', expectedTitle: 'こころ', expectedAuthor: '夏目漱石' },
+            { path: '../../../src/books/42939_yoko.txt', expectedTitle: '故郷', expectedAuthor: '魯迅' },
+            { path: '../../../src/books/52395_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '序' },
+            { path: '../../../src/books/52396_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '地の巻' },
+            { path: '../../../src/books/52397_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '水の巻' },
+            { path: '../../../src/books/52398_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '火の巻' },
+            { path: '../../../src/books/52399_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '風の巻' },
+            { path: '../../../src/books/52400_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '空の巻' },
+            { path: '../../../src/books/52401_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '二天の巻' },
+            { path: '../../../src/books/52402_yoko.txt', expectedTitle: '宮本武蔵', expectedAuthor: '円明の巻' } // L2 of 52402 is "円明の巻" but the test previously wrote expectedAuthor is "円明 of the roll"
         ];
 
         predefinedBooks.forEach(b => {

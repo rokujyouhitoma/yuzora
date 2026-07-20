@@ -23,7 +23,7 @@ test.describe('Resource Management (Asset & ResourceDirector) Unit Tests', () =>
         global.document = document;
 
         // Load asset.js
-        const assetJsPath = path.resolve(__dirname, '../../src/js/modules/storage/asset.js');
+        const assetJsPath = path.resolve(__dirname, '../../../src/js/modules/storage/asset.js');
         const assetJsCode = fs.readFileSync(assetJsPath, 'utf8');
         const assetContainer = {};
         eval(assetJsCode + "\nassetContainer.Asset = Asset; assetContainer.BookAsset = BookAsset;");
@@ -33,7 +33,7 @@ test.describe('Resource Management (Asset & ResourceDirector) Unit Tests', () =>
         global.BookAsset = BookAssetClass;
 
         // Load resource-director.js
-        const resourceJsPath = path.resolve(__dirname, '../../src/js/modules/storage/resource-director.js');
+        const resourceJsPath = path.resolve(__dirname, '../../../src/js/modules/storage/resource-director.js');
         const resourceJsCode = fs.readFileSync(resourceJsPath, 'utf8');
         const resourceContainer = {};
         eval(resourceJsCode + "\nresourceContainer.ResourceDirector = ResourceDirector;");

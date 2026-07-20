@@ -57,7 +57,7 @@ test.describe('Welcome Loading Placeholders (Skeleton) Unit Tests', () => {
         global.bindWelcomeEvent_ = () => {};
 
         // Load ui.js to get setupPredefinedBooksGrids
-        const uiJsPath = path.resolve(__dirname, '../../src/js/modules/ui/ui.js');
+        const uiJsPath = path.resolve(__dirname, '../../../src/js/modules/ui/ui.js');
         const uiJsCode = fs.readFileSync(uiJsPath, 'utf8');
         
         // Eval and bind to global context
