@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Documentation: Aligned all 9 agent definition files under `.agents/agents/` with the latest structure, implementing role-specific business duties, code-delegation capabilities, code of conduct policies, and menu-based response protocols based on official IPA references (ID: 094).
+
 - Implemented high-performance background plain text parsing and chunked tokenization using an inline Web Worker to completely isolate script imports and avoid CSP violations (ID: 007).
 - Embedded AozoraTokenizer within the Web Worker to avoid importScripts and eliminate naming mismatch crashes during minification under ADVANCED_OPTIMIZATIONS.
 - Guided asynchronous JSDOM teardown race conditions in unit tests by resolving locator dependencies dynamically inside viewer and parser callbacks.

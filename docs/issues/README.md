@@ -103,6 +103,7 @@
 | **091** | Feature | Medium | Closed | CSSスタイルのモジュール化 | AI Agent | [091-css-module-refactoring.md](closed/091-css-module-refactoring.md) |
 | **092** | Refactor | Medium | Closed | しおり（進捗）書き込み処理の非同期アイドル実行化 | AI Agent | [092-async-bookmark-storage.md](closed/092-async-bookmark-storage.md) |
 | **093** | Feature | High | Closed | 大容量テキストのインクリメンタルパースおよびレンダリング（Web Worker対応） | AI Agent | [093-incremental-text-parsing.md](closed/093-incremental-text-parsing.md) |
+| **094** | Refactor | Medium | Closed | 他のエージェント定義ファイルのブラッシュアップ | AI Agent | [094-align-other-agents-definition.md](closed/094-align-other-agents-definition.md) |
 
 
 ## 2. 状態（ステータス）定義

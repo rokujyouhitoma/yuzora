@@ -83,7 +83,7 @@
 | **073** | Feature | Medium | Approved | Visual Regression Testing (VRT) の導入 | [073-introduce-visual-regression-testing.md](073-introduce-visual-regression-testing.md) |
 | **074** | Enhancement | Medium | Approved | 自動テスト用サンプル書籍の拡充 | [074-expand-sample-books-for-layout-diagnostics.md](074-expand-sample-books-for-layout-diagnostics.md) |
 | **075** | Enhancement | Low | Approved | テストカバレッジ・品質メトリクス可視化 | [075-visualize-test-coverage-and-quality-metrics.md](075-visualize-test-coverage-and-quality-metrics.md) |
-| **076** | Refactor | Medium | Draft | 情報処理技術者試験区分に基づく他のエージェント定義ファイルのブラッシュアップ | [076-align-other-agents-definition.md](076-align-other-agents-definition.md) |
+| **076** | Refactor | Medium | Closed | 情報処理技術者試験区分に基づく他のエージェント定義ファイルのブラッシュアップ | [076-align-other-agents-definition.md](closed/076-align-other-agents-definition.md) |
 
 ---
 
