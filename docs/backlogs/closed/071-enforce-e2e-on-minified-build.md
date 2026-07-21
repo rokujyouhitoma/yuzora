@@ -2,7 +2,7 @@
 ID: 071
 種別: Enhancement
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] Enforce E2E on Minified Build (ID: 071)

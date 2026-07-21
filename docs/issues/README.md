@@ -98,8 +98,8 @@
 | **086** | Feature | Medium | Closed | サニタイズロジック (sanitizeDOM) の共通化によるコード重複の排除 | AI Agent | [086-consolidate-sanitize-dom-method.md](closed/086-consolidate-sanitize-dom-method.md) |
 | **087** | Feature | Medium | Closed | DOMParser インスタンスの再利用化によるメモリリーク低減 | AI Agent | [087-reuse-dom-parser-instance.md](closed/087-reuse-dom-parser-instance.md) |
 | **088** | Refactor | Medium | Closed | ITストラテジスト (ST) の立場に基づくドキュメント管理・役割定義の見直し | AI Agent | [088-align-st-role-as-it-strategist.md](closed/088-align-st-role-as-it-strategist.md) |
-| **089** | Feature | High | New | 難読化ビルドに対するE2Eの100%適用 | AI Agent | [089-enforce-e2e-on-minified-build.md](089-enforce-e2e-on-minified-build.md) |
-| **090** | Feature | High | New | セキュリティ・スキャンツールのCI統合 | AI Agent | [090-integrate-security-scanner-in-ci.md](090-integrate-security-scanner-in-ci.md) |
+| **089** | Feature | High | Closed | 難読化ビルドに対するE2Eの100%適用 | AI Agent | [089-enforce-e2e-on-minified-build.md](closed/089-enforce-e2e-on-minified-build.md) |
+| **090** | Feature | High | Closed | セキュリティ・スキャンツールのCI統合 | AI Agent | [090-integrate-security-scanner-in-ci.md](closed/090-integrate-security-scanner-in-ci.md) |
 | **091** | Feature | Medium | Closed | CSSスタイルのモジュール化 | AI Agent | [091-css-module-refactoring.md](closed/091-css-module-refactoring.md) |
 | **092** | Refactor | Medium | Closed | しおり（進捗）書き込み処理の非同期アイドル実行化 | AI Agent | [092-async-bookmark-storage.md](closed/092-async-bookmark-storage.md) |
 | **093** | Feature | High | Closed | 大容量テキストのインクリメンタルパースおよびレンダリング（Web Worker対応） | AI Agent | [093-incremental-text-parsing.md](closed/093-incremental-text-parsing.md) |

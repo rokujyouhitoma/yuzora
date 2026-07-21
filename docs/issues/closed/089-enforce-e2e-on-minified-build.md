@@ -2,7 +2,7 @@
 ID: 089
 種別: Feature
 優先度: High
-ステータス: Open (New)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] Enforce E2E on Minified Build (ID: 089)

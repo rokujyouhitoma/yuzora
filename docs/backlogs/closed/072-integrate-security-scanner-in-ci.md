@@ -2,7 +2,7 @@
 ID: 072
 種別: Enhancement
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] Integrate Security Scanner in CI (ID: 072)
