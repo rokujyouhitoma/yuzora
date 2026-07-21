@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Implemented high-performance background plain text parsing and chunked tokenization using an inline Web Worker to completely isolate script imports and avoid CSP violations (ID: 007).
+- Embedded AozoraTokenizer within the Web Worker to avoid importScripts and eliminate naming mismatch crashes during minification under ADVANCED_OPTIMIZATIONS.
+- Guided asynchronous JSDOM teardown race conditions in unit tests by resolving locator dependencies dynamically inside viewer and parser callbacks.
+- Allowed blob: in script-src CSP meta tag headers in index.html and compiled.html for worker execution.
+- Formally closed backlog 007 and issue 093 registries for Web Worker incremental text parsing.
+
 - Added Software Quality Assurance Specialist (QA) agent definition in `.agents/agents/` based on other existing agents.
 - Enforced Playwright E2E testing on minified production builds (`compiled.html`) via `TEST_PATH` environment variable switching (ID: 089).
 - Integrated `npm audit` dependency security scanning and minified build E2E test runs in the GitHub Actions CI pipeline (ID: 090).

@@ -47,6 +47,39 @@ test.describe('commands.js Unit Tests', () => {
         // Mock Element.prototype.scrollTo for JSDOM
         window.Element.prototype.scrollTo = () => {};
 
+        // Mock URL.createObjectURL, URL.revokeObjectURL and Worker for JSDOM
+        window.URL.createObjectURL = () => "blob:mock";
+        window.URL.revokeObjectURL = () => {};
+        window.Worker = class {
+            constructor() {
+                this._terminated = false;
+                window.setTimeout(() => {
+                    if (!this._terminated && this.onmessage) {
+                        this.onmessage({ data: { 'type': 'INIT_OK' } });
+                    }
+                }, 0);
+            }
+            postMessage(msg) {
+                if (msg['type'] === 'PARSE') {
+                    window.setTimeout(() => {
+                        if (!this._terminated && this.onmessage) {
+                            this.onmessage({
+                                data: {
+                                    'type': 'BLOCKS_CHUNK',
+                                    'blocks': [],
+                                    'isFirst': true,
+                                    'isLast': true
+                                }
+                            });
+                        }
+                    }, 0);
+                }
+            }
+            terminate() {
+                this._terminated = true;
+            }
+        };
+
         // Load main-min.js code
         const appJsCode = fs.readFileSync(path.resolve(__dirname, '../../../main-min.js'), 'utf8');
         const scriptEl = window.document.createElement('script');

@@ -43,7 +43,6 @@ class LoadBookCommand extends Command {
     }
     /** @override */
     execute() {
-        const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
         const resourceDirector = /** @type {!ResourceDirectorInterface} */ (Yuzora.locator.resolve(ResourceDirector));
         const self = this;
         const loaderFn = function() {
@@ -51,9 +50,12 @@ class LoadBookCommand extends Command {
         };
         resourceDirector.loadBook(this.fileName, this.fileName, loaderFn)
             .then(function(bookAsset) {
-                bookModel.title = bookAsset.id;
-                bookModel.type = bookAsset.id.endsWith('.html') || bookAsset.id.endsWith('.xhtml') ? 'html' : 'txt';
-                bookModel.content = bookAsset.content;
+                const currentBookModel = /** @type {?} */ (Yuzora.locator.resolve(BookModel));
+                if (!currentBookModel) return;
+
+                currentBookModel.title = bookAsset.id;
+                currentBookModel.type = bookAsset.id.endsWith('.html') || bookAsset.id.endsWith('.xhtml') ? 'html' : 'txt';
+                currentBookModel.content = bookAsset.content;
                 
                 yuzora.publisher.publish(YuzoraEventType.BOOK_LOADED, {
                     fileName: self.fileName,

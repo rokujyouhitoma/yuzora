@@ -770,6 +770,10 @@ function RendererInterface() {}
  */
 RendererInterface.prototype.render = function(htmlContent) {};
 /**
+ * @param {string} htmlContent
+ */
+RendererInterface.prototype.appendRender = function(htmlContent) {};
+/**
  * @param {number} progress
  * @param {boolean=} smooth
  */
@@ -843,6 +847,15 @@ AozoraParserInterface.prototype.parseAozoraText = function(text) {};
 AozoraParserInterface.prototype.parseAozoraHTML = function(htmlString) {};
 /** @param {string} line */
 AozoraParserInterface.prototype.formatAozoraMarkup = function(line) {};
+/**
+ * @param {string} text
+ * @param {function(string, string, string): (void|!Promise<void>)} onFirstChunkReady
+ * @param {function(string): void} onChunkParsed
+ * @param {function(): void} onComplete
+ * @param {function(): boolean} shouldCancel
+ * @return {!Promise<void>}
+ */
+AozoraParserInterface.prototype.parseAozoraTextIncremental = function(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {};
 
 // AozoraSemanticAnalyzerInterface
 /** @interface */

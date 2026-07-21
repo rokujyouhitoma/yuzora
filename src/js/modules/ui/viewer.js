@@ -74,107 +74,161 @@ let currentLoadId = 0;
 async function displayBook() {
     const loadId = ++currentLoadId;
     const bookModel = /** @type {!BookModelInterface} */ (Yuzora.locator.resolve(BookModel));
-    const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
-    const renderer = /** @type {!RendererInterface} */ (Yuzora.locator.resolve(VerticalRenderer));
 
     // Invalidate cached layout dimensions for the new book
     viewContext.cachedScrollWidth = null;
     viewContext.cachedClientWidth = null;
 
-    let parsedHTML = '';
-
     const parser = /** @type {!AozoraParserInterface} */ (Yuzora.locator.resolve(AozoraParser));
-    if (bookModel.type === 'txt') {
-        // Parse plain text with Aozora annotation
-        const parsed = parser.parseAozoraText(bookModel.content);
-        parsedHTML = parsed.body;
-    } else {
-        // XHTML/HTML
-        const parsed = parser.parseAozoraHTML(bookModel.content);
-        parsedHTML = parsed.body;
-        bookModel.title = parsed.title || bookModel.title.replace(/\.(x?html)/, '');
-    }
 
-    // Override with predefined book title/author if matched
-    const predefinedBook = PREDEFINED_BOOKS.find(b => b.title === bookModel.title || bookModel.title.includes(b.cardId.toString()));
-    if (predefinedBook) {
-        bookModel.title = predefinedBook.title;
-        bookModel.author = predefinedBook.author || '';
-    }
+    // eslint-disable-next-line complexity
+    const onFirstChunkReady = async (title, author, html) => {
+        const currentBookModel = /** @type {?} */ (Yuzora.locator.resolve(BookModel));
+        if (!currentBookModel) return;
+        currentBookModel.title = title;
+        currentBookModel.author = author;
 
-    // Apply to viewer
-    viewContext.bookTitle.textContent = bookModel.title;
-    document.title = `${bookModel.title} - ゆうぞら`;
-    renderer.render(parsedHTML);
+        // Override with predefined book title/author if matched
+        const predefinedBook = PREDEFINED_BOOKS.find(b => b.title === title || title.includes(b.cardId.toString()));
+        if (predefinedBook) {
+            currentBookModel.title = predefinedBook.title;
+            currentBookModel.author = predefinedBook.author || '';
+        }
 
-    // Set default activeHeadingId to the first TOC item if available
-    viewContext.activeHeadingId = (bookModel.toc && bookModel.toc.length > 0) ? bookModel.toc[0].id : null;
+        // Apply to viewer
+        const currentViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
+        if (currentViewContext && currentViewContext.bookTitle) {
+            currentViewContext.bookTitle.textContent = currentBookModel.title;
+        }
+        document.title = `${currentBookModel.title} - ゆうぞら`;
+        
+        const currentRenderer = /** @type {?} */ (Yuzora.locator.resolve(VerticalRenderer));
+        if (currentRenderer) {
+            currentRenderer.render(html);
+        }
 
-    // Transition to reader scene via SceneDirector
-    const sceneDirector = /** @type {!SceneDirectorInterface} */ (Yuzora.locator.resolve(SceneDirector));
-    sceneDirector.transitionTo('reader');
+        // Transition to reader scene via SceneDirector
+        const currentSceneDirector = /** @type {?} */ (Yuzora.locator.resolve(SceneDirector));
+        if (currentSceneDirector) {
+            currentSceneDirector.transitionTo('reader');
+        }
 
-    // Sync URL hash and update router.currentHash to avoid loop
-    const router = /** @type {!RouterInterface} */ (Yuzora.locator.resolve(Router));
-    if (predefinedBook) {
-        const nextHash = "#/reader?book=" + predefinedBook.id;
-        router.currentHash = nextHash;
-        window.location.hash = nextHash;
-    } else {
-        const nextHash = "#/reader?local=" + encodeURIComponent(bookModel.title);
-        router.currentHash = nextHash;
-        window.location.hash = nextHash;
-    }
+        // Sync URL hash and update router.currentHash to avoid loop
+        const currentRouter = /** @type {?} */ (Yuzora.locator.resolve(Router));
+        if (currentRouter) {
+            if (predefinedBook) {
+                const nextHash = "#/reader?book=" + predefinedBook.id;
+                currentRouter.currentHash = nextHash;
+                window.location.hash = nextHash;
+            } else {
+                const nextHash = "#/reader?local=" + encodeURIComponent(currentBookModel.title);
+                currentRouter.currentHash = nextHash;
+                window.location.hash = nextHash;
+            }
+        }
 
-    // Check if there is a saved bookmark for this file
-    const bookmarkRepo = /** @type {!BookmarkRepositoryInterface} */ (Yuzora.locator.resolve(BookmarkRepository));
-    bookmarkModel.bookmarkProgress = await bookmarkRepo.load(bookModel.title);
+        // Check if there is a saved bookmark for this file
+        const bookmarkRepo = /** @type {?} */ (Yuzora.locator.resolve(BookmarkRepository));
+        const currentBookmarkModel = /** @type {?} */ (Yuzora.locator.resolve(BookmarkModel));
+        if (bookmarkRepo && currentBookmarkModel) {
+            currentBookmarkModel.bookmarkProgress = await bookmarkRepo.load(currentBookModel.title);
+        }
 
-    if (currentLoadId !== loadId) {
-        return;
-    }
-
-    // Wait a tick for rendering to complete before restoring scroll position
-    viewContext.isReflowing = true;
-    window['__isReflowing__'] = true;
-    setTimeout(async () => {
         if (currentLoadId !== loadId) {
             return;
         }
 
-        try {
-            // 直接、自己修復処理を呼び出して完了を待つ
-            await renderer.adjustPageBreaksForOverrun();
+        // Restore scroll position immediately for the initial chunk to display first pages
+        restoreScrollPosition();
+        updateProgress();
+    };
 
+    const onChunkParsed = (html) => {
+        const currentRenderer = /** @type {?} */ (Yuzora.locator.resolve(VerticalRenderer));
+        if (!currentRenderer) return;
+        // Safe DOM append
+        if (typeof currentRenderer.appendRender === 'function') {
+            currentRenderer.appendRender(html);
+        }
+    };
+
+    const onComplete = () => {
+        const currentBookModel = /** @type {?} */ (Yuzora.locator.resolve(BookModel));
+        const currentViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
+        if (!currentBookModel || !currentViewContext) return;
+
+        // Set default activeHeadingId to the first TOC item if available
+        currentViewContext.activeHeadingId = (currentBookModel.toc && currentBookModel.toc.length > 0) ? currentBookModel.toc[0].id : null;
+
+        // Wait a tick for rendering to complete before running final self-repair and full TOC check
+        currentViewContext.isReflowing = true;
+        window['__isReflowing__'] = true;
+        
+        setTimeout(async () => {
             if (currentLoadId !== loadId) {
                 return;
             }
 
             try {
-                restoreScrollPosition();
-                updateProgress();
-                yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
-                setTimeout(() => {
-                    if (currentLoadId !== loadId) {
-                        return;
+                const currentRenderer = /** @type {?} */ (Yuzora.locator.resolve(VerticalRenderer));
+                if (!currentRenderer) return;
+
+                // Run final page adjustments
+                await currentRenderer.adjustPageBreaksForOverrun();
+
+                if (currentLoadId !== loadId) {
+                    return;
+                }
+
+                try {
+                    restoreScrollPosition();
+                    updateProgress();
+                    yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
+                    setTimeout(() => {
+                        if (currentLoadId !== loadId) {
+                            return;
+                        }
+                        const finalViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
+                        if (finalViewContext) {
+                            finalViewContext.isReflowing = false;
+                        }
+                        window['__isReflowing__'] = false;
+                    }, 50);
+                } catch (err) {
+                    document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
+                    console.error("FATAL_ERROR: ", err);
+                    const finalViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
+                    if (finalViewContext) {
+                        finalViewContext.isReflowing = false;
                     }
-                    viewContext.isReflowing = false;
                     window['__isReflowing__'] = false;
-                }, 50);
-            } catch (err) {
-                document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
-                console.error("FATAL_ERROR: ", err);
-                viewContext.isReflowing = false;
+                }
+            } catch (e) {
+                console.error("Self repair on complete failed:", e);
+                const finalViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
+                if (finalViewContext) {
+                    finalViewContext.isReflowing = false;
+                }
                 window['__isReflowing__'] = false;
             }
-        } catch (err) {
-            document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
-            console.error("FATAL_ERROR: ", err);
-            viewContext.isReflowing = false;
-            window['__isReflowing__'] = false;
-        }
-    }, 100);
+        }, 50);
+    };
+
+    const shouldCancel = () => {
+        return loadId !== currentLoadId;
+    };
+
+    if (bookModel.type === 'txt') {
+        // Execute background parsing via Web Worker
+        // @ts-expect-error
+        await parser.parseAozoraTextIncremental(bookModel.content, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
+    } else {
+        // HTML is fast enough to parse synchronously
+        const parsed = parser.parseAozoraHTML(bookModel.content);
+        await onFirstChunkReady(parsed.title || bookModel.title.replace(/\.(x?html)/, ''), '', parsed.body);
+        onComplete();
+    }
 }
 
 function handleScroll() {

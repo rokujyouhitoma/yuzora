@@ -74,7 +74,10 @@ class Yuzora {
                     };
                     resourceDirector.loadBook(lastSession.name || "", lastSession.name || "", loaderFn)
                         .then(bookAsset => {
-                            const bookModel = /** @type {!BookModelInterface} */ (this.locator.resolve(BookModel));
+                            if (!this.locator) return;
+                            const bookModel = /** @type {?} */ (this.locator.resolve(BookModel));
+                            if (!bookModel) return;
+
                             bookModel.title = bookAsset.id;
                             bookModel.content = bookAsset.content;
                             bookModel.type = bookAsset.id.endsWith('.html') || bookAsset.id.endsWith('.xhtml') ? 'html' : 'txt';

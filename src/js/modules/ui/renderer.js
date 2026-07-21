@@ -80,6 +80,31 @@ class VerticalRenderer {
     }
 
     /**
+     * Appends parsed HTML content to the viewport container securely.
+     * @override
+     * @param {string} htmlContent
+     */
+    // @ts-expect-error
+    appendRender(htmlContent) {
+        if (!this.viewContext.readerContent) return;
+
+        const doc = this.domParser.parseFromString(htmlContent, 'text/html');
+        const body = doc.body;
+        if (!body) return;
+
+        // Force white-list based DOM sanitization (Defense in Depth)
+        const evaluator = /** @type {!AozoraEvaluatorInterface} */ (Yuzora.locator.resolve(AozoraEvaluator));
+        if (evaluator) {
+            evaluator.sanitizeDOM(body);
+        }
+
+        // Safe DOM Node migration (prevents browser re-parsing innerHTML)
+        while (body.firstChild) {
+            this.viewContext.readerContent.appendChild(body.firstChild);
+        }
+    }
+
+    /**
      * Restores the scroll position coordinates based on reading progress percent.
      * @override
      * @param {number} progress
