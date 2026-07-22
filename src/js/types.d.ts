@@ -242,6 +242,7 @@ interface Window {
     YuzoraEventTarget: any;
     Publisher: any;
     YuzoraEventType: any;
+    ErrorBoundary: any;
     initializeDOMElements(): void;
 }
 interface RendererInterface {

@@ -377,3 +377,61 @@ function findCharAtBoundary(element, boundaryX) {
 
     return null;
 }
+
+class ErrorBoundary {
+    constructor() {
+        /** @type {!Array<!Object>} */
+        this.capturedErrors = [];
+    }
+
+    setup() {
+        window.addEventListener('error', (event) => {
+            this.logError({
+                message: event.message,
+                filename: event.filename,
+                lineno: event.lineno,
+                colno: event.colno,
+                error: event.error ? event.error.stack : null
+            });
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            this.logError({
+                message: event.reason ? (event.reason.message || String(event.reason)) : 'Unhandled Rejection',
+                error: event.reason ? event.reason.stack : null
+            });
+        });
+    }
+
+    logError(info) {
+        this.capturedErrors.push(Object.assign({
+            timestamp: new Date().toISOString()
+        }, info));
+    }
+
+    exportDiagnosticReport() {
+        let commandManager = null;
+        try {
+            commandManager = Yuzora.locator.resolve(CommandManager);
+        } catch (e) {
+            commandManager = null;
+        }
+        const reportData = {
+            appName: 'Yuzora',
+            timestamp: new Date().toISOString(),
+            userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'Node.js',
+            errors: this.capturedErrors,
+            history: commandManager ? commandManager.exportJSON() : null
+        };
+        return JSON.stringify(reportData, null, 2);
+    }
+}
+
+ErrorBoundary.prototype['setup'] = ErrorBoundary.prototype.setup;
+ErrorBoundary.prototype['logError'] = ErrorBoundary.prototype.logError;
+ErrorBoundary.prototype['exportDiagnosticReport'] = ErrorBoundary.prototype.exportDiagnosticReport;
+
+if (typeof window !== 'undefined') {
+    window.ErrorBoundary = ErrorBoundary;
+}
+

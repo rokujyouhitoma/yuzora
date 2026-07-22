@@ -87,7 +87,7 @@
 | **077** | Feature | High | Closed | IndexedDBを用いた本棚機能（マイライブラリ）の構築 | [077-indexeddb-book-shelf.md](closed/077-indexeddb-book-shelf.md) |
 | **078** | Enhancement | Medium | Closed | リリース準備・バージョン管理のCI/CD自動化 | [078-release-ci-automation.md](closed/078-release-ci-automation.md) |
 | **079** | Refactor | Medium | Closed | ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 | [079-parser-interface-abstraction.md](closed/079-parser-interface-abstraction.md) |
-| **080** | Enhancement | Medium | Draft | クライアントサイドでのエラー境界と診断レポート出力 | [080-client-error-boundary.md](080-client-error-boundary.md) |
+| **080** | Enhancement | Medium | Closed | クライアントサイドでのエラー境界と診断レポート出力 | [080-client-error-boundary.md](closed/080-client-error-boundary.md) |
 | **081** | Enhancement | Low | Draft | クライアントサイドのSLA/SLO定義とパフォーマンス監視 | [081-client-performance-slo.md](081-client-performance-slo.md) |
 | **082** | Enhancement | High | Closed | インポートデータ（設定/履歴）の厳格なスキーマ検証によるプロトタイプ汚染対策 | [082-strict-schema-validation.md](closed/082-strict-schema-validation.md) |
 | **083** | Enhancement | Medium | Draft | 最初期フェーズにおけるインポートファイルサイズ制限によるDoS対策 | [083-early-file-size-check.md](083-early-file-size-check.md) |

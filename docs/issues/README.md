@@ -111,6 +111,7 @@
 | **099** | Enhancement | Medium | Closed | 自動テスト用サンプル書籍の拡充 | AI Agent | [099-expand-sample-books-for-layout-diagnostics.md](closed/099-expand-sample-books-for-layout-diagnostics.md) |
 | **100** | Enhancement | Low | Closed | テストカバレッジ・品質メトリクス可視化 | AI Agent | [100-visualize-test-coverage-and-quality-metrics.md](closed/100-visualize-test-coverage-and-quality-metrics.md) |
 | **101** | Enhancement | Medium | Closed | リリース準備・バージョン管理のCI/CD自動化 | AI Agent | [101-release-ci-automation.md](closed/101-release-ci-automation.md) |
+| **102** | Enhancement | Medium | Closed | クライアントサイドでのエラー境界と診断レポート出力 | AI Agent | [102-client-error-boundary.md](closed/102-client-error-boundary.md) |
 
 
 ## 2. 状態（ステータス）定義

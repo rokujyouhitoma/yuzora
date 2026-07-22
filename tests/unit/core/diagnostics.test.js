@@ -73,4 +73,19 @@ test.describe('diagnostics.js Unit Tests', () => {
         assert.ok(report.includes('レイアウト診断レポート'));
         assert.ok(report.includes('アライメント検証'));
     });
+
+    test('ErrorBoundary should capture errors and export diagnostic report (Issue 102)', () => {
+        assert.ok(window.ErrorBoundary);
+        const boundary = new window.ErrorBoundary();
+        boundary.setup();
+        boundary.logError({ message: 'Test error', filename: 'test.js', lineno: 10 });
+        
+        assert.strictEqual(boundary.capturedErrors.length, 1);
+        assert.strictEqual(boundary.capturedErrors[0].message, 'Test error');
+        
+        const reportJson = boundary.exportDiagnosticReport();
+        const parsed = JSON.parse(reportJson);
+        assert.strictEqual(parsed.appName, 'Yuzora');
+        assert.strictEqual(parsed.errors.length, 1);
+    });
 });

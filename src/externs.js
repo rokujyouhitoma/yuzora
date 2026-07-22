@@ -8,6 +8,53 @@
 var localStorageKeys;
 var localStorage;
 
+/** @type {?} */
+Window.prototype.ErrorBoundary;
+
+/**
+ * @interface
+ */
+function ErrorBoundaryInterface() {}
+ErrorBoundaryInterface.prototype.setup = function() {};
+/**
+ * @param {!Object} info
+ */
+ErrorBoundaryInterface.prototype.logError = function(info) {};
+/**
+ * @return {string}
+ */
+ErrorBoundaryInterface.prototype.exportDiagnosticReport = function() {};
+/** @type {!Array<!Object>} */
+ErrorBoundaryInterface.prototype.capturedErrors;
+
+/** @type {string} */
+Event.prototype.message;
+/** @type {string} */
+Event.prototype.filename;
+/** @type {number} */
+Event.prototype.lineno;
+/** @type {number} */
+Event.prototype.colno;
+/** @type {?} */
+Event.prototype.error;
+/** @type {?} */
+Event.prototype.reason;
+
+/** @type {string} */
+Object.prototype.fileName;
+/** @type {string} */
+Object.prototype.fileType;
+/** @type {number} */
+Object.prototype.importedAt;
+/** @type {string} */
+Object.prototype.content;
+/** @type {string} */
+Object.prototype.title;
+/** @type {string} */
+Object.prototype.author;
+/** @type {!Array<!Object>} */
+Object.prototype.capturedErrors;
+
 // Repository Interface definition in externs
 /**
  * @interface
