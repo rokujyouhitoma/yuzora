@@ -171,6 +171,56 @@ function setupPredefinedBooksGrids() {
                         viewContext.readerBooksGrid.appendChild(card);
                     });
                 }
+
+                // Render library books from IndexedDB
+                const libraryRepo = /** @type {!LibraryRepositoryInterface} */ (Yuzora.locator.resolve(LibraryRepository));
+                libraryRepo.getBooks().then(books => {
+                    if (sceneDirector.currentSceneName !== "welcome") return;
+                    const librarySection = document.getElementById("library-section");
+                    const libraryGrid = document.getElementById("library-books-grid");
+                    if (!librarySection || !libraryGrid) return;
+
+                    if (books.length === 0) {
+                        librarySection.classList.add("hidden");
+                        return;
+                    }
+
+                    librarySection.classList.remove("hidden");
+                    libraryGrid.innerHTML = "";
+
+                    books.forEach(book => {
+                        const card = document.createElement("div");
+                        card.className = "book-card fade-in";
+                        card.setAttribute("data-book-id", book.fileName);
+                        card.innerHTML = `
+                            <div class="book-card-title"></div>
+                            <div class="book-card-author"></div>
+                            <button class="book-card-delete-btn" title="本棚から削除" aria-label="本棚から削除">×</button>
+                        `;
+                        const titleEl = card.querySelector(".book-card-title");
+                        const authorEl = card.querySelector(".book-card-author");
+                        if (titleEl) titleEl.textContent = book.title || "";
+                        if (authorEl) authorEl.textContent = book.author || "";
+
+                        const onClick = (e) => {
+                            const target = /** @type {!Element} */ (e.target);
+                            if (target && (target.classList.contains("book-card-delete-btn") || target.closest(".book-card-delete-btn"))) {
+                                e.stopPropagation();
+                                if (confirm(`「${book.title}」を本棚から削除しますか？`)) {
+                                    libraryRepo.deleteBook(book.fileName).then(() => {
+                                        setupPredefinedBooksGrids();
+                                    });
+                                }
+                                return;
+                            }
+                            window.location.hash = "#/reader?library=" + encodeURIComponent(book.fileName);
+                        };
+                        bindWelcomeEvent_(card, "click", onClick);
+                        libraryGrid.appendChild(card);
+                    });
+                }).catch(e => {
+                    console.error("Failed to load and render library books:", e);
+                });
             }, 600);
         }, 0);
     });

@@ -64,6 +64,45 @@ class Yuzora {
         router.register("/reader", async (params) => {
             if (params["book"]) {
                 loadPredefinedBook(params["book"]);
+            } else if (params["library"]) {
+                const libraryName = params["library"];
+                const libraryRepo = /** @type {!LibraryRepositoryInterface} */ (this.locator.resolve(LibraryRepository));
+                try {
+                    const book = await libraryRepo.getBook(libraryName);
+                    if (book) {
+                        const resourceDirector = /** @type {!ResourceDirectorInterface} */ (this.locator.resolve(ResourceDirector));
+                        const loaderFn = function() {
+                            return Promise.resolve(book.content || "");
+                        };
+                        resourceDirector.loadBook(book.fileName, book.fileName, loaderFn)
+                            .then(bookAsset => {
+                                if (!this.locator) return;
+                                const bookModel = /** @type {?} */ (this.locator.resolve(BookModel));
+                                if (!bookModel) return;
+
+                                bookModel.title = book.title;
+                                bookModel.author = book.author;
+                                bookModel.content = bookAsset.content;
+                                bookModel.type = book.fileType;
+                                bookModel.source = 'library';
+                                bookModel.fileName = book.fileName;
+                                this.publisher.publish(YuzoraEventType.BOOK_LOADED, {
+                                    fileName: book.fileName,
+                                    fileContent: bookAsset.content
+                                });
+                            })
+                            .catch(err => {
+                                console.error("Failed to load library book via ResourceDirector:", err);
+                                router.navigate("/welcome");
+                            });
+                    } else {
+                        alert("書籍がライブラリに見つかりませんでした。");
+                        router.navigate("/welcome");
+                    }
+                } catch (e) {
+                    console.error("Failed to fetch library book:", e);
+                    router.navigate("/welcome");
+                }
             } else if (params["local"]) {
                 const sessionRepo = /** @type {!SessionRepositoryInterface} */ (this.locator.resolve(SessionRepository));
                 const lastSession = await sessionRepo.load();
@@ -112,7 +151,13 @@ class Yuzora {
         const currentHash = window.location.hash;
 
         if (lastSession && lastSession.name && lastSession.content && (!currentHash || currentHash === "#" || currentHash === "#/welcome")) {
-            window.location.hash = "#/reader?local=" + encodeURIComponent(lastSession.name);
+            const libraryRepo = /** @type {!LibraryRepositoryInterface} */ (this.locator.resolve(LibraryRepository));
+            const existsInLibrary = await libraryRepo.getBook(lastSession.name);
+            if (existsInLibrary) {
+                window.location.hash = "#/reader?library=" + encodeURIComponent(lastSession.name);
+            } else {
+                window.location.hash = "#/reader?local=" + encodeURIComponent(lastSession.name);
+            }
         }
 
         // Start routing

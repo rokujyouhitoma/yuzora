@@ -100,6 +100,40 @@ SessionRepositoryInterface.prototype.save = function(name, content, type) {};
 SessionRepositoryInterface.prototype.clear = function() {};
 
 
+// LibraryRepository Interface definition in externs
+/**
+ * @interface
+ */
+function LibraryRepositoryInterface() {}
+/**
+ * @param {string} fileName
+ * @param {string} title
+ * @param {string} author
+ * @param {string} content
+ * @param {string} fileType
+ * @return {!Promise<void>}
+ */
+LibraryRepositoryInterface.prototype.saveBook = function(fileName, title, author, content, fileType) {};
+/**
+ * @return {!Promise<!Array<!Object>>}
+ */
+LibraryRepositoryInterface.prototype.getBooks = function() {};
+/**
+ * @param {string} fileName
+ * @return {!Promise<?Object>}
+ */
+LibraryRepositoryInterface.prototype.getBook = function(fileName) {};
+/**
+ * @param {string} fileName
+ * @return {!Promise<void>}
+ */
+LibraryRepositoryInterface.prototype.deleteBook = function(fileName) {};
+/**
+ * @return {!Promise<void>}
+ */
+LibraryRepositoryInterface.prototype.clearAll = function() {};
+
+
 // Window prototype expansions
 /** @type {!LocatorInterface} */
 Window.prototype.locator;

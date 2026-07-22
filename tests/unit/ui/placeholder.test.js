@@ -22,8 +22,10 @@ test.describe('Welcome Loading Placeholders (Skeleton) Unit Tests', () => {
 
         class ViewContext {}
         class SceneDirector {}
+        class LibraryRepository {}
         global.ViewContext = ViewContext;
         global.SceneDirector = SceneDirector;
+        global.LibraryRepository = LibraryRepository;
 
         // Mock PREDEFINED_BOOKS globals
         global.PREDEFINED_BOOKS = [
@@ -43,6 +45,11 @@ test.describe('Welcome Loading Placeholders (Skeleton) Unit Tests', () => {
                 if (Class.name === 'SceneDirector') {
                     return {
                         currentSceneName: 'welcome'
+                    };
+                }
+                if (Class.name === 'LibraryRepository') {
+                    return {
+                        getBooks: () => Promise.resolve([])
                     };
                 }
                 return {};
@@ -69,6 +76,7 @@ test.describe('Welcome Loading Placeholders (Skeleton) Unit Tests', () => {
         delete global.document;
         delete global.ViewContext;
         delete global.SceneDirector;
+        delete global.LibraryRepository;
         delete global.PREDEFINED_BOOKS;
         delete global.Yuzora;
         delete global.bindWelcomeEvent_;

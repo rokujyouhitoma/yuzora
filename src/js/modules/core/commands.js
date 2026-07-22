@@ -57,6 +57,7 @@ class LoadBookCommand extends Command {
                 currentBookModel.title = bookAsset.id;
                 currentBookModel.type = bookAsset.id.endsWith('.html') || bookAsset.id.endsWith('.xhtml') ? 'html' : 'txt';
                 currentBookModel.content = bookAsset.content;
+                currentBookModel.fileName = self.fileName;
                 
                 yuzora.publisher.publish(YuzoraEventType.BOOK_LOADED, {
                     fileName: self.fileName,

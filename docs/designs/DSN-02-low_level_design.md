@@ -560,6 +560,21 @@ $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \t
 - `last_read_file_type` : ファイルの拡張子形式 (`"txt"` または `"html"`)
 - `last_read_file_content` : 最後にデコードされた状態のテキスト/HTML本文 (`string`)
 
+### 4.4 IndexedDB マイライブラリ（本棚）ストレージ (`yuzora_db`)
+インポートされた書籍データをローカルブラウザ内に永続化し、本棚カードとして管理するための仕様：
+- **DB名 / バージョン**: `yuzora_db` (Version 1)
+- **オブジェクトストア**: `books` (KeyPath: `name`)
+- **保持レコード構造**:
+  - `name`: ファイル名 (プライマリキー, `string`)
+  - `content`: ファイルのデコード済み本文テキスト/HTML (`string`)
+  - `type`: 拡張子種別 (`"txt"` または `"html"`)
+  - `title`: 青空文庫ヘッダー解析済みの作品名 (`string`)
+  - `author`: 青空文庫ヘッダー解析済みの著者名 (`string`)
+  - `updatedAt`: 最終更新/インポート日時タイムスタンプ (`number`)
+- **リポジトリ構造**:
+  - `IndexedDBRepository`: IndexedDB 接続・トランザクション非同期処理の基盤抽象クラス。
+  - `LibraryRepository`: `books` オブジェクトストアに対する CRUD (`getAllBooks`, `getBook`, `saveBook`, `deleteBook`) ロジックカプセル化クラス。
+
 ---
 
 ## 5. CSS定義・スタイリング詳細 (CSS Variables & Styles)

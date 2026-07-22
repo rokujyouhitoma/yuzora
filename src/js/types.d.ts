@@ -145,6 +145,14 @@ interface SessionRepositoryInterface {
     clear(): Promise<void>;
 }
 
+interface LibraryRepositoryInterface {
+    saveBook(fileName: string, title: string, author: string, content: string, fileType: string): Promise<void>;
+    getBooks(): Promise<any[]>;
+    getBook(fileName: string): Promise<any>;
+    deleteBook(fileName: string): Promise<void>;
+    clearAll(): Promise<void>;
+}
+
 interface BookModelInterface {
     title: string;
     author: string;
@@ -153,6 +161,8 @@ interface BookModelInterface {
     totalPages: number;
     currentPage: number;
     toc: any[];
+    source?: string;
+    fileName?: string;
     isEmpty(): boolean;
     clear(): void;
 }

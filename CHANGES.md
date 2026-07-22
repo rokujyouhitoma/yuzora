@@ -1,6 +1,12 @@
 # Changelog / 変更履歴
 
 All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+- Added IndexedDB book shelf (My Library) persistence, allowing imported books to be stored locally in browser `yuzora_db`, dynamically rendered as cards on the welcome screen, read via `#/reader?library=filename` route, and deleted with confirmation, and updated DSN-01 and DSN-02 (ID: 097).
+- Documentation: Closed backlog 077 and issue 097 (ID: 097).
+
 - Security: Implemented strict whitelist settings verification and recursive prototype pollution (`__proto__`, `constructor`, `prototype`) prevention checks during config loading and operation history imports, and updated DSN-02 (ID: 096).
 - Fixed a flaky Table of Contents E2E test by tapping the reader viewport to ensure controls are visible before opening the TOC drawer (ID: 096).
 - Changed `AozoraParser` to implement a new decoupled `DocumentParser` interface, registering it on the Service Locator to abstract viewer and application modules from low-level parsing logic, and updated DSN-02 (ID: 095).

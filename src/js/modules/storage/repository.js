@@ -572,6 +572,262 @@ class SessionRepository {
 }
 
 // ==========================================================================
+// IndexedDBRepository
+// ==========================================================================
+
+/**
+ * Repository implementation backed by IndexedDB.
+ */
+class IndexedDBRepository {
+    constructor() {
+        /**
+         * @private
+         * @type {string}
+         */
+        this.dbName = "yuzora_db";
+        /**
+         * @private
+         * @type {number}
+         */
+        this.dbVersion = 1;
+        /**
+         * @private
+         * @type {string}
+         */
+        this.storeName = "books";
+        /**
+         * @private
+         * @type {?IDBDatabase}
+         */
+        this.db = null;
+    }
+
+    /**
+     * @private
+     * @return {!Promise<!IDBDatabase>}
+     */
+    async getDB() {
+        if (this.db) {
+            return this.db;
+        }
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open(this.dbName, this.dbVersion);
+            request.onupgradeneeded = (event) => {
+                const db = request.result;
+                if (!db.objectStoreNames.contains(this.storeName)) {
+                    db.createObjectStore(this.storeName, { keyPath: "fileName" });
+                }
+            };
+            request.onsuccess = () => {
+                this.db = request.result;
+                resolve(this.db);
+            };
+            request.onerror = () => {
+                reject(request.error || new Error("Failed to open IndexedDB"));
+            };
+        });
+    }
+
+    /**
+     * Retrieve all items.
+     * @return {!Promise<!Array<!Object>>}
+     */
+    async getAll() {
+        const db = await this.getDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(this.storeName, "readonly");
+            const store = transaction.objectStore(this.storeName);
+            const request = store.getAll();
+            request.onsuccess = () => {
+                resolve(request.result || []);
+            };
+            request.onerror = () => {
+                reject(request.error || new Error("Failed to getAll from IndexedDB"));
+            };
+        });
+    }
+
+    /**
+     * Get item by key.
+     * @param {string} key
+     * @return {!Promise<?Object>}
+     */
+    async get(key) {
+        const db = await this.getDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(this.storeName, "readonly");
+            const store = transaction.objectStore(this.storeName);
+            const request = store.get(key);
+            request.onsuccess = () => {
+                resolve(request.result || null);
+            };
+            request.onerror = () => {
+                reject(request.error || new Error("Failed to get from IndexedDB"));
+            };
+        });
+    }
+
+    /**
+     * Put item.
+     * @param {!Object} value
+     * @return {!Promise<void>}
+     */
+    async put(value) {
+        const db = await this.getDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(this.storeName, "readwrite");
+            const store = transaction.objectStore(this.storeName);
+            const request = store.put(value);
+            request.onsuccess = () => {
+                resolve();
+            };
+            request.onerror = () => {
+                reject(request.error || new Error("Failed to put into IndexedDB"));
+            };
+        });
+    }
+
+    /**
+     * Delete item.
+     * @param {string} key
+     * @return {!Promise<void>}
+     */
+    async delete(key) {
+        const db = await this.getDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(this.storeName, "readwrite");
+            const store = transaction.objectStore(this.storeName);
+            const request = store.delete(key);
+            request.onsuccess = () => {
+                resolve();
+            };
+            request.onerror = () => {
+                reject(request.error || new Error("Failed to delete from IndexedDB"));
+            };
+        });
+    }
+
+    /**
+     * Clear all items.
+     * @return {!Promise<void>}
+     */
+    async clear() {
+        const db = await this.getDB();
+        return new Promise((resolve, reject) => {
+            const transaction = db.transaction(this.storeName, "readwrite");
+            const store = transaction.objectStore(this.storeName);
+            const request = store.clear();
+            request.onsuccess = () => {
+                resolve();
+            };
+            request.onerror = () => {
+                reject(request.error || new Error("Failed to clear IndexedDB"));
+            };
+        });
+    }
+}
+
+// ==========================================================================
+// LibraryRepository (Domain Repository)
+// ==========================================================================
+
+/**
+ * Domain repository for library books saved in IndexedDB.
+ * @implements {LibraryRepositoryInterface}
+ */
+class LibraryRepository {
+    /**
+     * @param {!IndexedDBRepository} db
+     */
+    constructor(db) {
+        /**
+         * @private
+         * @type {!IndexedDBRepository}
+         */
+        this.db = db;
+    }
+
+    /**
+     * Save a book to the library database.
+     * @param {string} fileName
+     * @param {string} title
+     * @param {string} author
+     * @param {string} content
+     * @param {string} fileType
+     * @return {!Promise<void>}
+     * @override
+     */
+    // @ts-expect-error
+    async saveBook(fileName, title, author, content, fileType) {
+        if (!fileName) return;
+        const bookObj = {
+            fileName: fileName,
+            title: title || fileName,
+            author: author || "",
+            content: content || "",
+            fileType: fileType || "txt",
+            importedAt: Date.now()
+        };
+        await this.db.put(bookObj);
+    }
+
+    /**
+     * Retrieve all library books metadata sorted by importedAt desc.
+     * @return {!Promise<!Array<!Object>>}
+     * @override
+     */
+    // @ts-expect-error
+    async getBooks() {
+        try {
+            const all = await this.db.getAll();
+            return all.sort((a, b) => (b.importedAt || 0) - (a.importedAt || 0));
+        } catch (e) {
+            console.warn("LibraryRepository.getBooks() failed:", e);
+            return [];
+        }
+    }
+
+    /**
+     * Retrieve a specific book by fileName.
+     * @param {string} fileName
+     * @return {!Promise<?Object>}
+     * @override
+     */
+    // @ts-expect-error
+    async getBook(fileName) {
+        if (!fileName) return null;
+        try {
+            return await this.db.get(fileName);
+        } catch (e) {
+            console.warn("LibraryRepository.getBook() failed:", e);
+            return null;
+        }
+    }
+
+    /**
+     * Delete a book by fileName.
+     * @param {string} fileName
+     * @return {!Promise<void>}
+     * @override
+     */
+    // @ts-expect-error
+    async deleteBook(fileName) {
+        if (!fileName) return;
+        await this.db.delete(fileName);
+    }
+
+    /**
+     * Clear all books from the library.
+     * @return {!Promise<void>}
+     * @override
+     */
+    // @ts-expect-error
+    async clearAll() {
+        await this.db.clear();
+    }
+}
+
+// ==========================================================================
 // Locator Registration
 // ==========================================================================
 
@@ -579,8 +835,12 @@ const globalLocalStorage = new LocalStorageRepository();
 const globalSettingsRepository = new SettingsRepository(/** @type {!RepositoryInterface} */ (globalLocalStorage));
 const globalBookmarkRepository = new BookmarkRepository(/** @type {!RepositoryInterface} */ (globalLocalStorage));
 const globalSessionRepository = new SessionRepository(/** @type {!RepositoryInterface} */ (globalLocalStorage));
+const globalIndexedDBRepository = new IndexedDBRepository();
+const globalLibraryRepository = new LibraryRepository(globalIndexedDBRepository);
 
 locator.register(LocalStorageRepository, globalLocalStorage);
 locator.register(SettingsRepository, globalSettingsRepository);
 locator.register(BookmarkRepository, globalBookmarkRepository);
 locator.register(SessionRepository, globalSessionRepository);
+locator.register(IndexedDBRepository, globalIndexedDBRepository);
+locator.register(LibraryRepository, globalLibraryRepository);

@@ -6,6 +6,13 @@
 function handleFile(file) {
     if (!file) return;
 
+    // DoS file size limit check (2MB)
+    const MAX_SIZE = 2 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+        alert("ファイルサイズが2MBを超えているため、インポートできません。");
+        return;
+    }
+
     const resourceDirector = /** @type {!ResourceDirectorInterface} */ (Yuzora.locator.resolve(ResourceDirector));
 
     const loaderFn = function() {
@@ -121,10 +128,30 @@ async function displayBook() {
                 const nextHash = "#/reader?book=" + predefinedBook.id;
                 currentRouter.currentHash = nextHash;
                 window.location.hash = nextHash;
-            } else {
-                const nextHash = "#/reader?local=" + encodeURIComponent(currentBookModel.title);
+            } else if (currentBookModel.source === 'library') {
+                const nextHash = "#/reader?library=" + encodeURIComponent(currentBookModel.fileName || currentBookModel.title);
                 currentRouter.currentHash = nextHash;
                 window.location.hash = nextHash;
+            } else {
+                const libraryRepo = /** @type {!LibraryRepositoryInterface} */ (Yuzora.locator.resolve(LibraryRepository));
+                const fName = currentBookModel.fileName || currentBookModel.title;
+                libraryRepo.saveBook(
+                    fName,
+                    currentBookModel.title,
+                    currentBookModel.author,
+                    currentBookModel.content,
+                    currentBookModel.type
+                ).then(() => {
+                    currentBookModel.source = 'library';
+                    const nextHash = "#/reader?library=" + encodeURIComponent(fName);
+                    currentRouter.currentHash = nextHash;
+                    window.location.hash = nextHash;
+                }).catch(err => {
+                    console.error("Failed to save book to library:", err);
+                    const nextHash = "#/reader?local=" + encodeURIComponent(currentBookModel.title);
+                    currentRouter.currentHash = nextHash;
+                    window.location.hash = nextHash;
+                });
             }
         }
 

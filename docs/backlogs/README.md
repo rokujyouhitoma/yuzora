@@ -84,7 +84,7 @@
 | **074** | Enhancement | Medium | Approved | 自動テスト用サンプル書籍の拡充 | [074-expand-sample-books-for-layout-diagnostics.md](074-expand-sample-books-for-layout-diagnostics.md) |
 | **075** | Enhancement | Low | Approved | テストカバレッジ・品質メトリクス可視化 | [075-visualize-test-coverage-and-quality-metrics.md](075-visualize-test-coverage-and-quality-metrics.md) |
 | **076** | Refactor | Medium | Closed | 情報処理技術者試験区分に基づく他のエージェント定義ファイルのブラッシュアップ | [076-align-other-agents-definition.md](closed/076-align-other-agents-definition.md) |
-| **077** | Feature | High | Draft | IndexedDBを用いた本棚機能（マイライブラリ）の構築 | [077-indexeddb-book-shelf.md](077-indexeddb-book-shelf.md) |
+| **077** | Feature | High | Closed | IndexedDBを用いた本棚機能（マイライブラリ）の構築 | [077-indexeddb-book-shelf.md](closed/077-indexeddb-book-shelf.md) |
 | **078** | Enhancement | Medium | Draft | リリース準備・バージョン管理のCI/CD自動化 | [078-release-ci-automation.md](078-release-ci-automation.md) |
 | **079** | Refactor | Medium | Closed | ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 | [079-parser-interface-abstraction.md](closed/079-parser-interface-abstraction.md) |
 | **080** | Enhancement | Medium | Draft | クライアントサイドでのエラー境界と診断レポート出力 | [080-client-error-boundary.md](080-client-error-boundary.md) |

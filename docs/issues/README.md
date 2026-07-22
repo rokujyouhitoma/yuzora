@@ -106,6 +106,7 @@
 | **094** | Refactor | Medium | Closed | 他のエージェント定義ファイルのブラッシュアップ | AI Agent | [094-align-other-agents-definition.md](closed/094-align-other-agents-definition.md) |
 | **095** | Refactor | Medium | Closed | ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 | AI Agent | [095-parser-interface-abstraction.md](closed/095-parser-interface-abstraction.md) |
 | **096** | Feature | High | Closed | インポートデータ（設定/履歴）の厳格なスキーマ検証によるプロトタイプ汚染対策 | AI Agent | [096-strict-schema-validation.md](closed/096-strict-schema-validation.md) |
+| **097** | Feature | High | Closed | IndexedDBを用いた本棚機能（マイライブラリ）の構築 | AI Agent | [097-indexeddb-book-shelf.md](closed/097-indexeddb-book-shelf.md) |
 
 
 ## 2. 状態（ステータス）定義

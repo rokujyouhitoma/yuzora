@@ -49,7 +49,7 @@ const moduleFactory = new Function(
     'locatorStub',
     'localStorageStub',
     `${moduleCode}
-    return { Repository, LocalStorageRepository, InMemoryRepository, SettingsRepository, BookmarkRepository, SessionRepository };`
+    return { Repository, LocalStorageRepository, InMemoryRepository, SettingsRepository, BookmarkRepository, SessionRepository, IndexedDBRepository, LibraryRepository };`
 );
 
 const {
@@ -58,7 +58,9 @@ const {
     InMemoryRepository,
     SettingsRepository,
     BookmarkRepository,
-    SessionRepository
+    SessionRepository,
+    IndexedDBRepository,
+    LibraryRepository
 } = moduleFactory(locatorStub, localStorageStub);
 
 // ==========================================================================
@@ -356,5 +358,57 @@ test.describe('Repository substitution (InMemory replaces LocalStorage)', () => 
         await sessionRepo.save('kokoro.txt', 'full text content', 'txt');
         const session = await sessionRepo.load();
         assert.strictEqual(session.name, 'kokoro.txt');
+    });
+
+    test('LibraryRepository works with mock IndexedDB backend', async () => {
+        // Implement a simple in-memory mock of IndexedDBRepository
+        const mockDb = {
+            store: new Map(),
+            async getAll() {
+                return Array.from(this.store.values());
+            },
+            async get(key) {
+                return this.store.get(key) || null;
+            },
+            async put(value) {
+                this.store.set(value.fileName, value);
+            },
+            async delete(key) {
+                this.store.delete(key);
+            },
+            async clear() {
+                this.store.clear();
+            }
+        };
+
+        const libraryRepo = new LibraryRepository(mockDb);
+
+        // 1. Save books
+        await libraryRepo.saveBook('sanshiro.txt', '三四郎', '夏目漱石', 'sanshiro content', 'txt');
+        // Add a tiny delay to ensure timestamps differ in sorting
+        await new Promise(r => setTimeout(r, 2));
+        await libraryRepo.saveBook('kokoro.txt', 'こころ', '夏目漱石', 'kokoro content', 'txt');
+
+        // 2. Fetch books list (should be sorted by importedAt desc, i.e., kokoro first since saved second)
+        const books = await libraryRepo.getBooks();
+        assert.strictEqual(books.length, 2);
+        assert.strictEqual(books[0].fileName, 'kokoro.txt');
+        assert.strictEqual(books[1].fileName, 'sanshiro.txt');
+
+        // 3. Fetch specific book
+        const book = await libraryRepo.getBook('kokoro.txt');
+        assert.strictEqual(book.title, 'こころ');
+        assert.strictEqual(book.content, 'kokoro content');
+
+        // 4. Delete book
+        await libraryRepo.deleteBook('kokoro.txt');
+        const booksAfterDelete = await libraryRepo.getBooks();
+        assert.strictEqual(booksAfterDelete.length, 1);
+        assert.strictEqual(booksAfterDelete[0].fileName, 'sanshiro.txt');
+
+        // 5. Clear all
+        await libraryRepo.clearAll();
+        const booksAfterClear = await libraryRepo.getBooks();
+        assert.strictEqual(booksAfterClear.length, 0);
     });
 });
