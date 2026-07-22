@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Standardized explicit `dispose()` lifecycle garbage collection and memory release on `Asset` / `BookAsset` instances (ID: 107).
+- Documentation: Closed backlog 086 and issue 107 (ID: 107).
 - Enhanced DOM virtualization and paragraph bounds caching (`paragraphBoundsCache`) in `VerticalRenderer` for large book rendering performance (ID: 106).
 - Documentation: Closed backlog 085 and issue 106 (ID: 106).
 - Added font stylesheet preload links (`<link rel="preload">`) and verified `font-display: swap` in HTML/CSS for faster FCP (ID: 105).
