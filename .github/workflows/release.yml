@@ -1,0 +1,45 @@
+name: Release Automation
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Java (needed for Closure Compiler)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build minified bundle
+        run: make
+
+      - name: Run lint and unit tests
+        run: |
+          npm run lint
+          npm run test:types
+          npm run test:unit
+
+      - name: Package Release Assets
+        run: |
+          mkdir -p release-assets
+          cp compiled.html release-assets/
+          cp main-min.js release-assets/

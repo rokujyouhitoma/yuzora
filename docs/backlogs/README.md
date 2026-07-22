@@ -85,7 +85,7 @@
 | **075** | Enhancement | Low | Closed | テストカバレッジ・品質メトリクス可視化 | [075-visualize-test-coverage-and-quality-metrics.md](closed/075-visualize-test-coverage-and-quality-metrics.md) |
 | **076** | Refactor | Medium | Closed | 情報処理技術者試験区分に基づく他のエージェント定義ファイルのブラッシュアップ | [076-align-other-agents-definition.md](closed/076-align-other-agents-definition.md) |
 | **077** | Feature | High | Closed | IndexedDBを用いた本棚機能（マイライブラリ）の構築 | [077-indexeddb-book-shelf.md](closed/077-indexeddb-book-shelf.md) |
-| **078** | Enhancement | Medium | Draft | リリース準備・バージョン管理のCI/CD自動化 | [078-release-ci-automation.md](078-release-ci-automation.md) |
+| **078** | Enhancement | Medium | Closed | リリース準備・バージョン管理のCI/CD自動化 | [078-release-ci-automation.md](closed/078-release-ci-automation.md) |
 | **079** | Refactor | Medium | Closed | ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 | [079-parser-interface-abstraction.md](closed/079-parser-interface-abstraction.md) |
 | **080** | Enhancement | Medium | Draft | クライアントサイドでのエラー境界と診断レポート出力 | [080-client-error-boundary.md](080-client-error-boundary.md) |
 | **081** | Enhancement | Low | Draft | クライアントサイドのSLA/SLO定義とパフォーマンス監視 | [081-client-performance-slo.md](081-client-performance-slo.md) |

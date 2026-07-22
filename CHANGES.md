@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added automated release build workflow (`.github/workflows/release.yml`) for tags and manual triggers (ID: 101).
+- Documentation: Closed backlog 078 and issue 101 (ID: 101).
 - Added test coverage script (`npm run test:coverage`) and integrated test coverage reporting in CI workflow (ID: 100).
 - Documentation: Closed backlog 075 and issue 100 (ID: 100).
 - Added expanded sample book fixture (`sample_complex_layout.txt`) covering complex Aozora formatting (rubies, chitsuki, headings, page-breaks) and integrated boundary verification tests (ID: 099).
