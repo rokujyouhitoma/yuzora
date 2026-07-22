@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Refactored and aligned Information Security Specialist (`information-security-specialist.agent.md`) agent definitions and security skill delegations (ID: 110).
+- Documentation: Closed backlog 089 and issue 110 (ID: 110).
 - Added checksum hash calculation and integrity validation to command history export/import operations (ID: 109).
 - Documentation: Closed backlog 088 and issue 109 (ID: 109).
 - Added automated traceability verification script (`scripts/verify-traceability.js`) and CI workflow step (`npm run test:traceability`) (ID: 108).

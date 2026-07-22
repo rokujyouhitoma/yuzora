@@ -119,6 +119,7 @@
 | **107** | Refactor | Medium | Closed | フレームワークのライフサイクルにおける明示的なインスタンス破棄（dispose）の徹底 | AI Agent | [107-lifecycle-dispose-garbage-collection.md](closed/107-lifecycle-dispose-garbage-collection.md) |
 | **108** | Enhancement | Medium | Closed | CIパイプラインにおける要件・設計・コード・テストのトレーサビリティ検証自動化 | AI Agent | [108-ci-traceability-verification.md](closed/108-ci-traceability-verification.md) |
 | **109** | Feature | Medium | Closed | コマンド履歴エクスポート時へのチェックサム付与とインポート時整合性検証 | AI Agent | [109-command-history-checksum.md](closed/109-command-history-checksum.md) |
+| **110** | Refactor | Medium | Closed | セキュリティスペシャリスト (SC) エージェント定義の洗練と体系化 | AI Agent | [110-align-security-specialist-agent.md](closed/110-align-security-specialist-agent.md) |
 
 
 ## 2. 状態（ステータス）定義

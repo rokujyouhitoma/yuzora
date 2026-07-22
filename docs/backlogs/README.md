@@ -96,7 +96,7 @@
 | **086** | Refactor | Medium | Closed | フレームワークのライフサイクルにおける明示的なインスタンス破棄（dispose）の徹底 | [086-lifecycle-dispose-garbage-collection.md](closed/086-lifecycle-dispose-garbage-collection.md) |
 | **087** | Enhancement | Medium | Closed | CIパイプラインにおける要件・設計・コード・テストのトレーサビリティ検証自動化 | [087-ci-traceability-verification.md](closed/087-ci-traceability-verification.md) |
 | **088** | Feature | Medium | Closed | コマンド履歴エクスポート時へのチェックサム付与とインポート時整合性検証 | [088-command-history-checksum.md](closed/088-command-history-checksum.md) |
-| **089** | Refactor | Medium | Draft | セキュリティスペシャリスト (SC) エージェント定義の洗練と体系化 | [089-align-security-specialist-agent.md](089-align-security-specialist-agent.md) |
+| **089** | Refactor | Medium | Closed | セキュリティスペシャリスト (SC) エージェント定義の洗練と体系化 | [089-align-security-specialist-agent.md](closed/089-align-security-specialist-agent.md) |
 
 ---
 
