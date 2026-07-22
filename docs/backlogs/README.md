@@ -80,7 +80,7 @@
 | **070** | Refactor | Medium | Closed | ITストラテジスト (ST) の立場に基づくドキュメント管理・役割定義の見直しプラン | [070-align-st-role-as-it-strategist.md](closed/070-align-st-role-as-it-strategist.md) |
 | **071** | Enhancement | High | Closed | 難読化ビルドに対するE2Eの100%適用 | [071-enforce-e2e-on-minified-build.md](closed/071-enforce-e2e-on-minified-build.md) |
 | **072** | Enhancement | High | Closed | セキュリティ・スキャンツールのCI統合 | [072-integrate-security-scanner-in-ci.md](closed/072-integrate-security-scanner-in-ci.md) |
-| **073** | Feature | Medium | Approved | Visual Regression Testing (VRT) の導入 | [073-introduce-visual-regression-testing.md](073-introduce-visual-regression-testing.md) |
+| **073** | Feature | Medium | Closed | Visual Regression Testing (VRT) の導入 | [073-introduce-visual-regression-testing.md](closed/073-introduce-visual-regression-testing.md) |
 | **074** | Enhancement | Medium | Approved | 自動テスト用サンプル書籍の拡充 | [074-expand-sample-books-for-layout-diagnostics.md](074-expand-sample-books-for-layout-diagnostics.md) |
 | **075** | Enhancement | Low | Approved | テストカバレッジ・品質メトリクス可視化 | [075-visualize-test-coverage-and-quality-metrics.md](075-visualize-test-coverage-and-quality-metrics.md) |
 | **076** | Refactor | Medium | Closed | 情報処理技術者試験区分に基づく他のエージェント定義ファイルのブラッシュアップ | [076-align-other-agents-definition.md](closed/076-align-other-agents-definition.md) |

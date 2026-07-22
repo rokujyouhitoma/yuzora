@@ -2,7 +2,7 @@
 ID: 073
 種別: Feature
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Feature] Introduce Visual Regression Testing (ID: 073)

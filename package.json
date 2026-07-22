@@ -12,6 +12,7 @@
     "test:e2e": "npm run test:cleanup && playwright test",
     "test:e2e:compiled": "npm run test:cleanup && TEST_PATH=/compiled.html playwright test",
     "test:types": "tsc --noEmit",
+    "test:vrt": "npm run test:cleanup && playwright test tests/e2e/vrt.spec.js",
     "lint": "eslint src/js/",
     "test": "npm run lint && npm run test:types && npm run test:unit && npm run test:e2e && npm run test:e2e:compiled"
   },

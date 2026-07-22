@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added Visual Regression Testing (VRT) test suite using Playwright snapshot comparisons (`npm run test:vrt`) to detect layout and theme rendering regressions, and updated DSN-01 (ID: 098).
+- Documentation: Closed backlog 073 and issue 098 (ID: 098).
 - Added IndexedDB book shelf (My Library) persistence, allowing imported books to be stored locally in browser `yuzora_db`, dynamically rendered as cards on the welcome screen, read via `#/reader?library=filename` route, and deleted with confirmation, and updated DSN-01 and DSN-02 (ID: 097).
 - Documentation: Closed backlog 077 and issue 097 (ID: 097).
 

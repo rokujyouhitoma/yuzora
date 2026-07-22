@@ -398,5 +398,5 @@ graph TD
   - **ESLint**: JavaScript の静的コード解析
   - **TypeScript Compiler (tsc)**: JSDoc アノテーションに基づく静的型チェック
   - **Google Closure Compiler**: ADVANCED_OPTIMIZATIONS による難読化・検証
-  - **Playwright**: E2Eブラウザテスト
+  - **Playwright**: E2Eブラウザテストおよび Visual Regression Testing (VRT) によるレイアウト崩れ・テーマ表示差異の自動検証
   - **Node.js Test Runner**: ユニットテスト
