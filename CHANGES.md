@@ -1,8 +1,8 @@
 # Changelog / 変更履歴
 
 All notable changes to this project will be documented in this file.
-## [Unreleased]
-
+- Security: Implemented strict whitelist settings verification and recursive prototype pollution (`__proto__`, `constructor`, `prototype`) prevention checks during config loading and operation history imports, and updated DSN-02 (ID: 096).
+- Fixed a flaky Table of Contents E2E test by tapping the reader viewport to ensure controls are visible before opening the TOC drawer (ID: 096).
 - Changed `AozoraParser` to implement a new decoupled `DocumentParser` interface, registering it on the Service Locator to abstract viewer and application modules from low-level parsing logic, and updated DSN-02 (ID: 095).
 - Fixed a flaky TOC E2E test timing failure under heavy CPU load by increasing the smooth scroll settling timeout to 3000ms (ID: 095).
 - Fixed hanging E2E test runs by adding a port cleanup step (`fuser`) in `package.json` to automatically terminate any orphaned background servers on port 8080 (ID: 095).

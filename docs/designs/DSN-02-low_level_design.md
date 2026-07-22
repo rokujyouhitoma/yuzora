@@ -538,6 +538,17 @@ $$\text{scrollLeft} \leftarrow \begin{cases} -(\text{bookmarkProgress} \times \t
     "spacing": "spacing-normal"
   }
   ```
+- **バリデーションとプロトタイプ汚染対策**:
+  `SettingsRepository.load()` は、読み込んだ JSON 文字列のデシリアライズ時に以下の厳格なホワイトリスト検証を実施します：
+  1. 自身または子オブジェクト内に `__proto__`, `constructor`, `prototype` キーが再帰的に含まれている場合、インポートを拒否して空オブジェクト `{}` を返します。
+  2. 読み込まれたオブジェクトから、以下の許可されたキー以外のプロパティ、および対応する値のホワイトリストに適合しないプロパティをすべて除去（フィルタリング）します。
+     - `theme`: `sepia`, `night`, `light`, `black`
+     - `font`: `font-gothic`, `font-mincho`
+     - `direction`: `rtl`, `ltr`
+     - `size`: `size-sm`, `size-md`, `size-lg`
+     - `lh`: `line-height-tight`, `line-height-normal`, `line-height-loose`
+     - `spacing`: `spacing-narrow`, `spacing-normal`, `spacing-wide`
+     - `headingPageBreakMode`: `none`, `large`, `large-medium`, `all`
 
 ### 4.2 しおり進捗率 (`bookmark_<filename>`)
 - **キー名**: `bookmark_${currentFileName}` （例: `bookmark_52395_yoko.txt`）
@@ -883,7 +894,7 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
     ```
 - **シリアライズとエラーハンドリング (`exportJSON()` / `importJSON(jsonString)`)**:
   - `exportJSON()`: `JSON.stringify(commandHistory)` により、JSON文字列としてエクスポートします。
-  - `importJSON(jsonString)`: `JSON.parse` を用いてオブジェクト配列へ復元。セキュリティ強化（XSS防止およびプロトタイプ汚染防止）のため、デシリアライズ前に各コマンドの `type` および `params` に対して厳格なホワイトリストベースの構造検証（`validateCommandItem_`）を適用します。`__proto__`, `constructor`, `prototype` キーを含むパラメータオブジェクトや、規定外の型・値をもつパラメータは即座に破棄（スキップ）されます。パース時およびインスタンス生成時のすべての例外を `try-catch` で囲み、エラー検知時には警告アラートをデバッグUIへ出力して安全にフォールバックします。
+  - `importJSON(jsonString)`: `JSON.parse` を用いてオブジェクト配列へ復元。セキュリティ強化（XSS防止およびプロトタイプ汚染防止）のため、デシリアライズ前に各コマンドの `type` および `params` に対して厳格なホワイトリストベースの構造検証（`validateCommandItem_`）を適用します。再帰的に探索を行うヘルパー関数 `hasPrototypePollutionKeys` を用いて、`__proto__`, `constructor`, `prototype` キーを含むプロパティがネストされた子オブジェクトを含めて存在する場合はコマンド全体を即座に破棄（スキップ）します。また、各コマンドに対応した定義済みパラメータ以外の余剰なノイズキーが含まれる場合、あるいはパラメータの値の型や値範囲（例: `NavigatePage` の `targetPage` は1以上の整数、`UpdateConfig` は指定ホワイトリスト）に合致しない場合も破棄されます。パース時およびインスタンス生成時のすべての例外を `try-catch` で囲み、エラー検知時には警告アラートをデバッグUIへ出力して安全にフォールバックします。
 - **自動リプレイ処理 (`replay(commands)`)**:
   - `isReplaying = true` に設定し、リプレイ中はユーザーによる新規コマンド実行やスクロール操作等のインタラクションをガード（無視）します。
   - 各コマンドを **`300ms`** のインターバルをあけて順次（非同期シーケンス）実行し、スクロール等のレンダリングや同期の遅延を吸収します。すべてのコマンド実行が完了したのち `isReplaying = false` に戻します。

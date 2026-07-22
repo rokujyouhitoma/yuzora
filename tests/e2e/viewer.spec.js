@@ -329,6 +329,8 @@ test.describe('Yuzora E2E Reader Tests', () => {
         await page.waitForTimeout(3000);
 
         // 5. Open TOC drawer again
+        await page.click('#reader-viewport');
+        await expect(readerHeader).not.toHaveClass(/hidden/);
         await btnTOC.click();
         await expect(tocDrawer).toHaveClass(/open/);
 

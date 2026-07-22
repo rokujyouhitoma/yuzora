@@ -184,6 +184,38 @@ test.describe('SettingsRepository', () => {
         const repo = new SettingsRepository(storage);
         assert.deepStrictEqual(await repo.load(), {});
     });
+
+    test('load() discards config with prototype pollution key', async () => {
+        const storage = new InMemoryRepository();
+        await storage.save('yuzora_config', '{"theme":"sepia","__proto__":{"polluted":true}}');
+        const repo = new SettingsRepository(storage);
+        assert.deepStrictEqual(await repo.load(), {});
+    });
+
+    test('load() discards config with nested prototype pollution key', async () => {
+        const storage = new InMemoryRepository();
+        await storage.save('yuzora_config', '{"theme":"sepia","nested":{"__proto__":{"polluted":true}}}');
+        const repo = new SettingsRepository(storage);
+        assert.deepStrictEqual(await repo.load(), {});
+    });
+
+    test('load() filters out invalid config keys and invalid config values', async () => {
+        const storage = new InMemoryRepository();
+        await storage.save('yuzora_config', JSON.stringify({
+            theme: 'sepia',
+            font: 'invalid-font-hack', // invalid value
+            direction: 'rtl',
+            invalidKey: 'someValue', // invalid key
+            size: 'size-lg'
+        }));
+        const repo = new SettingsRepository(storage);
+        const loaded = await repo.load();
+        assert.deepStrictEqual(loaded, {
+            theme: 'sepia',
+            direction: 'rtl',
+            size: 'size-lg'
+        });
+    });
 });
 
 // ==========================================================================

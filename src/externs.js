@@ -122,6 +122,8 @@ Window.prototype.Publisher;
 Window.prototype.__DEBUG_EVENT__;
 /** @type {boolean} */
 Window.prototype.__DEBUG_PERFORMANCE__;
+/** @type {Function} */
+Window.prototype.hasPrototypePollutionKeys;
 
 /** @type {!YuzoraInterface} */
 var yuzora;

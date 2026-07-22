@@ -228,4 +228,87 @@ test.describe('commands.js Unit Tests', () => {
         assert.equal(restored[0].type, "SyncBookmark");
         assert.equal(restored[0].progress, 0.5);
     });
+
+    test('should reject command item containing nested prototype pollution keys', () => {
+        const { CommandManager } = window.Yuzora;
+        const nestedMaliciousJson = JSON.stringify([
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: 10,
+                    nested: {
+                        "__proto__": { "polluted": true }
+                    }
+                }
+            },
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: 12
+                }
+            }
+        ]);
+        const restored = CommandManager.importJSON(nestedMaliciousJson);
+        // The first NavigatePage should be rejected due to nested prototype pollution keys
+        assert.equal(restored.length, 1);
+        assert.equal(restored[0].type, "NavigatePage");
+        assert.equal(restored[0].targetPage, 12);
+    });
+
+    test('should reject command item containing extra noise parameters', () => {
+        const { CommandManager } = window.Yuzora;
+        const noiseJson = JSON.stringify([
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: 10,
+                    extraNoise: "should_cause_rejection"
+                }
+            },
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: 12
+                }
+            }
+        ]);
+        const restored = CommandManager.importJSON(noiseJson);
+        assert.equal(restored.length, 1);
+        assert.equal(restored[0].type, "NavigatePage");
+        assert.equal(restored[0].targetPage, 12);
+    });
+
+    test('should reject command item with invalid parameter types or bounds', () => {
+        const { CommandManager } = window.Yuzora;
+        const invalidTypesJson = JSON.stringify([
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: "10" // String targetPage
+                }
+            },
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: 10.5 // Float targetPage
+                }
+            },
+            {
+                type: "SyncBookmark",
+                params: {
+                    progress: 1.5 // Out of bounds progress
+                }
+            },
+            {
+                type: "NavigatePage",
+                params: {
+                    targetPage: 12
+                }
+            }
+        ]);
+        const restored = CommandManager.importJSON(invalidTypesJson);
+        assert.equal(restored.length, 1);
+        assert.equal(restored[0].type, "NavigatePage");
+        assert.equal(restored[0].targetPage, 12);
+    });
 });

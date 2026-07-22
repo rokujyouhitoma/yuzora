@@ -6,6 +6,73 @@
  */
 "use strict";
 
+/**
+ * Checks if a key is a prototype pollution property.
+ * @param {string} key
+ * @return {boolean}
+ */
+function isPollutedKey(key) {
+    return key === '__proto__' || key === 'constructor' || key === 'prototype';
+}
+
+/**
+ * Checks if a prototype object is mutated / polluted.
+ * @param {*} proto
+ * @return {boolean}
+ */
+function isPollutedPrototype(proto) {
+    return proto !== null && proto !== Object.prototype && proto !== Array.prototype;
+}
+
+/**
+ * Checks if the scan should be skipped for an object.
+ * @param {*} obj
+ * @param {!Set<*>} visited
+ * @return {boolean}
+ */
+function shouldSkipScan(obj, visited) {
+    return !obj || typeof obj !== "object" || visited.has(obj);
+}
+
+/**
+ * Recursively scans an object for prototype pollution keys.
+ * @param {*} obj
+ * @param {!Set<*>=} visited
+ * @return {boolean}
+ */
+function hasPrototypePollutionKeys(obj, visited = new Set()) {
+    if (shouldSkipScan(obj, visited)) {
+        return false;
+    }
+    visited.add(obj);
+
+    const nonNullObj = /** @type {!Object} */ (obj);
+
+    if (isPollutedPrototype(Object.getPrototypeOf(nonNullObj))) {
+        return true;
+    }
+
+    const keys = Object.getOwnPropertyNames(nonNullObj);
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        if (isPollutedKey(key)) {
+            return true;
+        }
+        try {
+            const desc = Object.getOwnPropertyDescriptor(nonNullObj, key);
+            const val = desc ? desc.value : undefined;
+            if (hasPrototypePollutionKeys(val, visited)) {
+                return true;
+            }
+        } catch (e) {
+            // Ignore errors
+        }
+    }
+    return false;
+}
+const globalObj = typeof globalThis !== "undefined" ? globalThis : (typeof window !== "undefined" ? window : {});
+globalObj['hasPrototypePollutionKeys'] = hasPrototypePollutionKeys;
+
 // ==========================================================================
 // Base Repository (Abstract)
 // ==========================================================================
@@ -228,6 +295,39 @@ class InMemoryRepository extends Repository {
 // ==========================================================================
 
 /**
+ * Filters a configuration object against the allowed settings whitelist.
+ * @param {*} parsed
+ * @return {!Object<string, string>}
+ */
+function filterConfigKeys(parsed) {
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+        return /** @type {!Object<string, string>} */ ({});
+    }
+    const validated = {};
+    const allowedKeys = {
+        'theme': ['sepia', 'dark', 'light', 'black'],
+        'font': ['font-gothic', 'font-mincho'],
+        'direction': ['rtl', 'ltr'],
+        'size': ['size-sm', 'size-md', 'size-lg', 'size-xl'],
+        'lh': ['line-height-tight', 'line-height-normal', 'line-height-loose'],
+        'spacing': ['spacing-tight', 'spacing-normal', 'spacing-loose'],
+        'headingPageBreakMode': ['none', 'large', 'large-medium', 'all']
+    };
+
+    const parsedKeys = Object.keys(parsed);
+    for (let i = 0; i < parsedKeys.length; i++) {
+        const key = parsedKeys[i];
+        if (allowedKeys.hasOwnProperty(key)) {
+            const val = parsed[key];
+            if (typeof val === "string" && allowedKeys[key].indexOf(val) !== -1) {
+                validated[key] = val;
+            }
+        }
+    }
+    return /** @type {!Object<string, string>} */ (validated);
+}
+
+/**
  * Domain repository for user display settings (theme, font, direction, etc.).
  * Encapsulates the 'yuzora_config' storage key.
  * @implements {SettingsRepositoryInterface}
@@ -250,6 +350,7 @@ class SettingsRepository {
         this._KEY = 'yuzora_config';
     }
 
+
     /**
      * Load the settings object from storage.
      * Returns an empty object if no settings are found or parsing fails.
@@ -260,16 +361,26 @@ class SettingsRepository {
     async load() {
         try {
             const raw = await this.storage.get(this._KEY);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                if (parsed && typeof parsed === "object") {
-                    return /** @type {!Object<string, string>} */ (parsed);
-                }
+            if (!raw) {
+                return /** @type {!Object<string, string>} */ ({});
             }
+
+            const parsed = JSON.parse(raw);
+            if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+                return /** @type {!Object<string, string>} */ ({});
+            }
+
+            if (hasPrototypePollutionKeys(parsed)) {
+                console.warn("SettingsRepository.load() detected prototype pollution in config, discarding config.");
+                return /** @type {!Object<string, string>} */ ({});
+            }
+
+            const validated = filterConfigKeys(parsed);
+            return /** @type {!Object<string, string>} */ (validated);
         } catch (e) {
             console.warn("SettingsRepository.load() failed to parse JSON:", e);
         }
-        return {};
+        return /** @type {!Object<string, string>} */ ({});
     }
 
     /**

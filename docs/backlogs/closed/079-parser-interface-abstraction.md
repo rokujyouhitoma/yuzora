@@ -2,7 +2,7 @@
 ID: 079
 種別: Refactor
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [REFACTOR] ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 (ID: 079)
@@ -41,7 +41,7 @@ Service Locator経由で依存関係を抽象型として解決する設計に�
 
 ### 3.2 疎結合化と依存関係解決
 *   **Service Locator でのキーの抽象化**:
-    *   現在 `Yuzora.locator.register(AozoraParser, new AozoraParser())` のように具象クラスをキーとして登録している箇所を、抽象インターフェース型キー、またはLocatorに登録する専用の解決トークンクラス `DocumentParser` に置き換えます。
+    *   現在 `Yuzora.locator.register(AozoraParser, new AozoraParser())` のように具象クラスをキーとして登録している箇所を、抽象インターフェース型キー、またはLocatorに登録する専用 of 専用の解決トークンクラス `DocumentParser` に置き換えます。
 *   **AozoraParser のリファクタリング**:
     *   `AozoraParser` クラスを `implements DocumentParser` とし、`parseAozoraText` などの具象メソッドを包み込む形で、`parseText` / `parseHTML` / `formatMarkup` メソッドを実装します（旧メソッドは後方互換性のために残す、または移行完了時に安全にクリーンアップします）。
 *   **UI層・コア層の呼び出し変更**:
@@ -51,8 +51,8 @@ Service Locator経由で依存関係を抽象型として解決する設計に�
 *   Google Closure Compiler（ADVANCED_OPTIMIZATIONS）での圧縮時に、JSDocタイプ定義（`@implements {DocumentParser}`）に基づいてプロパティ名が安全に難読化され、かつ型チェックエラー（`tsc`）が発生しないことを担保します。
 
 ## 4. 受入基準 (DoD) / Acceptance Criteria
-- [ ] `src/js/types.d.ts` にフォーマット中立な `DocumentParser` および `ParsedDocument` インターフェースが定義されていること。
-- [ ] `AozoraParser` が `DocumentParser` インターフェースを正しく実装していること。
-- [ ] `yuzora.js` および `viewer.js` が `DocumentParser` をキーとしてService Locatorからインスタンスを解決し、具象クラス（`AozoraParser`）への名前の直接依存が排除されていること。
-- [ ] すべてのテストコードが更新され、パーサークラスおよびパース機能のテストが正常にパスすること。
-- [ ] 難読化ビルド（`make`）が警告やエラーなく正常に完了すること。
+- [x] `src/js/types.d.ts` にフォーマット中立な `DocumentParser` および `ParsedDocument` インターフェースが定義されていること。
+- [x] `AozoraParser` が `DocumentParser` インターフェースを正しく実装していること。
+- [x] `yuzora.js` および `viewer.js` が `DocumentParser` をキーとしてService Locatorからインスタンスを解決し、具象クラス（`AozoraParser`）への名前の直接依存が排除されていること。
+- [x] すべてのテストコードが更新され、パーサークラスおよびパース機能のテストが正常にパスすること。
+- [x] 難読化ビルド（`make`）が警告やエラーなく正常に完了すること。

@@ -3,6 +3,7 @@
  */
 "use strict";
 
+
 // ==========================================================================
 // Command Pattern for Operation History
 // ==========================================================================
@@ -444,19 +445,32 @@ class CommandHistory {
      * @param {*} params
      * @return {boolean}
      */
+    isValidConfigKeys_(params) {
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        return keys.length === 2 && keys.indexOf("configKey") !== -1 && keys.indexOf("configValue") !== -1;
+    }
+
+    /**
+     * @private
+     * @param {*} params
+     * @return {boolean}
+     */
     validateConfigParam_(params) {
-        if (!params || typeof params['configKey'] !== "string" || typeof params['configValue'] !== "string") return false;
+        if (!this.isValidConfigKeys_(params)) return false;
+        if (typeof params['configKey'] !== "string" || typeof params['configValue'] !== "string") return false;
         const validValues = {
             theme: ["sepia", "light", "dark", "black"],
             font: ["font-mincho", "font-gothic"],
             direction: ["rtl", "ltr"],
-            size: ["size-sm", "size-md", "size-lg"],
-            lh: ["line-height-sm", "line-height-normal", "line-height-lg"],
-            spacing: ["spacing-sm", "spacing-normal", "spacing-lg"]
+            size: ["size-sm", "size-md", "size-lg", "size-xl"],
+            lh: ["line-height-tight", "line-height-normal", "line-height-loose"],
+            spacing: ["spacing-tight", "spacing-normal", "spacing-loose"],
+            headingPageBreakMode: ["none", "large", "large-medium", "all"]
         };
         if (!Object.prototype.hasOwnProperty.call(validValues, params['configKey'])) return false;
         const list = validValues[params['configKey']];
-        return !!list && list.includes(params['configValue']);
+        return !!list && list.indexOf(params['configValue']) !== -1;
     }
 
     /**
@@ -465,7 +479,11 @@ class CommandHistory {
      * @return {boolean}
      */
     validateLoadBook_(params) {
-        return !!params && typeof params['fileName'] === "string" && typeof params['fileContent'] === "string";
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        if (keys.length !== 2) return false;
+        if (keys.indexOf("fileName") === -1 || keys.indexOf("fileContent") === -1) return false;
+        return typeof params['fileName'] === "string" && typeof params['fileContent'] === "string";
     }
 
     /**
@@ -474,7 +492,12 @@ class CommandHistory {
      * @return {boolean}
      */
     validateNavigatePage_(params) {
-        return !!params && typeof params['targetPage'] === "number" && !isNaN(params['targetPage']) && params['targetPage'] >= 1;
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        if (keys.length !== 1) return false;
+        if (keys.indexOf("targetPage") === -1) return false;
+        const targetPage = params['targetPage'];
+        return typeof targetPage === "number" && !isNaN(targetPage) && Number.isInteger(targetPage) && targetPage >= 1;
     }
 
     /**
@@ -483,7 +506,12 @@ class CommandHistory {
      * @return {boolean}
      */
     validateSyncBookmark_(params) {
-        return !!params && typeof params['progress'] === "number" && !isNaN(params['progress']) && params['progress'] >= 0.0 && params['progress'] <= 1.0;
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        if (keys.length !== 1) return false;
+        if (keys.indexOf("progress") === -1) return false;
+        const progress = params['progress'];
+        return typeof progress === "number" && !isNaN(progress) && progress >= 0.0 && progress <= 1.0;
     }
 
     /**
@@ -492,7 +520,11 @@ class CommandHistory {
      * @return {boolean}
      */
     validateToggleControls_(params) {
-        return !!params && typeof params['visible'] === "boolean";
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        if (keys.length !== 1) return false;
+        if (keys.indexOf("visible") === -1) return false;
+        return typeof params['visible'] === "boolean";
     }
 
     /**
@@ -501,7 +533,11 @@ class CommandHistory {
      * @return {boolean}
      */
     validateToggleDrawer_(params) {
-        return !!params && (params['drawerId'] === "settings" || params['drawerId'] === "toc") && typeof params['open'] === "boolean";
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        if (keys.length !== 2) return false;
+        if (keys.indexOf("drawerId") === -1 || keys.indexOf("open") === -1) return false;
+        return (params['drawerId'] === "settings" || params['drawerId'] === "toc") && typeof params['open'] === "boolean";
     }
 
     /**
@@ -510,7 +546,11 @@ class CommandHistory {
      * @return {boolean}
      */
     validateClearStorage_(params) {
-        return !!params && ["bookmarks", "config", "all"].includes(params['clearType']);
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        if (keys.length !== 1) return false;
+        if (keys.indexOf("clearType") === -1) return false;
+        return ["bookmarks", "config", "all"].indexOf(params['clearType']) !== -1;
     }
 
     /**
@@ -519,7 +559,11 @@ class CommandHistory {
      * @return {boolean}
      */
     validateToggleDebugModal_(params) {
-        return !!params && typeof params['open'] === "boolean";
+        if (!params || typeof params !== "object" || Array.isArray(params)) return false;
+        const keys = Object.keys(params);
+        if (keys.length !== 1) return false;
+        if (keys.indexOf("open") === -1) return false;
+        return typeof params['open'] === "boolean";
     }
 
     /**
@@ -536,7 +580,10 @@ class CommandHistory {
             "SyncBookmark": this.validateSyncBookmark_,
             "ToggleControls": this.validateToggleControls_,
             "ToggleDrawer": this.validateToggleDrawer_,
-            "ExitReader": () => true,
+            "ExitReader": (p) => {
+                if (!p || typeof p !== "object" || Array.isArray(p)) return false;
+                return Object.keys(p).length === 0;
+            },
             "ClearStorage": this.validateClearStorage_,
             "ToggleDebugModal": this.validateToggleDebugModal_
         };
@@ -549,19 +596,35 @@ class CommandHistory {
      * @param {*} item
      * @return {boolean}
      */
-    validateCommandItem_(item) {
-        if (!item || typeof item !== "object") return false;
+    isValidCommandStructure_(item) {
+        if (!item || typeof item !== "object" || Array.isArray(item)) return false;
         if (typeof item['type'] !== "string") return false;
-        if (!item['params'] || typeof item['params'] !== "object") return false;
+        return !(!item['params'] || typeof item['params'] !== "object" || Array.isArray(item['params']));
+    }
 
-        const params = /** @type {!Object} */ (item['params']);
-        // Block prototype pollution keys
-        for (const key of Object.keys(params)) {
-            if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
-                return false;
-            }
+    /**
+     * @private
+     * @param {*} item
+     * @return {boolean}
+     */
+    isPollutedCommandItem_(item) {
+        const gObj = typeof globalThis !== "undefined" ? globalThis : (typeof window !== "undefined" ? window : {});
+        return !!(gObj['hasPrototypePollutionKeys'] && gObj['hasPrototypePollutionKeys'](item));
+    }
+
+    /**
+     * @private
+     * @param {*} item
+     * @return {boolean}
+     */
+    validateCommandItem_(item) {
+        if (!this.isValidCommandStructure_(item)) return false;
+        if (this.isPollutedCommandItem_(item)) {
+            console.warn("Discarding command item containing prototype pollution keys:", item);
+            return false;
         }
 
+        const params = /** @type {!Object} */ (item['params']);
         return this.validateParamsByType_(item['type'], params);
     }
 
