@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added client-side performance SLO indicators and status reporting in layout diagnostics (ID: 103).
+- Documentation: Closed backlog 081 and issue 103 (ID: 103).
 - Added top-level `ErrorBoundary` class with global exception listeners and diagnostic report export functionality (ID: 102).
 - Documentation: Closed backlog 080 and issue 102 (ID: 102).
 - Added automated release build workflow (`.github/workflows/release.yml`) for tags and manual triggers (ID: 101).

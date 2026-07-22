@@ -295,8 +295,25 @@ async function diagnoseBoundaryOverlap(viewportRect, childNodes, currentPage, on
 }
 
 /**
- * @return {!Promise<string>}
+ * @return {string}
  */
+function diagnosePerformanceSLO() {
+    const renderer = Yuzora.locator.resolve(VerticalRenderer);
+    const lastMetrics = renderer ? renderer.lastRepairMetrics : null;
+
+    let report = `### ⚡ パフォーマンス SLA / SLO 計測\n`;
+    const targetRenderMs = 1000;
+    if (lastMetrics) {
+        const renderMs = lastMetrics.durationMs;
+        const passRender = renderMs <= targetRenderMs;
+        report += `- **初回レイアウト描画時間 SLO (<= 1000ms)**: ${renderMs.toFixed(1)}ms (${passRender ? '✅ PASS' : '⚠️ SLO_VIOLATION'})\n`;
+    } else {
+        report += `- **初回レイアウト描画時間 SLO**: 未計測\n`;
+    }
+    report += `\n`;
+    return report;
+}
+
 async function runLayoutDiagnosis() {
     const viewContext = /** @type {!ViewContextInterface} */ (Yuzora.locator.resolve(ViewContext));
     if (!viewContext.readerViewport || !viewContext.readerContent) {
@@ -318,6 +335,7 @@ async function runLayoutDiagnosis() {
 
     let report = '';
     report += diagnoseEnvironmentInfo(currentPage, pageCount);
+    report += diagnosePerformanceSLO();
     report += diagnoseColumnsInfo(cStyle);
     report += diagnoseColumnWidthCheck(cStyle);
     report += diagnoseVerticalLayoutInfo(viewportRect, cStyle);
