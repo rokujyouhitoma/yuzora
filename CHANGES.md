@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Enhanced DOM virtualization and paragraph bounds caching (`paragraphBoundsCache`) in `VerticalRenderer` for large book rendering performance (ID: 106).
+- Documentation: Closed backlog 085 and issue 106 (ID: 106).
 - Added font stylesheet preload links (`<link rel="preload">`) and verified `font-display: swap` in HTML/CSS for faster FCP (ID: 105).
 - Documentation: Closed backlog 084 and issue 105 (ID: 105).
 - Added pre-flight file size validation (2MB limit) at import entry points to prevent DoS attacks (ID: 104).

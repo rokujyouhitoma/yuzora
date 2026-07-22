@@ -115,6 +115,7 @@
 | **103** | Enhancement | Low | Closed | クライアントサイドのSLA/SLO定義とパフォーマンス監視 | AI Agent | [103-client-performance-slo.md](closed/103-client-performance-slo.md) |
 | **104** | Enhancement | Medium | Closed | 最初期フェーズにおけるインポートファイルサイズ制限によるDoS対策 | AI Agent | [104-early-file-size-check.md](closed/104-early-file-size-check.md) |
 | **105** | Enhancement | Low | Closed | Webフォントおよび主要アセットのpreloadとfont-display最適化 | AI Agent | [105-webfont-preload-optimization.md](closed/105-webfont-preload-optimization.md) |
+| **106** | Feature | High | Closed | DOM仮想化（Virtual Scroll）による大容量書籍表示時のメモリ負荷低減 | AI Agent | [106-dom-virtualization.md](closed/106-dom-virtualization.md) |
 
 
 ## 2. 状態（ステータス）定義
