@@ -113,6 +113,7 @@
 | **101** | Enhancement | Medium | Closed | リリース準備・バージョン管理のCI/CD自動化 | AI Agent | [101-release-ci-automation.md](closed/101-release-ci-automation.md) |
 | **102** | Enhancement | Medium | Closed | クライアントサイドでのエラー境界と診断レポート出力 | AI Agent | [102-client-error-boundary.md](closed/102-client-error-boundary.md) |
 | **103** | Enhancement | Low | Closed | クライアントサイドのSLA/SLO定義とパフォーマンス監視 | AI Agent | [103-client-performance-slo.md](closed/103-client-performance-slo.md) |
+| **104** | Enhancement | Medium | Closed | 最初期フェーズにおけるインポートファイルサイズ制限によるDoS対策 | AI Agent | [104-early-file-size-check.md](closed/104-early-file-size-check.md) |
 
 
 ## 2. 状態（ステータス）定義

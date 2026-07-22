@@ -90,7 +90,7 @@
 | **080** | Enhancement | Medium | Closed | クライアントサイドでのエラー境界と診断レポート出力 | [080-client-error-boundary.md](closed/080-client-error-boundary.md) |
 | **081** | Enhancement | Low | Closed | クライアントサイドのSLA/SLO定義とパフォーマンス監視 | [081-client-performance-slo.md](closed/081-client-performance-slo.md) |
 | **082** | Enhancement | High | Closed | インポートデータ（設定/履歴）の厳格なスキーマ検証によるプロトタイプ汚染対策 | [082-strict-schema-validation.md](closed/082-strict-schema-validation.md) |
-| **083** | Enhancement | Medium | Draft | 最初期フェーズにおけるインポートファイルサイズ制限によるDoS対策 | [083-early-file-size-check.md](083-early-file-size-check.md) |
+| **083** | Enhancement | Medium | Closed | 最初期フェーズにおけるインポートファイルサイズ制限によるDoS対策 | [083-early-file-size-check.md](closed/083-early-file-size-check.md) |
 | **084** | Enhancement | Low | Draft | Webフォントおよび主要アセットのpreloadとfont-display最適化 | [084-webfont-preload-optimization.md](084-webfont-preload-optimization.md) |
 | **085** | Feature | High | Draft | DOM仮想化（Virtual Scroll）による大容量書籍表示時のメモリ負荷低減 | [085-dom-virtualization.md](085-dom-virtualization.md) |
 | **086** | Refactor | Medium | Draft | フレームワークのライフサイクルにおける明示的なインスタンス破棄（dispose）の徹底 | [086-lifecycle-dispose-garbage-collection.md](086-lifecycle-dispose-garbage-collection.md) |

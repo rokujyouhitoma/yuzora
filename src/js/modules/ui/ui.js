@@ -237,11 +237,16 @@ function setupWelcomeEvents() {
     const onDragLeave = () => {
         viewContext.dropZone.classList.remove("dragover");
     };
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB DoS Defense Limit
     const onDrop = (e) => {
         e.preventDefault();
         viewContext.dropZone.classList.remove("dragover");
         const dragEvent = /** @type {!DragEvent} */ (e);
         const file = dragEvent.dataTransfer.files[0];
+        if (file && file.size > MAX_FILE_SIZE) {
+            alert("ファイルサイズが2MBを超えているため、インポートできません。");
+            return;
+        }
         handleFile(file);
     };
 
@@ -253,6 +258,10 @@ function setupWelcomeEvents() {
     const onFileInputChange = (e) => {
         const inputElement = /** @type {!HTMLInputElement} */ (e.target);
         const file = inputElement.files[0];
+        if (file && file.size > MAX_FILE_SIZE) {
+            alert("ファイルサイズが2MBを超えているため、インポートできません。");
+            return;
+        }
         handleFile(file);
     };
     bindWelcomeEvent_(viewContext.fileInput, "change", onFileInputChange);

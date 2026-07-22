@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added pre-flight file size validation (2MB limit) at import entry points to prevent DoS attacks (ID: 104).
+- Documentation: Closed backlog 083 and issue 104 (ID: 104).
 - Added client-side performance SLO indicators and status reporting in layout diagnostics (ID: 103).
 - Documentation: Closed backlog 081 and issue 103 (ID: 103).
 - Added top-level `ErrorBoundary` class with global exception listeners and diagnostic report export functionality (ID: 102).
