@@ -86,7 +86,7 @@
 | **076** | Refactor | Medium | Closed | 情報処理技術者試験区分に基づく他のエージェント定義ファイルのブラッシュアップ | [076-align-other-agents-definition.md](closed/076-align-other-agents-definition.md) |
 | **077** | Feature | High | Draft | IndexedDBを用いた本棚機能（マイライブラリ）の構築 | [077-indexeddb-book-shelf.md](077-indexeddb-book-shelf.md) |
 | **078** | Enhancement | Medium | Draft | リリース準備・バージョン管理のCI/CD自動化 | [078-release-ci-automation.md](078-release-ci-automation.md) |
-| **079** | Refactor | Medium | Draft | ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 | [079-parser-interface-abstraction.md](079-parser-interface-abstraction.md) |
+| **079** | Refactor | Medium | Approved | ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 | [079-parser-interface-abstraction.md](079-parser-interface-abstraction.md) |
 | **080** | Enhancement | Medium | Draft | クライアントサイドでのエラー境界と診断レポート出力 | [080-client-error-boundary.md](080-client-error-boundary.md) |
 | **081** | Enhancement | Low | Draft | クライアントサイドのSLA/SLO定義とパフォーマンス監視 | [081-client-performance-slo.md](081-client-performance-slo.md) |
 | **082** | Enhancement | High | Draft | インポートデータ（設定/履歴）の厳格なスキーマ検証によるプロトタイプ汚染対策 | [082-strict-schema-validation.md](082-strict-schema-validation.md) |
