@@ -3,6 +3,7 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
+- Documentation: Created and polished issue 095 (Parser Interface Abstraction) to In Progress status (ID: 095).
 - Documentation: Refined and polished backlog 079 (Parser Interface Abstraction) to Approved status (ID: 079).
 - Documentation: Created 12 new backlog items (IDs 077 to 088) in docs/backlogs/ and registered them in the backlog registry README.md, representing proposed improvements from ST, PM, SA, SM, SC, NW, QA, ES, AU perspectives.
 - Documentation: Aligned all 9 agent definition files under `.agents/agents/` with the latest structure, implementing role-specific business duties, code-delegation capabilities, code of conduct policies, and menu-based response protocols based on official IPA references (ID: 094).
