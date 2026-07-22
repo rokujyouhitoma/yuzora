@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Fixed high severity DoS vulnerability in transitive dependency `brace-expansion` (GHSA-3jxr-9vmj-r5cp) (ID: 111).
+- Documentation: Closed backlog 090 and issue 111 (ID: 111).
 - Refactored and aligned Information Security Specialist (`information-security-specialist.agent.md`) agent definitions and security skill delegations (ID: 110).
 - Documentation: Closed backlog 089 and issue 110 (ID: 110).
 - Added checksum hash calculation and integrity validation to command history export/import operations (ID: 109).

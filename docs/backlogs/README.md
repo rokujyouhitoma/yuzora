@@ -97,6 +97,7 @@
 | **087** | Enhancement | Medium | Closed | CIパイプラインにおける要件・設計・コード・テストのトレーサビリティ検証自動化 | [087-ci-traceability-verification.md](closed/087-ci-traceability-verification.md) |
 | **088** | Feature | Medium | Closed | コマンド履歴エクスポート時へのチェックサム付与とインポート時整合性検証 | [088-command-history-checksum.md](closed/088-command-history-checksum.md) |
 | **089** | Refactor | Medium | Closed | セキュリティスペシャリスト (SC) エージェント定義の洗練と体系化 | [089-align-security-specialist-agent.md](closed/089-align-security-specialist-agent.md) |
+| **090** | Bug | High | Closed | brace-expansion パッケージの DoS 脆弱性 (GHSA-3jxr-9vmj-r5cp) の修正 | [090-fix-brace-expansion-vulnerability.md](closed/090-fix-brace-expansion-vulnerability.md) |
 
 ---
 
