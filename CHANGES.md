@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added checksum hash calculation and integrity validation to command history export/import operations (ID: 109).
+- Documentation: Closed backlog 088 and issue 109 (ID: 109).
 - Added automated traceability verification script (`scripts/verify-traceability.js`) and CI workflow step (`npm run test:traceability`) (ID: 108).
 - Documentation: Closed backlog 087 and issue 108 (ID: 108).
 - Standardized explicit `dispose()` lifecycle garbage collection and memory release on `Asset` / `BookAsset` instances (ID: 107).

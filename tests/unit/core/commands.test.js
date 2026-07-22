@@ -311,4 +311,27 @@ test.describe('commands.js Unit Tests', () => {
         assert.equal(restored[0].type, "NavigatePage");
         assert.equal(restored[0].targetPage, 12);
     });
+
+    test('should attach checksum on exportJSON and verify checksum on importJSON (Issue 109)', async () => {
+        const { CommandManager, LoadBookCommand, NavigatePageCommand } = window.Yuzora;
+        CommandManager.commandHistory = [];
+        await CommandManager.execute(new LoadBookCommand("test.txt", "sample content"));
+        await CommandManager.execute(new NavigatePageCommand(3));
+
+        const exportedJson = CommandManager.exportJSON();
+        const parsedExport = JSON.parse(exportedJson);
+        assert.ok(parsedExport.checksum);
+        assert.equal(typeof parsedExport.checksum, 'string');
+        assert.equal(parsedExport.history.length, 2);
+
+        // 1. Importing valid wrapper JSON with checksum should succeed
+        const importedCmds = CommandManager.importJSON(exportedJson);
+        assert.equal(importedCmds.length, 2);
+
+        // 2. Tampering history content should trigger checksum mismatch error and return null
+        parsedExport.history[1].params.targetPage = 999;
+        const tamperedJson = JSON.stringify(parsedExport);
+        const tamperedResult = CommandManager.importJSON(tamperedJson);
+        assert.equal(tamperedResult, null);
+    });
 });

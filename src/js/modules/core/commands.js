@@ -408,12 +408,33 @@ class CommandHistory {
     }
 
     /**
-     * Exports history as JSON string.
+     * Calculates checksum string for a serialized history payload.
+     * @param {!Array} historyData
+     * @return {string}
+     */
+    calculateChecksum(historyData) {
+        const jsonStr = JSON.stringify(historyData);
+        let hash = 5381;
+        for (let i = 0; i < jsonStr.length; i++) {
+            hash = ((hash << 5) + hash) + jsonStr.charCodeAt(i);
+            hash = hash & hash;
+        }
+        return (hash >>> 0).toString(16);
+    }
+
+    /**
+     * Exports history as JSON string with checksum.
      * @override
      */
     // @ts-expect-error
     exportJSON() {
-        return JSON.stringify(this.commandHistory.map(cmd => cmd.serialize()), null, 2);
+        const historyData = this.commandHistory.map(cmd => cmd.serialize());
+        const checksum = this.calculateChecksum(historyData);
+        return JSON.stringify({
+            version: 1,
+            checksum: checksum,
+            history: historyData
+        }, null, 2);
     }
 
     recreateCommand(item) {
@@ -630,16 +651,37 @@ class CommandHistory {
     }
 
     /**
+     * @private
+     * @param {*} parsed
+     * @return {!Array}
+     */
+    extractRawHistoryArray_(parsed) {
+        if (Array.isArray(parsed)) {
+            return parsed;
+        }
+        if (parsed && typeof parsed === "object" && Array.isArray(parsed.history)) {
+            if (typeof parsed.checksum === "string") {
+                const expectedChecksum = this.calculateChecksum(parsed.history);
+                if (parsed.checksum !== expectedChecksum) {
+                    console.warn("Checksum mismatch detected in imported history. Data may be corrupted or tampered.");
+                    throw new Error("チェックサム不一致: 履歴データが改ざんされているか破損しています");
+                }
+            }
+            return parsed.history;
+        }
+        throw new Error("Input operations history must be a JSON array or valid wrapper object");
+    }
+
+    /**
      * Imports history from JSON string.
      * @override
      */
     // @ts-expect-error
     importJSON(jsonString) {
         try {
-            const rawArray = JSON.parse(jsonString);
-            if (!Array.isArray(rawArray)) {
-                throw new Error("Input operations history must be a JSON array");
-            }
+            const parsed = JSON.parse(jsonString);
+            const rawArray = this.extractRawHistoryArray_(parsed);
+
             const commands = [];
             for (const item of rawArray) {
                 if (this.validateCommandItem_(item)) {

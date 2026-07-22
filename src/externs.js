@@ -498,6 +498,10 @@ Object.prototype.currentFileType;
 /** @type {?} */
 Object.prototype.bookmarkProgress;
 /** @type {?} */
+Object.prototype.checksum;
+/** @type {?} */
+Object.prototype.history;
+/** @type {?} */
 Object.prototype.headerTimeout;
 /** @type {?} */
 Object.prototype.isReflowing;
