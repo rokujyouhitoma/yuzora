@@ -3,8 +3,52 @@
  */
 "use strict";
 
+
+/**
+ * @interface
+ */
+class DocumentParser {
+    /**
+     * @param {string} text
+     * @return {!ParsedDocument}
+     */
+    parseText(text) {
+        throw new Error('Interface method not implemented');
+    }
+
+    /**
+     * @param {string} htmlString
+     * @return {!ParsedDocument}
+     */
+    parseHTML(htmlString) {
+        throw new Error('Interface method not implemented');
+    }
+
+    /**
+     * @param {string} markupLine
+     * @return {string}
+     */
+    formatMarkup(markupLine) {
+        throw new Error('Interface method not implemented');
+    }
+
+    /**
+     * @param {string} text
+     * @param {function(string, string, string):(!Promise<void>|void)} onFirstChunkReady
+     * @param {function(string):void} onChunkParsed
+     * @param {function():void} onComplete
+     * @param {function():boolean} shouldCancel
+     * @return {!Promise<void>}
+     */
+    parseTextIncremental(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
+        throw new Error('Interface method not implemented');
+    }
+}
+window['DocumentParser'] = DocumentParser;
+
 /**
  * @implements {AozoraParserInterface}
+ * @implements {DocumentParser}
  */
 class AozoraParser {
     constructor() {
@@ -18,6 +62,50 @@ class AozoraParser {
         this.configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
         /** @private @const {!DOMParser} */
         this.domParser = new DOMParser();
+    }
+
+    /**
+     * @param {string} text
+     * @return {!ParsedDocument}
+     * @override
+     */
+    // @ts-expect-error
+    parseText(text) {
+        return this.parseAozoraText(text);
+    }
+
+    /**
+     * @param {string} htmlString
+     * @return {!ParsedDocument}
+     * @override
+     */
+    // @ts-expect-error
+    parseHTML(htmlString) {
+        return this.parseAozoraHTML(htmlString);
+    }
+
+    /**
+     * @param {string} markupLine
+     * @return {string}
+     * @override
+     */
+    // @ts-expect-error
+    formatMarkup(markupLine) {
+        return this.formatAozoraMarkup(markupLine);
+    }
+
+    /**
+     * @param {string} text
+     * @param {function(string, string, string):(!Promise<void>|void)} onFirstChunkReady
+     * @param {function(string):void} onChunkParsed
+     * @param {function():void} onComplete
+     * @param {function():boolean} shouldCancel
+     * @return {!Promise<void>}
+     * @override
+     */
+    // @ts-expect-error
+    parseTextIncremental(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
+        return this.parseAozoraTextIncremental(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
     }
 
     /**

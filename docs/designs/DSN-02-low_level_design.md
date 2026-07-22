@@ -165,6 +165,7 @@
 
 ### 1.3 依存注入・サービスロケーターへの登録クラス
 起動時に各機能モジュールが Locator に登録され、他のモジュールからは Locator を通じて呼び出されます。今回、新たに `SceneDirector`、`Router`、`ResourceDirector` および `VerticalRenderer` が Locator に登録されます。
+また、特定のファイル形式への依存を低減するため、パーサーモジュールは `AozoraParser` の具象クラス名ではなく、抽象インターフェースである `DocumentParser` クラス型キーを用いて Locator に登録され、呼び出し側はインターフェース経由で解決されます。
 
 
 
@@ -306,7 +307,15 @@ Shift_JIS または UTF-8 から文字列へとデコードされたプレーン
   - **プロパティ難読化の排除**: Closure Compiler の `ADVANCED_OPTIMIZATIONS` によるプロパティ名圧縮から保護するため、返却するトークンオブジェクトのすべてのプロパティキーを文字列リテラル（クォート）として定義します。
   - **ルビの自動判定範囲規則**:
     `｜` または `|` による境界指定がない場合、漢字クラス（常用漢字以外に `々`, `仝`, `〆`, `〇`, `ヶ` および外字注記で表現する二の字点 `※［＃二の字点、面区点番号1-2-22］` などの繰り返し・特殊記号を含む）または単一のアルファベット単語を自動的に検出してルビ対象と判定します。境界指定 `｜` または `|` がある場合は、スペース（グループルビ）やカタカナ混じりなどを含む `《` までのすべての文字を範囲として抽出します。
+* **ドキュメントパーサー抽象インターフェース (`DocumentParser`)**:
+  - 依存解決と拡張性を担保するための共通定義。以下のメソッドを持ちます。
+    - `parseText(text)`: テキスト全体のパースを行い、タイトル・本文・メタデータを格納したオブジェクト `ParsedDocument` を返却する。
+    - `parseHTML(htmlString)`: HTMLのパースを行い、`ParsedDocument` を返却する。
+    - `formatMarkup(markupLine)`: 単一行のマークアップ整形を行う。
 * **構文解析器 (`parser.js` / `AozoraParser`)**:
+  - 抽象インターフェース `DocumentParser` を実装し、以下の具象メソッドをラップして提供します。
+  - `parseText(text)` および `parseHTML(htmlString)`: それぞれ `parseAozoraText(text)`、`parseAozoraHTML(htmlString)` に移譲し、共通結果モデル `{ title, body }` を返却します。
+  - `formatMarkup(markupLine)`: `formatAozoraMarkup(markupLine)` に移譲します。
   - `parseAozoraText(text)` メソッド：青空文庫テキストのパースを担当します。`AozoraTokenizer.tokenize` から出力されたブロックトークンストリームに対する走査ループを回し、メタデータや注記の切り出しロジックは Tokenizer に任せ、Parser 自身は受け取ったトークンの属性値に基づいて AST のドキュメントルート（`DocumentNode`）を構築することに専念します。
   - **明示的な改ページ注記の解析**: トークンの `type` が `'BLOCK_PAGE_BREAK'` である場合、インラインのパースを介さず、直ちに `PageBreakNode` を `documentChildren` 配列に追加します。これにより、不要な段落要素（`<p>`）が生成されるのを防ぎます。
   - **見出し前の自動改ページと重複防止**: 見出しトークン（`'BLOCK_HEADING'`）を処理する際、`documentChildren` を末尾から逆順走査して `EmptyLineNode`（空行）以外の直前の実質的なノード `prevNode` を取得します。`prevNode` が存在し、かつその `type` が `'Heading'`（大・中・小見出し全て）、`'PageBreak'`、`'CoverPage'` のいずれでもない場合に、見出しノードを生成する前に `new PageBreakNode()` を `documentChildren` に挿入します。

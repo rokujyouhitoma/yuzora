@@ -3,8 +3,10 @@
 All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
-- Documentation: Created and polished issue 095 (Parser Interface Abstraction) to In Progress status (ID: 095).
-- Documentation: Refined and polished backlog 079 (Parser Interface Abstraction) to Approved status (ID: 079).
+- Changed `AozoraParser` to implement a new decoupled `DocumentParser` interface, registering it on the Service Locator to abstract viewer and application modules from low-level parsing logic, and updated DSN-02 (ID: 095).
+- Fixed a flaky TOC E2E test timing failure under heavy CPU load by increasing the smooth scroll settling timeout to 3000ms (ID: 095).
+- Fixed hanging E2E test runs by adding a port cleanup step (`fuser`) in `package.json` to automatically terminate any orphaned background servers on port 8080 (ID: 095).
+- Documentation: Closed backlog 079 and issue 095 (ID: 095).
 - Documentation: Created 12 new backlog items (IDs 077 to 088) in docs/backlogs/ and registered them in the backlog registry README.md, representing proposed improvements from ST, PM, SA, SM, SC, NW, QA, ES, AU perspectives.
 - Documentation: Aligned all 9 agent definition files under `.agents/agents/` with the latest structure, implementing role-specific business duties, code-delegation capabilities, code of conduct policies, and menu-based response protocols based on official IPA references (ID: 094).
 

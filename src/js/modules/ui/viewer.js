@@ -80,7 +80,7 @@ async function displayBook() {
     viewContext.cachedScrollWidth = null;
     viewContext.cachedClientWidth = null;
 
-    const parser = /** @type {!AozoraParserInterface} */ (Yuzora.locator.resolve(AozoraParser));
+    const parser = /** @type {!DocumentParser} */ (Yuzora.locator.resolve(DocumentParser));
 
     // eslint-disable-next-line complexity
     const onFirstChunkReady = async (title, author, html) => {
@@ -221,11 +221,10 @@ async function displayBook() {
 
     if (bookModel.type === 'txt') {
         // Execute background parsing via Web Worker
-        // @ts-expect-error
-        await parser.parseAozoraTextIncremental(bookModel.content, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
+        await parser.parseTextIncremental(bookModel.content, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
     } else {
         // HTML is fast enough to parse synchronously
-        const parsed = parser.parseAozoraHTML(bookModel.content);
+        const parsed = parser.parseHTML(bookModel.content);
         await onFirstChunkReady(parsed.title || bookModel.title.replace(/\.(x?html)/, ''), '', parsed.body);
         onComplete();
     }

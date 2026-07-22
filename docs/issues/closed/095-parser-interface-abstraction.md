@@ -2,7 +2,7 @@
 ID: 095
 種別: Refactor
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [FEAT/ENH] ドキュメントパーサーインターフェースの抽象化とマルチフォーマット対応 (ID: 095)
@@ -100,9 +100,9 @@ Target Branch: `refactor/095-parser-interface-abstraction`
 ---
 
 ## 5. 完了条件 / Success Criteria (DoD)
-- [ ] `src/js/types.d.ts` に `DocumentParser` / `ParsedDocument` が定義され、`npm run test:types` にパスすること。
-- [ ] `AozoraParser` が `DocumentParser` インターフェースを実装し、具象メソッドをラップしていること。
-- [ ] `yuzora.js` および `viewer.js` が具象パーサークラスへの直接依存を排除し、`DocumentParser` キー経由で依存解決を行っていること。
-- [ ] `npm run test:unit` が全テスト正常にパスすること。
-- [ ] 難読化コンパイル（`make`）を実行し、コンパイラエラーや警告がないこと、および `compiled.html` 経由の E2E テスト（`npm run test:e2e:compiled`）がすべてパスすること。
-- [ ] 変更内容が詳細設計書 [DSN-02-low_level_design.md](../designs/DSN-02-low_level_design.md) に正しく反映され、ドキュメントの死文化がないこと。
+- [x] `src/js/types.d.ts` に `DocumentParser` / `ParsedDocument` が定義され、`npm run test:types` にパスすること。
+- [x] `AozoraParser` が `DocumentParser` インターフェースを実装し、具象メソッドをラップしていること。
+- [x] `yuzora.js` および `viewer.js` が具象パーサークラスへの直接依存を排除し、`DocumentParser` キー経由で依存解決を行っていること。
+- [x] `npm run test:unit` が全テスト正常にパスすること。
+- [x] 難読化コンパイル（`make`）を実行し、コンパイラエラーや警告がないこと、および `compiled.html` 経由の E2E テスト（`npm run test:e2e:compiled`）がすべてパスすること。
+- [x] 変更内容が詳細設計書 [DSN-02-low_level_design.md](../designs/DSN-02-low_level_design.md) に正しく反映され、ドキュメントの死文化がないこと。

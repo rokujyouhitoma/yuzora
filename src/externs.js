@@ -138,20 +138,29 @@ CSSStyleDeclaration.prototype.columnGap;
  */
 function LocatorInterface() {}
 /**
- * @param {!Function} Class
+ * @param {?} Class
  * @return {?}
  */
 LocatorInterface.prototype.resolve = function(Class) {};
 /**
- * @param {!Function} Class
+ * @param {?} Class
  * @return {?}
  */
 LocatorInterface.prototype.locate = function(Class) {};
 /**
- * @param {!Function} Class
+ * @param {?} Class
  * @param {!Object} instance
  */
 LocatorInterface.prototype.register = function(Class, instance) {};
+
+/**
+ * @typedef {{
+ *   title: string,
+ *   body: string,
+ *   metadata: (Object|undefined)
+ * }}
+ */
+var ParsedDocument;
 
 // Custom interface to protect property names from being renamed globally in ADVANCED_OPTIMIZATIONS
 /**
@@ -856,6 +865,21 @@ AozoraParserInterface.prototype.formatAozoraMarkup = function(line) {};
  * @return {!Promise<void>}
  */
 AozoraParserInterface.prototype.parseAozoraTextIncremental = function(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {};
+/** @param {string} text */
+AozoraParserInterface.prototype.parseText = function(text) {};
+/** @param {string} htmlString */
+AozoraParserInterface.prototype.parseHTML = function(htmlString) {};
+/** @param {string} line */
+AozoraParserInterface.prototype.formatMarkup = function(line) {};
+/**
+ * @param {string} text
+ * @param {function(string, string, string): (void|!Promise<void>)} onFirstChunkReady
+ * @param {function(string): void} onChunkParsed
+ * @param {function(): void} onComplete
+ * @param {function(): boolean} shouldCancel
+ * @return {!Promise<void>}
+ */
+AozoraParserInterface.prototype.parseTextIncremental = function(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {};
 
 // AozoraSemanticAnalyzerInterface
 /** @interface */

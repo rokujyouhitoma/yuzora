@@ -283,4 +283,27 @@ interface AozoraEvaluatorInterface {
     sanitizeDOM(rootElement: any): void;
 }
 
+interface ParsedDocument {
+    title: string;
+    body: string;
+    metadata?: {
+        author?: string;
+        [key: string]: any;
+    };
+}
+
+interface DocumentParser {
+    parseText(text: string): ParsedDocument;
+    parseHTML(htmlString: string): ParsedDocument;
+    formatMarkup(markupLine: string): string;
+    parseTextIncremental(
+        text: string,
+        onFirstChunkReady: (title: string, author: string, html: string) => Promise<void> | void,
+        onChunkParsed: (htmlChunk: string) => void,
+        onComplete: () => void,
+        shouldCancel: () => boolean
+    ): Promise<void>;
+}
+
+
 

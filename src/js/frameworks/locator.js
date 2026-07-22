@@ -9,19 +9,19 @@
  */
 class Locator {
     /**
-     * @param {Map<Function, Object>} [container]
+     * @param {Map<?, Object>} [container]
      */
     constructor(container) {
         /**
          * @private
-         * @type {Map<Function, Object>}
+         * @type {Map<?, Object>}
          */
         this.container = container || new Map();
     }
 
     /**
      * Register an instance for a Class constructor.
-     * @param {!Function} Class
+     * @param {?} Class
      * @param {!Object} instance
      * @override
      */
@@ -33,7 +33,7 @@ class Locator {
     /**
      * Resolve and return the registered instance for a Class.
      * Throws an error if the class is not registered.
-     * @param {!Function} Class
+     * @param {?} Class
      * @return {!Object}
      * @override
      */
@@ -52,7 +52,7 @@ class Locator {
     /**
      * Reference-style locating: resolves or auto-instantiates if not registered.
      * Throws an error if auto-instantiation fails.
-     * @param {!Function} Class
+     * @param {?} Class
      * @return {!Object}
      * @override
      */

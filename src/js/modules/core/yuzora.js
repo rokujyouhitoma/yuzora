@@ -179,7 +179,7 @@ class Yuzora {
      */
     // @ts-expect-error
     parseAozoraText(text) {
-        return /** @type {!AozoraParserInterface} */ (this.locator.resolve(AozoraParser)).parseAozoraText(text);
+        return /** @type {!DocumentParser} */ (this.locator.resolve(DocumentParser)).parseText(text);
     }
 
     /**
@@ -190,7 +190,7 @@ class Yuzora {
      */
     // @ts-expect-error
     parseAozoraHTML(html) {
-        return /** @type {!AozoraParserInterface} */ (this.locator.resolve(AozoraParser)).parseAozoraHTML(html);
+        return /** @type {!DocumentParser} */ (this.locator.resolve(DocumentParser)).parseHTML(html);
     }
 
     /**
@@ -201,7 +201,7 @@ class Yuzora {
      */
     // @ts-expect-error
     formatAozoraMarkup(markup) {
-        return /** @type {!AozoraParserInterface} */ (this.locator.resolve(AozoraParser)).formatAozoraMarkup(markup);
+        return /** @type {!DocumentParser} */ (this.locator.resolve(DocumentParser)).formatMarkup(markup);
     }
 
     /**
@@ -373,7 +373,7 @@ Yuzora.locator.register(Yuzora, yuzoraInstance);
 Yuzora.locator.register(AozoraTokenizer, new AozoraTokenizer());
 Yuzora.locator.register(AozoraSemanticAnalyzer, new AozoraSemanticAnalyzer());
 Yuzora.locator.register(AozoraEvaluator, new AozoraEvaluator());
-Yuzora.locator.register(AozoraParser, new AozoraParser());
+Yuzora.locator.register(DocumentParser, new AozoraParser());
 
 window['yuzora'] = /** @type {*} */ (yuzoraInstance);
 window['Yuzora'] = /** @type {*} */ (yuzoraInstance);

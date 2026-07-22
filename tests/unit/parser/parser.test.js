@@ -441,7 +441,7 @@ test.describe('parser.js Unit Tests', () => {
     });
 
     test('10 Books Integration & Cross-Cutting Verification', () => {
-        const parser = window.Yuzora.locator.resolve(window.Yuzora.AozoraParser);
+        const parser = window.Yuzora.locator.resolve(window.DocumentParser);
         const bookModel = window.Yuzora.locator.resolve(window.Yuzora.BookModel);
         
         const predefinedBooks = [
@@ -462,7 +462,7 @@ test.describe('parser.js Unit Tests', () => {
             const content = fs.readFileSync(absolutePath, 'utf8');
 
             const start = Date.now();
-            const result = parser.parseAozoraText(content);
+            const result = parser.parseText(content);
             const duration = Date.now() - start;
 
             // 6. パフォーマンスと堅牢性の検証 (大容量ファイルの処理速度検証)
