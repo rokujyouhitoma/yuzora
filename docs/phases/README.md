@@ -11,15 +11,15 @@
 
 | ID | フェーズ名 | 英名 | ステータス | 対応ドキュメント | 個別ファイル |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **PHASE-01** | 要求定義 | User Requirements Definition (URD) | — | [REQ-01](../requirements/REQ-01-user_requirements.md), [REQ-02](../requirements/REQ-02-feature_list.md) | — |
-| **PHASE-02** | 要件定義 | System Requirements Definition (SRD) | — | [REQ-03](../requirements/REQ-03-system_requirements.md) | — |
-| **PHASE-03** | 基本設計 | High-Level Design (HLD) | — | [DSN-01](../designs/DSN-01-high_level_design.md) | — |
-| **PHASE-04** | 詳細設計 | Low-Level Design (LLD) | — | [DSN-02](../designs/DSN-02-low_level_design.md) | — |
-| **PHASE-05** | 実装 | Implementation (Make) | — | [index.html](../../index.html), [app.js](../../src/js/app.js) | — |
-| **PHASE-06** | 単体検証 | Unit Verification | — | [MNG-05](../processes/MNG-05-test_cases.md) Section 4 | — |
-| **PHASE-07** | 結合検証 | Integration Verification | — | [MNG-05](../processes/MNG-05-test_cases.md) Section 3 | — |
-| **PHASE-08** | システム検証 | System Verification | — | [MNG-05](../processes/MNG-05-test_cases.md) Section 2 | — |
-| **PHASE-09** | 受入検証・リリース | Acceptance Verification & Release | — | [MNG-05](../processes/MNG-05-test_cases.md) Section 1 | — |
+| **PHASE-01** | 要求定義 | User Requirements Definition (URD) | **Done** | [REQ-01](../requirements/REQ-01-user_requirements.md), [REQ-02](../requirements/REQ-02-feature_list.md) | — |
+| **PHASE-02** | 要件定義 | System Requirements Definition (SRD) | **Done** | [REQ-03](../requirements/REQ-03-system_requirements.md) | — |
+| **PHASE-03** | 基本設計 | High-Level Design (HLD) | **Done** | [DSN-01](../designs/DSN-01-high_level_design.md) | — |
+| **PHASE-04** | 詳細設計 | Low-Level Design (LLD) | **Done** | [DSN-02](../designs/DSN-02-low_level_design.md) | — |
+| **PHASE-05** | 実装 | Implementation (Make) | **Done** | [index.html](../../index.html), [app.js](../../src/js/app.js) | — |
+| **PHASE-06** | 単体検証 | Unit Verification | **Done** | [MNG-05](../processes/MNG-05-test_cases.md) Section 4 | — |
+| **PHASE-07** | 結合検証 | Integration Verification | **Done** | [MNG-05](../processes/MNG-05-test_cases.md) Section 3 | — |
+| **PHASE-08** | システム検証 | System Verification | **Done** | [MNG-05](../processes/MNG-05-test_cases.md) Section 2 | — |
+| **PHASE-09** | 受入検証・リリース | Acceptance Verification & Release | **Done** | [MNG-05](../processes/MNG-05-test_cases.md) Section 1 | — |
 
 ---
 

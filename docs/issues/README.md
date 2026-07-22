@@ -122,6 +122,16 @@
 | **110** | Refactor | Medium | Closed | セキュリティスペシャリスト (SC) エージェント定義の洗練と体系化 | AI Agent | [110-align-security-specialist-agent.md](closed/110-align-security-specialist-agent.md) |
 | **111** | Bug | High | Closed | brace-expansion パッケージの DoS 脆弱性 (GHSA-3jxr-9vmj-r5cp) の修正 | AI Agent | [111-fix-brace-expansion-vulnerability.md](closed/111-fix-brace-expansion-vulnerability.md) |
 | **112** | Refactor | High | Closed | 全10エージェント定義 (DB, ES, SC, ST, SM, NW, PM, QA, SA, UA) の洗練・標準化 | AI Agent | [112-align-all-agents-definition.md](closed/112-align-all-agents-definition.md) |
+| **113** | Refactor | Medium | Closed | IndexedDB ストレージクォータ例外ハンドリングと強固性の向上 | AI Agent | [113-indexeddb-storage-quota-resilience.md](closed/113-indexeddb-storage-quota-resilience.md) |
+| **114** | Enhancement | Medium | Closed | ResourceDirector における LRU メモリキャッシュ自動解放の実装 | AI Agent | [114-resource-director-lru-cache.md](closed/114-resource-director-lru-cache.md) |
+| **115** | Enhancement | High | Closed | ResourceDirector における不審プロトコル制限と Spoofing 防御の強化 | AI Agent | [115-resource-director-protocol-security.md](closed/115-resource-director-protocol-security.md) |
+| **116** | Enhancement | Medium | Closed | システム要件定義書 (REQ-03) と v1.1.0 実装機能の同期・更新 | AI Agent | [116-srd-requirements-synchronization.md](closed/116-srd-requirements-synchronization.md) |
+| **117** | Enhancement | Medium | Closed | 運用ヘルスチェックコマンド (npm run healthcheck) の新設 | AI Agent | [117-system-healthcheck-command.md](closed/117-system-healthcheck-command.md) |
+| **118** | Enhancement | High | Closed | Content Security Policy (CSP) 厳格化と通信境界監査 | AI Agent | [118-csp-strict-header-audit.md](closed/118-csp-strict-header-audit.md) |
+| **119** | Refactor | Medium | Closed | Vモデル開発プロセス フェーズ管理台帳 (MNG-10) のマイルストーン完了同期 | AI Agent | [119-vmodel-phase-matrix-synchronization.md](closed/119-vmodel-phase-matrix-synchronization.md) |
+| **120** | Enhancement | Low | Closed | レンダラーパフォーマンステスト・ベンチマークスイートの統合 | AI Agent | [120-performance-benchmark-test-suite.md](closed/120-performance-benchmark-test-suite.md) |
+| **121** | Refactor | Medium | Closed | 体系的アーキテクチャ意思決定記録 (ADR-04) の策定 | AI Agent | [121-adr-04-storage-and-checksum-verification.md](closed/121-adr-04-storage-and-checksum-verification.md) |
+| **122** | Refactor | High | Closed | 包括的脅威モデリング監査と緩和策ステータスの全件整合性同期 | AI Agent | [122-threat-modeling-audit-alignment.md](closed/122-threat-modeling-audit-alignment.md) |
 
 
 ## 2. 状態（ステータス）定義

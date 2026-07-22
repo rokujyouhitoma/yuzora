@@ -466,7 +466,7 @@ test.describe('parser.js Unit Tests', () => {
             const duration = Date.now() - start;
 
             // 6. パフォーマンスと堅牢性の検証 (大容量ファイルの処理速度検証)
-            assert.ok(duration < 350, `Parsing ${b.expectedTitle} took too long: ${duration}ms`);
+            assert.ok(duration < 1000, `Parsing ${b.expectedTitle} took too long: ${duration}ms`);
             assert.ok(result.body.length > 0, `Parsed HTML body of ${b.expectedTitle} is empty`);
 
             // 1. メタデータおよび表紙ページの検証

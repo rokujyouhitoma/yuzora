@@ -99,6 +99,16 @@
 | **089** | Refactor | Medium | Closed | セキュリティスペシャリスト (SC) エージェント定義の洗練と体系化 | [089-align-security-specialist-agent.md](closed/089-align-security-specialist-agent.md) |
 | **090** | Bug | High | Closed | brace-expansion パッケージの DoS 脆弱性 (GHSA-3jxr-9vmj-r5cp) の修正 | [090-fix-brace-expansion-vulnerability.md](closed/090-fix-brace-expansion-vulnerability.md) |
 | **091** | Refactor | High | Closed | 全10エージェント定義 (DB, ES, SC, ST, SM, NW, PM, QA, SA, UA) の洗練・標準化 | [091-align-all-agents-definition.md](closed/091-align-all-agents-definition.md) |
+| **092** | Refactor | Medium | Closed | IndexedDB ストレージクォータ例外ハンドリングと強固性の向上 | [092-indexeddb-storage-quota-resilience.md](closed/092-indexeddb-storage-quota-resilience.md) |
+| **093** | Enhancement | Medium | Closed | ResourceDirector における LRU メモリキャッシュ自動解放の実装 | [093-resource-director-lru-cache.md](closed/093-resource-director-lru-cache.md) |
+| **094** | Enhancement | High | Closed | ResourceDirector における不審プロトコル制限と Spoofing 防御の強化 | [094-resource-director-protocol-security.md](closed/094-resource-director-protocol-security.md) |
+| **095** | Enhancement | Medium | Closed | システム要件定義書 (REQ-03) と v1.1.0 実装機能の同期・更新 | [095-srd-requirements-synchronization.md](closed/095-srd-requirements-synchronization.md) |
+| **096** | Enhancement | Medium | Closed | 運用ヘルスチェックコマンド (npm run healthcheck) の新設 | [096-system-healthcheck-command.md](closed/096-system-healthcheck-command.md) |
+| **097** | Enhancement | High | Closed | Content Security Policy (CSP) 厳格化と通信境界監査 | [097-csp-strict-header-audit.md](closed/097-csp-strict-header-audit.md) |
+| **098** | Refactor | Medium | Closed | Vモデル開発プロセス フェーズ管理台帳 (MNG-10) のマイルストーン完了同期 | [098-vmodel-phase-matrix-synchronization.md](closed/098-vmodel-phase-matrix-synchronization.md) |
+| **099** | Enhancement | Low | Closed | レンダラーパフォーマンステスト・ベンチマークスイートの統合 | [099-performance-benchmark-test-suite.md](closed/099-performance-benchmark-test-suite.md) |
+| **100** | Refactor | Medium | Closed | 体系的アーキテクチャ意思決定記録 (ADR-04) の策定 | [100-adr-04-storage-and-checksum-verification.md](closed/100-adr-04-storage-and-checksum-verification.md) |
+| **101** | Refactor | High | Closed | 包括的脅威モデリング監査と緩和策ステータスの全件整合性同期 | [101-threat-modeling-audit-alignment.md](closed/101-threat-modeling-audit-alignment.md) |
 
 ---
 

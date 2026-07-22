@@ -21,7 +21,12 @@ class ResourceDirector {
    * @private
    */
   _isAllowedOrigin(url) {
-    // Relative paths are always allowed
+    if (!url || typeof url !== 'string') return false;
+    var lower = url.trim().toLowerCase();
+    if (lower.startsWith('javascript:') || lower.startsWith('data:') || lower.startsWith('blob:')) {
+      return false;
+    }
+    // Relative paths are allowed
     if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('//')) {
       return true;
     }
@@ -59,6 +64,14 @@ class ResourceDirector {
           // Return placeholder load
           return Promise.reject(new Error('Asset is currently loading.'));
         }
+      }
+    }
+
+    // LRU Cache Eviction: dispose old assets if cache size exceeds limit
+    if (this.assets.size >= ResourceDirector.MAX_CACHE_COUNT && !this.assets.has(id)) {
+      var oldestKey = this.assets.keys().next().value;
+      if (oldestKey) {
+        this.unload(oldestKey);
       }
     }
 
@@ -116,5 +129,11 @@ class ResourceDirector {
  * @const {number}
  */
 ResourceDirector.MAX_BOOK_SIZE = 2 * 1024 * 1024;
+
+/**
+ * Maximum number of book assets held in LRU memory cache before eviction.
+ * @const {number}
+ */
+ResourceDirector.MAX_CACHE_COUNT = 5;
 
 window['ResourceDirector'] = ResourceDirector;

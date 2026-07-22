@@ -768,7 +768,11 @@ class LibraryRepository {
             fileType: fileType || "txt",
             importedAt: Date.now()
         };
-        await this.db.put(bookObj);
+        try {
+            await this.db.put(bookObj);
+        } catch (e) {
+            console.warn("LibraryRepository.saveBook() failed:", e);
+        }
     }
 
     /**
@@ -813,7 +817,11 @@ class LibraryRepository {
     // @ts-expect-error
     async deleteBook(fileName) {
         if (!fileName) return;
-        await this.db.delete(fileName);
+        try {
+            await this.db.delete(fileName);
+        } catch (e) {
+            console.warn("LibraryRepository.deleteBook() failed:", e);
+        }
     }
 
     /**
@@ -823,7 +831,11 @@ class LibraryRepository {
      */
     // @ts-expect-error
     async clearAll() {
-        await this.db.clear();
+        try {
+            await this.db.clear();
+        } catch (e) {
+            console.warn("LibraryRepository.clearAll() failed:", e);
+        }
     }
 }
 

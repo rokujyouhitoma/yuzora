@@ -2,8 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
-
+- DB: Improved `LibraryRepository` error handling and IndexedDB storage quota resilience (ID: 113).
+- ES: Added LRU memory cache eviction (`MAX_CACHE_COUNT = 5`) and disposal in `ResourceDirector` (ID: 114).
+- SC: Added protocol validation (`javascript:`, `data:`, `blob:`) and spoofing protection in `ResourceDirector` (ID: 115).
+- ST: Synchronized `REQ-03-system_requirements.md` with v1.1.0 features (IndexedDB shelf, Error Boundary, Checksum) (ID: 116).
+- SM: Added `npm run healthcheck` pre-flight diagnostics command (ID: 117).
+- NW: Audited and enforced strict Content Security Policy (CSP) headers (ID: 118).
+- PM: Synchronized V-Model Phase management ledger (`MNG-10`) milestone statuses (ID: 119).
+- QA: Integrated renderer performance benchmark diagnostics (ID: 120).
+- SA: Created ADR-04 architecture decision record for storage abstraction and checksum verification (ID: 121).
+- UA: Audited and aligned all threat modeling items (T-S1 to T-T3) to 100% resolved status (ID: 122).
 - Refactored and standardized all 10 agent definition files (DB, ES, SC, ST, SM, NW, PM, QA, SA, UA) and skill delegations (ID: 112).
 - Documentation: Closed backlog 091 and issue 112 (ID: 112).
 - Fixed high severity DoS vulnerability in transitive dependency `brace-expansion` (GHSA-3jxr-9vmj-r5cp) (ID: 111).
