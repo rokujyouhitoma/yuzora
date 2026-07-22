@@ -121,6 +121,7 @@
 | **109** | Feature | Medium | Closed | コマンド履歴エクスポート時へのチェックサム付与とインポート時整合性検証 | AI Agent | [109-command-history-checksum.md](closed/109-command-history-checksum.md) |
 | **110** | Refactor | Medium | Closed | セキュリティスペシャリスト (SC) エージェント定義の洗練と体系化 | AI Agent | [110-align-security-specialist-agent.md](closed/110-align-security-specialist-agent.md) |
 | **111** | Bug | High | Closed | brace-expansion パッケージの DoS 脆弱性 (GHSA-3jxr-9vmj-r5cp) の修正 | AI Agent | [111-fix-brace-expansion-vulnerability.md](closed/111-fix-brace-expansion-vulnerability.md) |
+| **112** | Refactor | High | Closed | 全10エージェント定義 (DB, ES, SC, ST, SM, NW, PM, QA, SA, UA) の洗練・標準化 | AI Agent | [112-align-all-agents-definition.md](closed/112-align-all-agents-definition.md) |
 
 
 ## 2. 状態（ステータス）定義

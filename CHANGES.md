@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Refactored and standardized all 10 agent definition files (DB, ES, SC, ST, SM, NW, PM, QA, SA, UA) and skill delegations (ID: 112).
+- Documentation: Closed backlog 091 and issue 112 (ID: 112).
 - Fixed high severity DoS vulnerability in transitive dependency `brace-expansion` (GHSA-3jxr-9vmj-r5cp) (ID: 111).
 - Documentation: Closed backlog 090 and issue 111 (ID: 111).
 - Refactored and aligned Information Security Specialist (`information-security-specialist.agent.md`) agent definitions and security skill delegations (ID: 110).
