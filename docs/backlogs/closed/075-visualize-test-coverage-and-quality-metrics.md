@@ -2,7 +2,7 @@
 ID: 075
 種別: Enhancement
 優先度: Low
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] Visualize Test Coverage & Quality Metrics (ID: 075)

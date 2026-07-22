@@ -109,6 +109,7 @@
 | **097** | Feature | High | Closed | IndexedDBを用いた本棚機能（マイライブラリ）の構築 | AI Agent | [097-indexeddb-book-shelf.md](closed/097-indexeddb-book-shelf.md) |
 | **098** | Feature | Medium | Closed | Visual Regression Testing (VRT) の導入 | AI Agent | [098-introduce-visual-regression-testing.md](closed/098-introduce-visual-regression-testing.md) |
 | **099** | Enhancement | Medium | Closed | 自動テスト用サンプル書籍の拡充 | AI Agent | [099-expand-sample-books-for-layout-diagnostics.md](closed/099-expand-sample-books-for-layout-diagnostics.md) |
+| **100** | Enhancement | Low | Closed | テストカバレッジ・品質メトリクス可視化 | AI Agent | [100-visualize-test-coverage-and-quality-metrics.md](closed/100-visualize-test-coverage-and-quality-metrics.md) |
 
 
 ## 2. 状態（ステータス）定義
