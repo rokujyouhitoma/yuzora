@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added font stylesheet preload links (`<link rel="preload">`) and verified `font-display: swap` in HTML/CSS for faster FCP (ID: 105).
+- Documentation: Closed backlog 084 and issue 105 (ID: 105).
 - Added pre-flight file size validation (2MB limit) at import entry points to prevent DoS attacks (ID: 104).
 - Documentation: Closed backlog 083 and issue 104 (ID: 104).
 - Added client-side performance SLO indicators and status reporting in layout diagnostics (ID: 103).
