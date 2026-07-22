@@ -522,4 +522,15 @@ test.describe('parser.js Unit Tests', () => {
         assert.strictEqual(tokens[5]['type'], 'BLOCK_PARAGRAPH');
         assert.strictEqual(tokens[5]['alignmentClass'], 'chiyose');
     });
+
+    test('Complex sample book layout diagnostic fixture verification (Issue 099)', () => {
+        const fixturePath = path.join(__dirname, '../../fixtures/books/sample_complex_layout.txt');
+        const content = fs.readFileSync(fixturePath, 'utf-8');
+        const result = window.Yuzora.parseAozoraText(content);
+
+        assert.strictEqual(result.title, 'サンプル作品 (著者名)');
+        assert.ok(result.body.includes('class="page-break"'));
+        assert.ok(result.body.includes('class="chitsuki"'));
+        assert.ok(result.body.includes('<ruby>'));
+    });
 });

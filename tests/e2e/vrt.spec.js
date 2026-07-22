@@ -8,7 +8,7 @@ test.describe('Visual Regression Testing (VRT)', () => {
 
   test('Welcome screen visual snapshot', async ({ page }) => {
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
-    await page.waitForSelector('#welcome-section');
+    await page.waitForSelector('#welcome-screen');
     await page.waitForTimeout(300);
     await expect(page).toHaveScreenshot('welcome-screen.png', {
       maxDiffPixelRatio: 0.15,

@@ -2,7 +2,7 @@
 ID: 074
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] Expand Sample Books for Layout Diagnostics (ID: 074)
