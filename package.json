@@ -13,6 +13,7 @@
     "test:e2e:compiled": "npm run test:cleanup && TEST_PATH=/compiled.html playwright test",
     "test:types": "tsc --noEmit",
     "test:coverage": "node --experimental-test-coverage --test tests/unit/core/yuzora.test.js tests/unit/parser/parser.test.js tests/unit/core/locator.test.js tests/unit/core/commands.test.js tests/unit/core/diagnostics.test.js tests/unit/ui/renderer.test.js tests/unit/core/event.test.js tests/unit/storage/repository.test.js tests/unit/ui/scene.test.js tests/unit/core/router.test.js tests/unit/storage/resource.test.js tests/unit/ui/placeholder.test.js",
+    "test:traceability": "node scripts/verify-traceability.js",
     "test:vrt": "npm run test:cleanup && playwright test tests/e2e/vrt.spec.js",
     "lint": "eslint src/js/",
     "test": "npm run lint && npm run test:types && npm run test:unit && npm run test:e2e && npm run test:e2e:compiled"

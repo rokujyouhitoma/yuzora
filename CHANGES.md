@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- Added automated traceability verification script (`scripts/verify-traceability.js`) and CI workflow step (`npm run test:traceability`) (ID: 108).
+- Documentation: Closed backlog 087 and issue 108 (ID: 108).
 - Standardized explicit `dispose()` lifecycle garbage collection and memory release on `Asset` / `BookAsset` instances (ID: 107).
 - Documentation: Closed backlog 086 and issue 107 (ID: 107).
 - Enhanced DOM virtualization and paragraph bounds caching (`paragraphBoundsCache`) in `VerticalRenderer` for large book rendering performance (ID: 106).

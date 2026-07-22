@@ -47,6 +47,9 @@ jobs:
       - name: Run test coverage
         run: npm run test:coverage
 
+      - name: Run traceability verification
+        run: npm run test:traceability
+
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
 

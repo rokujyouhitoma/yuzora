@@ -94,7 +94,7 @@
 | **084** | Enhancement | Low | Closed | Webフォントおよび主要アセットのpreloadとfont-display最適化 | [084-webfont-preload-optimization.md](closed/084-webfont-preload-optimization.md) |
 | **085** | Feature | High | Closed | DOM仮想化（Virtual Scroll）による大容量書籍表示時のメモリ負荷低減 | [085-dom-virtualization.md](closed/085-dom-virtualization.md) |
 | **086** | Refactor | Medium | Closed | フレームワークのライフサイクルにおける明示的なインスタンス破棄（dispose）の徹底 | [086-lifecycle-dispose-garbage-collection.md](closed/086-lifecycle-dispose-garbage-collection.md) |
-| **087** | Enhancement | Medium | Draft | CIパイプラインにおける要件・設計・コード・テストのトレーサビリティ検証自動化 | [087-ci-traceability-verification.md](087-ci-traceability-verification.md) |
+| **087** | Enhancement | Medium | Closed | CIパイプラインにおける要件・設計・コード・テストのトレーサビリティ検証自動化 | [087-ci-traceability-verification.md](closed/087-ci-traceability-verification.md) |
 | **088** | Feature | Medium | Draft | コマンド履歴エクスポート時へのチェックサム付与とインポート時整合性検証 | [088-command-history-checksum.md](088-command-history-checksum.md) |
 
 ---
