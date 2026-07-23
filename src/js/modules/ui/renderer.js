@@ -204,24 +204,50 @@ class VerticalRenderer {
 
             const startTime = performance.now();
 
-            const childNodes = Array.from(readerContent.children).filter(node => {
-                const style = window.getComputedStyle(node);
-                return style.display !== 'none';
-            });
+            // Direct node filtering without window.getComputedStyle to avoid forced synchronous layout
+            const rawChildren = Array.from(readerContent.children);
+            const childNodes = [];
+            for (let k = 0; k < rawChildren.length; k++) {
+                const node = /** @type {!HTMLElement} */ (rawChildren[k]);
+                if (node.nodeType === 1 && !node.classList.contains('empty-line') && node.style.display !== 'none') {
+                    childNodes.push(node);
+                }
+            }
+
+            const clientWidth = readerViewport.clientWidth || 800;
+            const absScroll = Math.abs(readerViewport.scrollLeft);
+            
+            // Viewport-windowed scanning range: focus on paragraphs near current viewport
+            // (within 2 pages before and 4 pages after current position) to prevent blocking large books
+            const minX = Math.max(0, absScroll - clientWidth * 2);
+            const maxX = absScroll + clientWidth * 4;
 
             let i = 0;
             let lastYieldTime = performance.now();
+            let anyRepaired = false;
+            let evaluatedCount = 0;
+
             while (i < childNodes.length) {
                 // 中断チェック：新しい修復が割り込んだ場合は即座に実行を終了する
                 if (this.currentRepairId !== repairId) {
+                    if (window['__DEBUG_PERFORMANCE__']) {
+                        console.log(`[Layout Repair Profile] Aborted repairId ${repairId} at node ${i}/${childNodes.length}`);
+                    }
                     return;
                 }
 
                 const child = childNodes[i];
-                const repaired = checkAndRepairParagraph(child, readerViewport);
-                if (repaired) {
-                    this.applyPageBreakSizes();
+                const rect = child.getBoundingClientRect();
+                const docLeft = rect.left + absScroll;
+
+                if (docLeft >= minX && docLeft <= maxX) {
+                    evaluatedCount++;
+                    const repaired = checkAndRepairParagraph(child, readerViewport);
+                    if (repaired) {
+                        anyRepaired = true;
+                    }
                 }
+
                 i++;
 
                 // メインスレッドを解放してブロッキングを回避（10ms フレーム予算型タイムスライス & ユーザー入力優先判定）
@@ -229,6 +255,10 @@ class VerticalRenderer {
                 if (this.currentRepairId !== repairId) {
                     return;
                 }
+            }
+
+            if (anyRepaired) {
+                this.applyPageBreakSizes();
             }
 
             // 中断チェック
@@ -243,6 +273,8 @@ class VerticalRenderer {
             this.lastRepairMetrics = {
                 passesCount: 1,
                 insertedCount: insertedCount,
+                evaluatedCount: evaluatedCount,
+                scannedCount: childNodes.length,
                 durationMs: parseFloat(durationMs.toFixed(1))
             };
 
@@ -251,7 +283,7 @@ class VerticalRenderer {
             this.viewContext.cachedClientWidth = null;
 
             if (window['__DEBUG_PERFORMANCE__']) {
-                console.log(`[Layout Repair] adjustPageBreaksForOverrun completed in ${durationMs.toFixed(1)}ms. passesCount: 1, insertedCount: ${insertedCount}`);
+                console.log(`[Layout Repair Profile] Completed in ${durationMs.toFixed(1)}ms. Total nodes: ${childNodes.length}, Window evaluated: ${evaluatedCount}, Breaks inserted: ${insertedCount}`);
             }
 
             this.cacheParagraphBounds();

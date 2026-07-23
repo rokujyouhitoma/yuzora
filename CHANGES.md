@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Fix: Resolved UI freeze and input unresponsiveness on loading large books (e.g., `宮本武蔵 02 地の巻`) by implementing viewport-windowed overrun repair, eliminating synchronous `getComputedStyle` layout thrashing, and adding debug performance profiling (ID: 128).
+- Documentation: Closed backlog 106 and issue 128 (ID: 106, 128).
 - Security: Remediated SecureCoder security scanner findings across codebase, hardened object property access in `commands.js`, sanitized text index access in `diagnostics.js`, and added automated scanner script `tools/security/securecoder-scanner.py` (ID: 127).
 - Documentation: Created approved backlog 105 documenting SecureCoder scanner workflow & API integration, and closed issue 127 (ID: 105, 127).
 - Refactor: Audited all 22 raw `setTimeout` callsites across `src/js/` and encapsulated them into 5 core framework abstractions (`TaskScheduler`, `DOMUtils`, `AnimationUtils`, `Timing`, and `Publisher.prototype.publishAsync`) (ID: 126).

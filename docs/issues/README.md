@@ -137,6 +137,7 @@
 | **125** | Enhancement | High | Closed | Parserモジュールにおけるコンテンツのストリーミング・分割パースによるノンブロッキング設計の導入 | AI Agent | [125-parser-chunked-stream-parsing-non-blocking.md](closed/125-parser-chunked-stream-parsing-non-blocking.md) |
 | **126** | Refactor | High | Closed | setTimeout / 非同期タイマー処理の抽象化基盤 (Scheduler / DOMUtils / Timing) への刷新 | AI Agent | [126-refactor-async-timer-infrastructure.md](closed/126-refactor-async-timer-infrastructure.md) |
 | **127** | Security | High | Closed | SecureCoder スキャナー指摘事項の修正および脆弱性・誤検知の網羅的対処 | AI Agent | [127-remediate-securecoder-findings.md](closed/127-remediate-securecoder-findings.md) |
+| **128** | Bug | High | Closed | 大容量書籍ロード直後の入力不能・UIフリーズ不具合の修正とレンダリング最適化 | AI Agent | [128-large-content-rendering-freeze-fix.md](closed/128-large-content-rendering-freeze-fix.md) |
 
 
 ## 2. 状態（ステータス）定義
