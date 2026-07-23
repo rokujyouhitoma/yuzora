@@ -980,6 +980,15 @@ AozoraParserInterface.prototype.parseTextIncremental = function(text, onFirstChu
  * @return {!Promise<void>}
  */
 AozoraParserInterface.prototype.parseHTMLIncremental = function(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {};
+/**
+ * @param {string} htmlString
+ * @param {function(string, string, string): (void|!Promise<void>)} onFirstChunkReady
+ * @param {function(string): void} onChunkParsed
+ * @param {function(): void} onComplete
+ * @param {function(): boolean} shouldCancel
+ * @return {!Promise<void>}
+ */
+AozoraParserInterface.prototype.parseAozoraHTMLIncremental = function(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {};
 
 // AozoraSemanticAnalyzerInterface
 /** @interface */

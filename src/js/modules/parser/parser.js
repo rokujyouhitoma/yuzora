@@ -376,7 +376,9 @@ class AozoraParser {
      * @param {function(): void} onComplete
      * @param {function(): boolean} shouldCancel
      * @return {!Promise<void>}
+     * @override
      */
+    // @ts-expect-error
     // eslint-disable-next-line complexity
     async parseAozoraHTMLIncremental(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
         if (shouldCancel()) return;
@@ -969,3 +971,7 @@ class AozoraParser {
 }
 
 window['AozoraParser'] = AozoraParser;
+AozoraParser.prototype['parseHTMLIncremental'] = AozoraParser.prototype.parseHTMLIncremental;
+AozoraParser.prototype['parseTextIncremental'] = AozoraParser.prototype.parseTextIncremental;
+DocumentParser.prototype['parseHTMLIncremental'] = DocumentParser.prototype.parseHTMLIncremental;
+DocumentParser.prototype['parseTextIncremental'] = DocumentParser.prototype.parseTextIncremental;
