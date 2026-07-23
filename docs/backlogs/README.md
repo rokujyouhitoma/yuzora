@@ -110,7 +110,7 @@
 | **100** | Refactor | Medium | Closed | 体系的アーキテクチャ意思決定記録 (ADR-04) の策定 | [100-adr-04-storage-and-checksum-verification.md](closed/100-adr-04-storage-and-checksum-verification.md) |
 | **101** | Refactor | High | Closed | 包括的脅威モデリング監査と緩和策ステータスの全件整合性同期 | [101-threat-modeling-audit-alignment.md](closed/101-threat-modeling-audit-alignment.md) |
 | **102** | Enhancement | High | Closed | 大規模コンテンツロード時のUIメインスレッド無停止・タイムスライス最適化 | [102-large-content-non-blocking-performance.md](closed/102-large-content-non-blocking-performance.md) |
-| **103** | Enhancement | High | Approved | Parserモジュールにおけるコンテンツのストリーミング・分割パースによるノンブロッキング設計の導入 | [103-parser-chunked-stream-parsing-non-blocking.md](103-parser-chunked-stream-parsing-non-blocking.md) |
+| **103** | Enhancement | High | Closed | Parserモジュールにおけるコンテンツのストリーミング・分割パースによるノンブロッキング設計の導入 | [103-parser-chunked-stream-parsing-non-blocking.md](closed/103-parser-chunked-stream-parsing-non-blocking.md) |
 | **104** | Refactor | High | Approved | setTimeout / 非同期タイマー処理の抽象化基盤 (Scheduler / DOMUtils / Timing) への刷新 | [104-refactor-async-timer-infrastructure.md](104-refactor-async-timer-infrastructure.md) |
 
 ---
