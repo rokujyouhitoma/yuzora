@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Refactor: Redesigned CSS Multi-column layout architecture by replacing window `vw` units with container percentage (`50%` / `100%`) units across `reader.css` and `style.css`, eliminating scrollbar width offset calculation errors and preventing page edge character truncation (ID: 130).
+- Documentation: Closed backlog 108 and issue 130 (ID: 108, 130).
 - Fix: Resolved page edge text truncation (half-sliced characters) on large books like `宮本武蔵 02 地の巻` by eliminating the 5px offset calculation buffer distortion and restricting dynamic page break removal to the active viewport scanning window (ID: 129).
 - Documentation: Closed backlog 107 and issue 129 (ID: 107, 129).
 - Fix: Resolved UI freeze and input unresponsiveness on loading large books (e.g., `宮本武蔵 02 地の巻`) by implementing viewport-windowed overrun repair, eliminating synchronous `getComputedStyle` layout thrashing, and adding debug performance profiling (ID: 128).

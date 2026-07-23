@@ -139,6 +139,7 @@
 | **127** | Security | High | Closed | SecureCoder スキャナー指摘事項の修正および脆弱性・誤検知の網羅的対処 | AI Agent | [127-remediate-securecoder-findings.md](closed/127-remediate-securecoder-findings.md) |
 | **128** | Bug | High | Closed | 大容量書籍ロード直後の入力不能・UIフリーズ不具合の修正とレンダリング最適化 | AI Agent | [128-large-content-rendering-freeze-fix.md](closed/128-large-content-rendering-freeze-fix.md) |
 | **129** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等におけるページ左右端の文字切れ（半分切断）の根本修正と精密レイアウト計測 | AI Agent | [129-fix-page-edge-text-truncation.md](closed/129-fix-page-edge-text-truncation.md) |
+| **130** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等における CSS Multi-column アーキテクチャ再設計によるページ左右端文字切れの根本解決 | AI Agent | [130-architectural-fix-page-edge-text-truncation.md](closed/130-architectural-fix-page-edge-text-truncation.md) |
 
 
 ## 2. 状態（ステータス）定義

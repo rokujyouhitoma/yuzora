@@ -376,4 +376,35 @@ test.describe('renderer.js Unit Tests', () => {
             }
         });
     });
+
+    test('VerticalRenderer - architectural percentage-based column width alignment (Issue 130)', async () => {
+        const readerContent = document.getElementById('reader-content');
+        const readerViewport = document.getElementById('reader-viewport');
+
+        // Simulate container width with scrollbar offset (e.g., clientWidth = 983px)
+        Object.defineProperty(readerViewport, 'clientWidth', { value: 983, configurable: true });
+
+        let paragraphsHtml = '';
+        for (let i = 0; i < 30; i++) {
+            paragraphsHtml += `<p class="paragraph">宮本武蔵 地の巻 本文 ${i}</p>`;
+        }
+        readerContent.innerHTML = paragraphsHtml;
+
+        const viewContext = {
+            readerContent: readerContent,
+            readerViewport: readerViewport,
+            cachedScrollWidth: null,
+            cachedClientWidth: null
+        };
+        const configModel = { direction: 'rtl' };
+
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = new VerticalRendererClass(viewContext, configModel);
+
+        await renderer.adjustPageBreaksForOverrun();
+
+        // Verify overrun check does not report boundary overrun when column width matches container percentage
+        const hasOverrun = renderer.hasOverrunNearCurrentPage();
+        assert.strictEqual(hasOverrun, false);
+    });
 });
