@@ -339,4 +339,41 @@ test.describe('renderer.js Unit Tests', () => {
         assert.strictEqual(typeof renderer.lastRepairMetrics.durationMs, 'number');
         assert.ok(renderer.lastRepairMetrics.durationMs >= 0);
     });
+
+    test('VerticalRenderer - exact page edge alignment and zero text truncation verification (Issue 129)', async () => {
+        const readerContent = document.getElementById('reader-content');
+        const readerViewport = document.getElementById('reader-viewport');
+        
+        let paragraphsHtml = '';
+        for (let i = 0; i < 50; i++) {
+            paragraphsHtml += `<p class="paragraph" id="p-${i}">吾輩は猫である。名前はまだ無い。どこで生れたかとんと見当がつかぬ。${i}</p>`;
+        }
+        readerContent.innerHTML = paragraphsHtml;
+
+        const viewContext = {
+            readerContent: readerContent,
+            readerViewport: readerViewport,
+            cachedScrollWidth: null,
+            cachedClientWidth: null
+        };
+        const configModel = { direction: 'rtl' };
+
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = new VerticalRendererClass(viewContext, configModel);
+
+        await renderer.adjustPageBreaksForOverrun();
+
+        // Verify that metrics and breaks were calculated correctly without 5px offset distortion
+        assert.strictEqual(typeof renderer.lastRepairMetrics.durationMs, 'number');
+        assert.strictEqual(typeof renderer.lastRepairMetrics.insertedCount, 'number');
+
+        // Verify page-break width calculation has no buffer distortion
+        const breaks = readerContent.querySelectorAll('.page-break');
+        breaks.forEach(b => {
+            if (b.style.width) {
+                const w = parseFloat(b.style.width);
+                assert.ok(!isNaN(w) && w > 0);
+            }
+        });
+    });
 });

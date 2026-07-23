@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Fix: Resolved page edge text truncation (half-sliced characters) on large books like `宮本武蔵 02 地の巻` by eliminating the 5px offset calculation buffer distortion and restricting dynamic page break removal to the active viewport scanning window (ID: 129).
+- Documentation: Closed backlog 107 and issue 129 (ID: 107, 129).
 - Fix: Resolved UI freeze and input unresponsiveness on loading large books (e.g., `宮本武蔵 02 地の巻`) by implementing viewport-windowed overrun repair, eliminating synchronous `getComputedStyle` layout thrashing, and adding debug performance profiling (ID: 128).
 - Documentation: Closed backlog 106 and issue 128 (ID: 106, 128).
 - Security: Remediated SecureCoder security scanner findings across codebase, hardened object property access in `commands.js`, sanitized text index access in `diagnostics.js`, and added automated scanner script `tools/security/securecoder-scanner.py` (ID: 127).

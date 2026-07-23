@@ -114,6 +114,7 @@
 | **104** | Refactor | High | Closed | setTimeout / 非同期タイマー処理の抽象化基盤 (Scheduler / DOMUtils / Timing) への刷新 | [104-refactor-async-timer-infrastructure.md](closed/104-refactor-async-timer-infrastructure.md) |
 | **105** | Security | High | Closed | SecureCoder セキュリティスキャナーの利用方法・運用ワークフローの統合と自動化 | [105-securecoder-security-scanner-workflow.md](closed/105-securecoder-security-scanner-workflow.md) |
 | **106** | Bug | High | Closed | 大容量書籍ロード直後の入力不能・UIフリーズ不具合の修正とレンダリング最適化 | [106-large-content-rendering-freeze-fix.md](closed/106-large-content-rendering-freeze-fix.md) |
+| **107** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等におけるページ左右端の文字切れ（半分切断）の根本修正と精密レイアウト計測 | [107-fix-page-edge-text-truncation.md](closed/107-fix-page-edge-text-truncation.md) |
 
 ---
 

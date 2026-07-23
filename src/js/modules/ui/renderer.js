@@ -198,10 +198,6 @@ class VerticalRenderer {
             const readerContent = this.viewContext.readerContent;
             const readerViewport = this.viewContext.readerViewport;
 
-            // 1. Remove all existing dynamic page break elements to start fresh
-            const existingBreaks = readerContent.querySelectorAll('.dynamic-page-break');
-            existingBreaks.forEach(el => el.remove());
-
             const startTime = performance.now();
 
             // Direct node filtering without window.getComputedStyle to avoid forced synchronous layout
@@ -221,6 +217,17 @@ class VerticalRenderer {
             // (within 2 pages before and 4 pages after current position) to prevent blocking large books
             const minX = Math.max(0, absScroll - clientWidth * 2);
             const maxX = absScroll + clientWidth * 4;
+
+            // 1. Remove existing dynamic page breaks ONLY within the active window range
+            // to preserve calculated page breaks on other pages when scrolling large books
+            const existingBreaks = readerContent.querySelectorAll('.dynamic-page-break');
+            existingBreaks.forEach(el => {
+                const bRect = el.getBoundingClientRect();
+                const bLeft = bRect.left + absScroll;
+                if (bLeft >= minX && bLeft <= maxX) {
+                    el.remove();
+                }
+            });
 
             let i = 0;
             let lastYieldTime = performance.now();
@@ -343,11 +350,9 @@ class VerticalRenderer {
                 const isRtl = this.configModel.direction === 'rtl';
                 const rect = prevElement.getBoundingClientRect();
                 const parentRect = params.parent.getBoundingClientRect();
-                // 5pxの安全バッファを引くことで、端数誤差によるカラムインデックスの誤判定（白紙ページ発生）を防ぐ
-                const buffer = 5;
                 const relativeLeft = isRtl 
-                    ? (parentRect.right - rect.left - buffer)
-                    : (rect.right - parentRect.left - buffer);
+                    ? (parentRect.right - rect.left)
+                    : (rect.right - parentRect.left);
 
                 // Math.round clientWidth / step gives N (columns per page)
                 const clientWidth = this.viewContext.readerViewport.clientWidth;
