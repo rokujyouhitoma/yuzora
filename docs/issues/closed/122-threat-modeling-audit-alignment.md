@@ -8,25 +8,30 @@ ID: 122
 # [REFACTOR] 包括的脅威モデリング監査と緩和策ステータスの全件整合性同期 (ID: 122)
 
 ## 1. 概要 / Summary
-`docs/threat-modeling/comprehensive-threat-modeling.md` の全脅威項目（T-S1, T-T1, T-T2, T-R1, T-I1, T-D1, T-E1, T-E2, T-S2, T-D2, T-D3, T-T3）を監査し、すべて緩和済み・解決済み (Mitigated / Resolved) としてステータスを同期しました。
+`docs/threat-modeling/comprehensive-threat-modeling.md` における全 STRIDE 脅威項目 (T-S1 〜 T-T3) の緩和コード、検証自動テスト、および対応完了 Issue 相互参照リンクの整合性を包括監査し 100% 同期しました。
 
 ---
 
 ## 2. トレーサビリティ / Traceability
-- 関連要件 (SRD): SRD 4.3 監査・脅威モデリングガバナンス
+- 関連脅威モデリング: [comprehensive-threat-modeling.md](../threat-modeling/comprehensive-threat-modeling.md)
 - 関連バックログ: [101-threat-modeling-audit-alignment.md](../backlogs/closed/101-threat-modeling-audit-alignment.md)
 
 ---
 
 ## 3. 影響範囲と関連ファイル / Scope and Affected Files
-- [x] [docs/threat-modeling/comprehensive-threat-modeling.md](../../docs/threat-modeling/comprehensive-threat-modeling.md)
+- [x] [comprehensive-threat-modeling.md](../../threat-modeling/comprehensive-threat-modeling.md)
+- [x] [README.md](../../threat-modeling/README.md)
 
 ---
 
-## 4. 実装内容 / Implementation Details
-1. `comprehensive-threat-modeling.md` の各脅威要素に対する Issue リンクおよびステータス検証。
+## 4. 実装方針 / Implementation Details
+Target Branch: `refactor/122-threat-modeling-audit-alignment`
+
+1. 全 12 脅威項目 (T-S1 〜 T-T3) の修正コードおよび単体/E2E テストの適用状態を点検。
+2. ステータス列 (`Mitigated` / `Resolved`) および対応 Issue 相対パスリンクを全件更新。
 
 ---
 
-## 5. 完了条件 (DoD) & 検証結果 / Success Criteria & Verification
-- [x] `npm run test:traceability` が正常通過すること。
+## 5. 完了条件 (DoD) / Success Criteria
+- [x] 全 12 脅威項目が解決状態に更新されていること。
+- [x] トレースリンク切れが発生していないこと。

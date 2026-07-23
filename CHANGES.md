@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 - Added PWA Web App Manifest (`manifest.json`), icons (`icons/`), and Service Worker (`sw.js`) for full offline self-sovereign operation and updated DSN-01 and DSN-02 (ID: 123).
 - Added PWA E2E tests (`tests/e2e/pwa.spec.js`) and updated build automation (`Makefile`) for Service Worker cache management (ID: 123).
 - Documentation: Closed backlog 040 and issue 123 (ID: 123).
+- Documentation: Conducted `/polish-backlog` and `/polish-issue` for backlogs 092-101 and issues 113-122 to establish full requirements, STRIDE security mitigations, and DoD traceability (ID: 113-122).
 
 - DB: Improved `LibraryRepository` error handling and IndexedDB storage quota resilience (ID: 113).
 - ES: Added LRU memory cache eviction (`MAX_CACHE_COUNT = 5`) and disposal in `ResourceDirector` (ID: 114).
