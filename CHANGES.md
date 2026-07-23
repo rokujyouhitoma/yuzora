@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Security: Remediated SecureCoder security scanner findings across codebase, hardened object property access in `commands.js`, sanitized text index access in `diagnostics.js`, and added automated scanner script `tools/security/securecoder-scanner.py` (ID: 127).
+- Documentation: Created approved backlog 105 documenting SecureCoder scanner workflow & API integration, and closed issue 127 (ID: 105, 127).
 - Refactor: Audited all 22 raw `setTimeout` callsites across `src/js/` and encapsulated them into 5 core framework abstractions (`TaskScheduler`, `DOMUtils`, `AnimationUtils`, `Timing`, and `Publisher.prototype.publishAsync`) (ID: 126).
 - Documentation: Closed backlog 104 and issue 126 (ID: 126).
 - Added PWA Web App Manifest (`manifest.json`), icons (`icons/`), and Service Worker (`sw.js`) for full offline self-sovereign operation and updated DSN-01 and DSN-02 (ID: 123).

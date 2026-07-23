@@ -117,7 +117,9 @@ class UpdateConfigCommand extends Command {
         const configModel = /** @type {!ConfigModelInterface} */ (Yuzora.locator.resolve(ConfigModel));
         const bookmarkModel = /** @type {!BookmarkModelInterface} */ (Yuzora.locator.resolve(BookmarkModel));
         
-        configModel[this.configKey] = this.configValue;
+        if (Object.prototype.hasOwnProperty.call(configModel, this.configKey)) {
+            configModel[this.configKey] = this.configValue;
+        }
         updateSettingsUI(this.configKey, this.configValue);
         
         viewContext.isReflowing = true;
@@ -356,7 +358,8 @@ class CommandHistory {
 
     isDuplicateCommand(command) {
         if (this.commandHistory.length === 0) return false;
-        const lastCmd = this.commandHistory[this.commandHistory.length - 1];
+        const lastCmd = Array.isArray(this.commandHistory) && this.commandHistory.length > 0 ? this.commandHistory[this.commandHistory.length - 1] : null;
+        if (!lastCmd) return false;
         
         if (command.type === "NavigatePage" && lastCmd.type === "NavigatePage") {
             return lastCmd.targetPage === command.targetPage;
@@ -490,8 +493,9 @@ class CommandHistory {
             spacing: ["spacing-tight", "spacing-normal", "spacing-loose"],
             headingPageBreakMode: ["none", "large", "large-medium", "all"]
         };
-        if (!Object.prototype.hasOwnProperty.call(validValues, params['configKey'])) return false;
-        const list = validValues[params['configKey']];
+        const configKey = params['configKey'];
+        if (!Object.prototype.hasOwnProperty.call(validValues, configKey)) return false;
+        const list = Object.prototype.hasOwnProperty.call(validValues, configKey) ? validValues[configKey] : null;
         return !!list && list.indexOf(params['configValue']) !== -1;
     }
 
@@ -609,7 +613,7 @@ class CommandHistory {
             "ClearStorage": this.validateClearStorage_,
             "ToggleDebugModal": this.validateToggleDebugModal_
         };
-        const fn = validators[type];
+        const fn = Object.prototype.hasOwnProperty.call(validators, type) ? validators[type] : null;
         return fn ? fn.call(this, params) : false;
     }
 

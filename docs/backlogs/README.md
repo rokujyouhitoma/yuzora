@@ -112,6 +112,7 @@
 | **102** | Enhancement | High | Closed | 大規模コンテンツロード時のUIメインスレッド無停止・タイムスライス最適化 | [102-large-content-non-blocking-performance.md](closed/102-large-content-non-blocking-performance.md) |
 | **103** | Enhancement | High | Closed | Parserモジュールにおけるコンテンツのストリーミング・分割パースによるノンブロッキング設計の導入 | [103-parser-chunked-stream-parsing-non-blocking.md](closed/103-parser-chunked-stream-parsing-non-blocking.md) |
 | **104** | Refactor | High | Closed | setTimeout / 非同期タイマー処理の抽象化基盤 (Scheduler / DOMUtils / Timing) への刷新 | [104-refactor-async-timer-infrastructure.md](closed/104-refactor-async-timer-infrastructure.md) |
+| **105** | Security | High | Approved | SecureCoder セキュリティスキャナーの利用方法・運用ワークフローの統合と自動化 | [105-securecoder-security-scanner-workflow.md](105-securecoder-security-scanner-workflow.md) |
 
 ---
 

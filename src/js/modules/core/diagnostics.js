@@ -377,7 +377,7 @@ function findCharAtBoundary(element, boundaryX) {
                 const before = text.substring(Math.max(0, i - 10), i);
                 const after = text.substring(i + 1, Math.min(text.length, i + 11));
                 return {
-                    char: text[i],
+                    char: text.charAt(i),
                     rect: rect,
                     context: { before, after }
                 };
