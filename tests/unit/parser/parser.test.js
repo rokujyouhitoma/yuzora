@@ -533,4 +533,34 @@ test.describe('parser.js Unit Tests', () => {
         assert.ok(result.body.includes('class="chitsuki"'));
         assert.ok(result.body.includes('<ruby>'));
     });
+
+    test('should incrementally parse HTML content without blocking (Issue 124)', async () => {
+        const parser = window.yuzora.locator.resolve(window.DocumentParser);
+        let sampleHtml = '<html><head><title>テスト作品</title></head><body><div class="main_body">';
+        for (let i = 0; i < 120; i++) {
+            sampleHtml += `<p>段落 ${i}</p>`;
+        }
+        sampleHtml += '</div></body></html>';
+
+        let firstTitle = '';
+        let chunkCount = 0;
+        let completeCalled = false;
+
+        const onFirstChunkReady = (title, author, html) => {
+            firstTitle = title;
+        };
+        const onChunkParsed = (html) => {
+            chunkCount++;
+        };
+        const onComplete = () => {
+            completeCalled = true;
+        };
+        const shouldCancel = () => false;
+
+        await parser.parseHTMLIncremental(sampleHtml, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
+
+        assert.strictEqual(firstTitle, 'テスト作品');
+        assert.ok(chunkCount >= 1);
+        assert.strictEqual(completeCalled, true);
+    });
 });

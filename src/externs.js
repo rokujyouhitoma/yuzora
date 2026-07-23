@@ -500,6 +500,10 @@ Object.prototype.bookmarkProgress;
 /** @type {?} */
 Object.prototype.checksum;
 /** @type {?} */
+Object.prototype.parseTextIncremental;
+/** @type {?} */
+Object.prototype.parseHTMLIncremental;
+/** @type {?} */
 Object.prototype.history;
 /** @type {?} */
 Object.prototype.headerTimeout;
@@ -967,6 +971,15 @@ AozoraParserInterface.prototype.formatMarkup = function(line) {};
  * @return {!Promise<void>}
  */
 AozoraParserInterface.prototype.parseTextIncremental = function(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {};
+/**
+ * @param {string} htmlString
+ * @param {function(string, string, string): (void|!Promise<void>)} onFirstChunkReady
+ * @param {function(string): void} onChunkParsed
+ * @param {function(): void} onComplete
+ * @param {function(): boolean} shouldCancel
+ * @return {!Promise<void>}
+ */
+AozoraParserInterface.prototype.parseHTMLIncremental = function(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {};
 
 // AozoraSemanticAnalyzerInterface
 /** @interface */

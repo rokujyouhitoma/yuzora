@@ -212,7 +212,7 @@ class VerticalRenderer {
             });
 
             let i = 0;
-            let batchCounter = 0;
+            let lastYieldTime = performance.now();
             while (i < childNodes.length) {
                 // 中断チェック：新しい修復が割り込んだ場合は即座に実行を終了する
                 if (this.currentRepairId !== repairId) {
@@ -225,11 +225,20 @@ class VerticalRenderer {
                     this.applyPageBreakSizes();
                 }
                 i++;
-                batchCounter++;
-                if (batchCounter >= 600) {
-                    batchCounter = 0;
-                    // メインスレッドを解放してブロッキングを回避（タイムスライス）
+
+                // メインスレッドを解放してブロッキングを回避（10ms フレーム予算型タイムスライス & ユーザー入力優先判定）
+                const now = performance.now();
+                const nav = navigator;
+                const isInputPending = (nav && nav['scheduling'] && typeof nav['scheduling']['isInputPending'] === 'function')
+                    ? nav['scheduling']['isInputPending']()
+                    : false;
+
+                if (now - lastYieldTime >= 10 || isInputPending) {
                     await new Promise(resolve => setTimeout(resolve, 0));
+                    if (this.currentRepairId !== repairId) {
+                        return;
+                    }
+                    lastYieldTime = performance.now();
                 }
             }
 

@@ -250,10 +250,8 @@ async function displayBook() {
         // Execute background parsing via Web Worker
         await parser.parseTextIncremental(bookModel.content, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
     } else {
-        // HTML is fast enough to parse synchronously
-        const parsed = parser.parseHTML(bookModel.content);
-        await onFirstChunkReady(parsed.title || bookModel.title.replace(/\.(x?html)/, ''), '', parsed.body);
-        onComplete();
+        // Execute non-blocking incremental parsing for HTML
+        await parser.parseHTMLIncremental(bookModel.content, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
     }
 }
 

@@ -43,6 +43,18 @@ class DocumentParser {
     parseTextIncremental(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
         throw new Error('Interface method not implemented');
     }
+
+    /**
+     * @param {string} htmlString
+     * @param {function(string, string, string):(!Promise<void>|void)} onFirstChunkReady
+     * @param {function(string):void} onChunkParsed
+     * @param {function():void} onComplete
+     * @param {function():boolean} shouldCancel
+     * @return {!Promise<void>}
+     */
+    parseHTMLIncremental(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
+        throw new Error('Interface method not implemented');
+    }
 }
 window['DocumentParser'] = DocumentParser;
 
@@ -106,6 +118,20 @@ class AozoraParser {
     // @ts-expect-error
     parseTextIncremental(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
         return this.parseAozoraTextIncremental(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
+    }
+
+    /**
+     * @param {string} htmlString
+     * @param {function(string, string, string):(!Promise<void>|void)} onFirstChunkReady
+     * @param {function(string):void} onChunkParsed
+     * @param {function():void} onComplete
+     * @param {function():boolean} shouldCancel
+     * @return {!Promise<void>}
+     * @override
+     */
+    // @ts-expect-error
+    parseHTMLIncremental(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
+        return this.parseAozoraHTMLIncremental(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel);
     }
 
     /**
@@ -340,6 +366,81 @@ class AozoraParser {
             title: title || '',
             body: mainBody.innerHTML
         };
+    }
+
+    /**
+     * Parses HTML text incrementally in non-blocking time-sliced chunks.
+     * @param {string} htmlString
+     * @param {function(string, string, string): (void|!Promise<void>)} onFirstChunkReady
+     * @param {function(string): void} onChunkParsed
+     * @param {function(): void} onComplete
+     * @param {function(): boolean} shouldCancel
+     * @return {!Promise<void>}
+     */
+    // eslint-disable-next-line complexity
+    async parseAozoraHTMLIncremental(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel) {
+        if (shouldCancel()) return;
+        const doc = this.domParser.parseFromString(htmlString, 'text/html');
+        
+        const titleEl = doc.querySelector('title');
+        const title = titleEl ? titleEl.textContent || '' : '';
+
+        let mainBody = doc.querySelector('.main_body');
+        if (!mainBody) {
+            mainBody = doc.querySelector('body');
+        }
+
+        if (mainBody) {
+            const bibliographicalInfo = mainBody.querySelector('.bibliographical_information');
+            if (bibliographicalInfo) bibliographicalInfo.remove();
+            
+            const cardLink = mainBody.querySelector('.card_link');
+            if (cardLink) cardLink.remove();
+
+            this.evaluator.sanitizeDOM(mainBody);
+        }
+
+        if (shouldCancel()) return;
+
+        const children = mainBody ? Array.from(mainBody.children) : [];
+        if (children.length === 0) {
+            await onFirstChunkReady(title, '', mainBody ? mainBody.innerHTML : '');
+            onComplete();
+            return;
+        }
+
+        const chunkSize = 50;
+        let index = 0;
+        let isFirst = true;
+
+        let lastYieldTime = performance.now();
+        while (index < children.length) {
+            if (shouldCancel()) return;
+
+            const limit = Math.min(index + chunkSize, children.length);
+            const chunkChildren = children.slice(index, limit);
+            index = limit;
+
+            const tempContainer = document.createElement('div');
+            chunkChildren.forEach(child => tempContainer.appendChild(child.cloneNode(true)));
+            const chunkHtml = tempContainer.innerHTML;
+
+            if (isFirst) {
+                await onFirstChunkReady(title, '', chunkHtml);
+                isFirst = false;
+            } else {
+                onChunkParsed(chunkHtml);
+            }
+
+            const now = performance.now();
+            if (now - lastYieldTime >= 10 && index < children.length) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+                lastYieldTime = performance.now();
+            }
+        }
+
+        if (shouldCancel()) return;
+        onComplete();
     }
 
     /**

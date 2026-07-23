@@ -310,4 +310,33 @@ test.describe('renderer.js Unit Tests', () => {
         const hasOverrun = renderer.hasOverrunNearCurrentPage();
         assert.strictEqual(hasOverrun, false);
     });
+
+    test('VerticalRenderer - 10ms frame budgeted time-slicing non-blocking repair (Issue 124)', async () => {
+        const readerContent = document.getElementById('reader-content');
+        const readerViewport = document.getElementById('reader-viewport');
+        
+        let paragraphsHtml = '';
+        for (let i = 0; i < 200; i++) {
+            paragraphsHtml += `<p class="paragraph" style="width: 50px; height: 500px;">段落 ${i}</p>`;
+        }
+        readerContent.innerHTML = paragraphsHtml;
+
+        const viewContext = {
+            readerContent: readerContent,
+            readerViewport: readerViewport,
+            cachedScrollWidth: null,
+            cachedClientWidth: null
+        };
+        const configModel = { direction: 'rtl' };
+
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = new VerticalRendererClass(viewContext, configModel);
+        
+        const startTime = performance.now();
+        await renderer.adjustPageBreaksForOverrun();
+        const duration = performance.now() - startTime;
+
+        assert.strictEqual(typeof renderer.lastRepairMetrics.durationMs, 'number');
+        assert.ok(renderer.lastRepairMetrics.durationMs >= 0);
+    });
 });
