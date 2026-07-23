@@ -385,8 +385,8 @@ test.describe('Repository substitution (InMemory replaces LocalStorage)', () => 
 
         // 1. Save books
         await libraryRepo.saveBook('sanshiro.txt', '三四郎', '夏目漱石', 'sanshiro content', 'txt');
-        // Add a tiny delay to ensure timestamps differ in sorting
-        await new Promise(r => setTimeout(r, 2));
+        // Add a delay to ensure timestamps differ in sorting
+        await new Promise(r => setTimeout(r, 25));
         await libraryRepo.saveBook('kokoro.txt', 'こころ', '夏目漱石', 'kokoro content', 'txt');
 
         // 2. Fetch books list (should be sorted by importedAt desc, i.e., kokoro first since saved second)
