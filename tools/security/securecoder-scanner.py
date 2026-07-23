@@ -32,7 +32,7 @@ def scan_file(port, abs_path):
     url = f"http://127.0.0.1:{port}/scan"
     payload = json.dumps({"filePath": abs_path}).encode("utf-8")
     req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=10) as resp:
+    with urllib.request.urlopen(req, timeout=30) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 def ignore_finding(port, abs_path, rule_id, snippet, line_number, vuln_class, reason):
