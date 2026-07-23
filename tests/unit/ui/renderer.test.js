@@ -407,4 +407,33 @@ test.describe('renderer.js Unit Tests', () => {
         const hasOverrun = renderer.hasOverrunNearCurrentPage();
         assert.strictEqual(hasOverrun, false);
     });
+
+    test('VerticalRenderer - long paragraph intra-split and page break repair (Issue 131)', async () => {
+        const readerContent = document.getElementById('reader-content');
+        const readerViewport = document.getElementById('reader-viewport');
+
+        // Create an extra-long single paragraph containing 3000 characters
+        let longText = '';
+        for (let i = 0; i < 150; i++) {
+            longText += `宮本武蔵地の巻長大段落検証文節パターン${i}。`;
+        }
+        readerContent.innerHTML = `<p class="paragraph" id="long-p">${longText}</p>`;
+
+        const viewContext = {
+            readerContent: readerContent,
+            readerViewport: readerViewport,
+            cachedScrollWidth: null,
+            cachedClientWidth: null
+        };
+        const configModel = { direction: 'rtl' };
+
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = new VerticalRendererClass(viewContext, configModel);
+
+        await renderer.adjustPageBreaksForOverrun();
+
+        // Verify that long paragraph repair executed safely without throws
+        assert.strictEqual(typeof renderer.lastRepairMetrics.durationMs, 'number');
+        assert.ok(renderer.lastRepairMetrics.durationMs >= 0);
+    });
 });

@@ -229,6 +229,22 @@ class VerticalRenderer {
                 }
             });
 
+            // Merge any split paragraphs within window back into their original parent paragraphs
+            const splitParas = readerContent.querySelectorAll('.dynamic-split-paragraph');
+            splitParas.forEach(splitEl => {
+                const bRect = splitEl.getBoundingClientRect();
+                const bLeft = bRect.left + absScroll;
+                if (bLeft >= minX && bLeft <= maxX) {
+                    const prevBreak = splitEl.previousElementSibling;
+                    const origPara = prevBreak ? prevBreak.previousElementSibling : null;
+                    if (origPara && origPara.nodeName === splitEl.nodeName) {
+                        origPara.textContent += splitEl.textContent;
+                        if (prevBreak) prevBreak.remove();
+                        splitEl.remove();
+                    }
+                }
+            });
+
             let i = 0;
             let lastYieldTime = performance.now();
             let anyRepaired = false;
@@ -618,6 +634,7 @@ function getCrossedBoundaries(docLeft, docRight, clientWidth) {
     return boundaries;
 }
 
+// eslint-disable-next-line complexity
 function checkAndRepairParagraph(child, readerViewport) {
     if (child.classList.contains('empty-line') || child.classList.contains('page-break')) {
         return false;
@@ -641,23 +658,58 @@ function checkAndRepairParagraph(child, readerViewport) {
             continue;
         }
 
-        // Check if the paragraph is already preceded by a page break to avoid infinite loop
-        if (isPrecededByPageBreak(child)) {
-            return false;
-        }
-
         // Check if there is a character crossing the boundary
         const charInfo = findCharAtDocumentBoundary(child, boundaryX, scrollLeft);
         if (charInfo) {
-            // Insert page break before this paragraph
-            const pageBreak = document.createElement('div');
-            pageBreak.className = 'page-break dynamic-page-break';
-            child.parentNode.insertBefore(pageBreak, child);
-            return true;
+            if (!isPrecededByPageBreak(child)) {
+                // Insert page break before this paragraph
+                const pageBreak = document.createElement('div');
+                pageBreak.className = 'page-break dynamic-page-break';
+                child.parentNode.insertBefore(pageBreak, child);
+                return true;
+            } else if (charInfo.node && charInfo.node.nodeType === 3) {
+                // Long paragraph case: paragraph is already preceded by a page break,
+                // but still crosses a downstream page boundary. Split paragraph at char.
+                return splitParagraphAtChar(child, charInfo.node, charInfo.charIndex);
+            }
         }
     }
 
     return false;
+}
+
+/**
+ * Splits a long paragraph at a specific character index and inserts a page break between the two halves.
+ * @private
+ * @param {!Element} paragraph
+ * @param {!Node} textNode
+ * @param {number} charIndex
+ * @return {boolean}
+ */
+function splitParagraphAtChar(paragraph, textNode, charIndex) {
+    if (!textNode || !textNode.textContent || charIndex <= 0) {
+        return false;
+    }
+    const fullText = textNode.textContent;
+    const firstPart = fullText.substring(0, charIndex);
+    const secondPart = fullText.substring(charIndex);
+
+    textNode.textContent = firstPart;
+
+    const newParagraph = document.createElement('p');
+    newParagraph.className = (paragraph.className || '') + ' dynamic-split-paragraph';
+    newParagraph.textContent = secondPart;
+
+    const pageBreak = document.createElement('div');
+    pageBreak.className = 'page-break dynamic-page-break dynamic-split-break';
+
+    const parent = paragraph.parentNode;
+    const nextSib = paragraph.nextSibling;
+
+    parent.insertBefore(pageBreak, nextSib);
+    parent.insertBefore(newParagraph, nextSib);
+
+    return true;
 }
 
 /**

@@ -47,7 +47,7 @@
 | **037** | Refactor | Medium | Closed | 永続化層（Repository）の完全非同期対応と抽象化 | [037-async-repository-abstraction.md](closed/037-async-repository-abstraction.md) |
 | **038** | Refactor | Medium | Closed | イベント駆動（EDA）の名前空間化とスコープ分離 | [038-scoped-event-namespaces.md](closed/038-scoped-event-namespaces.md) |
 | **039** | Feature | Medium | Closed | セキュリティ・バイ・デザインに基づくセキュアレンダラーパターンの強制 | [039-secure-dom-renderer.md](closed/039-secure-dom-renderer.md) |
-| **040** | Feature | Medium | Approved | オフライン自律稼働とPWA（Progressive Web App）化の導入 | [040-pwa-offline-support.md](040-pwa-offline-support.md) |
+| **040** | Feature | Medium | Closed | オフライン自律稼働とPWA（Progressive Web App）化の導入 | [040-pwa-offline-support.md](closed/040-pwa-offline-support.md) |
 | **041** | Refactor | Medium | Closed | CSS変数の完全活用による「CSSテーマエンジン」の導入 | [041-css-theme-engine.md](closed/041-css-theme-engine.md) |
 | **042** | Refactor | Medium | Closed | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](closed/042-jsdoc-tsc-type-check.md) |
 | **043** | Feature | High | Closed | コマンド履歴入力検証とCSPの導入 | [043-command-history-validation-and-csp.md](closed/043-command-history-validation-and-csp.md) |
@@ -116,6 +116,7 @@
 | **106** | Bug | High | Closed | 大容量書籍ロード直後の入力不能・UIフリーズ不具合の修正とレンダリング最適化 | [106-large-content-rendering-freeze-fix.md](closed/106-large-content-rendering-freeze-fix.md) |
 | **107** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等におけるページ左右端の文字切れ（半分切断）の根本修正と精密レイアウト計測 | [107-fix-page-edge-text-truncation.md](closed/107-fix-page-edge-text-truncation.md) |
 | **108** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等における CSS Multi-column アーキテクチャ再設計によるページ左右端文字切れの根本解決 | [108-architectural-fix-page-edge-text-truncation.md](closed/108-architectural-fix-page-edge-text-truncation.md) |
+| **109** | Enhancement | High | Approved | 長大段落（Long Paragraphs）における超え発生時の段落動的分割と完全ページブレイク制御 | [109-split-long-paragraphs-non-blocking-page-breaks.md](109-split-long-paragraphs-non-blocking-page-breaks.md) |
 
 ---
 

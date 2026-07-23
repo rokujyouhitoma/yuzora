@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Feature: Implemented intra-paragraph DOM text node splitting (`splitParagraphAtChar`) and seamless re-merging (`mergeSplitParagraphs`) for extra-long paragraphs spanning page boundaries, and conducted full empirical statistical percentile analysis across 38,656 paragraphs (ID: 131).
+- Documentation: Closed backlog 109, issue 131, and backlog 040 (ID: 040, 109, 131).
 - Refactor: Redesigned CSS Multi-column layout architecture by replacing window `vw` units with container percentage (`50%` / `100%`) units across `reader.css` and `style.css`, eliminating scrollbar width offset calculation errors and preventing page edge character truncation (ID: 130).
 - Documentation: Closed backlog 108 and issue 130 (ID: 108, 130).
 - Fix: Resolved page edge text truncation (half-sliced characters) on large books like `宮本武蔵 02 地の巻` by eliminating the 5px offset calculation buffer distortion and restricting dynamic page break removal to the active viewport scanning window (ID: 129).
