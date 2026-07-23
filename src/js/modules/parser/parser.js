@@ -722,17 +722,20 @@ class AozoraParser {
             };
 
             function runTokenization(tokenizer, text, chunkSize) {
-                const blocks = tokenizer.tokenize(text);
-                
+                const lines = text.split(/\r?\n/);
                 let index = 0;
                 let isFirst = true;
 
                 function sendNextChunk() {
-                    const limit = Math.min(index + chunkSize, blocks.length);
-                    const chunkBlocks = blocks.slice(index, limit);
+                    const limit = Math.min(index + chunkSize, lines.length);
+                    const chunkBlocks = [];
+                    for (let k = index; k < limit; k++) {
+                        const token = tokenizer.tokenizeSingleLine(lines[k]);
+                        if (token) chunkBlocks.push(token);
+                    }
                     index = limit;
 
-                    const isLast = (index >= blocks.length);
+                    const isLast = (index >= lines.length);
                     self.postMessage({
                         'type': 'BLOCKS_CHUNK',
                         'blocks': chunkBlocks,

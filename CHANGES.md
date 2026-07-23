@@ -7,7 +7,8 @@ All notable changes to this project will be documented in this file.
 - Documentation: Closed backlog 040 and issue 123 (ID: 123).
 - Documentation: Conducted `/polish-backlog` and `/polish-issue` for backlogs 092-101 and issues 113-122 to establish full requirements, STRIDE security mitigations, and DoD traceability (ID: 113-122).
 - Performance: Upgraded `adjustPageBreaksForOverrun` to 10ms frame-budgeted time-slicing with input interrupt guards (`isInputPending`) and introduced non-blocking incremental HTML parsing (`parseHTMLIncremental`) for large content (ID: 124).
-- Documentation: Closed backlog 102 and issue 124 (ID: 124).
+- Performance: Implemented Chunked Stream Pipeline for `AozoraParser` and `AozoraTokenizer` with 500-line streaming Web Worker tokenization and incremental AST/DOM sanitization (ID: 125).
+- Documentation: Closed backlog 102, backlog 103, issue 124, and issue 125 (ID: 125).
 
 - DB: Improved `LibraryRepository` error handling and IndexedDB storage quota resilience (ID: 113).
 - ES: Added LRU memory cache eviction (`MAX_CACHE_COUNT = 5`) and disposal in `ResourceDirector` (ID: 114).

@@ -312,9 +312,12 @@ Shift_JIS または UTF-8 から文字列へとデコードされたプレーン
     - `parseText(text)`: テキスト全体のパースを行い、タイトル・本文・メタデータを格納したオブジェクト `ParsedDocument` を返却する。
     - `parseHTML(htmlString)`: HTMLのパースを行い、`ParsedDocument` を返却する。
     - `formatMarkup(markupLine)`: 単一行のマークアップ整形を行う。
+    - `parseTextIncremental(text, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel)`: Web Worker によるストリーミング分割パースを行う。
+    - `parseHTMLIncremental(htmlString, onFirstChunkReady, onChunkParsed, onComplete, shouldCancel)`: 10ms タイムスライスによる非同期分割パースを行う。
 * **構文解析器 (`parser.js` / `AozoraParser`)**:
   - 抽象インターフェース `DocumentParser` を実装し、以下の具象メソッドをラップして提供します。
   - `parseText(text)` および `parseHTML(htmlString)`: それぞれ `parseAozoraText(text)`、`parseAozoraHTML(htmlString)` に移譲し、共通結果モデル `{ title, body }` を返却します。
+  - `parseTextIncremental(...)` および `parseHTMLIncremental(...)`: 分割ストリーミングパース処理に移譲し、大容量ファイルパース中も 10ms ごとに主スレッドを譲渡してフリーズを防止します。
   - `formatMarkup(markupLine)`: `formatAozoraMarkup(markupLine)` に移譲します。
   - `parseAozoraText(text)` メソッド：青空文庫テキストのパースを担当します。`AozoraTokenizer.tokenize` から出力されたブロックトークンストリームに対する走査ループを回し、メタデータや注記の切り出しロジックは Tokenizer に任せ、Parser 自身は受け取ったトークンの属性値に基づいて AST のドキュメントルート（`DocumentNode`）を構築することに専念します。
   - **明示的な改ページ注記の解析**: トークンの `type` が `'BLOCK_PAGE_BREAK'` である場合、インラインのパースを介さず、直ちに `PageBreakNode` を `documentChildren` 配列に追加します。これにより、不要な段落要素（`<p>`）が生成されるのを防ぎます。

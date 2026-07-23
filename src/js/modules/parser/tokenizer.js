@@ -25,124 +25,128 @@ class AozoraTokenizer {
     constructor() {}
 
     /**
+     * @param {string} line
+     * @return {!AozoraToken}
+     * @override
+     */
+    // @ts-expect-error
+    // eslint-disable-next-line complexity
+    tokenizeSingleLine(line) {
+        if (line.trim().length === 0) {
+            return {
+                'type': 'BLOCK_EMPTY_LINE',
+                'value': line,
+                'rt': undefined,
+                'children': undefined,
+                'headingLevel': undefined,
+                'headingText': undefined,
+                'jisageClass': undefined,
+                'alignmentClass': undefined,
+                'inlineTokens': undefined
+            };
+        }
+        
+        if (line.trim() === '［＃改ページ］') {
+            return {
+                'type': 'BLOCK_PAGE_BREAK',
+                'value': line,
+                'rt': undefined,
+                'children': undefined,
+                'headingLevel': undefined,
+                'headingText': undefined,
+                'jisageClass': undefined,
+                'alignmentClass': undefined,
+                'inlineTokens': undefined
+            };
+        }
+        
+        // 地下げ (字下げ) 判定と除去
+        let jisageClass = '';
+        const jisageMatch = line.match(/［＃([０-９0-9]+)字下げ］/);
+        if (jisageMatch) {
+            const rawNum = jisageMatch[1];
+            const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+            const n = parseInt(cleanNum, 10);
+            jisageClass = `jisage${n}`;
+            line = line.replace(/［＃[０-９0-9]+字下げ］/, '');
+        }
+        
+        // アライメント判定と除去
+        let alignmentClass = '';
+        if (line.includes('［＃地付き］')) {
+            alignmentClass = 'chitsuki';
+            line = line.replace(/［＃地付き］/g, '');
+        } else if (line.includes('［＃地寄せ］')) {
+            alignmentClass = 'chiyose';
+            line = line.replace(/［＃地寄せ］/g, '');
+        } else {
+            const chitageMatch = line.match(/［＃地から([０-９0-9]+)字上げ］/);
+            if (chitageMatch) {
+                const rawNum = chitageMatch[1];
+                const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+                const n = parseInt(cleanNum, 10);
+                alignmentClass = `chitage-${n}`;
+                line = line.replace(/［＃地から[０-９0-9]+字上げ］/g, '');
+            }
+        }
+        
+        // 見出し判定と除去
+        let isHeading = false;
+        let headingLevel = 2;
+        let headingText = '';
+        const headingMatch = line.match(/［＃「([^」]+)」は(大|中|小)見出し］/);
+        if (headingMatch) {
+            isHeading = true;
+            headingText = headingMatch[1];
+            const levelChar = headingMatch[2];
+            if (levelChar === '大') headingLevel = 2;
+            else if (levelChar === '中') headingLevel = 3;
+            else if (levelChar === '小') headingLevel = 4;
+            line = line.replace(/［＃「[^」]+」は(?:大|中|小)見出し］/, '');
+        }
+        
+        // ブロック内部 of インライントークンを抽出
+        const inlineTokens = this.tokenizeInline(line);
+        
+        if (isHeading) {
+            return {
+                'type': 'BLOCK_HEADING',
+                'value': line,
+                'rt': undefined,
+                'children': undefined,
+                'headingLevel': headingLevel,
+                'headingText': headingText,
+                'jisageClass': jisageClass,
+                'alignmentClass': alignmentClass,
+                'inlineTokens': inlineTokens
+            };
+        } else {
+            return {
+                'type': 'BLOCK_PARAGRAPH',
+                'value': line,
+                'rt': undefined,
+                'children': undefined,
+                'headingLevel': undefined,
+                'headingText': undefined,
+                'jisageClass': jisageClass,
+                'alignmentClass': alignmentClass,
+                'inlineTokens': inlineTokens
+            };
+        }
+    }
+
+    /**
      * @param {string} text
      * @return {!Array<!AozoraToken>}
      * @override
      */
     // @ts-expect-error
-    // eslint-disable-next-line complexity
     tokenize(text) {
         const blocks = [];
         const lines = text.split(/\r?\n/);
-        
         for (let i = 0; i < lines.length; i++) {
-            let line = lines[i];
-            
-            if (line.trim().length === 0) {
-                blocks.push({
-                    'type': 'BLOCK_EMPTY_LINE',
-                    'value': line,
-                    'rt': undefined,
-                    'children': undefined,
-                    'headingLevel': undefined,
-                    'headingText': undefined,
-                    'jisageClass': undefined,
-                    'alignmentClass': undefined,
-                    'inlineTokens': undefined
-                });
-                continue;
-            }
-            
-            if (line.trim() === '［＃改ページ］') {
-                blocks.push({
-                    'type': 'BLOCK_PAGE_BREAK',
-                    'value': line,
-                    'rt': undefined,
-                    'children': undefined,
-                    'headingLevel': undefined,
-                    'headingText': undefined,
-                    'jisageClass': undefined,
-                    'alignmentClass': undefined,
-                    'inlineTokens': undefined
-                });
-                continue;
-            }
-            
-            // 地下げ (字下げ) 判定と除去
-            let jisageClass = '';
-            const jisageMatch = line.match(/［＃([０-９0-9]+)字下げ］/);
-            if (jisageMatch) {
-                const rawNum = jisageMatch[1];
-                const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-                const n = parseInt(cleanNum, 10);
-                jisageClass = `jisage${n}`;
-                line = line.replace(/［＃[０-９0-9]+字下げ］/, '');
-            }
-            
-            // アライメント判定と除去
-            let alignmentClass = '';
-            if (line.includes('［＃地付き］')) {
-                alignmentClass = 'chitsuki';
-                line = line.replace(/［＃地付き］/g, '');
-            } else if (line.includes('［＃地寄せ］')) {
-                alignmentClass = 'chiyose';
-                line = line.replace(/［＃地寄せ］/g, '');
-            } else {
-                const chitageMatch = line.match(/［＃地から([０-９0-9]+)字上げ］/);
-                if (chitageMatch) {
-                    const rawNum = chitageMatch[1];
-                    const cleanNum = rawNum.replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-                    const n = parseInt(cleanNum, 10);
-                    alignmentClass = `chitage-${n}`;
-                    line = line.replace(/［＃地から[０-９0-9]+字上げ］/g, '');
-                }
-            }
-            
-            // 見出し判定と除去
-            let isHeading = false;
-            let headingLevel = 2;
-            let headingText = '';
-            const headingMatch = line.match(/［＃「([^」]+)」は(大|中|小)見出し］/);
-            if (headingMatch) {
-                isHeading = true;
-                headingText = headingMatch[1];
-                const levelChar = headingMatch[2];
-                if (levelChar === '大') headingLevel = 2;
-                else if (levelChar === '中') headingLevel = 3;
-                else if (levelChar === '小') headingLevel = 4;
-                line = line.replace(/［＃「[^」]+」は(?:大|中|小)見出し］/, '');
-            }
-            
-            // ブロック内部 of インライントークンを抽出
-            const inlineTokens = this.tokenizeInline(line);
-            
-            if (isHeading) {
-                blocks.push({
-                    'type': 'BLOCK_HEADING',
-                    'value': line,
-                    'rt': undefined,
-                    'children': undefined,
-                    'headingLevel': headingLevel,
-                    'headingText': headingText,
-                    'jisageClass': jisageClass,
-                    'alignmentClass': alignmentClass,
-                    'inlineTokens': inlineTokens
-                });
-            } else {
-                blocks.push({
-                    'type': 'BLOCK_PARAGRAPH',
-                    'value': line,
-                    'rt': undefined,
-                    'children': undefined,
-                    'headingLevel': undefined,
-                    'headingText': undefined,
-                    'jisageClass': jisageClass,
-                    'alignmentClass': alignmentClass,
-                    'inlineTokens': inlineTokens
-                });
-            }
+            blocks.push(this.tokenizeSingleLine(lines[i]));
         }
-        
         return blocks;
     }
 
@@ -348,3 +352,4 @@ class AozoraTokenizer {
 }
 
 window['AozoraTokenizer'] = AozoraTokenizer;
+AozoraTokenizer.prototype['tokenizeSingleLine'] = AozoraTokenizer.prototype.tokenizeSingleLine;

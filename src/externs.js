@@ -504,6 +504,8 @@ Object.prototype.parseTextIncremental;
 /** @type {?} */
 Object.prototype.parseHTMLIncremental;
 /** @type {?} */
+Object.prototype.tokenizeSingleLine;
+/** @type {?} */
 Object.prototype.history;
 /** @type {?} */
 Object.prototype.headerTimeout;

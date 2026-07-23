@@ -187,10 +187,10 @@ sequenceDiagram
         activate C
         C->>C: 同梱データ(JS内蔵) または 外部フェッチ(Fetch API) で本文テキスト取得
     end
-    C->>C: AozoraTokenizerによる字句解析 (ブロック＆インライン)
-    C->>C: AozoraParserによるASTノードツリー構築
+    C->>C: AozoraTokenizerによるノンブロッキング行分割トークン化 (Workerストリーム)
+    C->>C: AozoraParserによるインクリメンタルASTノードツリー構築 (10msタイムスライス)
     C->>C: AozoraSemanticAnalyzerによるルビネスト等の意味解析
-    C->>C: AozoraEvaluatorによるHTML生成＆XSS防御エスケープ
+    C->>C: AozoraEvaluatorによるHTML生成＆XSS防御エスケープ (サニタイズ防壁)
     C->>V: HTMLレンダリング (reader-content)
     C->>S: 最後に読んだファイル名でしおり情報を照会
     S-->>C: 前回の読了進捗率 (0.0 - 1.0)
