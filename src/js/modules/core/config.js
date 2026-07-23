@@ -72,8 +72,12 @@ class ViewContext {
         this.tabContentMonitor = null;
         this.tabContentDiagnose = null;
 
-        // UI/Layout related states
+        // Timer & Debounce Management
         this.headerTimeout = null;
+        this.inactivityTimer = null;
+        this.debouncedScrollHandler = null;
+
+        // UI/Layout related states
         this.isReflowing = false;
         this.activeHeadingId = null;
         this.tocObserver = null;
@@ -345,15 +349,9 @@ class BookmarkModel {
                     resolve();
                 };
 
-                if (window['requestIdleCallback']) {
-                    this.idleId_ = window['requestIdleCallback'](() => {
-                        saveAction();
-                    });
-                } else {
-                    this.idleId_ = window.setTimeout(() => {
-                        saveAction();
-                    }, 0);
-                }
+                TaskScheduler.requestIdle(() => {
+                    saveAction();
+                });
             });
         }
     }

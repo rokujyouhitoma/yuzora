@@ -135,6 +135,7 @@
 | **123** | Feature | Medium | Closed | オフライン自律稼働とPWA（Progressive Web App）化の導入 | AI Agent | [123-pwa-offline-support.md](closed/123-pwa-offline-support.md) |
 | **124** | Enhancement | High | Closed | 大規模コンテンツロード時のUIメインスレッド無停止・タイムスライス最適化 | AI Agent | [124-large-content-non-blocking-performance.md](closed/124-large-content-non-blocking-performance.md) |
 | **125** | Enhancement | High | Closed | Parserモジュールにおけるコンテンツのストリーミング・分割パースによるノンブロッキング設計の導入 | AI Agent | [125-parser-chunked-stream-parsing-non-blocking.md](closed/125-parser-chunked-stream-parsing-non-blocking.md) |
+| **126** | Refactor | High | Closed | setTimeout / 非同期タイマー処理の抽象化基盤 (Scheduler / DOMUtils / Timing) への刷新 | AI Agent | [126-refactor-async-timer-infrastructure.md](closed/126-refactor-async-timer-infrastructure.md) |
 
 
 ## 2. 状態（ステータス）定義

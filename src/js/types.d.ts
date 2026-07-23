@@ -21,6 +21,7 @@ interface PublisherInterface {
     subscribe(topic: string, callback: (data: any) => void): void;
     unsubscribe(topic: string, callback: (data: any) => void): void;
     publish(topic: string, data?: any): void;
+    publishAsync(topic: string, data?: any): void;
 }
 
 interface RouterInterface {
@@ -45,6 +46,8 @@ interface SceneDirectorInterface {
 
 interface ViewContextInterface {
     headerTimeout: number | null;
+    inactivityTimer: any;
+    debouncedScrollHandler: any;
     isReflowing: boolean;
     activeHeadingId: string | null;
     tocObserver: any;

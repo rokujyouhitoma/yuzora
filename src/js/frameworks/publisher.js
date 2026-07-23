@@ -85,4 +85,17 @@ class Publisher {
         // AppEvent is loaded globally before Publisher
         this.eventTarget_.dispatchEvent(/** @type {!YuzoraEventInterface} */ (new AppEvent(topic, data)));
     }
+
+    /**
+     * Publish data to all subscribers of a topic asynchronously on the next macro task.
+     * @param {string} topic The topic to publish.
+     * @param {*=} data The data payload.
+     * @override
+     */
+    // @ts-expect-error
+    publishAsync(topic, data) {
+        setTimeout(() => {
+            this.publish(topic, data);
+        }, 0);
+    }
 }

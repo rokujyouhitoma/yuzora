@@ -122,7 +122,7 @@ class UpdateConfigCommand extends Command {
         
         viewContext.isReflowing = true;
         applySettings();
-        setTimeout(() => {
+        DOMUtils.afterReflow(() => {
             const maxScroll = Math.abs(viewContext.readerViewport.scrollWidth - viewContext.readerViewport.clientWidth);
             if (configModel.direction === 'rtl') {
                 viewContext.readerViewport.scrollLeft = -(bookmarkModel.bookmarkProgress * maxScroll);
@@ -130,7 +130,7 @@ class UpdateConfigCommand extends Command {
                 viewContext.readerViewport.scrollLeft = bookmarkModel.bookmarkProgress * maxScroll;
             }
             viewContext.isReflowing = false;
-        }, 150);
+        });
         await saveSettings();
     }
     /** @override */
@@ -716,7 +716,7 @@ class CommandHistory {
         try {
             for (const cmd of commands) {
                 // Delay execution by 300ms to allow rendering / transition cycles
-                await new Promise(resolve => setTimeout(resolve, 300));
+                await TaskScheduler.delay(300);
                 await this.execute(cmd, true);
                 // Re-populate commandHistory during replay for consistent session state afterward
                 this.commandHistory.push(cmd);

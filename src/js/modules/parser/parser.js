@@ -434,11 +434,7 @@ class AozoraParser {
                 onChunkParsed(chunkHtml);
             }
 
-            const now = performance.now();
-            if (now - lastYieldTime >= 10 && index < children.length) {
-                await new Promise(resolve => setTimeout(resolve, 0));
-                lastYieldTime = performance.now();
-            }
+            lastYieldTime = await TaskScheduler.yieldToMainThread(10, lastYieldTime);
         }
 
         if (shouldCancel()) return;

@@ -63,6 +63,20 @@ test.describe('Welcome Loading Placeholders (Skeleton) Unit Tests', () => {
         // Mock welcome bind utility in global scope
         global.bindWelcomeEvent_ = () => {};
 
+        // Load framework modules
+        const domUtilsCode = fs.readFileSync(path.resolve(__dirname, '../../../src/js/frameworks/dom-utils.js'), 'utf8');
+        const animationCode = fs.readFileSync(path.resolve(__dirname, '../../../src/js/frameworks/animation.js'), 'utf8');
+        const timingCode = fs.readFileSync(path.resolve(__dirname, '../../../src/js/frameworks/timing.js'), 'utf8');
+        const schedulerCode = fs.readFileSync(path.resolve(__dirname, '../../../src/js/frameworks/scheduler.js'), 'utf8');
+        eval(domUtilsCode);
+        eval(animationCode);
+        eval(timingCode);
+        eval(schedulerCode);
+        global.DOMUtils = window.DOMUtils;
+        global.AnimationUtils = window.AnimationUtils;
+        global.Timing = window.Timing;
+        global.Scheduler = window.Scheduler;
+
         // Load ui.js to get setupPredefinedBooksGrids
         const uiJsPath = path.resolve(__dirname, '../../../src/js/modules/ui/ui.js');
         const uiJsCode = fs.readFileSync(uiJsPath, 'utf8');

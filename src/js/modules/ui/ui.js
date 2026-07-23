@@ -120,10 +120,8 @@ function setupPredefinedBooksGrids() {
         }
     };
 
-    // Defer grid initialization using requestAnimationFrame + setTimeout (Lazy render)
-    const defer = (typeof window !== 'undefined' && window.requestAnimationFrame) ? window.requestAnimationFrame : (/** @type {function():void} */ cb) => setTimeout(cb, 16);
-    defer(() => {
-        setTimeout(() => {
+    DOMUtils.nextFrame(() => {
+        DOMUtils.afterRender(() => {
             // Safety guard: only render if we are still on the welcome screen
             if (sceneDirector.currentSceneName !== "welcome") return;
 
@@ -132,7 +130,7 @@ function setupPredefinedBooksGrids() {
             createSkeletons(viewContext.readerBooksGrid);
 
             // Asynchronously replace skeletons with actual book cards after 600ms delay
-            setTimeout(() => {
+            AnimationUtils.delay(600).then(() => {
                 // Safety guard: only render if we are still on the welcome screen
                 if (sceneDirector.currentSceneName !== "welcome") return;
 
@@ -221,8 +219,8 @@ function setupPredefinedBooksGrids() {
                 }).catch(e => {
                     console.error("Failed to load and render library books:", e);
                 });
-            }, 600);
-        }, 0);
+            });
+        });
     });
 }
 
@@ -289,7 +287,6 @@ function setupReaderEvents() {
     bindReaderEvent_(viewContext.btnBack, "click", onBackClick);
 
     // Scroll Events on viewport
-    let scrollTimeout;
     const onViewportScroll = () => {
         if (viewContext.isReflowing) return;
 
@@ -302,8 +299,10 @@ function setupReaderEvents() {
         }
 
         handleScroll();
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(handleScrollDebounced, 150);
+        if (!viewContext.debouncedScrollHandler) {
+            viewContext.debouncedScrollHandler = Timing.debounce(handleScrollDebounced, 150);
+        }
+        viewContext.debouncedScrollHandler();
     };
     bindReaderEvent_(viewContext.readerViewport, "scroll", onViewportScroll);
 
@@ -1060,10 +1059,10 @@ function jumpToHeading(headingId) {
     CommandManager.execute(new NavigatePageCommand(pageIndex + 1));
 
     // Focus the target element after smooth scroll completes to prevent layout jump or scroll interruption
-    setTimeout(() => {
+    AnimationUtils.waitForTransition(targetElement, 400).then(() => {
         targetElement.setAttribute("tabindex", "-1");
         targetElement.focus({ preventScroll: true });
-    }, 400);
+    });
 }
 
 function hideControls() {
@@ -1083,10 +1082,13 @@ function triggerHeaderShow() {
         viewContext.readerFooter.classList.remove("hidden");
     }
     
-    clearTimeout(viewContext.headerTimeout);
-    viewContext.headerTimeout = setTimeout(() => {
+    if (viewContext.inactivityTimer) {
+        viewContext.inactivityTimer.cancel();
+    }
+    viewContext.inactivityTimer = Timing.createInactivityTimer(() => {
         hideControls();
-    }, 3000); // Hide after 3 seconds of inactivity
+    }, 3000);
+    viewContext.inactivityTimer.trigger();
 }
 
 function toggleControls(e) {

@@ -292,6 +292,10 @@ CommandManagerInterface.prototype.updateDebugMonitor = function() {};
 function ViewContextInterface() {}
 /** @type {?number} */
 ViewContextInterface.prototype.headerTimeout;
+/** @type {?} */
+ViewContextInterface.prototype.inactivityTimer;
+/** @type {?} */
+ViewContextInterface.prototype.debouncedScrollHandler;
 /** @type {boolean} */
 ViewContextInterface.prototype.isReflowing;
 /** @type {?string} */
@@ -758,6 +762,17 @@ PublisherInterface.prototype.unsubscribe = function(topic, callback) {};
  * @param {*=} data
  */
 PublisherInterface.prototype.publish = function(topic, data) {};
+/**
+ * @param {string} topic
+ * @param {*=} data
+ */
+PublisherInterface.prototype.publishAsync = function(topic, data) {};
+/**
+ * @param {string} topic
+ * @param {*=} data
+ */
+/** @type {?} */
+Window.prototype.TaskScheduler;
 
 
 // Scene Interface definition

@@ -192,53 +192,55 @@ async function displayBook() {
         currentViewContext.isReflowing = true;
         window['__isReflowing__'] = true;
         
-        setTimeout(async () => {
-            if (currentLoadId !== loadId) {
-                return;
-            }
-
-            try {
-                const currentRenderer = /** @type {?} */ (Yuzora.locator.resolve(VerticalRenderer));
-                if (!currentRenderer) return;
-
-                // Run final page adjustments
-                await currentRenderer.adjustPageBreaksForOverrun();
-
+        Timing.createSettlementBuffer(() => {
+            (async () => {
                 if (currentLoadId !== loadId) {
                     return;
                 }
 
                 try {
-                    restoreScrollPosition();
-                    updateProgress();
-                    yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
-                    setTimeout(() => {
-                        if (currentLoadId !== loadId) {
-                            return;
-                        }
+                    const currentRenderer = /** @type {?} */ (Yuzora.locator.resolve(VerticalRenderer));
+                    if (!currentRenderer) return;
+
+                    // Run final page adjustments
+                    await currentRenderer.adjustPageBreaksForOverrun();
+
+                    if (currentLoadId !== loadId) {
+                        return;
+                    }
+
+                    try {
+                        restoreScrollPosition();
+                        updateProgress();
+                        yuzora.publisher.publish(YuzoraEventType.BOOK_RENDERED);
+                        Timing.createSettlementBuffer(() => {
+                            if (currentLoadId !== loadId) {
+                                return;
+                            }
+                            const finalViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
+                            if (finalViewContext) {
+                                finalViewContext.isReflowing = false;
+                            }
+                            window['__isReflowing__'] = false;
+                        }, 50);
+                    } catch (err) {
+                        document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
+                        console.error("FATAL_ERROR: ", err);
                         const finalViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
                         if (finalViewContext) {
                             finalViewContext.isReflowing = false;
                         }
                         window['__isReflowing__'] = false;
-                    }, 50);
-                } catch (err) {
-                    document.title = "FATAL_ERROR: " + (err instanceof Error ? err.message : String(err));
-                    console.error("FATAL_ERROR: ", err);
+                    }
+                } catch (e) {
+                    console.error("Self repair on complete failed:", e);
                     const finalViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
                     if (finalViewContext) {
                         finalViewContext.isReflowing = false;
                     }
                     window['__isReflowing__'] = false;
                 }
-            } catch (e) {
-                console.error("Self repair on complete failed:", e);
-                const finalViewContext = /** @type {?} */ (Yuzora.locator.resolve(ViewContext));
-                if (finalViewContext) {
-                    finalViewContext.isReflowing = false;
-                }
-                window['__isReflowing__'] = false;
-            }
+            })();
         }, 50);
     };
 
@@ -440,7 +442,7 @@ function handleResize() {
         yuzora.publisher.unsubscribe(YuzoraEventType.LAYOUT_REPAIRED, handler);
         bookmarkModel.bookmarkProgress = oldProgress;
         updateProgress();
-        setTimeout(() => {
+        Timing.createSettlementBuffer(() => {
             viewContext.isReflowing = false;
             window['__isReflowing__'] = false;
         }, 50);

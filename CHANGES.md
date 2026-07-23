@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Refactor: Audited all 22 raw `setTimeout` callsites across `src/js/` and encapsulated them into 5 core framework abstractions (`TaskScheduler`, `DOMUtils`, `AnimationUtils`, `Timing`, and `Publisher.prototype.publishAsync`) (ID: 126).
+- Documentation: Closed backlog 104 and issue 126 (ID: 126).
 - Added PWA Web App Manifest (`manifest.json`), icons (`icons/`), and Service Worker (`sw.js`) for full offline self-sovereign operation and updated DSN-01 and DSN-02 (ID: 123).
 - Added PWA E2E tests (`tests/e2e/pwa.spec.js`) and updated build automation (`Makefile`) for Service Worker cache management (ID: 123).
 - Documentation: Closed backlog 040 and issue 123 (ID: 123).

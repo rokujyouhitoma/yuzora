@@ -195,9 +195,7 @@ class Yuzora {
         this.publisher.subscribe(YuzoraEventType.PAGE_CHANGED, () => {
             const renderer = /** @type {!VerticalRenderer} */ (this.locator.resolve(VerticalRenderer));
             if (renderer.isRepairing) return;
-            setTimeout(() => {
-                this.publisher.publish(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'current' });
-            }, 0);
+            this.publisher.publishAsync(YuzoraEventType.LAYOUT_CHECK_REQUESTED, { scope: 'current' });
         });
 
         // Listen to layout check requests
@@ -207,15 +205,11 @@ class Yuzora {
             if (checkDetail && checkDetail.scope === 'current') {
                 // Lightweight read-only check flanking current page
                 if (renderer.hasOverrunNearCurrentPage()) {
-                    setTimeout(() => {
-                        this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
-                    }, 0);
+                    this.publisher.publishAsync(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
                 }
             } else {
                 // "all" scope (e.g. load book, resize) - trigger repair unconditionally
-                setTimeout(() => {
-                    this.publisher.publish(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
-                }, 0);
+                this.publisher.publishAsync(YuzoraEventType.LAYOUT_REPAIR_REQUESTED);
             }
         });
     }

@@ -133,15 +133,7 @@ async function timeSliceEach(array, batchSize, onProgress, callback) {
         const progress = Math.round(((i + chunk.length) / array.length) * 100);
         onProgress(progress);
         
-        await new Promise(resolve => {
-            if (typeof requestAnimationFrame === 'function') {
-                requestAnimationFrame(() => {
-                    setTimeout(resolve, 0);
-                });
-            } else {
-                setTimeout(resolve, 0);
-            }
-        });
+        await TaskScheduler.yieldToMainThread(0);
     }
 }
 

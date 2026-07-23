@@ -4,6 +4,10 @@ JS_SRCS = src/js/frameworks/locator.js \
           src/js/frameworks/publisher.js \
           src/js/frameworks/scene.js \
           src/js/frameworks/router.js \
+          src/js/frameworks/scheduler.js \
+          src/js/frameworks/dom-utils.js \
+          src/js/frameworks/animation.js \
+          src/js/frameworks/timing.js \
           src/js/modules/core/locator.js \
           src/js/modules/ui/scene.js \
           src/js/modules/storage/repository.js \

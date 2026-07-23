@@ -140,9 +140,7 @@ class VerticalRenderer {
             behavior: 'smooth'
         });
 
-        return new Promise((resolve) => {
-            setTimeout(resolve, 400); // Wait for transition animation to complete
-        });
+        return AnimationUtils.waitForTransition(this.viewContext.readerViewport, 400);
     }
 
     /**
@@ -161,7 +159,7 @@ class VerticalRenderer {
         this.viewContext.readerContent.style.width = 'auto';
         
         return new Promise((resolve) => {
-            setTimeout(() => {
+            DOMUtils.afterReflow(() => {
                 // Enforce column content size width constraints
                 this.viewContext.readerContent.style.width = 'max-content';
                 
@@ -179,7 +177,7 @@ class VerticalRenderer {
                     this.viewContext.readerViewport.scrollLeft = progress * maxScroll;
                 }
                 resolve();
-            }, 100);
+            });
         });
     }
 
@@ -227,18 +225,9 @@ class VerticalRenderer {
                 i++;
 
                 // メインスレッドを解放してブロッキングを回避（10ms フレーム予算型タイムスライス & ユーザー入力優先判定）
-                const now = performance.now();
-                const nav = navigator;
-                const isInputPending = (nav && nav['scheduling'] && typeof nav['scheduling']['isInputPending'] === 'function')
-                    ? nav['scheduling']['isInputPending']()
-                    : false;
-
-                if (now - lastYieldTime >= 10 || isInputPending) {
-                    await new Promise(resolve => setTimeout(resolve, 0));
-                    if (this.currentRepairId !== repairId) {
-                        return;
-                    }
-                    lastYieldTime = performance.now();
+                lastYieldTime = await TaskScheduler.yieldToMainThread(10, lastYieldTime);
+                if (this.currentRepairId !== repairId) {
+                    return;
                 }
             }
 
