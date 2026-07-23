@@ -133,6 +133,7 @@
 | **121** | Refactor | Medium | Closed | 体系的アーキテクチャ意思決定記録 (ADR-04) の策定 | AI Agent | [121-adr-04-storage-and-checksum-verification.md](closed/121-adr-04-storage-and-checksum-verification.md) |
 | **122** | Refactor | High | Closed | 包括的脅威モデリング監査と緩和策ステータスの全件整合性同期 | AI Agent | [122-threat-modeling-audit-alignment.md](closed/122-threat-modeling-audit-alignment.md) |
 | **123** | Feature | Medium | Closed | オフライン自律稼働とPWA（Progressive Web App）化の導入 | AI Agent | [123-pwa-offline-support.md](closed/123-pwa-offline-support.md) |
+| **124** | Enhancement | High | Open | 大規模コンテンツロード時のUIメインスレッド無停止・タイムスライス最適化 | AI Agent | [124-large-content-non-blocking-performance.md](124-large-content-non-blocking-performance.md) |
 
 
 ## 2. 状態（ステータス）定義

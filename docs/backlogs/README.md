@@ -109,6 +109,7 @@
 | **099** | Enhancement | Low | Closed | レンダラーパフォーマンステスト・ベンチマークスイートの統合 | [099-performance-benchmark-test-suite.md](closed/099-performance-benchmark-test-suite.md) |
 | **100** | Refactor | Medium | Closed | 体系的アーキテクチャ意思決定記録 (ADR-04) の策定 | [100-adr-04-storage-and-checksum-verification.md](closed/100-adr-04-storage-and-checksum-verification.md) |
 | **101** | Refactor | High | Closed | 包括的脅威モデリング監査と緩和策ステータスの全件整合性同期 | [101-threat-modeling-audit-alignment.md](closed/101-threat-modeling-audit-alignment.md) |
+| **102** | Enhancement | High | Approved | 大規模コンテンツロード時のUIメインスレッド無停止・タイムスライス最適化 | [102-large-content-non-blocking-performance.md](102-large-content-non-blocking-performance.md) |
 
 ---
 
