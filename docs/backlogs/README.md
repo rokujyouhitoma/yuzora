@@ -47,7 +47,7 @@
 | **037** | Refactor | Medium | Closed | 永続化層（Repository）の完全非同期対応と抽象化 | [037-async-repository-abstraction.md](closed/037-async-repository-abstraction.md) |
 | **038** | Refactor | Medium | Closed | イベント駆動（EDA）の名前空間化とスコープ分離 | [038-scoped-event-namespaces.md](closed/038-scoped-event-namespaces.md) |
 | **039** | Feature | Medium | Closed | セキュリティ・バイ・デザインに基づくセキュアレンダラーパターンの強制 | [039-secure-dom-renderer.md](closed/039-secure-dom-renderer.md) |
-| **040** | Feature | Medium | Draft | オフライン自律稼働とPWA（Progressive Web App）化の導入 | [040-pwa-offline-support.md](040-pwa-offline-support.md) |
+| **040** | Feature | Medium | Approved | オフライン自律稼働とPWA（Progressive Web App）化の導入 | [040-pwa-offline-support.md](040-pwa-offline-support.md) |
 | **041** | Refactor | Medium | Closed | CSS変数の完全活用による「CSSテーマエンジン」の導入 | [041-css-theme-engine.md](closed/041-css-theme-engine.md) |
 | **042** | Refactor | Medium | Closed | JSDocとtsc（TypeScript Compiler）による静的型チェックの導入 | [042-jsdoc-tsc-type-check.md](closed/042-jsdoc-tsc-type-check.md) |
 | **043** | Feature | High | Closed | コマンド履歴入力検証とCSPの導入 | [043-command-history-validation-and-csp.md](closed/043-command-history-validation-and-csp.md) |

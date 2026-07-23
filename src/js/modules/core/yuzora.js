@@ -163,6 +163,10 @@ class Yuzora {
         // Start routing
         router.listen();
 
+        // Register Service Worker and network status observers for offline support
+        this.registerServiceWorker_();
+        this.setupNetworkStatusListeners_();
+
         // Listen to book rendered event to update UI controls and TOC observers
         this.publisher.subscribe(YuzoraEventType.BOOK_RENDERED, () => {
             triggerHeaderShow();
@@ -402,6 +406,40 @@ class Yuzora {
     // @ts-expect-error
     get ASTNode() {
         return ASTNode;
+    }
+
+    /**
+     * Registers Service Worker for PWA & offline support.
+     * @private
+     */
+    registerServiceWorker_() {
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registered with scope:', registration.scope);
+                    })
+                    .catch(err => {
+                        console.warn('ServiceWorker registration failed:', err);
+                    });
+            });
+        }
+    }
+
+    /**
+     * Sets up online / offline network status listeners.
+     * @private
+     */
+    setupNetworkStatusListeners_() {
+        const handleStatus = () => {
+            if (!navigator.onLine) {
+                console.log('Network status: Offline mode active');
+            } else {
+                console.log('Network status: Online');
+            }
+        };
+        window.addEventListener('online', handleStatus);
+        window.addEventListener('offline', handleStatus);
     }
 }
 

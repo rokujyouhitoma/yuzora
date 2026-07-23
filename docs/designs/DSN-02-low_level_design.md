@@ -1059,5 +1059,37 @@ $$D_{diff} = \left| L_{actual} - L_{ideal} \right|$$
 | 　├ レポートコピーボタン| `#btn-copy-debug-report` | `.debug-buttons` | 生成したMarkdownレポートをクリップボードにコピー。 |
 | 　└ 診断レポート表示エリア| `#diagnose-report-output` | `.debug-monitor-container` | 生成されたMarkdown診断レポートのテキストプレビューエリア。 |
 
+---
+
+## 10. オフライン自律稼働および PWA (Progressive Web App) 詳細設計
+
+### 10.1 Web App Manifest (`manifest.json`) 仕様
+ブラウザおよびモバイルOSがスタンドアロンアプリとしてインストールするためのメタデータ仕様です。
+- **`name`**: `"ゆうぞら - 青空文庫縦書きビューアー"`
+- **`short_name`**: `"ゆうぞら"`
+- **`start_url`**: `"./index.html"`
+- **`display`**: `"standalone"`
+- **`background_color`**: `"#f4ecd8"` (セピアテーマ標準背景色)
+- **`theme_color`**: `"#2c2416"`
+- **`icons`**:
+  - `192x192`: `icons/icon-192.png`
+  - `512x512`: `icons/icon-512.png`
+  - `maskable`: `icons/maskable-icon.png`
+
+### 10.2 Service Worker (`sw.js`) キャッシュモデルとライフサイクル
+- **`CACHE_NAME`**: `yuzora-cache-v{BUILD_ID}` (`Makefile` のビルド時置換により埋め込み)
+- **プレキャッシュアセット (Install Phase)**:
+  - コアUIおよびアセット: `index.html`, `compiled.html`, `manifest.json`, `main-min.js`, `src/css/style.css`, 各CSSモジュール, アイコン群
+  - 内蔵推奨書籍テキストデータ: `src/books/*.txt` (42939_yoko.txt 〜 773_yoko.txt)
+- **キャッシュパージ (Activate Phase)**:
+  - 古い `yuzora-cache-v*` の CacheStorage キーを抽出し自動パージ。
+- **Fetch 解決戦略 (Fetch Phase)**:
+  - **Cache First with Network Fallback**: 同一オリジン (`'self'`) の GET リクエストに対して CacheStorage から即時レスポンスを返却し、オフライン環境下での高速アプリ起動および完全なスタンドアロン読書環境を保証。
+
+### 10.3 アプリケーション層 (`yuzora.js`) 連携仕様
+- `Yuzora.prototype.boot()` 内で `if ('serviceWorker' in navigator)` を安全に評価し `./sw.js` を非同期登録。
+- `window.addEventListener('online')` および `window.addEventListener('offline')` によるオンライン/オフライン状態監視。
+
+
 
 

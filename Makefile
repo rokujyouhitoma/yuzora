@@ -66,14 +66,16 @@ $(JS_OUT): $(JS_SRCS)
 $(CSS_OUT): $(CSS_SRCS)
 	cat $(CSS_SRCS) > $(CSS_OUT)
 
-# Embed build information into index.html:
+# Embed build information into index.html and sw.js:
 #   1. Replace <meta> placeholder values with actual BUILD_ID / BUILD_DATE
 #   2. Append ?v=BUILD_ID cache-buster to all <script src="src/js/..."> tags
+#   3. Replace CACHE_NAME version in sw.js
 embed-build-info:
 	sed -i "s|content=\"BUILD_ID_PLACEHOLDER\"|content=\"$(BUILD_ID)\"|" index.html
 	sed -i "s|content=\"BUILD_DATE_PLACEHOLDER\"|content=\"$(BUILD_DATE)\"|" index.html
 	sed -i 's|src/js/\([^"]*\)\.js"|src/js/\1.js?v=$(BUILD_ID)"|g' index.html
 	sed -i 's|src/css/\([^"]*\)\.css"|src/css/\1.css?v=$(BUILD_ID)"|g' index.html
+	sed -i "s|yuzora-cache-vBUILD_ID_PLACEHOLDER|yuzora-cache-v$(BUILD_ID)|" sw.js
 
 clean:
 	rm -f $(JS_OUT) $(CSS_OUT)
