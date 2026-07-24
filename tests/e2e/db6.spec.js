@@ -1,8 +1,9 @@
 const { test, expect } = require('@playwright/test');
 test('db click', async ({ page }) => {
     page.on('console', msg => console.log('BROWSER CONSOLE:', msg.text()));
-    await page.route('**/*.{ttf,woff,woff2,otf}', r => r.abort());
+    await page.route('**/*.{ttf,woff,woff2,otf}', r => r.fulfill({ status: 200, body: '' }));
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
+    await page.waitForSelector('#developer-books-grid .book-card');
     await page.locator('#developer-books-grid .book-card').first().click();
     await page.waitForSelector('#reader-content p');
     await page.waitForTimeout(500);

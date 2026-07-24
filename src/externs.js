@@ -643,6 +643,20 @@ Object.prototype.params;
 Object.prototype.drawerId;
 /** @type {?} */
 Object.prototype.clearType;
+/** @type {?} */
+Object.prototype.category;
+/** @type {?} */
+Object.prototype.shortTitle;
+/** @type {?} */
+Object.prototype.cardId;
+/** @type {?} */
+Object.prototype.id;
+/** @type {?} */
+Object.prototype.path;
+/** @type {?} */
+Object.prototype.meta;
+
+
 
 
 // Command subclasses parameter property protection

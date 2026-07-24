@@ -92,8 +92,8 @@ class SceneDirector {
                 currentScene.exit();
             }
 
-            nextScene.enter(data);
             this.currentSceneName = sceneName;
+            nextScene.enter(data);
         } finally {
             this.isTransitioning = false;
         }

@@ -135,5 +135,6 @@ class Router {
     // @ts-expect-error
     navigate(hash) {
         window.location.hash = hash;
+        this.resolve(hash);
     }
 }

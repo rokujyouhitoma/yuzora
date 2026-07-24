@@ -140,7 +140,8 @@
 | **128** | Bug | High | Closed | 大容量書籍ロード直後の入力不能・UIフリーズ不具合の修正とレンダリング最適化 | AI Agent | [128-large-content-rendering-freeze-fix.md](closed/128-large-content-rendering-freeze-fix.md) |
 | **129** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等におけるページ左右端の文字切れ（半分切断）の根本修正と精密レイアウト計測 | AI Agent | [129-fix-page-edge-text-truncation.md](closed/129-fix-page-edge-text-truncation.md) |
 | **130** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等における CSS Multi-column アーキテクチャ再設計によるページ左右端文字切れの根本解決 | AI Agent | [130-architectural-fix-page-edge-text-truncation.md](closed/130-architectural-fix-page-edge-text-truncation.md) |
-| **131** | Enhancement | High | In Progress | 長大段落（Long Paragraphs）における超え発生時の段落動的分割と完全ページブレイク制御 | AI Agent | [131-split-long-paragraphs-non-blocking-page-breaks.md](131-split-long-paragraphs-non-blocking-page-breaks.md) |
+| **131** | Enhancement | High | Closed | 長大段落（Long Paragraphs）における超え発生時の段落動的分割と完全ページブレイク制御 | AI Agent | [131-split-long-paragraphs-non-blocking-page-breaks.md](closed/131-split-long-paragraphs-non-blocking-page-breaks.md) |
+| **132** | Bug | High | Closed | CI/CD E2Eテストにおける book-card 検出タイムアウトの解消 | AI Agent | [132-fix-ci-e2e-book-card-wait-timeout.md](closed/132-fix-ci-e2e-book-card-wait-timeout.md) |
 
 
 ## 2. 状態（ステータス）定義

@@ -120,19 +120,17 @@ function setupPredefinedBooksGrids() {
         }
     };
 
-    DOMUtils.nextFrame(() => {
-        DOMUtils.afterRender(() => {
-            // Safety guard: only render if we are still on the welcome screen
-            if (sceneDirector.currentSceneName !== "welcome") return;
+    // Safety guard: only render if we are still on the welcome screen
+    if (sceneDirector.currentSceneName !== "welcome") return;
 
-            // Render skeleton loaders initially
-            createSkeletons(viewContext.developerBooksGrid);
-            createSkeletons(viewContext.readerBooksGrid);
+    // Render skeleton loaders initially
+    createSkeletons(viewContext.developerBooksGrid);
+    createSkeletons(viewContext.readerBooksGrid);
 
-            // Asynchronously replace skeletons with actual book cards after 600ms delay
-            AnimationUtils.delay(600).then(() => {
-                // Safety guard: only render if we are still on the welcome screen
-                if (sceneDirector.currentSceneName !== "welcome") return;
+    // Asynchronously replace skeletons with actual book cards after 300ms delay
+    AnimationUtils.delay(300).then(() => {
+        // Safety guard: only render if we are still on the welcome screen
+        if (sceneDirector.currentSceneName !== "welcome") return;
 
                 if (viewContext.developerBooksGrid) {
                     viewContext.developerBooksGrid.innerHTML = "";
@@ -220,8 +218,6 @@ function setupPredefinedBooksGrids() {
                     console.error("Failed to load and render library books:", e);
                 });
             });
-        });
-    });
 }
 
 function setupWelcomeEvents() {

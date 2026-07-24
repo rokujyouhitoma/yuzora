@@ -2,8 +2,8 @@ const { test, expect } = require('@playwright/test');
 
 test.describe('Visual Regression Testing (VRT)', () => {
   test.beforeEach(async ({ page }) => {
-    // Abort external WebFont requests to ensure deterministic local font rendering
-    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
+    // Fulfill external WebFont requests with empty 200 response to prevent document.fonts hanging while ensuring deterministic local font rendering
+    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.fulfill({ status: 200, body: '' }));
   });
 
   test('Welcome screen visual snapshot', async ({ page }) => {

@@ -193,4 +193,22 @@ test.describe('Yuzora Scene Transition Framework Unit Tests', () => {
         assert.strictEqual(nestedCallBypassed, false, "Nested transitionTo should have been prevented");
         assert.strictEqual(director.currentSceneName, "reader", "Should stay in reader scene");
     });
+
+    test('should update currentSceneName before calling enter() lifecycle method', () => {
+        const director = new SceneDirector();
+        let sceneNameDuringEnter = null;
+
+        class TestScene extends Scene {
+            enter(data) {
+                sceneNameDuringEnter = director.currentSceneName;
+            }
+            exit() {}
+        }
+
+        director.register("test-scene", new TestScene());
+        director.transitionTo("test-scene");
+
+        assert.strictEqual(sceneNameDuringEnter, "test-scene", "currentSceneName should be 'test-scene' inside enter()");
+    });
 });
+

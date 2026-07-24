@@ -6,6 +6,7 @@ test.describe('Yuzora Page Break Tests', () => {
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // 2. Load the predefined book "こころ" (which has natural columns and we can insert a manual test element)
+    await page.waitForSelector('.book-card:has-text("こころ")');
     await page.click('.book-card:has-text("こころ")');
     await page.waitForSelector('#reader-viewport');
 
@@ -88,6 +89,7 @@ test.describe('Yuzora Page Break Tests', () => {
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // 2. Load the predefined book
+    await page.waitForSelector('.book-card:has-text("こころ")');
     await page.click('.book-card:has-text("こころ")');
     await page.waitForSelector('#reader-viewport');
 
@@ -131,6 +133,7 @@ test.describe('Yuzora Page Break Tests', () => {
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
     // 2. Load the predefined book "こころ"
+    await page.waitForSelector('.book-card:has-text("こころ")');
     await page.click('.book-card:has-text("こころ")');
     await page.waitForSelector('#reader-viewport');
 

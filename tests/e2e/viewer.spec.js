@@ -4,9 +4,9 @@ test.describe('Yuzora E2E Reader Tests', () => {
     test.beforeEach(async ({ page }) => {
         page.on('console', msg => console.log('BROWSER CONSOLE:', msg.text()));
         // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
-        await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
-        await page.route('https://fonts.googleapis.com/**', route => route.abort());
-        await page.route('https://fonts.gstatic.com/**', route => route.abort());
+        await page.route('**/*.{ttf,woff,woff2,otf}', route => route.fulfill({ status: 200, body: '' }));
+        await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, body: '' }));
+        await page.route('https://fonts.gstatic.com/**', route => route.fulfill({ status: 200, body: '' }));
 
         // Load the page from local server
         await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
@@ -27,6 +27,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
     test('should open reader screen when clicking a recommended book card', async ({ page }) => {
         // Click on the first book card (e.g. Kokoro)
+        await page.waitForSelector('#developer-books-grid .book-card');
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
 
@@ -40,6 +41,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
     test('should open setting drawer and change themes', async ({ page }) => {
         // Open a book first
+        await page.waitForSelector('#developer-books-grid .book-card');
         await page.locator('#developer-books-grid .book-card').first().click();
 
         // Check reader page is open
@@ -70,6 +72,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
     test('should maintain safety margin for the last line of the last page to prevent clipping', async ({ page }) => {
         // Open the first book card
+        await page.waitForSelector('#developer-books-grid .book-card');
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
 
@@ -107,6 +110,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
     test('should control debug modal using keyboard shortcuts', async ({ page }) => {
         // Open a book
+        await page.waitForSelector('#developer-books-grid .book-card');
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
@@ -150,6 +154,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
     test('should toggle reader header/footer visibility using ArrowUp/ArrowDown keys', async ({ page }) => {
         // Open a book
+        await page.waitForSelector('#developer-books-grid .book-card');
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
@@ -184,6 +189,7 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
     test('should toggle reader header/footer visibility by tapping/clicking the viewport', async ({ page }) => {
         // Open a book
+        await page.waitForSelector('#developer-books-grid .book-card');
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
@@ -215,7 +221,8 @@ test.describe('Yuzora E2E Reader Tests', () => {
     });
 
     test('should record and replay UI operation commands', async ({ page }) => {
-        // 1. Open a book
+        // Open a book
+        await page.waitForSelector('#developer-books-grid .book-card');
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
@@ -292,7 +299,8 @@ test.describe('Yuzora E2E Reader Tests', () => {
     });
 
     test('should observe headings and render TOC chunked progressive list', async ({ page }) => {
-        // 1. Open a book
+        // Open a book
+        await page.waitForSelector('#developer-books-grid .book-card');
         const bookCard = page.locator('#developer-books-grid .book-card').first();
         await bookCard.click();
         await page.waitForSelector('#reader-content p');
@@ -340,7 +348,8 @@ test.describe('Yuzora E2E Reader Tests', () => {
     });
 
     test('should navigate backward and forward using left/right overlay clicks in RTL mode', async ({ page }) => {
-        // 1. Open a book (Kokoro by default is RTL)
+        // Open a book
+        await page.waitForSelector('#developer-books-grid .book-card');
         await page.locator('#developer-books-grid .book-card').first().click();
         await page.waitForSelector('#reader-content p');
         await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
@@ -381,13 +390,14 @@ test.describe('Yuzora E2E Reader Tests', () => {
         const page = await context.newPage();
 
         // Block web fonts to prevent network delays
-        await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
-        await page.route('https://fonts.googleapis.com/**', route => route.abort());
-        await page.route('https://fonts.gstatic.com/**', route => route.abort());
+        await page.route('**/*.{ttf,woff,woff2,otf}', route => route.fulfill({ status: 200, body: '' }));
+        await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, body: '' }));
+        await page.route('https://fonts.gstatic.com/**', route => route.fulfill({ status: 200, body: '' }));
 
         await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
         // 1. Open a book (Kokoro by default is RTL)
+        await page.waitForSelector('#developer-books-grid .book-card');
         await page.locator('#developer-books-grid .book-card').first().click();
         await page.waitForSelector('#reader-content p');
         await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });

@@ -4,13 +4,13 @@ const fs = require('fs');
 
 test('Capture screenshots of reader pages', async ({ page }) => {
     // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
-    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
-    await page.route('https://fonts.googleapis.com/**', route => route.abort());
-    await page.route('https://fonts.gstatic.com/**', route => route.abort());
+    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.fulfill({ status: 200, body: '' }));
+    await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, body: '' }));
+    await page.route('https://fonts.gstatic.com/**', route => route.fulfill({ status: 200, body: '' }));
 
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
-    // Open first book
+    await page.waitForSelector('#developer-books-grid .book-card');
     const bookCard = page.locator('#developer-books-grid .book-card').first();
     await bookCard.click();
     await page.waitForSelector('#reader-content p');
@@ -42,13 +42,13 @@ test('Capture screenshots of reader pages', async ({ page }) => {
 
 test('Verify layout boundaries have zero overruns', async ({ page }) => {
     // Block web fonts to prevent network delays and timeouts in restricted sandbox environments
-    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.abort());
-    await page.route('https://fonts.googleapis.com/**', route => route.abort());
-    await page.route('https://fonts.gstatic.com/**', route => route.abort());
+    await page.route('**/*.{ttf,woff,woff2,otf}', route => route.fulfill({ status: 200, body: '' }));
+    await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, body: '' }));
+    await page.route('https://fonts.gstatic.com/**', route => route.fulfill({ status: 200, body: '' }));
 
     await page.goto('http://localhost:8080' + (process.env.TEST_PATH || '/'));
 
-    // Open first book
+    await page.waitForSelector('#developer-books-grid .book-card');
     const bookCard = page.locator('#developer-books-grid .book-card').first();
     await bookCard.click();
     await page.waitForSelector('#reader-content p');
