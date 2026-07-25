@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
+- Test: Registered Backlogs 110-114 for QA testing enhancements; polished and implemented Backlogs 110-113 (strict type checking, healthcheck optimization, parallel E2E testing, and E2E performance assertions) (ID: 110, 111, 112, 113, 114).
 - Fix: Resolved CI/CD E2E test timeout on `#developer-books-grid .book-card` by setting `currentSceneName` before `enter()` lifecycle execution in `SceneDirector`, adding missing framework script tags to `index.html`, and registering `PREDEFINED_BOOKS` property externs in `externs.js` (ID: 132).
 - Documentation: Closed issue 132 (ID: 132).
 - Feature: Implemented intra-paragraph DOM text node splitting (`splitParagraphAtChar`) and seamless re-merging (`mergeSplitParagraphs`) for extra-long paragraphs spanning page boundaries, and conducted full empirical statistical percentile analysis across 38,656 paragraphs (ID: 131).

@@ -62,8 +62,16 @@ Target Branch: `fix/132-ci-e2e-book-card-wait-timeout`
 ---
 
 ## 6. 完了条件 / Success Criteria (DoD)
-- [ ] `tests/e2e/viewer.spec.js` および `tests/e2e/vrt.spec.js` がタイムアウトなく成功すること。
-- [ ] `npm run test:vrt` および `npm run test:e2e:compiled` を含むすべての E2E テストが正常にパスすること。
-- [ ] すべてのユニットテスト (`npm run test:unit`) および Closure Compiler ビルド (`make`) がエラーなく成功すること。
-- [ ] 実装内容が [DSN-01](../designs/DSN-01-high_level_design.md) および [DSN-02](../designs/DSN-02-low_level_design.md) と完全な整合性を保持していること。
+- [x] `tests/e2e/viewer.spec.js` および `tests/e2e/vrt.spec.js` がタイムアウトなく成功すること。
+- [x] `npm run test:vrt` および `npm run test:e2e:compiled` を含むすべての E2E テストが正常にパスすること。
+- [x] すべてのユニットテスト (`npm run test:unit`) および Closure Compiler ビルド (`make`) がエラーなく成功すること。
+- [x] 実装内容が [DSN-01](../../designs/DSN-01-high_level_design.md) および [DSN-02](../../designs/DSN-02-low_level_design.md) と完全な整合性を保持していること。
+
+---
+
+## 7. トレーサビリティ / Traceability Matrix
+- **要件**: [REQ-03](../../requirements/REQ-03-software_requirements_specification.md)
+- **設計**: [DSN-01](../../designs/DSN-01-high_level_design.md), [DSN-02](../../designs/DSN-02-low_level_design.md)
+- **テスト**: `tests/e2e/viewer.spec.js`, `tests/e2e/vrt.spec.js`
+
 
