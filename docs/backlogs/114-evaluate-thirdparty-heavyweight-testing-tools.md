@@ -1,11 +1,41 @@
 ---
 ID: 114
-種別: Refactor
-優先度: Low
-ステータス: Draft
+種別: Enhancement
+優先度: Medium
+ステータス: Approved
 ---
 
-# [Refactor] サードパーティ製重量計測ツールの導入検討 (ID: 114)
+# [Enhancement] 高度パフォーマンス・ストレステストツールの評価およびCDPプロファイル計測の導入 (ID: 114)
 
 ## 1. 概要 / Summary
-外部サードパーティ製の重量級パフォーマンス/テスト計測ツールの導入可否を検討した結果、MNG-00（完全クライアントサイド実行および無依存の原則）への抵触およびCI実行コスト増加を回避するため、導入を見送り（Postponed）とします。
+超大容量書籍（50,000行以上の青空文庫テキスト）や連続ページめくり時におけるメモリリーク (`JSHeapUsedSize`)、レイアウトシフト (CLS)、およびフレーム描画時間 (FPS / Frame Budget) をミリ秒・バイト精度で動的プロファイル計測するための高度テスト手法を評価・選定します。[MNG-00](../../MNG-00-development_philosophy.md) の「プロダクションコード無依存・ゼロランタイム追加」原則を厳格遵守し、Playwright の Chrome DevTools Protocol (CDP) プロファイリング機能や Lighthouse CI などの開発専用ツールの適用可能性を検証します。
+
+---
+
+## 2. 影響範囲と関連ファイル / Scope and Affected Files
+- [x] [package.json](../../package.json) — 開発・計測用スクリプト定義
+- [x] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — CDPプロファイルアサーションの試行箇所
+- [x] [README.md](README.md) — バックログ台帳の更新
+
+---
+
+## 3. アプローチと設計方針 / Design Approach
+1. **プロダクション非侵入型の動的計測 (Non-Intrusive Profiling)**:
+   プロダクションの JavaScript コード (`src/js/` および `main-min.js`) に計測用外部ライブラリを一切同梱せず、Playwright が標準提供する Chrome DevTools Protocol (CDP) API (`CDPSession`) を通じてブラウザエンジンの Heap メモリ・レイアウトトレース情報を直接収集します。
+2. **評価対象手法のフィジビリティ比較**:
+   - **候補 A: Playwright CDP Session (`Performance.getMetrics`)**: 追加 npm パッケージゼロ。`JSHeapUsedSize`, `LayoutCount`, `RecalculateStyleCount` を低オーバーヘッドで直接計測。
+   - **候補 B: Lighthouse CI (Lhci)**: 開発用 CLI ツール。PWA性能・アクセシビリティ・Web Vitals の自動スコアリング。
+
+---
+
+## 4. 要件と技術詳細 / Technical Requirements
+- Playwright E2E テスト環境において `const client = await page.context().newCDPSession(page);` を利用し、`Performance.enable` 経由でメモリ領域およびリフロー回数のメトリクスを取得・検証するプロトタイプを作成する。
+- 大容量テキスト読み込み前後での `JSHeapUsedSize` の増分（デルタ）を測定し、メモリリークが発生していないことを評価する指標を確立する。
+- 開発専用（`devDependencies` または CLI `npx` 実行）にとどめ、本番バンドルサイズおよびクライアント動作速度への影響をゼロとすること。
+
+---
+
+## 5. 完了条件 (DoD) / Acceptance Criteria
+- [x] サードパーティ製計測ツールおよび CDP プロファイリング手法の比較評価が完了し、設計方針が確立されていること。
+- [x] 本プロダクトのゼロ依存原則 ([MNG-00](../../MNG-00-development_philosophy.md)) を維持した計測手法が選定され、バックログが `Approved` 状態に更新されていること。
+- [x] ドキュメント内のリンクが相対パスで記述され、[docs/backlogs/README.md](README.md) のステータスが `Approved` に同期していること。

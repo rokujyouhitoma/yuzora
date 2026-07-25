@@ -121,7 +121,7 @@
 | **111** | Enhancement | High | Closed | 全事前検証の統合ヘルスチェックコマンド (healthcheck) の最適化 | [111-integrate-all-verifications-in-healthcheck.md](closed/111-integrate-all-verifications-in-healthcheck.md) |
 | **112** | Enhancement | Medium | Closed | CIにおけるE2Eテストの両系並列実行基盤の拡充 | [112-parallel-e2e-testing-compiled-uncompiled.md](closed/112-parallel-e2e-testing-compiled-uncompiled.md) |
 | **113** | Enhancement | Medium | Closed | Playwright E2Eテストにおけるレイアウト修復時間・アサーションの追加 | [113-e2e-layout-repair-performance-assertions.md](closed/113-e2e-layout-repair-performance-assertions.md) |
-| **114** | Refactor | Low | Postponed | サードパーティ製重量計測ツールの導入検討 | [114-evaluate-thirdparty-heavyweight-testing-tools.md](114-evaluate-thirdparty-heavyweight-testing-tools.md) |
+| **114** | Enhancement | Medium | Approved | 高度パフォーマンス・ストレステストツールの評価およびCDPプロファイル計測の導入 | [114-evaluate-thirdparty-heavyweight-testing-tools.md](114-evaluate-thirdparty-heavyweight-testing-tools.md) |
 
 ---
 
