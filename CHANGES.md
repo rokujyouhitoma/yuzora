@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Fix: Configured 20px side reading margins (`--reader-padding-x: 20px`) across responsive media queries in `reader.css` and `style.css` and added paragraph safety margins (`margin-right: 12px; margin-left: 6px;`), completely eliminating text and ruby overflow clipping on both right and left screen edges (ID: 141).
+- Documentation: Closed issue 141 (ID: 141).
 - Fix: Resolved CI/CD E2E test `cm.recreateCommand is not a function` error under Closure Compiler ADVANCED_OPTIMIZATIONS minified builds by declaring `recreateCommand` in `CommandManagerInterface` within `src/externs.js` and adding JSDoc `@override` annotations in `commands.js` (ID: 140).
 - Documentation: Closed issue 140 (ID: 140).
 - Fix: Resolved CI/CD E2E test failure in `E2E Deterministic Scenario Command Replay Test (Issue 135)` by explicitly attaching `CommandManager` to `window` in `commands.js` and adding a robust fallback chain in `viewer.spec.js` (ID: 139).

@@ -539,6 +539,61 @@ test.describe('Yuzora E2E Reader Tests', () => {
             }
         }
     });
+
+    test('E2E Left & Right Edge Text/Ruby Clipping Prevention Guard (Issue 141)', async ({ page }) => {
+        // Load book with rubies
+        await page.waitForSelector('#developer-books-grid .book-card');
+        await page.click('.book-card:has-text("こころ")');
+        await page.waitForSelector('#reader-viewport');
+        await page.waitForTimeout(300);
+
+        // Verify viewport offset and bounding boxes of paragraphs on current page
+        const edgeCheck = await page.evaluate(() => {
+            const vp = document.getElementById('reader-viewport');
+            const vpRect = vp.getBoundingClientRect();
+            const winWidth = window.innerWidth;
+            
+            // Check viewport side margins
+            const leftMargin = vpRect.left;
+            const rightMargin = winWidth - vpRect.right;
+
+            const paras = Array.from(document.querySelectorAll('#reader-content p, #reader-content ruby'));
+            
+            let isClippedLeft = false;
+            let isClippedRight = false;
+            let maxOverflowRight = 0;
+            let maxOverflowLeft = 0;
+
+            paras.forEach(el => {
+                const r = el.getBoundingClientRect();
+                // Focus ONLY on elements currently visible in the active page viewport window
+                if (r.right > vpRect.left + 5 && r.left < vpRect.right - 5) {
+                    // Check right edge overflow (relative to viewport right edge)
+                    if (r.right > vpRect.right + 1) {
+                        isClippedRight = true;
+                        maxOverflowRight = Math.max(maxOverflowRight, r.right - vpRect.right);
+                    }
+                    // Check left edge overflow (relative to viewport left edge)
+                    if (r.left < vpRect.left - 1) {
+                        isClippedLeft = true;
+                        maxOverflowLeft = Math.max(maxOverflowLeft, vpRect.left - r.left);
+                    }
+                }
+            });
+
+            return { leftMargin, rightMargin, isClippedLeft, isClippedRight, maxOverflowRight, maxOverflowLeft, vpWidth: vpRect.width };
+        });
+
+        console.log('[Edge & Margin Check]', edgeCheck);
+
+        // Assert ~20px side margins from screen edges
+        expect(edgeCheck.leftMargin).toBeGreaterThanOrEqual(18);
+        expect(edgeCheck.rightMargin).toBeGreaterThanOrEqual(18);
+
+        // Assert 0px clipping on both left and right edges for visible elements
+        expect(edgeCheck.maxOverflowRight).toBeLessThan(1.0);
+        expect(edgeCheck.maxOverflowLeft).toBeLessThan(1.0);
+    });
 });
 
 

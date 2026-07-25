@@ -136,8 +136,8 @@
 /* Set page column width to match viewport height-based ratio */
 @media (min-width: 768px) {
     :root {
-        --reader-padding-x: 0px;
-        --reader-viewport-padding-x: 40px;
+        --reader-padding-x: 20px; /* 20px side margin from screen edges */
+        --reader-viewport-padding-x: 24px;
     }
     .reader-content {
         column-width: calc(50% - var(--reader-padding-x) - var(--reader-viewport-padding-x) * 2);
@@ -147,8 +147,8 @@
     :root {
         --reader-padding-top: 76px; /* 64px header + 12px padding */
         --reader-padding-bottom: 52px; /* 40px footer + 12px padding */
-        --reader-padding-x: 0px;
-        --reader-viewport-padding-x: 24px;
+        --reader-padding-x: 20px; /* 20px side margin from screen edges */
+        --reader-viewport-padding-x: 16px;
     }
     .reader-content {
         column-width: calc(100% - var(--reader-padding-x) * 2 - var(--reader-viewport-padding-x) * 2);
@@ -158,8 +158,8 @@
 /* Paragraph styling */
 .reader-content p {
     text-indent: 1em;
-    margin-left: 0;
-    margin-right: 0;
+    margin-left: 6px; /* Safety margin for left edge character clipping prevention */
+    margin-right: 12px; /* Safety margin for right edge ruby (rt) overflow clipping prevention */
     margin-bottom: 0; /* Clear default block margin */
 }
 
