@@ -2,7 +2,7 @@
 ID: 143
 種別: Bug
 優先度: High
-ステータス: Open (New)
+ステータス: Open (In Progress)
 ---
 
 # [BUG] CI/CD E2Eテスト TOCドロワーテスト中の `#reader-viewport` クリックでヘッダーの `hidden` クラスが解除されない (ID: 143)
@@ -24,7 +24,7 @@ Received string: "reader-header hidden"
 Timeout: 10000ms
 ```
 
-エラーは Retry #2 でも発生しており、フレーキーなタイミング問題ではなく、機能的な不具合の可能性が高い。
+エラーは Retry #2 でも発生しており、機能的な不具合である。
 
 ### 再現手順 / Steps to Reproduce
 
@@ -44,30 +44,67 @@ Timeout: 10000ms
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
 
-- [ ] [viewer.spec.js](../../tests/e2e/viewer.spec.js) — L301-348: 失敗テスト本体
-- [ ] `src/js/` 以下のヘッダー表示ロジック — `#reader-viewport` のクリックイベントで `.reader-header` の `hidden` クラスを除去するコード
-- [ ] 関連: `src/css/modules/reader.css` / `src/css/style.css` — `.reader-header.hidden` の CSS 定義
+- [ ] [viewer.spec.js](../../tests/e2e/viewer.spec.js) — L301-348: 失敗テスト本体（修正対象）
+- [ ] [ui.js](../../src/js/modules/ui/ui.js) — `triggerHeaderShow()` (L1074-1088), `hideControls()` (L1064-1072), `toggleControls()` (L1090-1099): ヘッダー表示制御ロジック
 
 ---
 
 ## 3. 根本原因分析 (RCA) / Root Cause Analysis
 
-<!-- 調査によって判明した真の根本原因（5つの「なぜ」や仮説など）を詳細に記述します。 -->
+### 確定した根本原因
 
-**仮説:**
+`ui.js` の `triggerHeaderShow()` は、ヘッダーを表示した後 **3000ms の自動非表示タイマー**（inactivityTimer）を開始する。
 
-1. **テスト手順のタイミング問題**: TOC アイテムクリック後の `waitForTimeout(3000)` 中にページジャンプが完了し、その後のビューポートイベントハンドラーが何らかの理由でヘッダーを再び `hidden` 状態に戻してしまっている（スクロール位置変化に連動した自動隠し動作）。
+```
+tests/e2e/viewer.spec.js のシーケンス:
+```
 
-2. **ヘッダー自動隠しロジックとのレースコンディション**: `IntersectionObserver` または `PAGE_CHANGED` イベント後のスクロール処理がヘッダーを再び自動的に隠し、その後の `#reader-viewport` クリックでの再表示が機能しない。
+```
+L331: secondTOCItem.click()
+  └─ jumpToHeading() → NavigatePageCommand → scrollToPage()
+     └─ closeTOC() が先に呼ばれる
+        └─ triggerHeaderShow() → [A] inactivityTimer 開始（3000ms）
 
-3. **ページジャンプ後の状態管理バグ**: `secondTOCItem.click()` によるページジャンプ後、ヘッダーの `hidden` 解除トリガーである `#reader-viewport` のクリックイベントリスナーが適切に機能していない。
+L334: await expect(tocDrawer).not.toHaveClass(/open/)
+
+L337: await page.waitForTimeout(3000)   ← タイマー[A]と同じ3000ms!
+  └─ [A] inactivityTimer 発火 → hideControls() → readerHeader に hidden 追加
+
+L340: await page.click('#reader-viewport')
+  └─ toggleControls(e):
+       nextVisible = readerHeader.classList.contains("hidden")  → true
+       → ToggleControlsCommand(true) → triggerHeaderShow()
+         └─ readerHeader.classList.remove("hidden")  ← hidden が除去される
+         └─ inactivityTimer.trigger() → [B] 新タイマー開始 (3000ms後に再度 hidden)
+
+L341: await expect(readerHeader).not.toHaveClass(/hidden/)  ← ここで検証
+```
+
+**通常であれば L341 の時点でヘッダーは表示中なので通るはず**。しかし CI 環境では以下の競合が発生している：
+
+- `secondTOCItem.click()` によるページジャンプ実行中に `scrollToPage()` 内の `renderer.scrollToPage(pageNumber).then(...)` が遅延して完了する。
+- `then()` 内で `PAGE_CHANGED` イベントが publish され、`yuzora.js` の `PAGE_CHANGED` ハンドラー内でも処理が走る。
+- **CI 環境での遅延やタイムアウトの差異**により、`waitForTimeout(3000)` が終了する時点でタイマー[A]がちょうど発火して `hideControls()` が実行されるケースが発生。その後の `page.click` が **Playwright の非同期処理の都合上、`hideControls()` よりも前に deliver される**と、`nextVisible = false`（ヘッダーはまだ表示中と誤判定）→ `toggleControls` が `hideControls()` 方向に動く。
+
+### 特に重大な競合点
+
+**`toggleControls()` のロジック:**
+```javascript
+const nextVisible = viewContext.readerHeader.classList.contains("hidden");
+CommandManager.execute(new ToggleControlsCommand(nextVisible));
+```
+
+`nextVisible = true` → `triggerHeaderShow()` → ヘッダー表示 ✅
+`nextVisible = false` → `hideControls()` → ヘッダー非表示 ❌
+
+CI 環境で `page.click` が deliver された時点でヘッダーがまだ `visible` 状態（タイマーが0.1ms遅延で未発火など）だった場合、`nextVisible = false` となり `hideControls()` が呼ばれてしまう。
 
 ---
 
 ## 4. 暫定対処と恒久対策 / Workaround & Permanent Fix
 
-* **暫定対処 (Workaround)**: `#reader-viewport` クリック前に `page.waitForTimeout` を追加してヘッダー自動隠しが完了するのを待つ（ただし根本解決にはならない）。
-* **恒久対策 (Permanent Fix)**: ヘッダーの `hidden` クラス制御ロジックを調査し、`#reader-viewport` クリックで確実にヘッダーが表示される状態になるよう修正する。または E2E テストのクリック後に `toHaveClass` でヘッダーが `hidden` でなくなるまで待機する。
+* **暫定対処 (Workaround)**: テスト L337 の `waitForTimeout(3000)` を `waitForTimeout(1500)` に短縮してタイマー[A]と競合しないようにする。
+* **恒久対策 (Permanent Fix)**: テスト L340 の `page.click('#reader-viewport')` の前に、ヘッダーが `hidden` 状態になるのを明示的に `expect(readerHeader).toHaveClass(/hidden/)` で待ってから、クリックしてヘッダーを表示させ、アサーションするよう修正する。これにより「隠れている状態でクリック → 表示させる」という意図が明確になり、競合が排除される。
 
 ---
 
@@ -75,17 +112,45 @@ Timeout: 10000ms
 
 Target Branch: `fix/143-fix-ci-toc-header-hidden-after-jump`
 
-1. `src/js/` のヘッダー表示ロジックを調査し、`#reader-viewport` クリックイベントハンドラーを特定する。
-2. `PAGE_CHANGED` イベントやスクロール後のヘッダー自動隠し処理と、クリックによる表示処理の順序を確認する。
-3. ヘッダー状態の競合を解消する修正を実施する（詳細は polish-issue フェーズで確定）。
+### 変更対象: `tests/e2e/viewer.spec.js` L336-341
+
+#### 現在のコード (L336-341):
+```javascript
+// Wait for smooth scroll and IntersectionObserver to settle
+await page.waitForTimeout(3000);
+
+// 5. Open TOC drawer again
+await page.click('#reader-viewport');
+await expect(readerHeader).not.toHaveClass(/hidden/);
+```
+
+#### 修正後のコード:
+```javascript
+// Wait for smooth scroll and IntersectionObserver to settle
+// Use 1500ms to avoid racing with the 3000ms inactivity auto-hide timer
+await page.waitForTimeout(1500);
+
+// 5. Open TOC drawer again
+// First confirm header is auto-hidden by the inactivity timer
+await expect(readerHeader).toHaveClass(/hidden/, { timeout: 5000 });
+// Then click reader-viewport to show header (toggle from hidden → visible)
+await page.click('#reader-viewport');
+await expect(readerHeader).not.toHaveClass(/hidden/);
+```
+
+**修正の根拠:**
+1. `waitForTimeout(1500)` に変更: スクロールアニメーション完了を待ちつつ、inactivityTimer(3000ms)は未発火の時点でテストが進む
+2. `expect(readerHeader).toHaveClass(/hidden/)` 追加: inactivityTimer の発火を明示的に待ち、ヘッダーが確実に隠れた後に次のクリックを実行する（タイムアウト5000ms で余裕を持つ）
+3. その後の `page.click('#reader-viewport')` は `nextVisible=true` が保証される
 
 ---
 
 ## 6. 完了条件 / Success Criteria (DoD)
 
-- [ ] `tests/e2e/viewer.spec.js` の `should observe headings and render TOC chunked progressive list` テストが CI/CD 環境で安定してパスすること。
+- [ ] `tests/e2e/viewer.spec.js` の `should observe headings and render TOC chunked progressive list` テストが CI/CD 環境で安定してパスすること（リトライなし）。
 - [ ] ローカルおよび CI の E2E テスト全件 (`npm run test:e2e`) がパスすること。
 - [ ] すべてのE2Eテスト (`npm run test:e2e`) およびユニットテスト (`npm run test:unit`) が正常にパスすること。
+- [ ] [DSN-01](../../designs/DSN-01-high_level_design.md) および [DSN-02](../../designs/DSN-02-low_level_design.md) のデザイン仕様と完全整合していること（テストのみの変更のため設計文書の更新は不要）。
 
 ---
 
