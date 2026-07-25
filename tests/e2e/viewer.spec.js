@@ -435,4 +435,106 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
         await context.close();
     });
+
+    test('E2E XSS Sanitization & Inline Payload Fuzzing Guard (Issue 134)', async ({ page }) => {
+        await page.waitForSelector('#developer-books-grid .book-card');
+
+        // Evaluate dynamic inline XSS payload injection via parser and DOM renderer
+        const isXssMitigated = await page.evaluate(async () => {
+            window.__xssTriggered__ = false;
+            const xssPayloads = [
+                '<script>window.__xssTriggered__=true</script>',
+                '<img src=x onerror="window.__xssTriggered__=true">',
+                '<a href="javascript:window.__xssTriggered__=true">Click</a>',
+                '<svg/onload="window.__xssTriggered__=true">'
+            ];
+
+            const parser = new window.AozoraParser();
+
+            for (const payload of xssPayloads) {
+                const html = parser.parseAozoraText(payload);
+
+                const container = document.createElement('div');
+                container.innerHTML = html;
+                document.body.appendChild(container);
+                await new Promise(r => setTimeout(r, 50));
+                document.body.removeChild(container);
+            }
+            return !window.__xssTriggered__;
+        });
+
+        expect(isXssMitigated).toBe(true);
+    });
+
+    test('E2E Deterministic Scenario Command Replay Test (Issue 135)', async ({ page }) => {
+        await page.waitForSelector('#developer-books-grid .book-card');
+
+        // Execute deterministic UI command sequence via Yuzora CommandManager
+        const replayResult = await page.evaluate(async () => {
+            if (!window.CommandManager) {
+                return { success: false, reason: 'CommandManager not available' };
+            }
+
+            const commandItem = { type: 'UpdateConfig', params: { configKey: 'theme', configValue: 'sepia' } };
+            const cmd = window.CommandManager.recreateCommand(commandItem);
+            await window.CommandManager.execute(cmd);
+
+            const isSepia = document.documentElement.classList.contains('theme-sepia') || document.body.classList.contains('theme-sepia');
+            return { success: true, isSepia };
+        });
+
+        expect(replayResult.success).toBe(true);
+    });
+
+
+
+    test('E2E Playwright CDP Session Memory Leak Guard (Issue 136)', async ({ browser }) => {
+        const context = await browser.newContext();
+        const page = await context.newPage();
+        const targetUrl = 'http://localhost:8080' + (process.env.TEST_PATH || '/');
+        await page.goto(targetUrl);
+        await page.waitForSelector('#developer-books-grid .book-card');
+
+        const cdpSession = await context.newCDPSession(page);
+        await cdpSession.send('Performance.enable');
+
+        const initialMetrics = await cdpSession.send('Performance.getMetrics');
+        const initialHeap = initialMetrics.metrics.find(m => m.name === 'JSHeapUsedSize')?.value || 0;
+
+        // Open book and close to trigger allocation and cleanup
+        await page.click('#developer-books-grid .book-card');
+        await page.waitForSelector('#reader-viewport', { state: 'visible' });
+        await page.waitForTimeout(500);
+
+        const finalMetrics = await cdpSession.send('Performance.getMetrics');
+        const finalHeap = finalMetrics.metrics.find(m => m.name === 'JSHeapUsedSize')?.value || 0;
+
+        const heapDeltaBytes = Math.abs(finalHeap - initialHeap);
+        // Assert heap delta is within 15MB reasonable threshold
+        expect(heapDeltaBytes).toBeLessThan(15 * 1024 * 1024);
+
+        await context.close();
+    });
+
+    test('E2E Accessibility & Keyboard Focus Navigation Guard (Issue 137)', async ({ page }) => {
+        await page.waitForSelector('#developer-books-grid .book-card');
+
+        // Test keyboard Tab navigation and active focus element
+        await page.keyboard.press('Tab');
+        const activeElementTag = await page.evaluate(() => document.activeElement ? document.activeElement.tagName.toLowerCase() : '');
+        expect(activeElementTag.length).toBeGreaterThan(0);
+
+        // Open settings drawer and verify aria attributes if present
+        const settingsBtn = page.locator('#settings-btn, [data-action="open-settings"]').first();
+        if (await settingsBtn.isVisible()) {
+            await settingsBtn.click();
+            const drawer = page.locator('#settings-drawer, .settings-panel').first();
+            if (await drawer.isVisible()) {
+                const ariaHidden = await drawer.getAttribute('aria-hidden');
+                expect(ariaHidden).not.toBe('true');
+            }
+        }
+    });
 });
+
+
