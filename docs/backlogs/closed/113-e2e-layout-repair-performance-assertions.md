@@ -2,7 +2,7 @@
 ID: 113
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] Playwright E2Eテストにおけるレイアウト修復時間・アサーションの追加 (ID: 113)
