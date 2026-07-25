@@ -126,7 +126,7 @@
 | **116** | Enhancement | High | Closed | 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテスト | [116-e2e-command-recorder-replay-tests.md](closed/116-e2e-command-recorder-replay-tests.md) |
 | **117** | Enhancement | Medium | Closed | Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 | [117-e2e-cdp-memory-leak-assertions.md](closed/117-e2e-cdp-memory-leak-assertions.md) |
 | **118** | Enhancement | Medium | Closed | WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 | [118-e2e-keyboard-accessibility-assertions.md](closed/118-e2e-keyboard-accessibility-assertions.md) |
-| **119** | Refactor | High | Approved | 決定論的自動改ページ（.page-break）挿入エンジンのアーキテクチャ整理と高度発展 | [119-architectural-deterministic-pagebreak-insertion-engine.md](119-architectural-deterministic-pagebreak-insertion-engine.md) |
+| **119** | Refactor | High | Closed | 決定論的自動改ページ（.page-break）挿入エンジンのアーキテクチャ整理と高度発展 | [119-architectural-deterministic-pagebreak-insertion-engine.md](closed/119-architectural-deterministic-pagebreak-insertion-engine.md) |
 
 ---
 

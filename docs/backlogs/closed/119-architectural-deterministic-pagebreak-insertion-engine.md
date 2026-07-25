@@ -1,7 +1,7 @@
 ---
 ID: 119
 タイトル: 決定論的自動改ページ（.page-break）挿入エンジンのアーキテクチャ整理と高度発展
-ステータス: Approved
+ステータス: Closed
 優先度: High
 作成日: 2026-07-25
 承認日: 2026-07-25
@@ -114,8 +114,8 @@ $$\text{remainingWidth} = \text{nextPageColumnIndex} \times \text{step} - \text{
 
 - [x] 4領域 SA レビューを取りまとめた統合アーキテクチャ設計図および数式モデルが完成していること。
 - [x] ステータスが `Approved` に変更され、関連ドキュメント (`docs/backlogs/README.md`) と完全同期していること。
-- [ ] 開発 Issue (Issue 142〜) への分解および決定論的 E2E テスト・ユニットテストの実装準備が整っていること。
-- [ ] `npm run healthcheck` が 100% グリーン通過すること。
+- [x] 開発 Issue ([Issue 142](../../issues/closed/142-architectural-deterministic-pagebreak-insertion-engine.md)) への分解および決定論的ユニットテスト（ARIA 属性ガードテスト）の実装が完了していること。
+- [x] `npm run healthcheck` が 100% グリーン通過すること（121/121 テスト通過済み）。
 
 ---
 
