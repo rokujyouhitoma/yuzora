@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Fix: Resolved CI/CD E2E test `cm.recreateCommand is not a function` error under Closure Compiler ADVANCED_OPTIMIZATIONS minified builds by declaring `recreateCommand` in `CommandManagerInterface` within `src/externs.js` and adding JSDoc `@override` annotations in `commands.js` (ID: 140).
+- Documentation: Closed issue 140 (ID: 140).
 - Fix: Resolved CI/CD E2E test failure in `E2E Deterministic Scenario Command Replay Test (Issue 135)` by explicitly attaching `CommandManager` to `window` in `commands.js` and adding a robust fallback chain in `viewer.spec.js` (ID: 139).
 - Documentation: Closed issue 139 (ID: 139).
 - Fix: Resolved CI/CD E2E test failures in `pagebreak.spec.js` by adding a robust fallback calculation for `columnWidth` in `resolveLayoutParameters` when `getComputedStyle` returns `'auto'`, setting explicit viewport in `playwright.config.js`, and enforcing deterministic `LAYOUT_REPAIRED` event waiting (ID: 138).

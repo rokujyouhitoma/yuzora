@@ -276,6 +276,8 @@ CommandManagerInterface.prototype.exportJSON = function() {};
 /** @type {Function} */
 CommandManagerInterface.prototype.importJSON = function(jsonString) {};
 /** @type {Function} */
+CommandManagerInterface.prototype.recreateCommand = function(serializedCmd) {};
+/** @type {Function} */
 CommandManagerInterface.prototype.undo = function() {};
 /** @type {Function} */
 CommandManagerInterface.prototype.redo = function() {};
@@ -1041,3 +1043,8 @@ AozoraEvaluatorInterface.prototype.sanitizeDOM = function(rootElement) {};
 var docLeft;
 /** @type {number} */
 var docRight;
+
+/** @type {?} */
+Window.prototype.CommandManager;
+
+

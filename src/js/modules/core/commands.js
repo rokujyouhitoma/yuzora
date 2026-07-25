@@ -440,6 +440,13 @@ class CommandHistory {
         }, null, 2);
     }
 
+    /**
+     * Recreates a command instance from serialized JSON item representation.
+     * @override
+     * @param {!{type: string, params: ?}} item
+     * @return {?}
+     */
+    // @ts-expect-error
     recreateCommand(item) {
         switch (item.type) {
             case "LoadBook":

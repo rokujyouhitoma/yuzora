@@ -149,6 +149,7 @@
 | **137** | Enhancement | Medium | Closed | WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 | AI Agent | [137-e2e-keyboard-accessibility-assertions.md](closed/137-e2e-keyboard-accessibility-assertions.md) |
 | **138** | Bug | High | Closed | CI/CD E2Eテスト pagebreak.spec.js のレイアウト境界アサーション失敗 | AI Agent | [138-fix-ci-pagebreak-e2e-layout-assertion-failure.md](closed/138-fix-ci-pagebreak-e2e-layout-assertion-failure.md) |
 | **139** | Bug | High | Closed | CI/CD E2Eテスト E2E Deterministic Scenario Command Replay Test の失敗 | AI Agent | [139-fix-ci-e2e-command-replay-test-failure.md](closed/139-fix-ci-e2e-command-replay-test-failure.md) |
+| **140** | Bug | High | Closed | CI/CD E2Eテスト `cm.recreateCommand is not a function` エラーの解消 | AI Agent | [140-fix-ci-recreate-command-not-a-function.md](closed/140-fix-ci-recreate-command-not-a-function.md) |
 
 
 ## 2. 状態（ステータス）定義
