@@ -142,7 +142,7 @@
 | **130** | Bug | High | Closed | `宮本武蔵 02 地の巻` 等における CSS Multi-column アーキテクチャ再設計によるページ左右端文字切れの根本解決 | AI Agent | [130-architectural-fix-page-edge-text-truncation.md](closed/130-architectural-fix-page-edge-text-truncation.md) |
 | **131** | Enhancement | High | Closed | 長大段落（Long Paragraphs）における超え発生時の段落動的分割と完全ページブレイク制御 | AI Agent | [131-split-long-paragraphs-non-blocking-page-breaks.md](closed/131-split-long-paragraphs-non-blocking-page-breaks.md) |
 | **132** | Bug | High | Closed | CI/CD E2Eテストにおける book-card 検出タイムアウトの解消 | AI Agent | [132-fix-ci-e2e-book-card-wait-timeout.md](closed/132-fix-ci-e2e-book-card-wait-timeout.md) |
-| **133** | Security | High | New | CI/CDにおける npm audit (brace-expansion DoS脆弱性 GHSA-mh99-v99m-4gvg) 失敗の修正 | AI Agent | [133-fix-ci-npm-audit-brace-expansion-vulnerability.md](133-fix-ci-npm-audit-brace-expansion-vulnerability.md) |
+| **133** | Security | High | Closed | CI/CDにおける npm audit (brace-expansion DoS脆弱性 GHSA-mh99-v99m-4gvg) 失敗の修正 | AI Agent | [133-fix-ci-npm-audit-brace-expansion-vulnerability.md](closed/133-fix-ci-npm-audit-brace-expansion-vulnerability.md) |
 
 
 ## 2. 状態（ステータス）定義

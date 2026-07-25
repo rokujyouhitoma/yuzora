@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Security: Remediated High severity DoS vulnerability in transitive dependency `brace-expansion` (GHSA-mh99-v99m-4gvg) by adding `"brace-expansion": "^5.0.8"` override in `package.json`, ensuring clean `npm audit --audit-level=high` in CI/CD pipeline (ID: 133).
+- Documentation: Closed issue 133 (ID: 133).
 - Test: Registered Backlogs 110-114 for QA testing enhancements; polished and implemented Backlogs 110-113 (strict type checking, healthcheck optimization, parallel E2E testing, and E2E performance assertions) (ID: 110, 111, 112, 113, 114).
 - Fix: Resolved CI/CD E2E test timeout on `#developer-books-grid .book-card` by setting `currentSceneName` before `enter()` lifecycle execution in `SceneDirector`, adding missing framework script tags to `index.html`, and registering `PREDEFINED_BOOKS` property externs in `externs.js` (ID: 132).
 - Documentation: Closed issue 132 (ID: 132).
