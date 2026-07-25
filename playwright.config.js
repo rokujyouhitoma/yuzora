@@ -16,6 +16,7 @@ module.exports = defineConfig({
     baseURL: 'http://localhost:8080',
     trace: 'on-first-retry',
     headless: true,
+    viewport: { width: 1280, height: 720 },
   },
   webServer: {
     command: 'node node_modules/http-server/bin/http-server -p 8080 -c-1',

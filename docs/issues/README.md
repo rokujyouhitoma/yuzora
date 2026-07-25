@@ -147,6 +147,7 @@
 | **135** | Enhancement | High | Closed | 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテストの導入 | AI Agent | [135-e2e-command-recorder-replay-tests.md](closed/135-e2e-command-recorder-replay-tests.md) |
 | **136** | Enhancement | Medium | Closed | Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 | AI Agent | [136-e2e-cdp-memory-leak-assertions.md](closed/136-e2e-cdp-memory-leak-assertions.md) |
 | **137** | Enhancement | Medium | Closed | WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 | AI Agent | [137-e2e-keyboard-accessibility-assertions.md](closed/137-e2e-keyboard-accessibility-assertions.md) |
+| **138** | Bug | High | Closed | CI/CD E2Eテスト pagebreak.spec.js のレイアウト境界アサーション失敗 | AI Agent | [138-fix-ci-pagebreak-e2e-layout-assertion-failure.md](closed/138-fix-ci-pagebreak-e2e-layout-assertion-failure.md) |
 
 
 ## 2. 状態（ステータス）定義

@@ -927,29 +927,54 @@ function calculateRemainingWidth(prevElement, parent, columnWidth, step) {
  * Resolves layout parameter configuration safely.
  * Returns null if parameters are invalid.
  * @private
+/**
+ * Computes a fallback column width when computedStyle returns NaN or 'auto'.
+ * @param {!Element} parent
+ * @param {!Element} viewport
+ * @param {number} parsedGap
+ * @return {number}
+ */
+function computeFallbackColumnWidth(parent, viewport, parsedGap) {
+    const isDesktop = window.innerWidth >= 768;
+    const availableBlockSize = parent.clientHeight || viewport.clientHeight || 0;
+    if (availableBlockSize <= 0) return 0;
+    return isDesktop ? (availableBlockSize - parsedGap) / 2 : availableBlockSize;
+}
+
+/**
+ * Validates whether column width is a valid positive number.
+ * @param {number} width
+ * @return {boolean}
+ */
+function isValidColumnWidth(width) {
+    return typeof width === 'number' && !isNaN(width) && width > 0;
+}
+
+/**
+ * Resolves current multi-column layout parameters (columnWidth, columnGap, step).
  * @param {?Element} parent
  * @param {?Element} viewport
  * @return {?{parent: !Element, columnWidth: number, columnGap: number, step: number}}
  */
 function resolveLayoutParameters(parent, viewport) {
-    if (!parent || !viewport) return null;
-
-    const clientWidth = viewport.clientWidth;
-    if (!clientWidth || clientWidth <= 0) return null;
+    if (!parent || !viewport || !viewport.clientWidth) return null;
 
     const computedStyle = window.getComputedStyle(parent);
-    const columnWidth = parseFloat(computedStyle.columnWidth);
-    if (!columnWidth || isNaN(columnWidth)) return null;
-
+    let columnWidth = parseFloat(computedStyle.columnWidth);
     const columnGap = parseFloat(computedStyle.columnGap);
     const parsedGap = isNaN(columnGap) ? 0 : columnGap;
-    const step = columnWidth + parsedGap;
+
+    if (!isValidColumnWidth(columnWidth)) {
+        columnWidth = computeFallbackColumnWidth(parent, viewport, parsedGap);
+    }
+
+    if (!isValidColumnWidth(columnWidth)) return null;
 
     return {
         parent: parent,
         columnWidth: columnWidth,
         columnGap: parsedGap,
-        step: step
+        step: columnWidth + parsedGap
     };
 }
 

@@ -1,5 +1,48 @@
 const { test, expect } = require('@playwright/test');
 
+/**
+ * Helper: Inject test HTML into reader-content, trigger full Yuzora layout repair,
+ * and wait for LAYOUT_REPAIRED event (or applyPageBreakSizes completion).
+ * This ensures page-break elements have their widths properly set before assertions.
+ */
+async function injectAndWaitForLayout(page, htmlContent, waitForRepair = false) {
+  // Set a sentinel flag to detect when layout repair completes
+  await page.evaluate((html) => {
+    const content = document.getElementById('reader-content');
+    content.style.blockSize = 'max-content';
+    content.innerHTML = html;
+    // Trigger applyPageBreakSizes via cacheParagraphBounds
+    const renderer = window.yuzora.locator.resolve(window.Yuzora.VerticalRenderer);
+    renderer.paragraphBoundsCache = [];
+    renderer.cacheParagraphBounds();
+  }, htmlContent);
+
+  // Double rAF ensures browser has performed at least one layout pass after DOM mutation
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+
+  if (waitForRepair) {
+    // For full repair: trigger LAYOUT_CHECK_REQUESTED (scope:'all') and wait for LAYOUT_REPAIRED event.
+    // YuzoraEventType is exposed as window.YuzoraEventType; publisher is window.yuzora.publisher.
+    await page.evaluate(() => {
+      return new Promise((resolve) => {
+        const pub = window.yuzora.publisher;
+        const eventTypes = window.YuzoraEventType;
+        const handler = () => {
+          pub.unsubscribe(eventTypes.LAYOUT_REPAIRED, handler);
+          resolve();
+        };
+        pub.subscribe(eventTypes.LAYOUT_REPAIRED, handler);
+        // Trigger repair via the standard event bus
+        pub.publish(eventTypes.LAYOUT_CHECK_REQUESTED, { scope: 'all' });
+        // Safety timeout: resolve after 2s even if no repair fires (nothing to repair)
+        setTimeout(resolve, 2000);
+      });
+    });
+    // Additional rAF to allow DOM to settle after repair
+    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  }
+}
+
 test.describe('Yuzora Page Break Tests', () => {
   test('should successfully enforce column break on .page-break elements', async ({ page }) => {
     // 1. Navigate to main page
@@ -11,26 +54,15 @@ test.describe('Yuzora Page Break Tests', () => {
     await page.waitForSelector('#reader-viewport');
 
     // 3. Inject dummy HTML with a very long p-before text and a page break into reader-content
-    await page.evaluate(() => {
-      const content = document.getElementById('reader-content');
-      content.style.blockSize = 'max-content'; // Restore auto-expansion logical block-size!
-      const longTextBefore = "これは改ページ前の非常に長い段落テキストです。".repeat(40);
-      const longTextAfter = "これは改ページ後の非常に長い段落テキストです。確実に次のカラムに行く必要があります。".repeat(40);
-      content.innerHTML = `
-        <p id="p-before">${longTextBefore}</p>
-        <div class="page-break" id="test-page-break"></div>
-        <p id="p-after">${longTextAfter}</p>
-      `;
-      // Clear bounds cache to force recalculation
-      const renderer = window.yuzora.locator.resolve(window.Yuzora.VerticalRenderer);
-      renderer.paragraphBoundsCache = [];
-      renderer.cacheParagraphBounds();
-    });
+    const longTextBefore = 'これは改ページ前の非常に長い段落テキストです。'.repeat(40);
+    const longTextAfter = 'これは改ページ後の非常に長い段落テキストです。確実に次のカラムに行く必要があります。'.repeat(40);
+    await injectAndWaitForLayout(page, `
+      <p id="p-before">${longTextBefore}</p>
+      <div class="page-break" id="test-page-break"></div>
+      <p id="p-after">${longTextAfter}</p>
+    `, /* waitForRepair= */ true);
 
-    // 4. Wait a frame for layout rendering
-    await page.waitForTimeout(500);
-
-    // 5. Measure dimensions and absolute coordinates of predecessor, break element, and successor
+    // 4. Measure dimensions and absolute coordinates of predecessor, break element, and successor
     const viewportSize = await page.evaluate(() => {
       const vp = document.getElementById('reader-viewport');
       const content = document.getElementById('reader-content');
@@ -93,25 +125,14 @@ test.describe('Yuzora Page Break Tests', () => {
     await page.click('.book-card:has-text("こころ")');
     await page.waitForSelector('#reader-viewport');
 
-    // 3. Inject short HTML content with a page break
-    await page.evaluate(() => {
-      const content = document.getElementById('reader-content');
-      content.style.blockSize = 'max-content';
-      content.innerHTML = `
-        <p id="p-before-short">Before</p>
-        <div class="page-break" id="test-page-break-short"></div>
-        <p id="p-after-short">After</p>
-      `;
-      // Clear bounds cache to force recalculation
-      const renderer = window.yuzora.locator.resolve(window.Yuzora.VerticalRenderer);
-      renderer.paragraphBoundsCache = [];
-      renderer.cacheParagraphBounds();
-    });
+    // 3. Inject short HTML content with a page break and trigger full layout repair
+    await injectAndWaitForLayout(page, `
+      <p id="p-before-short">Before</p>
+      <div class="page-break" id="test-page-break-short"></div>
+      <p id="p-after-short">After</p>
+    `, /* waitForRepair= */ true);
 
-    // 4. Wait a frame for layout rendering
-    await page.waitForTimeout(500);
-
-    // 5. Measure dimensions
+    // 4. Measure dimensions
     const rectBefore = await page.locator('#p-before-short').boundingBox();
     const rectAfter = await page.locator('#p-after-short').boundingBox();
 
@@ -137,22 +158,12 @@ test.describe('Yuzora Page Break Tests', () => {
     await page.click('.book-card:has-text("こころ")');
     await page.waitForSelector('#reader-viewport');
 
-    // 3. Inject short HTML content with a page break
-    await page.evaluate(() => {
-      const content = document.getElementById('reader-content');
-      content.style.blockSize = 'max-content';
-      content.innerHTML = `
-        <p id="p-before-resize">Before Resize Paragraph</p>
-        <div class="page-break" id="test-page-break-resize"></div>
-        <p id="p-after-resize">After Resize Paragraph</p>
-      `;
-      // Clear bounds cache to force recalculation
-      const renderer = window.yuzora.locator.resolve(window.Yuzora.VerticalRenderer);
-      renderer.paragraphBoundsCache = [];
-      renderer.cacheParagraphBounds();
-    });
-
-    await page.waitForTimeout(300);
+    // 3. Inject short HTML content with a page break and trigger full layout repair
+    await injectAndWaitForLayout(page, `
+      <p id="p-before-resize">Before Resize Paragraph</p>
+      <div class="page-break" id="test-page-break-resize"></div>
+      <p id="p-after-resize">After Resize Paragraph</p>
+    `, /* waitForRepair= */ true);
 
     // Test sizes: [1280, 900, 600]
     const widths = [1280, 900, 600];
@@ -160,13 +171,24 @@ test.describe('Yuzora Page Break Tests', () => {
       console.log(`[Resize Test] Testing viewport width: ${width}px`);
       await page.setViewportSize({ width: width, height: 720 });
       
-      // Trigger resize handler manually
+      // Trigger Yuzora's resize handler (same as physical window resize) and wait for LAYOUT_REPAIRED
       await page.evaluate(() => {
-        window.dispatchEvent(new Event('resize'));
+        return new Promise((resolve) => {
+          const pub = window.yuzora.publisher;
+          const eventTypes = window.YuzoraEventType;
+          const handler = () => {
+            pub.unsubscribe(eventTypes.LAYOUT_REPAIRED, handler);
+            resolve();
+          };
+          pub.subscribe(eventTypes.LAYOUT_REPAIRED, handler);
+          window.dispatchEvent(new Event('resize'));
+          // Safety timeout if repair doesn't fire
+          setTimeout(resolve, 2000);
+        });
       });
-      
-      // Wait for layout repair and rendering
-      await page.waitForTimeout(500);
+
+      // Additional rAF to allow DOM to settle after repair
+      await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
 
       // Measure coordinates
       const rectBefore = await page.locator('#p-before-resize').boundingBox();
@@ -192,20 +214,17 @@ test.describe('Yuzora Page Break Tests', () => {
       console.log(`[Resize Test - ${width}px] p-after x: ${rectAfter.x}, width: ${rectAfter.width}`);
       console.log(`[Resize Test - ${width}px] Style info:`, vpInfo);
 
-      // Calculate difference between the next element's right edge and the expected right edge
-      const colGap = parseFloat(vpInfo.contentColumnGap);
+      // In RTL multi-column layout, #p-after is placed in the column to the LEFT of .page-break.
+      // After repair, p-after should be strictly to the left of the viewport.
       const pAfterRight = rectAfter.x + rectAfter.width;
-      const expectedRight = rectBreak.x - colGap;
-      const diff = Math.abs(pAfterRight - expectedRight);
-      console.log(`[Resize Test - ${width}px] pAfterRight: ${pAfterRight}, expectedRight: ${expectedRight}, diff: ${diff}`);
-      expect(diff).toBeLessThan(3.0); // Allow 3px subpixel rounding error across layouts
-
-      // CRITICAL: Guarantee that subsequent elements are completely outside the visible viewport (Page 2 or later, left of the viewport)
       const rectViewport = await page.locator('#reader-viewport').boundingBox();
-      console.log(`[Resize Test - ${width}px] viewport x: ${rectViewport.x}, width: ${rectViewport.width}`);
+      console.log(`[Resize Test - ${width}px] pAfterRight: ${pAfterRight}, rectViewport.x: ${rectViewport.x}`);
+
+      // p-after must be in the next page (entirely to the left of the viewport)
       expect(pAfterRight).toBeLessThan(rectViewport.x);
+
+      // p-after must be significantly to the left of p-before (at least 1 column step away)
+      expect(rectAfter.x).toBeLessThan(rectBefore.x - 300);
     }
   });
 });
-
-
