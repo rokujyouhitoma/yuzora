@@ -665,6 +665,8 @@ function checkAndRepairParagraph(child, readerViewport) {
                 // Insert page break before this paragraph
                 const pageBreak = document.createElement('div');
                 pageBreak.className = 'page-break dynamic-page-break';
+                pageBreak.setAttribute('aria-hidden', 'true');
+                pageBreak.setAttribute('role', 'none');
                 child.parentNode.insertBefore(pageBreak, child);
                 return true;
             } else if (charInfo.node && charInfo.node.nodeType === 3) {
@@ -702,6 +704,8 @@ function splitParagraphAtChar(paragraph, textNode, charIndex) {
 
     const pageBreak = document.createElement('div');
     pageBreak.className = 'page-break dynamic-page-break dynamic-split-break';
+    pageBreak.setAttribute('aria-hidden', 'true');
+    pageBreak.setAttribute('role', 'none');
 
     const parent = paragraph.parentNode;
     const nextSib = paragraph.nextSibling;

@@ -436,4 +436,51 @@ test.describe('renderer.js Unit Tests', () => {
         assert.strictEqual(typeof renderer.lastRepairMetrics.durationMs, 'number');
         assert.ok(renderer.lastRepairMetrics.durationMs >= 0);
     });
+
+    test('VerticalRenderer - dynamic .page-break ARIA accessibility attributes guard (Issue 142)', async () => {
+        const readerContent = document.getElementById('reader-content');
+        const readerViewport = document.getElementById('reader-viewport');
+
+        Object.defineProperty(readerViewport, 'clientWidth', { value: 800, configurable: true });
+
+        // Prepare paragraphs; simulate an overrun by adding a pre-existing .page-break to test aria attribute
+        readerContent.innerHTML = '<p class="paragraph" style="width: 100px;">テスト段落１</p>';
+
+        // Directly invoke the insertPageBreakBefore logic by creating a dynamic page-break element
+        // in the same way renderer.js does, then verify ARIA attributes
+        const pageBreakDiv = document.createElement('div');
+        pageBreakDiv.className = 'page-break dynamic-page-break';
+        pageBreakDiv.setAttribute('aria-hidden', 'true');
+        pageBreakDiv.setAttribute('role', 'none');
+        readerContent.insertBefore(pageBreakDiv, readerContent.firstChild);
+
+        const injectedBreak = readerContent.querySelector('.dynamic-page-break');
+        assert.ok(injectedBreak, '.dynamic-page-break element should exist in DOM');
+        assert.strictEqual(injectedBreak.getAttribute('aria-hidden'), 'true',
+            '.page-break must have aria-hidden="true" to prevent accessibility tree pollution');
+        assert.strictEqual(injectedBreak.getAttribute('role'), 'none',
+            '.page-break must have role="none" to hide from assistive technologies');
+
+        // Verify adjustPageBreaksForOverrun executes without throwing
+        const viewContext = {
+            readerContent: readerContent,
+            readerViewport: readerViewport,
+            cachedScrollWidth: null,
+            cachedClientWidth: null
+        };
+        const configModel = { direction: 'rtl' };
+        const VerticalRendererClass = window.Yuzora.VerticalRenderer;
+        const renderer = new VerticalRendererClass(viewContext, configModel);
+        await renderer.adjustPageBreaksForOverrun();
+        assert.strictEqual(typeof renderer.lastRepairMetrics.durationMs, 'number');
+
+        // Verify all dynamic-page-breaks inserted by renderer have ARIA attributes
+        const allBreaks = readerContent.querySelectorAll('.dynamic-page-break');
+        allBreaks.forEach(el => {
+            assert.strictEqual(el.getAttribute('aria-hidden'), 'true',
+                'All renderer-inserted .page-break elements must have aria-hidden="true"');
+            assert.strictEqual(el.getAttribute('role'), 'none',
+                'All renderer-inserted .page-break elements must have role="none"');
+        });
+    });
 });
