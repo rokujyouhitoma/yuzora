@@ -13,8 +13,8 @@ ID: 114
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [x] [package.json](../../package.json) — 開発・計測用スクリプト定義
-- [x] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — CDPプロファイルアサーションの試行箇所
+- [ ] [package.json](../../package.json) — 開発・計測用スクリプト定義
+- [ ] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — CDPプロファイルアサーションの実装
 - [x] [README.md](README.md) — バックログ台帳の更新
 
 ---
@@ -36,6 +36,13 @@ ID: 114
 ---
 
 ## 5. 完了条件 (DoD) / Acceptance Criteria
+
+### 5.1 要件・設計承認条件 (Approved条件)
 - [x] サードパーティ製計測ツールおよび CDP プロファイリング手法の比較評価が完了し、設計方針が確立されていること。
 - [x] 本プロダクトのゼロ依存原則 ([MNG-00](../../MNG-00-development_philosophy.md)) を維持した計測手法が選定され、バックログが `Approved` 状態に更新されていること。
 - [x] ドキュメント内のリンクが相対パスで記述され、[docs/backlogs/README.md](README.md) のステータスが `Approved` に同期していること。
+
+### 5.2 実装・検証完了条件 (Closed条件 / 今後のIssue実装時)
+- [ ] Playwright E2E テスト環境において CDP Session (`Performance.enable`) 経由でメモリ領域およびリフロー回数のメトリクスを取得・アサートするスクリプトが実装されていること。
+- [ ] 大容量テキスト読み込み前後での `JSHeapUsedSize` メモリリーク検証が自動テスト内でパスすること。
+- [ ] `npm run healthcheck` パイプラインに統合され、エラーなく実行完了すること。
