@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+- Fix: Resolved CI/CD E2E test failure in `E2E Deterministic Scenario Command Replay Test (Issue 135)` by explicitly attaching `CommandManager` to `window` in `commands.js` and adding a robust fallback chain in `viewer.spec.js` (ID: 139).
+- Documentation: Closed issue 139 (ID: 139).
 - Fix: Resolved CI/CD E2E test failures in `pagebreak.spec.js` by adding a robust fallback calculation for `columnWidth` in `resolveLayoutParameters` when `getComputedStyle` returns `'auto'`, setting explicit viewport in `playwright.config.js`, and enforcing deterministic `LAYOUT_REPAIRED` event waiting (ID: 138).
 - Documentation: Closed issue 138 (ID: 138).
 - Test: Implemented rigorous low-cost QA E2E testing enhancements across Playwright test suite (XSS payload fuzzing guard, command recorder/replay deterministic scenario verification, CDP Chrome DevTools Protocol session memory leak assertions, and WAI-ARIA keyboard navigation accessibility guards) without external heavyweight dependencies (ID: 115, 116, 117, 118, 134, 135, 136, 137).

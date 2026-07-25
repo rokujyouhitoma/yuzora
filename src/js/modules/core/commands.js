@@ -777,3 +777,4 @@ window['Yuzora'].locator.register(CommandManagerClass, globalCommandHistory); //
 // Compatibility global variable
 /** @type {!CommandManagerInterface} */
 var CommandManager = /** @type {!CommandManagerInterface} */ (window['Yuzora'].locator.resolve(CommandHistory));
+window['CommandManager'] = CommandManager;

@@ -471,13 +471,17 @@ test.describe('Yuzora E2E Reader Tests', () => {
 
         // Execute deterministic UI command sequence via Yuzora CommandManager
         const replayResult = await page.evaluate(async () => {
-            if (!window.CommandManager) {
+            const cm = window.CommandManager 
+                || (window.yuzora && window.yuzora.CommandManager) 
+                || (window.Yuzora && window.Yuzora.locator && window.Yuzora.locator.resolve && window.Yuzora.locator.resolve('CommandHistory'));
+            
+            if (!cm) {
                 return { success: false, reason: 'CommandManager not available' };
             }
 
             const commandItem = { type: 'UpdateConfig', params: { configKey: 'theme', configValue: 'sepia' } };
-            const cmd = window.CommandManager.recreateCommand(commandItem);
-            await window.CommandManager.execute(cmd);
+            const cmd = cm.recreateCommand(commandItem);
+            await cm.execute(cmd);
 
             const isSepia = document.documentElement.classList.contains('theme-sepia') || document.body.classList.contains('theme-sepia');
             return { success: true, isSepia };
