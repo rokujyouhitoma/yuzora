@@ -2,7 +2,7 @@
 ID: 112
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] CIにおけるE2Eテストの両系並列実行基盤の拡充 (ID: 112)

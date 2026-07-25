@@ -119,7 +119,7 @@
 | **109** | Enhancement | High | Approved | 長大段落（Long Paragraphs）における超え発生時の段落動的分割と完全ページブレイク制御 | [109-split-long-paragraphs-non-blocking-page-breaks.md](109-split-long-paragraphs-non-blocking-page-breaks.md) |
 | **110** | Refactor | High | Closed | tsconfig.json の型チェック厳格化 | [110-strict-type-checking-tsconfig.md](closed/110-strict-type-checking-tsconfig.md) |
 | **111** | Enhancement | High | Closed | 全事前検証の統合ヘルスチェックコマンド (healthcheck) の最適化 | [111-integrate-all-verifications-in-healthcheck.md](closed/111-integrate-all-verifications-in-healthcheck.md) |
-| **112** | Enhancement | Medium | Approved | CIにおけるE2Eテストの両系並列実行基盤の拡充 | [112-parallel-e2e-testing-compiled-uncompiled.md](112-parallel-e2e-testing-compiled-uncompiled.md) |
+| **112** | Enhancement | Medium | Closed | CIにおけるE2Eテストの両系並列実行基盤の拡充 | [112-parallel-e2e-testing-compiled-uncompiled.md](closed/112-parallel-e2e-testing-compiled-uncompiled.md) |
 | **113** | Enhancement | Medium | Approved | Playwright E2Eテストにおけるレイアウト修復時間・アサーションの追加 | [113-e2e-layout-repair-performance-assertions.md](113-e2e-layout-repair-performance-assertions.md) |
 | **114** | Refactor | Low | Postponed | サードパーティ製重量計測ツールの導入検討 | [114-evaluate-thirdparty-heavyweight-testing-tools.md](114-evaluate-thirdparty-heavyweight-testing-tools.md) |
 
