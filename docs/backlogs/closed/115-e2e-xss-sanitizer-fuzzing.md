@@ -2,7 +2,7 @@
 ID: 115
 種別: Enhancement
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] E2Eテストにおけるインライン HTML サニタイズ・XSS ファジング検証 (ID: 115)
@@ -13,7 +13,7 @@ Playwright E2Eテストスイートにおいて、青空文庫テキストのル
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — インライン XSS ファジング E2E アサーションの追加
+- [x] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — インライン XSS ファジング E2E アサーションの追加
 - [x] [README.md](README.md) — バックログ台帳の更新
 
 ---
@@ -39,6 +39,6 @@ Playwright E2Eテストスイートにおいて、青空文庫テキストのル
 - [x] ドキュメント内のリンクが相対パスで記述され、[docs/backlogs/README.md](README.md) のステータスが `Approved` に更新されていること。
 
 ### 5.2 実装・検証完了条件 (Closed条件 / 今後のIssue実装時)
-- [ ] `tests/e2e/viewer.spec.js` に XSS サニタイズ動的検証テストケースが実装されていること。
-- [ ] すべての XSS 攻撃ケースにおいてスクリプト実行が阻止され、テストが 100% パスすること。
-- [ ] `npm run healthcheck` が正常に通過すること。
+- [x] `tests/e2e/viewer.spec.js` に XSS サニタイズ動的検証テストケースが実装されていること。
+- [x] すべての XSS 攻撃ケースにおいてスクリプト実行が阻止され、テストが 100% パスすること。
+- [x] `npm run healthcheck` が正常に通過すること。

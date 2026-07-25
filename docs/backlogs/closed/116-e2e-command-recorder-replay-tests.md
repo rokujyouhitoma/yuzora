@@ -2,7 +2,7 @@
 ID: 116
 種別: Enhancement
 優先度: High
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテスト (ID: 116)
@@ -13,7 +13,7 @@ Yuzora の独自基盤である `UICommandRecorder` および `UICommandReplayer
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — コマンドリプレイシナリオテストの追加
+- [x] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — コマンドリプレイシナリオテストの追加
 - [x] [README.md](README.md) — バックログ台帳の更新
 
 ---
@@ -37,6 +37,6 @@ Yuzora の独自基盤である `UICommandRecorder` および `UICommandReplayer
 - [x] ドキュメント内のリンクが相対パスで記述され、[docs/backlogs/README.md](README.md) のステータスが `Approved` に更新されていること。
 
 ### 5.2 実装・検証完了条件 (Closed条件 / 今後のIssue実装時)
-- [ ] `tests/e2e/viewer.spec.js` にコマンド決定論的再生テストケースが実装されていること。
-- [ ] リプレイ実行後のテーマ・フォント・ページ状態アサーションが 100% パスすること。
-- [ ] `npm run healthcheck` が正常に通過すること。
+- [x] `tests/e2e/viewer.spec.js` にコマンド決定論的再生テストケースが実装されていること。
+- [x] リプレイ実行後のテーマ・フォント・ページ状態アサーションが 100% パスすること。
+- [x] `npm run healthcheck` が正常に通過すること。

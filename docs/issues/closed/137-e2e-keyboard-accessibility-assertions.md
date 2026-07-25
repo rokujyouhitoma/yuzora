@@ -2,7 +2,7 @@
 ID: 137
 種別: Enhancement
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [Enhancement] WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 (ID: 137)

@@ -2,7 +2,7 @@
 ID: 118
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 (ID: 118)
@@ -13,7 +13,7 @@ ID: 118
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — キーボード & ARIA 属性 E2E アサーションの追加
+- [x] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — キーボード & ARIA 属性 E2E アサーションの追加
 - [x] [README.md](README.md) — バックログ台帳の更新
 
 ---
@@ -38,6 +38,6 @@ ID: 118
 - [x] ドキュメント内のリンクが相対パスで記述され、[docs/backlogs/README.md](README.md) のステータスが `Approved` に更新されていること。
 
 ### 5.2 実装・検証完了条件 (Closed条件 / 今後のIssue実装時)
-- [ ] `tests/e2e/viewer.spec.js` にキーボードフォーカスおよび ARIA アサーションが実装されていること。
-- [ ] すべてのキーボードナビゲーション E2E テストが 100% パスすること。
-- [ ] `npm run healthcheck` が正常に通過すること。
+- [x] `tests/e2e/viewer.spec.js` にキーボードフォーカスおよび ARIA アサーションが実装されていること。
+- [x] すべてのキーボードナビゲーション E2E テストが 100% パスすること。
+- [x] `npm run healthcheck` が正常に通過すること。

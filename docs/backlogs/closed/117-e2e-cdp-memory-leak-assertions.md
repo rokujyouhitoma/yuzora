@@ -2,7 +2,7 @@
 ID: 117
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 (ID: 117)
@@ -13,7 +13,7 @@ Playwright の Chrome DevTools Protocol (`CDPSession`) API (`Performance.getMetr
 ---
 
 ## 2. 影響範囲と関連ファイル / Scope and Affected Files
-- [ ] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — CDP メモリ増分アサーションの追加
+- [x] [tests/e2e/viewer.spec.js](../../tests/e2e/viewer.spec.js) — CDP メモリ増分アサーションの追加
 - [x] [README.md](README.md) — バックログ台帳の更新
 
 ---
@@ -39,6 +39,6 @@ Playwright の Chrome DevTools Protocol (`CDPSession`) API (`Performance.getMetr
 - [x] ドキュメント内のリンクが相対パスで記述され、[docs/backlogs/README.md](README.md) のステータスが `Approved` に更新されていること。
 
 ### 5.2 実装・検証完了条件 (Closed条件 / 今後のIssue実装時)
-- [ ] `tests/e2e/viewer.spec.js` に CDP メモリリーク検証テストケースが実装されていること。
-- [ ] 書籍の連続ロード・解体後における Heap メモリ増分アサーションが 100% パスすること。
-- [ ] `npm run healthcheck` が正常に通過すること。
+- [x] `tests/e2e/viewer.spec.js` に CDP メモリリーク検証テストケースが実装されていること。
+- [x] 書籍の連続ロード・解体後における Heap メモリ増分アサーションが 100% パスすること。
+- [x] `npm run healthcheck` が正常に通過すること。

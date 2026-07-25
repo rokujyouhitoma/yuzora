@@ -122,10 +122,10 @@
 | **112** | Enhancement | Medium | Closed | CIにおけるE2Eテストの両系並列実行基盤の拡充 | [112-parallel-e2e-testing-compiled-uncompiled.md](closed/112-parallel-e2e-testing-compiled-uncompiled.md) |
 | **113** | Enhancement | Medium | Closed | Playwright E2Eテストにおけるレイアウト修復時間・アサーションの追加 | [113-e2e-layout-repair-performance-assertions.md](closed/113-e2e-layout-repair-performance-assertions.md) |
 | **114** | Enhancement | Medium | Approved | 高度パフォーマンス・ストレステストツールの評価およびCDPプロファイル計測の導入 | [114-evaluate-thirdparty-heavyweight-testing-tools.md](114-evaluate-thirdparty-heavyweight-testing-tools.md) |
-| **115** | Enhancement | High | Approved | E2Eテストにおけるインライン HTML サニタイズ・XSS ファジング検証 | [115-e2e-xss-sanitizer-fuzzing.md](115-e2e-xss-sanitizer-fuzzing.md) |
-| **116** | Enhancement | High | Approved | 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテスト | [116-e2e-command-recorder-replay-tests.md](116-e2e-command-recorder-replay-tests.md) |
-| **117** | Enhancement | Medium | Approved | Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 | [117-e2e-cdp-memory-leak-assertions.md](117-e2e-cdp-memory-leak-assertions.md) |
-| **118** | Enhancement | Medium | Approved | WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 | [118-e2e-keyboard-accessibility-assertions.md](118-e2e-keyboard-accessibility-assertions.md) |
+| **115** | Enhancement | High | Closed | E2Eテストにおけるインライン HTML サニタイズ・XSS ファジング検証 | [115-e2e-xss-sanitizer-fuzzing.md](closed/115-e2e-xss-sanitizer-fuzzing.md) |
+| **116** | Enhancement | High | Closed | 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテスト | [116-e2e-command-recorder-replay-tests.md](closed/116-e2e-command-recorder-replay-tests.md) |
+| **117** | Enhancement | Medium | Closed | Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 | [117-e2e-cdp-memory-leak-assertions.md](closed/117-e2e-cdp-memory-leak-assertions.md) |
+| **118** | Enhancement | Medium | Closed | WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 | [118-e2e-keyboard-accessibility-assertions.md](closed/118-e2e-keyboard-accessibility-assertions.md) |
 
 ---
 

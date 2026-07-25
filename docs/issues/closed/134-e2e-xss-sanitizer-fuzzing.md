@@ -2,7 +2,7 @@
 ID: 134
 種別: Security
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [BUG/SEC] E2Eテストにおけるインライン HTML サニタイズ・XSS ファジング検証の導入 (ID: 134)

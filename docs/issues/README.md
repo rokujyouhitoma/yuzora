@@ -143,10 +143,10 @@
 | **131** | Enhancement | High | Closed | 長大段落（Long Paragraphs）における超え発生時の段落動的分割と完全ページブレイク制御 | AI Agent | [131-split-long-paragraphs-non-blocking-page-breaks.md](closed/131-split-long-paragraphs-non-blocking-page-breaks.md) |
 | **132** | Bug | High | Closed | CI/CD E2Eテストにおける book-card 検出タイムアウトの解消 | AI Agent | [132-fix-ci-e2e-book-card-wait-timeout.md](closed/132-fix-ci-e2e-book-card-wait-timeout.md) |
 | **133** | Security | High | Closed | CI/CDにおける npm audit (brace-expansion DoS脆弱性 GHSA-mh99-v99m-4gvg) 失敗の修正 | AI Agent | [133-fix-ci-npm-audit-brace-expansion-vulnerability.md](closed/133-fix-ci-npm-audit-brace-expansion-vulnerability.md) |
-| **134** | Security | High | In Progress | E2Eテストにおけるインライン HTML サニタイズ・XSS ファジング検証の導入 | AI Agent | [134-e2e-xss-sanitizer-fuzzing.md](134-e2e-xss-sanitizer-fuzzing.md) |
-| **135** | Enhancement | High | In Progress | 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテストの導入 | AI Agent | [135-e2e-command-recorder-replay-tests.md](135-e2e-command-recorder-replay-tests.md) |
-| **136** | Enhancement | Medium | In Progress | Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 | AI Agent | [136-e2e-cdp-memory-leak-assertions.md](136-e2e-cdp-memory-leak-assertions.md) |
-| **137** | Enhancement | Medium | In Progress | WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 | AI Agent | [137-e2e-keyboard-accessibility-assertions.md](137-e2e-keyboard-accessibility-assertions.md) |
+| **134** | Security | High | Closed | E2Eテストにおけるインライン HTML サニタイズ・XSS ファジング検証の導入 | AI Agent | [134-e2e-xss-sanitizer-fuzzing.md](closed/134-e2e-xss-sanitizer-fuzzing.md) |
+| **135** | Enhancement | High | Closed | 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテストの導入 | AI Agent | [135-e2e-command-recorder-replay-tests.md](closed/135-e2e-command-recorder-replay-tests.md) |
+| **136** | Enhancement | Medium | Closed | Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 | AI Agent | [136-e2e-cdp-memory-leak-assertions.md](closed/136-e2e-cdp-memory-leak-assertions.md) |
+| **137** | Enhancement | Medium | Closed | WAI-ARIA 属性およびキーボードフォーカス制御の E2E 自動検証 | AI Agent | [137-e2e-keyboard-accessibility-assertions.md](closed/137-e2e-keyboard-accessibility-assertions.md) |
 
 
 ## 2. 状態（ステータス）定義

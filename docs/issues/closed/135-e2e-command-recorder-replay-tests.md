@@ -2,7 +2,7 @@
 ID: 135
 種別: Enhancement
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [Enhancement] 内蔵コマンドレコーダーを活用した E2E 決定論的シナリオテストの導入 (ID: 135)

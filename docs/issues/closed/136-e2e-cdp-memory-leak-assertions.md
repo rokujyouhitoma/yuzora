@@ -2,7 +2,7 @@
 ID: 136
 種別: Enhancement
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [Enhancement] Playwright CDP Session 経由での JSHeapUsedSize メモリリーク自動検証 (ID: 136)
