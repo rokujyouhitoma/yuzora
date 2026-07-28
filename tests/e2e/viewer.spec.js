@@ -334,9 +334,13 @@ test.describe('Yuzora E2E Reader Tests', () => {
         await expect(tocDrawer).not.toHaveClass(/open/);
 
         // Wait for smooth scroll and IntersectionObserver to settle
-        await page.waitForTimeout(3000);
+        // Use 1500ms to avoid racing with the 3000ms inactivity auto-hide timer
+        await page.waitForTimeout(1500);
 
         // 5. Open TOC drawer again
+        // First confirm header is auto-hidden by the inactivity timer
+        await expect(readerHeader).toHaveClass(/hidden/, { timeout: 5000 });
+        // Then click reader-viewport to show header (toggle from hidden → visible)
         await page.click('#reader-viewport');
         await expect(readerHeader).not.toHaveClass(/hidden/);
         await btnTOC.click();
