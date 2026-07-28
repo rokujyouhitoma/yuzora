@@ -2,7 +2,7 @@
 ID: 144
 種別: Enhancement
 優先度: Medium
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [ENH] CDP `LayoutCount`・`RecalculateStyleCount` リフロー回数アサーションの実装 (ID: 144)

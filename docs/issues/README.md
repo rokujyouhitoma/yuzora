@@ -153,7 +153,7 @@
 | **141** | Bug | High | Closed | 縦書き読書画面の左右に20pxの読書余白を設定しテキスト・ルビの見切れを解消 | AI Agent | [141-fix-left-edge-text-clipping-with-ruby.md](closed/141-fix-left-edge-text-clipping-with-ruby.md) |
 | **142** | Refactor | High | Closed | 決定論的自動改ページ（.page-break）挿入エンジンのアーキテクチャ整理と高度発展 | AI Agent | [142-architectural-deterministic-pagebreak-insertion-engine.md](closed/142-architectural-deterministic-pagebreak-insertion-engine.md) |
 | **143** | Bug | High | Closed | CI/CD E2Eテスト TOCドロワーテスト中の `#reader-viewport` クリックでヘッダーの `hidden` クラスが解除されない | AI Agent | [143-fix-ci-toc-header-hidden-after-jump.md](closed/143-fix-ci-toc-header-hidden-after-jump.md) |
-| **144** | Enhancement | Medium | In Progress | CDP `LayoutCount`・`RecalculateStyleCount` リフロー回数アサーションの実装 | AI Agent | [144-cdp-layout-reflow-count-assertions.md](144-cdp-layout-reflow-count-assertions.md) |
+| **144** | Enhancement | Medium | Closed | CDP `LayoutCount`・`RecalculateStyleCount` リフロー回数アサーションの実装 | AI Agent | [144-cdp-layout-reflow-count-assertions.md](closed/144-cdp-layout-reflow-count-assertions.md) |
 
 
 ## 2. 状態（ステータス）定義
