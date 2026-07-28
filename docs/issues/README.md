@@ -152,7 +152,7 @@
 | **140** | Bug | High | Closed | CI/CD E2Eテスト `cm.recreateCommand is not a function` エラーの解消 | AI Agent | [140-fix-ci-recreate-command-not-a-function.md](closed/140-fix-ci-recreate-command-not-a-function.md) |
 | **141** | Bug | High | Closed | 縦書き読書画面の左右に20pxの読書余白を設定しテキスト・ルビの見切れを解消 | AI Agent | [141-fix-left-edge-text-clipping-with-ruby.md](closed/141-fix-left-edge-text-clipping-with-ruby.md) |
 | **142** | Refactor | High | Closed | 決定論的自動改ページ（.page-break）挿入エンジンのアーキテクチャ整理と高度発展 | AI Agent | [142-architectural-deterministic-pagebreak-insertion-engine.md](closed/142-architectural-deterministic-pagebreak-insertion-engine.md) |
-| **143** | Bug | High | In Progress | CI/CD E2Eテスト TOCドロワーテスト中の `#reader-viewport` クリックでヘッダーの `hidden` クラスが解除されない | AI Agent | [143-fix-ci-toc-header-hidden-after-jump.md](143-fix-ci-toc-header-hidden-after-jump.md) |
+| **143** | Bug | High | Closed | CI/CD E2Eテスト TOCドロワーテスト中の `#reader-viewport` クリックでヘッダーの `hidden` クラスが解除されない | AI Agent | [143-fix-ci-toc-header-hidden-after-jump.md](closed/143-fix-ci-toc-header-hidden-after-jump.md) |
 
 
 ## 2. 状態（ステータス）定義
