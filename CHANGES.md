@@ -2,7 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+- Fix: Resolved CI/CD E2E test race condition in `should observe headings and render TOC chunked progressive list` where `waitForTimeout(3000)` collided with the 3000ms inactivity auto-hide timer; reduced timeout to 1500ms and added explicit `expect(readerHeader).toHaveClass(/hidden/)` assertion before clicking to ensure deterministic hidden→visible toggle (ID: 143).
+- Documentation: Closed Issue 143 (ID: 143).
 - Refactor: Added `aria-hidden="true"` and `role="none"` WAI-ARIA attributes to all dynamically inserted `.page-break` spacer elements in `renderer.js` (both `checkAndRepairParagraph` and `splitParagraphAtChar` code paths) to prevent accessibility tree pollution by invisible DOM nodes, and added unit test guard in `renderer.test.js` (ID: 142).
+
 - Documentation: Closed Issue 142 and promoted Backlog 119 to Approved (ID: 142).
 - Fix: Configured 20px side reading margins (`--reader-padding-x: 20px`) across responsive media queries in `reader.css` and `style.css` and added paragraph safety margins (`margin-right: 12px; margin-left: 6px;`), completely eliminating text and ruby overflow clipping on both right and left screen edges (ID: 141).
 - Documentation: Closed issue 141 (ID: 141).
