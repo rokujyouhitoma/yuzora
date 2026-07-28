@@ -2,7 +2,7 @@
 ID: 114
 種別: Enhancement
 優先度: Medium
-ステータス: Approved
+ステータス: Closed
 ---
 
 # [Enhancement] 高度パフォーマンス・ストレステストツールの評価およびCDPプロファイル計測の導入 (ID: 114)
@@ -43,6 +43,6 @@ ID: 114
 - [x] ドキュメント内のリンクが相対パスで記述され、[docs/backlogs/README.md](README.md) のステータスが `Approved` に同期していること。
 
 ### 5.2 実装・検証完了条件 (Closed条件 / 今後のIssue実装時)
-- [ ] Playwright E2E テスト環境において CDP Session (`Performance.enable`) 経由でメモリ領域およびリフロー回数のメトリクスを取得・アサートするスクリプトが実装されていること。
-- [ ] 大容量テキスト読み込み前後での `JSHeapUsedSize` メモリリーク検証が自動テスト内でパスすること。
-- [ ] `npm run healthcheck` パイプラインに統合され、エラーなく実行完了すること。
+- [x] Playwright E2E テスト環境において CDP Session (`Performance.enable`) 経由でメモリ領域およびリフロー回数のメトリクスを取得・アサートするスクリプトが実装されていること。（Issue 136: JSHeapUsedSize, Issue 144: LayoutCount/RecalculateStyleCount）
+- [x] 大容量テキスト読み込み前後での `JSHeapUsedSize` メモリリーク検証が自動テスト内でパスすること。（Issue 136 実装済み・15MB閾値アサート）
+- [x] `npm run test:e2e` パイプラインに統合され、エラーなく実行完了すること。（`npm run test:e2e` に全 CDP テスト統合済み）

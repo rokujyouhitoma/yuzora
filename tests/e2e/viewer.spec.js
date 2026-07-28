@@ -524,6 +524,49 @@ test.describe('Yuzora E2E Reader Tests', () => {
         await context.close();
     });
 
+    test('E2E CDP Layout & Style Reflow Count Guard (Backlog 114)', async ({ browser }) => {
+        const context = await browser.newContext();
+        const page = await context.newPage();
+        const targetUrl = 'http://localhost:8080' + (process.env.TEST_PATH || '/');
+        // Block web fonts to prevent network delays in restricted sandbox environments
+        await page.route('**/*.{ttf,woff,woff2,otf}', route => route.fulfill({ status: 200, body: '' }));
+        await page.route('https://fonts.googleapis.com/**', route => route.fulfill({ status: 200, body: '' }));
+        await page.route('https://fonts.gstatic.com/**', route => route.fulfill({ status: 200, body: '' }));
+        await page.goto(targetUrl);
+        await page.waitForSelector('#developer-books-grid .book-card');
+
+        const cdpSession = await context.newCDPSession(page);
+        await cdpSession.send('Performance.enable');
+
+        // Baseline measurement before book load
+        const beforeMetrics = await cdpSession.send('Performance.getMetrics');
+        const beforeLayout = beforeMetrics.metrics.find(m => m.name === 'LayoutCount')?.value || 0;
+        const beforeStyle  = beforeMetrics.metrics.find(m => m.name === 'RecalculateStyleCount')?.value || 0;
+
+        // Open book and wait for full render + self-repair layout engine to settle
+        await page.click('#developer-books-grid .book-card');
+        await page.waitForSelector('#reader-viewport', { state: 'visible' });
+        await page.waitForFunction(() => !window.__isReflowing__, undefined, { timeout: 15000 });
+        await page.waitForTimeout(500);
+
+        // Post-load measurement
+        const afterMetrics = await cdpSession.send('Performance.getMetrics');
+        const afterLayout = afterMetrics.metrics.find(m => m.name === 'LayoutCount')?.value || 0;
+        const afterStyle  = afterMetrics.metrics.find(m => m.name === 'RecalculateStyleCount')?.value || 0;
+
+        const layoutDelta = afterLayout - beforeLayout;
+        const styleDelta  = afterStyle  - beforeStyle;
+
+        console.log(`[CDP Reflow Guard] LayoutCount delta: ${layoutDelta}, RecalculateStyleCount delta: ${styleDelta}`);
+
+        // Thresholds account for initial layout repair passes (Issue 056, 070, 083).
+        // These are regression baselines: if deltas exceed these, layout thrashing has been introduced.
+        expect(layoutDelta).toBeLessThan(500);
+        expect(styleDelta).toBeLessThan(500);
+
+        await context.close();
+    });
+
     test('E2E Accessibility & Keyboard Focus Navigation Guard (Issue 137)', async ({ page }) => {
         await page.waitForSelector('#developer-books-grid .book-card');
 

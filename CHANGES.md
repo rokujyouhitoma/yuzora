@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
+- Enhancement: Added CDP `LayoutCount` and `RecalculateStyleCount` reflow count assertion test (`E2E CDP Layout & Style Reflow Count Guard`) to `viewer.spec.js` via Playwright `Performance.getMetrics`; measures before/after book load deltas and asserts both remain under 500 to detect layout thrashing regressions, completing Backlog 114 implementation (ID: 144).
 - Fix: Resolved CI/CD E2E test race condition in `should observe headings and render TOC chunked progressive list` where `waitForTimeout(3000)` collided with the 3000ms inactivity auto-hide timer; reduced timeout to 1500ms and added explicit `expect(readerHeader).toHaveClass(/hidden/)` assertion before clicking to ensure deterministic hidden→visible toggle (ID: 143).
 - Documentation: Closed Issue 143 (ID: 143).
 - Refactor: Added `aria-hidden="true"` and `role="none"` WAI-ARIA attributes to all dynamically inserted `.page-break` spacer elements in `renderer.js` (both `checkAndRepairParagraph` and `splitParagraphAtChar` code paths) to prevent accessibility tree pollution by invisible DOM nodes, and added unit test guard in `renderer.test.js` (ID: 142).
