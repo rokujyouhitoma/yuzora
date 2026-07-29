@@ -340,8 +340,11 @@ test.describe('Yuzora E2E Reader Tests', () => {
         // 5. Open TOC drawer again
         // First confirm header is auto-hidden by the inactivity timer
         await expect(readerHeader).toHaveClass(/hidden/, { timeout: 5000 });
-        // Then click reader-viewport to show header (toggle from hidden → visible)
-        await page.click('#reader-viewport');
+        // Then click reader-viewport to show header (toggle from hidden → visible).
+        // Use position:{x:10,y:10} (top-left corner) to avoid ruby/text elements:
+        // toggleControls() early-returns if e.target.closest("ruby") is truthy,
+        // which happens when Playwright clicks the viewport center in CI layout.
+        await page.click('#reader-viewport', { position: { x: 10, y: 10 } });
         await expect(readerHeader).not.toHaveClass(/hidden/);
         await btnTOC.click();
         await expect(tocDrawer).toHaveClass(/open/);

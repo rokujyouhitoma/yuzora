@@ -2,6 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
+- Fix: Resolved persistent CI/CD E2E test failure in `should observe headings and render TOC chunked progressive list` where `page.click('#reader-viewport')` hit a `<ruby>` element causing `toggleControls()` to early-return without showing the header; fixed by using `position:{x:10,y:10}` to click the top-left corner of the viewport, bypassing the `e.target.closest("ruby")` guard (ID: 145).
 - Enhancement: Added CDP `LayoutCount` and `RecalculateStyleCount` reflow count assertion test (`E2E CDP Layout & Style Reflow Count Guard`) to `viewer.spec.js` via Playwright `Performance.getMetrics`; measures before/after book load deltas and asserts both remain under 500 to detect layout thrashing regressions, completing Backlog 114 implementation (ID: 144).
 - Fix: Resolved CI/CD E2E test race condition in `should observe headings and render TOC chunked progressive list` where `waitForTimeout(3000)` collided with the 3000ms inactivity auto-hide timer; reduced timeout to 1500ms and added explicit `expect(readerHeader).toHaveClass(/hidden/)` assertion before clicking to ensure deterministic hidden→visible toggle (ID: 143).
 - Documentation: Closed Issue 143 (ID: 143).
