@@ -154,7 +154,7 @@
 | **142** | Refactor | High | Closed | 決定論的自動改ページ（.page-break）挿入エンジンのアーキテクチャ整理と高度発展 | AI Agent | [142-architectural-deterministic-pagebreak-insertion-engine.md](closed/142-architectural-deterministic-pagebreak-insertion-engine.md) |
 | **143** | Bug | High | Closed | CI/CD E2Eテスト TOCドロワーテスト中の `#reader-viewport` クリックでヘッダーの `hidden` クラスが解除されない | AI Agent | [143-fix-ci-toc-header-hidden-after-jump.md](closed/143-fix-ci-toc-header-hidden-after-jump.md) |
 | **144** | Enhancement | Medium | Closed | CDP `LayoutCount`・`RecalculateStyleCount` リフロー回数アサーションの実装 | AI Agent | [144-cdp-layout-reflow-count-assertions.md](closed/144-cdp-layout-reflow-count-assertions.md) |
-| **145** | Bug | High | In Progress | CI/CD E2E TOCテスト — `#reader-viewport` クリック後もヘッダーが `hidden` のまま | AI Agent | [145-fix-ci-toc-header-still-hidden-after-viewport-click.md](145-fix-ci-toc-header-still-hidden-after-viewport-click.md) |
+| **145** | Bug | High | Closed | CI/CD E2E TOCテスト — `#reader-viewport` クリック後もヘッダーが `hidden` のまま | AI Agent | [145-fix-ci-toc-header-still-hidden-after-viewport-click.md](closed/145-fix-ci-toc-header-still-hidden-after-viewport-click.md) |
 
 
 ## 2. 状態（ステータス）定義

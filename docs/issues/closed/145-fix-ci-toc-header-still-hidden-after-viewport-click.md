@@ -2,7 +2,7 @@
 ID: 145
 種別: Bug
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [BUG] CI/CD E2E TOCテスト — `#reader-viewport` クリック後もヘッダーが `hidden` のまま (ID: 145)
