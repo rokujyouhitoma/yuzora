@@ -155,6 +155,7 @@
 | **143** | Bug | High | Closed | CI/CD E2Eテスト TOCドロワーテスト中の `#reader-viewport` クリックでヘッダーの `hidden` クラスが解除されない | AI Agent | [143-fix-ci-toc-header-hidden-after-jump.md](closed/143-fix-ci-toc-header-hidden-after-jump.md) |
 | **144** | Enhancement | Medium | Closed | CDP `LayoutCount`・`RecalculateStyleCount` リフロー回数アサーションの実装 | AI Agent | [144-cdp-layout-reflow-count-assertions.md](closed/144-cdp-layout-reflow-count-assertions.md) |
 | **145** | Bug | High | Closed | CI/CD E2E TOCテスト — `#reader-viewport` クリック後もヘッダーが `hidden` のまま | AI Agent | [145-fix-ci-toc-header-still-hidden-after-viewport-click.md](closed/145-fix-ci-toc-header-still-hidden-after-viewport-click.md) |
+| **146** | Bug | High | In Progress | CI/CD E2E TOCテスト — `#page-nav-left` オーバーレイによる `#reader-viewport` クリック遮断の修正 | AI Agent | [146-fix-ci-toc-page-nav-overlay-intercept.md](146-fix-ci-toc-page-nav-overlay-intercept.md) |
 
 
 ## 2. 状態（ステータス）定義

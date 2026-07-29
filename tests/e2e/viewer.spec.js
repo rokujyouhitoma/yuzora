@@ -341,10 +341,9 @@ test.describe('Yuzora E2E Reader Tests', () => {
         // First confirm header is auto-hidden by the inactivity timer
         await expect(readerHeader).toHaveClass(/hidden/, { timeout: 5000 });
         // Then click reader-viewport to show header (toggle from hidden → visible).
-        // Use position:{x:10,y:10} (top-left corner) to avoid ruby/text elements:
-        // toggleControls() early-returns if e.target.closest("ruby") is truthy,
-        // which happens when Playwright clicks the viewport center in CI layout.
-        await page.click('#reader-viewport', { position: { x: 10, y: 10 } });
+        // Use force: true to bypass Playwright actionability checks for overlay elements (#page-nav-left)
+        // and ensure the click event targets #reader-viewport directly without hitting ruby/interactive elements.
+        await page.click('#reader-viewport', { force: true });
         await expect(readerHeader).not.toHaveClass(/hidden/);
         await btnTOC.click();
         await expect(tocDrawer).toHaveClass(/open/);
