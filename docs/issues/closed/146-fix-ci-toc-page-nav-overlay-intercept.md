@@ -2,7 +2,7 @@
 ID: 146
 種別: Bug
 優先度: High
-ステータス: Open (In Progress)
+ステータス: Closed
 ---
 
 # [BUG] CI/CD E2E TOCテスト — `#page-nav-left` オーバーレイによる `#reader-viewport` クリック遮断の修正 (ID: 146)
